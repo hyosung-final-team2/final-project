@@ -1,7 +1,10 @@
+import MemberTable from '../../components/MemberList/MemberTable/MemberTable';
+import { users } from '../../components/MemberList/MemberListData';
+
 const MemberList = () => {
   return (
     <>
-      <h1>MemberList</h1>
+      <MemberTable users={users} />
     </>
   );
 };
