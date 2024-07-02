@@ -6,7 +6,7 @@ import RegisterCompletion from '../../components/Register/RegisterCompletion';
 import RegisterStepBar from '../../components/Register/RegisterStepBar';
 import useRegisterStepStore from '../../store/Register/registerStepStore';
 
-function Register() {
+const Register = () => {
   const { registerStep, setRegisterStep, setRegisterFirstData, setRegisterSecondData, setRegisterThirdData, resetStore } = useRegisterStepStore(state => ({
     registerStep: state.registerStep,
     setRegisterStep: state.setRegisterStep,
@@ -48,6 +48,6 @@ function Register() {
       </div>
     </>
   );
-}
+};
 
 export default Register;

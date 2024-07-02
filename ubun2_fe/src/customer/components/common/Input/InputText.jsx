@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function InputText({ labelTitle, labelStyle, type, containerStyle, defaultValue, placeholder, updateFormValue, updateType }) {
+const InputText = ({ labelTitle, labelStyle, type, containerStyle, defaultValue, placeholder, updateFormValue, updateType }) => {
   const [value, setValue] = useState(defaultValue);
 
   const updateInputValue = val => {
@@ -24,6 +24,6 @@ function InputText({ labelTitle, labelStyle, type, containerStyle, defaultValue,
       />
     </div>
   );
-}
+};
 
 export default InputText;
