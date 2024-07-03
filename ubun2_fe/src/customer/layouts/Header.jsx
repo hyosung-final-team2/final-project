@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
 import MoonIcon from '@heroicons/react/24/outline/MoonIcon';
 import SunIcon from '@heroicons/react/24/outline/SunIcon';
+import BreadCrumb from '../components/common/BreadCrumb/BreadCrumb';
 
 const Header = () => {
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme'));
@@ -31,6 +32,7 @@ const Header = () => {
             <Bars3Icon className='h-5 inline-block w-5' />
           </label>
           {/* <h1 className='text-2xl font-semibold ml-2'>효성스토어</h1> */}
+          <BreadCrumb />
         </div>
 
         <div className='flex-none '>
