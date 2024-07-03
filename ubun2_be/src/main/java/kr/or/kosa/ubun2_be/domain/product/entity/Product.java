@@ -6,13 +6,20 @@ import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.order.entity.OrderProduct;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
+import kr.or.kosa.ubun2_be.domain.product.dto.ProductRequest;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderOption;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "product")
 public class Product extends BaseTimeEntity {
     @Id
@@ -35,6 +42,9 @@ public class Product extends BaseTimeEntity {
 
     @Column(nullable = false)
     private int productPrice;
+
+    @Column(nullable = false) // 재고수량 추가
+    private int stockQuantity;
 
     @Column
     private int productDiscount;
@@ -60,6 +70,23 @@ public class Product extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "product")
     private List<CartProduct> cartProducts;
+
+    public void updateProduct(ProductRequest productRequest) {
+        this.productName = productRequest.getProductName();
+        this.productDescription = productRequest.getProductDescription();
+        this.productPrice = productRequest.getProductPrice();
+        this.productDiscount = productRequest.getProductDiscount();
+        this.productStatus = productRequest.isProductStatus();
+        this.orderOption = productRequest.getOrderOption();
+        this.productImageOriginalName = productRequest.getProductImageOriginalName();
+        this.productImagePath = productRequest.getProductImagePath();
+        this.stockQuantity = productRequest.getStockQuantity();
+    }
+
+    public void saveImage(String productImageOriginalName, String productImagePath) {
+        this.productImageOriginalName = productImageOriginalName;
+        this.productImagePath = productImagePath;
+    }
 
 
 }

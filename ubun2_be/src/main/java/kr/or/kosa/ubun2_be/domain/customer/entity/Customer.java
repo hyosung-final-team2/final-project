@@ -6,13 +6,19 @@ import kr.or.kosa.ubun2_be.domain.member.entity.PendingMember;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "customer")
 public class Customer extends BaseTimeEntity {
     @Id
