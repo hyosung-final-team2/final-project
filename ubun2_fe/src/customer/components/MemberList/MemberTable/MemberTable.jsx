@@ -1,11 +1,10 @@
-import MemberTableFeature from './MemberTableFeature';
-
+import { Table } from 'flowbite-react';
 import TablePagination from '../../common/Pagination/TablePagination';
 import { customTableTheme } from '../../common/Table/tableStyle';
-import { Table } from 'flowbite-react';
 import TableHead from '../../common/Table/TableHead';
 import TableBody from '../../common/Table/TableBody';
 import { tableColumn } from '../../common/Table/tableIndex';
+import MemberTableFeature from './MemberTableFeature';
 import MemberTableRow from './MemberTableRow';
 
 import { useState } from 'react';
@@ -17,14 +16,14 @@ const MemberTable = ({ users }) => {
 
   const handleAllChecked = checked => {
     if (checked) {
-      setSelectedMembers(users.map(user => user.memberId));
+      setSelectedMembers(users.map(user => user.id));
     } else {
       setSelectedMembers([]);
     }
   };
 
-  const handleRowChecked = memberId => {
-    setSelectedMembers(prev => (prev.includes(memberId) ? prev.filter(id => id !== memberId) : [...prev, memberId]));
+  const handleRowChecked = id => {
+    setSelectedMembers(prev => (prev.includes(id) ? prev.filter(id => id !== id) : [...prev, id]));
   };
 
   const handleSearch = (term, category) => {
@@ -42,7 +41,7 @@ const MemberTable = ({ users }) => {
       <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} />
 
       {/* 테이블 */}
-      <div className='shadow-md px-4'>
+      <div className='px-4 shadow-md'>
         <Table hoverable theme={customTableTheme}>
           <TableHead tableColumns={tableColumn.member} allChecked={selectedMembers.length === users.length} setAllChecked={handleAllChecked} />
           <TableBody users={users} TableRowComponent={MemberTableRow} selectedMembers={selectedMembers} handleRowChecked={handleRowChecked} />

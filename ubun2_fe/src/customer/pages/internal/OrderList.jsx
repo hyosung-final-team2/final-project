@@ -1,7 +1,10 @@
+import OrderTable from '../../components/OrderList/OrderTable/OrderTable';
+import { orders } from '../../components/OrderList/OrderListData';
+
 const OrderList = () => {
   return (
     <>
-      <h1>주문 리스트</h1>
+      <OrderTable orders={orders} />
     </>
   );
 };
