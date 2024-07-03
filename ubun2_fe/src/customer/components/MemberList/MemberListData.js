@@ -1,6 +1,6 @@
 export const users = [
   {
-    memberId: 1,
+    id: 1,
     memberEmail: 'neil.sims@flowbite.com',
     memberName: 'Neil Sims',
     memberPhone: '123-456-7890',
@@ -8,7 +8,7 @@ export const users = [
     memberRegisterStatus: true,
   },
   {
-    memberId: 2,
+    id: 2,
     memberEmail: 'jane.doe@flowbite.com',
     memberName: 'Jane Doe',
     memberPhone: '234-567-8901',
@@ -16,7 +16,7 @@ export const users = [
     memberRegisterStatus: false,
   },
   {
-    memberId: 3,
+    id: 3,
     memberEmail: 'john.smith@flowbite.com',
     memberName: 'John Smith',
     memberPhone: '345-678-9012',
@@ -24,7 +24,7 @@ export const users = [
     memberRegisterStatus: true,
   },
   {
-    memberId: 4,
+    id: 4,
     memberEmail: 'emily.jones@flowbite.com',
     memberName: 'Emily Jones',
     memberPhone: '456-789-0123',
@@ -32,7 +32,7 @@ export const users = [
     memberRegisterStatus: false,
   },
   {
-    memberId: 5,
+    id: 5,
     memberEmail: 'michael.brown@flowbite.com',
     memberName: 'Michael Brown',
     memberPhone: '567-890-1234',
@@ -40,7 +40,7 @@ export const users = [
     memberRegisterStatus: false,
   },
   {
-    memberId: 6,
+    id: 6,
     memberEmail: 'lisa.wilson@flowbite.com',
     memberName: 'Lisa Wilson',
     memberPhone: '678-901-2345',
@@ -48,7 +48,7 @@ export const users = [
     memberRegisterStatus: true,
   },
   {
-    memberId: 7,
+    id: 7,
     memberEmail: 'david.taylor@flowbite.com',
     memberName: 'David Taylor',
     memberPhone: '789-012-3456',
@@ -56,7 +56,7 @@ export const users = [
     memberRegisterStatus: true,
   },
   {
-    memberId: 8,
+    id: 8,
     memberEmail: 'david.taylor@flowbite.com',
     memberName: 'David Taylor',
     memberPhone: '789-012-3456',
