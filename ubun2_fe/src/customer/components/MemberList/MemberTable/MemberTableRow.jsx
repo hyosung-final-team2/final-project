@@ -1,22 +1,12 @@
 import { Table, Checkbox } from 'flowbite-react';
 import StatusBadge from '../../common/Badge/StatusBadge';
 
-const MemberTableRow = ({
-  memberId,
-  memberEmail,
-  memberName,
-  memberPhone,
-  memberRegisterDate,
-  memberRegisterStatus,
-  setOpenModal,
-  isChecked,
-  handleRowChecked,
-}) => {
+const MemberTableRow = ({ id, memberEmail, memberName, memberPhone, memberRegisterDate, memberRegisterStatus, setOpenModal, isChecked, handleRowChecked }) => {
   return (
     <>
       <Table.Row className='bg-white' onClick={() => setOpenModal(true)}>
         <Table.Cell>
-          <Checkbox checked={isChecked} onChange={() => handleRowChecked(memberId)} onClick={e => e.stopPropagation()} />
+          <Checkbox checked={isChecked} onChange={() => handleRowChecked(id)} onClick={e => e.stopPropagation()} />
         </Table.Cell>
         <Table.Cell>{memberEmail}</Table.Cell>
         <Table.Cell>{memberName}</Table.Cell>
