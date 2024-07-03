@@ -1,4 +1,5 @@
 import MemberTableFeature from './MemberTableFeature';
+
 import TablePagination from '../../common/Pagination/TablePagination';
 import { customTableTheme } from '../../common/Table/tableStyle';
 import { Table } from 'flowbite-react';
@@ -36,12 +37,12 @@ const MemberTable = ({ users }) => {
   };
 
   return (
-    <div className='relative overflow-x-auto shadow-md sm:rounded-lg'>
+    <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
       <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} />
 
       {/* 테이블 */}
-      <div className='shadow-md'>
+      <div className='shadow-md px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead tableColumns={tableColumn.member} allChecked={selectedMembers.length === users.length} setAllChecked={handleAllChecked} />
           <TableBody users={users} TableRowComponent={MemberTableRow} selectedMembers={selectedMembers} handleRowChecked={handleRowChecked} />

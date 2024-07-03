@@ -25,12 +25,12 @@ const Header = () => {
 
   return (
     <>
-      <div className='navbar sticky top-0 bg-base-100  z-10 shadow-md rounded-t-3xl main_shadow_header'>
+      <div className='navbar sticky top-0 bg-base-100  z-10 rounded-t-3xl main_shadow_header'>
         <div className='flex-1'>
           <label htmlFor='left-sidebar-drawer' className='btn drawer-button lg:hidden'>
             <Bars3Icon className='h-5 inline-block w-5' />
           </label>
-          <h1 className='text-2xl font-semibold ml-2'>효성스토어</h1>
+          {/* <h1 className='text-2xl font-semibold ml-2'>효성스토어</h1> */}
         </div>
 
         <div className='flex-none '>
