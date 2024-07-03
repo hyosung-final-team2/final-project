@@ -1,4 +1,4 @@
-function LandingIntro() {
+const LandingIntro = () => {
   return (
     <div className='hero min-h-full rounded-l-xl bg-base-200'>
       <div className='hero-content py-12'>
@@ -6,6 +6,6 @@ function LandingIntro() {
       </div>
     </div>
   );
-}
+};
 
 export default LandingIntro;

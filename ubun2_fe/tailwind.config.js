@@ -14,6 +14,15 @@ module.exports = {
       colors: {
         main: '#290386',
         second: '#d2cbe6',
+        excel: '#44b058',
+        btnborder: 'rgba(131, 129, 129, 0.2)',
+        // [custom color] - badge
+        'badge-red': '#E64952',
+        'badge-green': '#06B87C',
+        'badge-blue': '#0EA5E9',
+        'badge-orange': '#FD7A30',
+        'badge-yellow': '#FDE047',
+        'badge-orange-yellow': '#F59E0B',
       },
       animation: {
         'move-sideways': 'moveSideways 1s infinite alternate',
@@ -29,7 +38,11 @@ module.exports = {
         '1/20': '2%',
         '1/4': '28%',
         '48/100': '48%',
+        '50/100': '50%',
         '4/100': '4%',
+
+        '46/100': '46%',
+        '6/100': '8%',
       },
     },
   },

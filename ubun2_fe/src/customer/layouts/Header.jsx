@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon';
 import MoonIcon from '@heroicons/react/24/outline/MoonIcon';
 import SunIcon from '@heroicons/react/24/outline/SunIcon';
+import BreadCrumb from '../components/common/BreadCrumb/BreadCrumb';
 
 const Header = () => {
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme'));
@@ -25,12 +26,13 @@ const Header = () => {
 
   return (
     <>
-      <div className='navbar sticky top-0 bg-base-100  z-10 shadow-md rounded-t-3xl main_shadow_header'>
+      <div className='navbar sticky top-0 bg-base-100  z-10 rounded-t-3xl main_shadow_header'>
         <div className='flex-1'>
           <label htmlFor='left-sidebar-drawer' className='btn drawer-button lg:hidden'>
             <Bars3Icon className='h-5 inline-block w-5' />
           </label>
-          <h1 className='text-2xl font-semibold ml-2'>효성스토어</h1>
+          {/* <h1 className='text-2xl font-semibold ml-2'>효성스토어</h1> */}
+          <BreadCrumb />
         </div>
 
         <div className='flex-none '>

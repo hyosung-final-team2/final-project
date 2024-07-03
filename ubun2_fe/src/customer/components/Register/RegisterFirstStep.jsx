@@ -4,7 +4,7 @@ import InputText from '../common/Input/InputText';
 import InputTextWithBtn from '../common/Input/InputTextWithBtn';
 import { Datepicker } from 'flowbite-react';
 
-function RegisterFirstStep({ setRegisterStep, setRegisterFirstData }) {
+const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
   const INITIAL_REGISTER_OBJ = {
     businessRegistrationNumber: '',
     businessOpenDate: '',
@@ -114,6 +114,6 @@ function RegisterFirstStep({ setRegisterStep, setRegisterFirstData }) {
       </form>
     </>
   );
-}
+};
 
 export default RegisterFirstStep;

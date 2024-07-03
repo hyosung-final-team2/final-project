@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import LandingIntro from '../../components/Login/LandingIntro';
 import InputText from '../../components/common/Input/InputText';
 
-function Login() {
+const Login = () => {
   const INITIAL_LOGIN_OBJ = {
     password: '',
     emailId: '',
@@ -88,6 +88,6 @@ function Login() {
       </div>
     </div>
   );
-}
+};
 
 export default Login;

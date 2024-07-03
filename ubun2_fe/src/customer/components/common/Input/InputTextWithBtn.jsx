@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function InputTextWithBtn({
+const InputTextWithBtn = ({
   labelTitle,
   labelStyle,
   type,
@@ -12,7 +12,7 @@ function InputTextWithBtn({
   buttonText, // 버튼에 들어갈 텍스트
   clickPossibleWithoutData, // 최초에 데이터 없어도 버튼 사용가능 여부
   buttonFunc,
-}) {
+}) => {
   const [value, setValue] = useState(defaultValue);
 
   const updateInputValue = val => {
@@ -45,6 +45,6 @@ function InputTextWithBtn({
       </div>
     </div>
   );
-}
+};
 
 export default InputTextWithBtn;
