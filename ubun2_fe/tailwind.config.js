@@ -31,6 +31,11 @@ module.exports = {
         'custom-badge-roadaddr-text': '#366EA7',
         'custom-badge-jibun': '#E6E6E6',
         'custom-badge-jibun-text': '#54585B',
+
+        // [custom color] - alert
+        'custom-alert-check': '#928AFF',
+        'custom-alert-bg-purple': '#C8C4FF',
+        'custom-alert-bg-gray': '#F9FAFC',
       },
       animation: {
         'move-sideways': 'moveSideways 1s infinite alternate',

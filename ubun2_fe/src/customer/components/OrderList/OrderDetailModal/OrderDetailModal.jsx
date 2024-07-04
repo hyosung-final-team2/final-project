@@ -4,13 +4,13 @@ import SingleOrderProduct from '../OrderDetailModal/SingleOrderProduct';
 import OrderDetailInfo from '../OrderDetailModal/OrderDetailInfo';
 import StatusBadge from '../../common/Badge/StatusBadge';
 import SubScriptionOrderProduct from '../OrderDetailModal/SubScriptionOrderProduct';
-import { orderInfo } from '../OrderDetailData';
-import { customTheme } from './ModalCustomTheme';
+import { customModalTheme } from '../../common/Modal/modalStyle';
+import { orderInfo } from '../OrderDetailData'; // DUMMY DATA
 
 const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPrimaryClick }) => {
   return (
     <>
-      <Modal dismissible show={isOpen} onClose={() => setOpenModal(false)} theme={customTheme} size='5xl'>
+      <Modal dismissible show={isOpen} onClose={() => setOpenModal(false)} theme={customModalTheme} size='4xl'>
         <Modal.Header>
           <div className='flex items-center justify-between w-full'>
             <div className='text-3xl font-bold'>{title}</div>

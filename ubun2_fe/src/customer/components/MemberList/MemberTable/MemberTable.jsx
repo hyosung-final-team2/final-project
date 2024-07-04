@@ -1,4 +1,3 @@
-import MemberTableFeature from './MemberTableFeature';
 import MemberModal from '../MemberModal/MemberModal';
 import { Table } from 'flowbite-react';
 import TablePagination from '../../common/Pagination/TablePagination';
