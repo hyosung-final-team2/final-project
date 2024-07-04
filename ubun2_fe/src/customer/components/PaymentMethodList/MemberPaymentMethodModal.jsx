@@ -1,8 +1,10 @@
 import { Modal } from 'flowbite-react';
 import MemberInfo from '../common/Info/MemberInfo';
-import InfoInput from '../common/Input/InfoInput';
+import { customModalTheme } from '../common/Modal/ModalStyle';
+import MemberPaymentTable from './MemberPaymentTable/MemberPaymentTable';
+import PaymentInfo from './PaymentInfo';
 
-const MemberAddressEditModal = ({ isOpen, setOpenEditModal, title, children, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick }) => {
+const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, children, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick }) => {
   const hong = {
     name: '홍길동',
     email: 'owen123@naver.com',
@@ -10,39 +12,26 @@ const MemberAddressEditModal = ({ isOpen, setOpenEditModal, title, children, pri
     createdAt: '2024-01-14',
   };
 
-  const infos = [
-    {
-      placeholder: '우편번호',
-      value: '11111',
-      label: '우편번호',
-    },
-    {
-      placeholder: '도로명주소',
-      value: '경기도 김포시 풍년로 100',
-      label: '도로명주소',
-    },
-    {
-      placeholder: '상세주소',
-      value: '100동 100호',
-      label: '상세주소',
-    },
+  const existingPaymentMethods = [
+    { id: 1, type: '카드', company: '현대카드', number: '1111-****-****-4444', expiry: '24/08' },
+    { id: 2, type: '계좌', company: '국민은행', number: '1002-***-***-004', expiry: '24/08' },
+    { id: 3, type: '카드', company: '우리카드', number: '1111-****-****-4444', expiry: '24/08' },
   ];
-
   return (
     <>
-      <Modal dismissible show={isOpen} onClose={() => setOpenEditModal(false)} size='5xl'>
+      <Modal dismissible show={isOpen} onClose={() => setOpenModal(false)} theme={customModalTheme} size='5xl'>
         <Modal.Header>
           <div className='text-3xl font-bold'>
             {title}
-            <div className='text-3xl font-bold'>회원 주소지 수정</div>
+            <div className='text-3xl font-bold'>결제수단 등록</div>
           </div>
         </Modal.Header>
         <Modal.Body>
           <div className='space-y-4 flex-2'>
-            {children}
-            <MemberInfo member={hong} title='회원정보' onlyInfo={true} />
-            {/* <AddressInfo disabled={true} /> */}
-            <InfoInput infos={infos} />
+            {/* {children} */}
+            <MemberInfo member={hong} searchable={true} title='회원정보' />
+            <PaymentInfo />
+            <MemberPaymentTable payments={existingPaymentMethods} title='홍길동님의 결제수단 목록' />
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -50,7 +39,7 @@ const MemberAddressEditModal = ({ isOpen, setOpenEditModal, title, children, pri
             type='button'
             className='focus:outline-none w-20 text-custom-font-purple bg-custom-button-purple hover:bg-purple-400 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900'
           >
-            수정
+            등록
           </button>
           <button
             type='button'
@@ -64,4 +53,4 @@ const MemberAddressEditModal = ({ isOpen, setOpenEditModal, title, children, pri
   );
 };
 
-export default MemberAddressEditModal;
+export default MemberPaymentMethodModal;

@@ -1,10 +1,10 @@
 import { Modal } from 'flowbite-react';
-import MemberInfo from '../common/Input/MemberInfo';
+import MemberInfo from '../common/Info/MemberInfo';
 import InfoInput from '../common/Input/InfoInput';
 import MemberAddressTable from './MemberAddressTable/MemberAddressTable';
 import MemberAddressEditModal from './MemberAddressEditModal';
 import { useState, useEffect } from 'react';
-import { customModalTheme } from './ModalStyle';
+import { customModalTheme } from '../common/Modal/ModalStyle';
 
 const MemberAddressModal = ({ isOpen, setOpenModal }) => {
   const [openEditModal, setOpenEditModal] = useState(false);
@@ -102,7 +102,7 @@ const MemberAddressModal = ({ isOpen, setOpenModal }) => {
             </Modal.Header>
             <Modal.Body>
               <div className='space-y-4 flex-2'>
-                <MemberInfo member={hong} title='회원정보' />
+                <MemberInfo member={hong} searchable={true} title='회원정보' />
                 <InfoInput infos={infos} />
                 <MemberAddressTable addresses={addresses} title='홍길동님의 주소 목록' setIsEditMode={setIsEditMode} />
               </div>
