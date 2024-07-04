@@ -1,6 +1,9 @@
 import { Table } from 'flowbite-react';
-const MemberAddressTableRow = ({ zipNo, city, town, detail, setIsEditMode }) => {
+import useAddressStore from '../../../store/Address/useAddressStore';
+const MemberAddressTableRow = ({ zipNo, city, town, detail }) => {
+  const { selectedAddress, setIsEditMode, setSelectedAddress } = useAddressStore();
   const handleClick = () => {
+    setSelectedAddress({ city, town, detail, zipNo });
     setIsEditMode(true);
   };
   return (

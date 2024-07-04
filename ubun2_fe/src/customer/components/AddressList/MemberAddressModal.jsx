@@ -5,13 +5,11 @@ import MemberAddressEditModal from './MemberAddressEditModal';
 import { useState, useEffect } from 'react';
 import { customModalTheme } from '../common/Modal/modalStyle';
 import AddressInput from '../common/Input/AddressInput';
+import useAddressStore from '../../store/Address/useAddressStore';
 
 const MemberAddressModal = ({ isOpen, setOpenModal }) => {
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState(null);
-  const [selectedMember, setSelectedMember] = useState(null);
-  const [infos, setInfos] = useState([
+  const { isEditMode, setIsEditMode, setSelectedAddress } = useAddressStore();
+  const initialInfos = [
     {
       placeholder: '우편번호',
       value: '',
@@ -27,7 +25,7 @@ const MemberAddressModal = ({ isOpen, setOpenModal }) => {
       value: '',
       label: '상세주소',
     },
-  ]);
+  ];
 
   const hong = {
     name: '홍길동',
@@ -61,35 +59,13 @@ const MemberAddressModal = ({ isOpen, setOpenModal }) => {
   ];
 
   useEffect(() => {
-    const handleMessage = event => {
-      if (event.data.type === 'ADDRESS_SELECTED') {
-        const { result } = event.data;
-        setSelectedAddress(result);
-        setInfos([
-          {
-            placeholder: '우편번호',
-            value: result.zipNo,
-            label: '우편번호',
-          },
-          {
-            placeholder: '도로명주소',
-            value: result.roadAddr,
-            label: '도로명주소',
-          },
-          {
-            placeholder: '상세주소',
-            value: '',
-            label: '상세주소',
-          },
-        ]);
-      }
-    };
+    if (!isOpen) {
+      // 모달이 닫힐 때 실행
+      setIsEditMode(false);
+      setSelectedAddress(null);
+    }
+  }, [isOpen, setIsEditMode, setSelectedAddress]);
 
-    window.addEventListener('message', handleMessage);
-    return () => window.removeEventListener('message', handleMessage);
-  }, []);
-
-  useEffect(() => {}, [isEditMode]);
   return (
     <>
       <Modal dismissible show={isOpen} onClose={() => setOpenModal(false)} size='5xl' theme={customModalTheme}>
@@ -103,26 +79,13 @@ const MemberAddressModal = ({ isOpen, setOpenModal }) => {
             <Modal.Body>
               <div className='space-y-4 flex-2'>
                 <MemberInfo member={hong} searchable={true} title='회원정보' />
-                <AddressInput infos={infos} />
-                <MemberAddressTable addresses={addresses} title='홍길동님의 주소 목록' setIsEditMode={setIsEditMode} />
+                <AddressInput infos={initialInfos} title='주소 추가' />
+                <MemberAddressTable addresses={addresses} title='홍길동님의 주소 목록' />
               </div>
             </Modal.Body>
           </>
         ) : (
-          <>
-            <Modal.Header>
-              <div className='text-3xl font-bold'>
-                <div className='text-3xl font-bold'>회원 주소지 수정</div>
-              </div>
-            </Modal.Header>
-            <Modal.Body>
-              <div className='space-y-4 flex-2'>
-                <MemberInfo member={selectedMember} title='회원정보' onlyInfo={true} />
-                <AddressInput infos={infos} />
-                <MemberAddressEditModal />
-              </div>
-            </Modal.Body>
-          </>
+          <MemberAddressEditModal />
         )}
 
         <Modal.Footer>

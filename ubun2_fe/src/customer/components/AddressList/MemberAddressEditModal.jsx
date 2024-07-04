@@ -1,8 +1,13 @@
 import { Modal } from 'flowbite-react';
 import MemberInfo from '../common/Info/MemberInfo';
 import AddressInput from '../common/Input/AddressInput';
+import useAddressStore from '../../store/Address/useAddressStore';
+import { useEffect, useState } from 'react';
 
-const MemberAddressEditModal = ({ isOpen, setOpenEditModal, title, children, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick }) => {
+const MemberAddressEditModal = () => {
+  const { selectedAddress, setIsEditMode } = useAddressStore(); // 괄호 추가
+  const [infos, setInfos] = useState([]);
+
   const hong = {
     name: '홍길동',
     email: 'owen123@naver.com',
@@ -10,56 +15,41 @@ const MemberAddressEditModal = ({ isOpen, setOpenEditModal, title, children, pri
     createdAt: '2024-01-14',
   };
 
-  const infos = [
-    {
-      placeholder: '우편번호',
-      value: '11111',
-      label: '우편번호',
-    },
-    {
-      placeholder: '도로명주소',
-      value: '경기도 김포시 풍년로 100',
-      label: '도로명주소',
-    },
-    {
-      placeholder: '상세주소',
-      value: '100동 100호',
-      label: '상세주소',
-    },
-  ];
+  useEffect(() => {
+    if (selectedAddress) {
+      setInfos([
+        {
+          placeholder: '우편번호',
+          value: selectedAddress.zipNo || '',
+          label: '우편번호',
+        },
+        {
+          placeholder: '도로명주소',
+          value: `${selectedAddress.city} ${selectedAddress.town}` || '',
+          label: '도로명주소',
+        },
+        {
+          placeholder: '상세주소',
+          value: selectedAddress.detail || '',
+          label: '상세주소',
+        },
+      ]);
+    }
+  }, [selectedAddress]);
+
+  console.log(selectedAddress);
 
   return (
     <>
-      <Modal dismissible show={isOpen} onClose={() => setOpenEditModal(false)} size='5xl'>
-        <Modal.Header>
-          <div className='text-3xl font-bold'>
-            {title}
-            <div className='text-3xl font-bold'>회원 주소지 수정</div>
-          </div>
-        </Modal.Header>
-        <Modal.Body>
-          <div className='space-y-4 flex-2'>
-            {children}
-            <MemberInfo member={hong} title='회원정보' onlyInfo={true} />
-            {/* <AddressInfo disabled={true} /> */}
-            <AddressInput infos={infos} />
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <button
-            type='button'
-            className='focus:outline-none w-20 text-custom-font-purple bg-custom-button-purple hover:bg-purple-400 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900'
-          >
-            수정
-          </button>
-          <button
-            type='button'
-            className='focus:outline-none w-20 text-custom-font-purple bg-custom-button-purple hover:bg-purple-400 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900'
-          >
-            취소
-          </button>
-        </Modal.Footer>
-      </Modal>
+      <Modal.Header>
+        <div className='text-3xl font-bold'>회원 주소지 수정</div>
+      </Modal.Header>
+      <Modal.Body>
+        <div className='space-y-4 flex-2'>
+          <MemberInfo member={hong} title='회원정보' onlyInfo={true} />
+          <AddressInput infos={infos} title='주소 수정' />
+        </div>
+      </Modal.Body>
     </>
   );
 };
