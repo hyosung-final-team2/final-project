@@ -8,5 +8,5 @@ public interface CustomerService {
 
     void createCustomer(SignupRequest signupRequest);
 
-    boolean isExistCustomerEmail(String customerEmail);
+    boolean isExistCustomerLoginId(String customerLoginId);
 }

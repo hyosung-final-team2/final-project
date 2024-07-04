@@ -28,15 +28,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     @Transactional
     public void createCustomer(SignupRequest signupRequest) {
-        if (isExistCustomerEmail(signupRequest.getCustomerEmail())) {
-            throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER_EMAIL);
+        if (isExistCustomerLoginId(signupRequest.getCustomerLoginId())) {
+            throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER_LOGIN_ID);
         }
         customerRepository.save(signupRequest.toEntity(bCryptPasswordEncoder));
     }
 
     @Override
-    public boolean isExistCustomerEmail(String customerEmail) {
-        return customerRepository.existsByCustomerEmail(customerEmail);
+    public boolean isExistCustomerLoginId(String customerLoginId) {
+        return customerRepository.existsByCustomerLoginId(customerLoginId);
     }
 
 
