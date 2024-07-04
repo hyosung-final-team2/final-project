@@ -6,12 +6,14 @@ import kr.or.kosa.ubun2_be.domain.member.entity.PendingMember;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
+import kr.or.kosa.ubun2_be.global.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -50,7 +52,7 @@ public class Customer extends BaseTimeEntity {
     private String businessOwner;
 
     @Column(nullable = false)
-    private LocalDateTime businessOpenDate;
+    private String businessOpenDate;
 
     @Column(nullable = false)
     private String businessAddress;
@@ -66,6 +68,10 @@ public class Customer extends BaseTimeEntity {
 
     @Column
     private String announcement;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
 
     @OneToMany(mappedBy = "customer")
     private List<MemberCustomer> memberCustomers;
