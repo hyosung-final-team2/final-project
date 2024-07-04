@@ -1,4 +1,5 @@
 import MemberInfo from './MemberInfo';
+import MemberAddressTable from './MemberAddressTable/MemberAddressTable';
 import { Modal } from 'flowbite-react';
 import { memo } from 'react';
 
@@ -23,6 +24,7 @@ const MemberModal = ({ isOpen, setOpenModal, title, primaryButtonText, secondary
         <Modal.Body>
           <div className='space-y-4 flex-2'>
             <MemberInfo member={hong} onlyInfo={true} title='회원정보' />
+            <MemberAddressTable />
           </div>
         </Modal.Body>
         <Modal.Footer>
