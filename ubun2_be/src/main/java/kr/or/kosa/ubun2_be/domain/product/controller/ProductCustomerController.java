@@ -25,7 +25,7 @@ public class ProductCustomerController {
 
     @Operation(summary = "전체 상품 목록 및 정렬,검색을 통한 상품 목록 조회")
     @GetMapping("/")
-    public ResponseDto<?> findProductsByCustomerIdAndSearchKeywordOrderBy(Long customerId, SearchRequest searchRequest, @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable) {
+    public ResponseDto<?> findProducts(Long customerId, SearchRequest searchRequest, @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable) {
         Page<ProductResponse> productResponseList = productService.findProducts(customerId, searchRequest, pageable);
         return new ResponseDto<>().ok(productResponseList, "정상출력 데이터");
     }
