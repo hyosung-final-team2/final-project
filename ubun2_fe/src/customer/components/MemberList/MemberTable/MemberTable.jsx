@@ -18,9 +18,11 @@ const MemberTable = ({ users }) => {
   const [searchTerm, setSearchTerm] = useState(''); // 검색된 단어
   const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
 
+  console.log(selectedMembers);
+
   const handleAllChecked = checked => {
     if (checked) {
-      setSelectedMembers(users.map(user => user.memberId));
+      setSelectedMembers(users.map(user => user.id));
     } else {
       setSelectedMembers([]);
     }
