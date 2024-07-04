@@ -1,6 +1,6 @@
 import SearchBarWithDrop from '../../common/SearchBar/SearchBarWithDrop';
 
-const PendingOrderTableFeature = ({ tableColumns, onSearch }) => {
+const PendingOrderTableFeature = ({ tableColumns, onSearch, orderApprove, orderCancel }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
   return (
@@ -9,8 +9,12 @@ const PendingOrderTableFeature = ({ tableColumns, onSearch }) => {
         <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} />
       </div>
       <div className='flex gap-2'>
-        <button className={`${commonButtonStyles} bg-green-300 text-green-700 hover:text-white hover:bg-green-500 px-8`}>승인</button>
-        <button className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>취소</button>
+        <button onClick={orderApprove} className={`${commonButtonStyles} bg-green-300 text-green-700 hover:text-white hover:bg-green-500 px-8`}>
+          승인
+        </button>
+        <button onClick={orderCancel} className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>
+          취소
+        </button>
       </div>
     </div>
   );
