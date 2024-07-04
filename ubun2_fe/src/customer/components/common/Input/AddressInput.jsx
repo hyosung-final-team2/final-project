@@ -1,4 +1,4 @@
-const AddressInput = ({ disabled = false, infos }) => {
+const AddressInput = ({ disabled = false, infos, title }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md ';
 
   const handleAddressSearch = async () => {
@@ -14,7 +14,7 @@ const AddressInput = ({ disabled = false, infos }) => {
   };
   return (
     <div className='p-3'>
-      <h3 className='text-xl font-bold mb-4'>주소 추가</h3>
+      <h3 className='text-xl font-bold mb-4'>{title}</h3>
       <div className='grid auto-cols-auto gap-4' style={{ gridTemplateColumns: '3fr 5fr 5fr 3fr' }}>
         {infos.map((info, index) => (
           <div className='relative' key={index} onClick={info.label !== '상세주소' ? handleAddressSearch : null}>

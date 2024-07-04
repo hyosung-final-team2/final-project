@@ -1,5 +1,3 @@
-import AddressRegisterTable from './AddressRegisterTable';
-import AddressRegisterForm from './AddressRegisterForm';
 import MemberAddressTable from '../../../AddressList/MemberAddressTable/MemberAddressTable';
 import AddressInput from '../../../common/Input/AddressInput';
 const addresses = [
@@ -49,7 +47,7 @@ const MemberAddressInfo = () => {
       <div className='mb-4'>
         <div className='w-full flex flex-col'>
           <MemberAddressTable addresses={addresses} title='주소 목록' />
-          <AddressInput infos={infos} />
+          <AddressInput infos={infos} title='주소 추가' />
         </div>
       </div>
     </>
