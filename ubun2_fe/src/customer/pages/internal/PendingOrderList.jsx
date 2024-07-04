@@ -1,7 +1,10 @@
+import PendingOrderTable from '../../components/PendingOrderList/PendingOrderTable/PendingOrderTable';
+import { pendingOrders } from '../../components/PendingOrderList/PendingOrderListData';
+
 const PendingOrderList = () => {
   return (
     <>
-      <h1>주문 승인 대기 리스트</h1>
+      <PendingOrderTable pendingOrders={pendingOrders} />
     </>
   );
 };
