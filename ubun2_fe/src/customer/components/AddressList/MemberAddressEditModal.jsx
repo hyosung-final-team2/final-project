@@ -37,8 +37,6 @@ const MemberAddressEditModal = () => {
     }
   }, [selectedAddress]);
 
-  console.log(selectedAddress);
-
   return (
     <>
       <Modal.Header>
