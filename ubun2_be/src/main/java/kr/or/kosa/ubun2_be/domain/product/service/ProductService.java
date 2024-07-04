@@ -1,16 +1,15 @@
 package kr.or.kosa.ubun2_be.domain.product.service;
 
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductDeleteRequest;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductDetailResponse;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductRequest;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductResponse;
+import kr.or.kosa.ubun2_be.domain.product.dto.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface ProductService {
 
-    List<ProductResponse> findProductsByCustomerId(Long customerId);
+    Page<ProductResponse> findProducts(Long customerId,SearchRequest searchRequest,Pageable pageable);
     ProductDetailResponse findByCustomerIdAndProductId(Long customerId, Long productId);
     void insertProduct(MultipartFile image, Long customerId, ProductRequest productRequest);
     void updateProduct(MultipartFile image,Long customerId, ProductRequest productUpdateRequest);
