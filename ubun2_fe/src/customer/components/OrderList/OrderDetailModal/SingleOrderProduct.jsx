@@ -6,7 +6,7 @@ const SingleOrderProduct = ({ orderProductList }) => {
       <div className='flex items-center justify-between mb-3'>
         <h3 className='text-xl font-bold'>상품목록</h3>
       </div>
-      <List unstyled className='px-8 py-6 divide-y divide-gray-200 rounded-md dark:divide-gray-700 bg-background-gray'>
+      <List unstyled className='px-8 py-6 divide-y divide-gray-200 rounded-md dark:divide-gray-700 bg-custom-alert-bg-gray'>
         {orderProductList.map(orderProduct => (
           <List.Item key={orderProduct.orderProductId} className='flex items-start gap-6 py-4'>
             <div className='w-2/12 relativecd'>

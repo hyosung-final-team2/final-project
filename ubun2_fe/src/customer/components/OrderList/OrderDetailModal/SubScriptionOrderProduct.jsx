@@ -15,10 +15,10 @@ const SubscriptionOrderProduct = ({ subscription, orderProductList }) => {
 
   return (
     <div className='p-3'>
-      <div className='flex items-center justify-between mb-3'>
+      <div className='flex items-center justify-between mb-3 text-main'>
         <h3 className='text-xl font-bold'>{subscription.cycleNumber}회차 정기배송 상품 목록</h3>
-        <div className='font-bold text-custom-primary'>
-          <h5>{`${subscription.cycleNumber} 회 / 총 10 회`}</h5>
+        <div className='font-bold text-md text-custom-primary'>
+          <h5>{`${subscription.cycleNumber} 회`}</h5>
           <h5>{`${subscription.createdAt}`}</h5>
         </div>
       </div>
@@ -36,7 +36,7 @@ const SubscriptionOrderProduct = ({ subscription, orderProductList }) => {
         </Select>
       </div>
 
-      <List unstyled className='px-8 py-6 divide-y divide-gray-200 rounded-md dark:divide-gray-700 bg-background-gray'>
+      <List unstyled className='px-8 py-6 divide-y divide-gray-200 rounded-md dark:divide-gray-700 bg-custom-alert-bg-gray'>
         {orderProductList.map(orderProduct => (
           <List.Item key={orderProduct.orderProductId} className='flex items-start gap-6 py-4'>
             <div className='w-2/12 relativecd'>
