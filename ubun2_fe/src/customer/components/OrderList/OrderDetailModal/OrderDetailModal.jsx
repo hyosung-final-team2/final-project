@@ -4,7 +4,7 @@ import SingleOrderProduct from '../OrderDetailModal/SingleOrderProduct';
 import OrderDetailInfo from '../OrderDetailModal/OrderDetailInfo';
 import StatusBadge from '../../common/Badge/StatusBadge';
 import SubScriptionOrderProduct from '../OrderDetailModal/SubScriptionOrderProduct';
-import { customModalTheme } from '../../common/Modal/ModalStyle';
+import { customModalTheme } from '../../common/Modal/modalStyle';
 import { orderInfo } from '../OrderDetailData'; // DUMMY DATA
 
 const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPrimaryClick }) => {

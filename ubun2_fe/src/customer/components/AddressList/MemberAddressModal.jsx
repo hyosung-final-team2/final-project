@@ -4,7 +4,7 @@ import InfoInput from '../common/Input/InfoInput';
 import MemberAddressTable from './MemberAddressTable/MemberAddressTable';
 import MemberAddressEditModal from './MemberAddressEditModal';
 import { useState, useEffect } from 'react';
-import { customModalTheme } from '../common/Modal/ModalStyle';
+import { customModalTheme } from '../common/Modal/modalStyle';
 
 const MemberAddressModal = ({ isOpen, setOpenModal }) => {
   const [openEditModal, setOpenEditModal] = useState(false);
