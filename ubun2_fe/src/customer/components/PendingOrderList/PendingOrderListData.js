@@ -1,11 +1,11 @@
-export const orders = [
+export const pendingOrders = [
   {
     id: 1,
     orderCreatedAt: '2024-06-30',
     orderMemberId: 'hong111',
     totalOrderPrice: 30000,
     orderPaymentMethod: 'CARD',
-    orderStatus: 'APPROVED',
+    orderStatus: 'PENDING',
     orderOption: 'SINGLE',
   },
   {
@@ -14,7 +14,7 @@ export const orders = [
     orderMemberId: 'hong222',
     totalOrderPrice: 30001,
     orderPaymentMethod: 'CARD',
-    orderStatus: 'MODIFIED',
+    orderStatus: 'PENDING',
     orderOption: 'SUBSCRIPTION',
   },
   {
@@ -23,8 +23,8 @@ export const orders = [
     orderMemberId: 'hong333',
     totalOrderPrice: 30002,
     orderPaymentMethod: 'ACCOUNT',
-    orderStatus: 'DENIED',
-    orderOption: 'SINGLE',
+    orderStatus: 'PENDING',
+    orderOption: 'SUBSCRIPTION',
   },
   {
     id: 4,
@@ -32,7 +32,7 @@ export const orders = [
     orderMemberId: 'hong444',
     totalOrderPrice: 30003,
     orderPaymentMethod: 'CARD',
-    orderStatus: 'APPROVED',
+    orderStatus: 'PENDING',
     orderOption: 'SINGLE',
   },
   {
@@ -41,7 +41,7 @@ export const orders = [
     orderMemberId: 'hong555',
     totalOrderPrice: 30004,
     orderPaymentMethod: 'CARD',
-    orderStatus: 'MODIFIED',
+    orderStatus: 'PENDING',
     orderOption: 'SUBSCRIPTION',
   },
   {
@@ -50,7 +50,7 @@ export const orders = [
     orderMemberId: 'hong6666',
     totalOrderPrice: 30005,
     orderPaymentMethod: 'ACCOUNT',
-    orderStatus: 'DENIED',
+    orderStatus: 'PENDING',
     orderOption: 'SUBSCRIPTION',
   },
 ];
