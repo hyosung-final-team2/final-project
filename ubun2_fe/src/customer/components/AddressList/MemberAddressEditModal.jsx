@@ -1,6 +1,6 @@
 import { Modal } from 'flowbite-react';
 import MemberInfo from '../common/Info/MemberInfo';
-import InfoInput from '../common/Input/InfoInput';
+import AddressInput from '../common/Input/AddressInput';
 
 const MemberAddressEditModal = ({ isOpen, setOpenEditModal, title, children, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick }) => {
   const hong = {
@@ -42,7 +42,7 @@ const MemberAddressEditModal = ({ isOpen, setOpenEditModal, title, children, pri
             {children}
             <MemberInfo member={hong} title='회원정보' onlyInfo={true} />
             {/* <AddressInfo disabled={true} /> */}
-            <InfoInput infos={infos} />
+            <AddressInput infos={infos} />
           </div>
         </Modal.Body>
         <Modal.Footer>

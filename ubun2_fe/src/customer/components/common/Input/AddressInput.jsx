@@ -3,7 +3,7 @@ const AddressInput = ({ disabled = false, infos }) => {
 
   const handleAddressSearch = async () => {
     if (!disabled) {
-      let url = '/address-search';
+      let url = '/customer/address-search';
       // 팝업 window의 크기 지정
       const width = 700;
       const height = 760;
