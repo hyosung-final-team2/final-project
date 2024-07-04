@@ -2,10 +2,7 @@ package kr.or.kosa.ubun2_be.domain.product.service.impl;
 
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductDeleteRequest;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductDetailResponse;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductRequest;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductResponse;
+import kr.or.kosa.ubun2_be.domain.product.dto.*;
 import kr.or.kosa.ubun2_be.domain.product.entity.Category;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductException;
@@ -15,13 +12,12 @@ import kr.or.kosa.ubun2_be.domain.product.service.CategoryService;
 import kr.or.kosa.ubun2_be.domain.product.service.ImageService;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,11 +29,8 @@ public class ProductServiceImpl implements ProductService {
     private final ImageService imageService;
 
     @Override
-    public List<ProductResponse> findProductsByCustomerId(Long customerId) {
-        List<ProductResponse> productResponseList = productRepository.findByCustomerCustomerId(customerId)
-                .stream().map(entity -> new ProductResponse(entity))
-                .collect(Collectors.toList());
-        return productResponseList;
+    public Page<ProductResponse> findProducts(Long customerId, SearchRequest searchRequest, Pageable pageable) {
+        return productRepository.findProducts(customerId, searchRequest, pageable).map(ProductResponse::new);
     }
 
     @Override
