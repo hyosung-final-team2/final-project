@@ -8,6 +8,7 @@ import CustomerLogin from './customer/pages/external/Login';
 import CustomerRegister from './customer/pages/external/Register';
 import CustomerForgotPassword from './customer/pages/external/ForgotPassword';
 import CustomerLayout from './customer/layouts/Layout';
+import AddressSearchPopUp from './customer/components/common/AddressSearch/AddressSearchPopUp';
 
 const App = () => {
   const [token, setToken] = useState(true);
@@ -25,6 +26,7 @@ const App = () => {
               <Route path='forgot-password' element={<CustomerForgotPassword />} />
               <Route path='app/*' element={<CustomerLayout />} />
               <Route path='*' element={<Navigate to={token ? '/customer/app/dashboard' : '/customer/login'} replace />} />
+              <Route path='/address-search' element={<AddressSearchPopUp />} />
             </Routes>
           }
         />
