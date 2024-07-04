@@ -1,12 +1,11 @@
 package kr.or.kosa.ubun2_be.domain.customer.dto;
 
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
-import kr.or.kosa.ubun2_be.global.enums.UserRole;
+import kr.or.kosa.ubun2_be.global.auth.enums.UserRole;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.time.LocalDateTime;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
 @Setter
@@ -23,10 +22,10 @@ public class SignupRequest {
     private String businessAddress;
     private String description;
 
-    public Customer toEntity(BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public Customer toEntity(PasswordEncoder passwordEncoder) {
         return Customer.builder()
                 .customerLoginId(customerLoginId)
-                .customerPassword(bCryptPasswordEncoder.encode(customerPassword))
+                .customerPassword(passwordEncoder.encode(customerPassword))
                 .customerName(customerName)
                 .customerPhone(customerPhone)
                 .customerEmail(customerEmail)
@@ -38,5 +37,21 @@ public class SignupRequest {
                 .description(description)
                 .userRole(UserRole.ROLE_CUSTOMER)
                 .build();
+//    }    public Customer toEntity(BCryptPasswordEncoder bCryptPasswordEncoder) {
+//        return Customer.builder()
+//                .customerLoginId(customerLoginId)
+//                .customerPassword(bCryptPasswordEncoder.encode(customerPassword))
+//                .customerName(customerName)
+//                .customerPhone(customerPhone)
+//                .customerEmail(customerEmail)
+//                .businessRegistrationNumber(businessRegistrationNumber)
+//                .businessName(businessName)
+//                .businessOwner(businessOwner)
+//                .businessOpenDate(businessOpenDate)
+//                .businessAddress(businessAddress)
+//                .description(description)
+//                .userRole(UserRole.ROLE_CUSTOMER)
+//                .build();
+//    }
     }
 }

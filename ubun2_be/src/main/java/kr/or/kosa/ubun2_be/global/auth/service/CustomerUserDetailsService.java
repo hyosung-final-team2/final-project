@@ -1,8 +1,8 @@
-package kr.or.kosa.ubun2_be.global.service;
+package kr.or.kosa.ubun2_be.global.auth.service;
 
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
-import kr.or.kosa.ubun2_be.global.dto.CustomUserDetails;
+import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,16 +13,14 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomerUserDetailsService implements UserDetailsService {
 
     private final CustomerRepository customerRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Customer> customerData = customerRepository.findByCustomerLoginId(username);
+    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
+        Optional<Customer> customerData = customerRepository.findByCustomerLoginId(loginId);
         return customerData.map(CustomUserDetails::new)
-                .orElseThrow(() -> {
-                    return new UsernameNotFoundException("User not found with login ID: " + username);
-                });
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with login ID: " + loginId));
     }
 }

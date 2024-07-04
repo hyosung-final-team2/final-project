@@ -1,33 +1,29 @@
-package kr.or.kosa.ubun2_be.global.jwt;
+package kr.or.kosa.ubun2_be.global.auth.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.or.kosa.ubun2_be.domain.customer.dto.LoginRequest;
+import kr.or.kosa.ubun2_be.global.auth.dto.LoginRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Collections;
 
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -43,15 +39,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             throw new RuntimeException("Failed to parse login request", e);
         }
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginRequest.getCustomerLoginId(),
-                                                                                                loginRequest.getCustomerPassword(),
-                                                                                      null);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginRequest.getLoginId(),
+                                                                                                loginRequest.getPassword(),
+                                                                                                Collections.singletonList(loginRequest::getUserType));
 
         return authenticationManager.authenticate(authToken);
     }
 
 
-    //로그인 성공시 실행하는 메소드 (여기서 JWT를 발급하면 됨)
+
+    //로그인 성공시 실행하는 메소드
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         System.out.println("success");
