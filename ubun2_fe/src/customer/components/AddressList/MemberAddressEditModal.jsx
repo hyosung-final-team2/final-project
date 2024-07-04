@@ -1,5 +1,5 @@
 import { Modal } from 'flowbite-react';
-import MemberInfo from '../common/Input/MemberInfo';
+import MemberInfo from '../common/Info/MemberInfo';
 import InfoInput from '../common/Input/InfoInput';
 
 const MemberAddressEditModal = ({ isOpen, setOpenEditModal, title, children, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick }) => {
