@@ -5,11 +5,14 @@ import kr.or.kosa.ubun2_be.domain.product.dto.*;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,11 +20,13 @@ import java.util.List;
 public class ProductCustomerController {
 
     private final ProductService productService;
+    private static final int PAGE_SIZE = 9;
+    private static final String SORT_DEFAULT = "createdAt";
 
-    @Operation(summary = "상품 목록 조회")
+    @Operation(summary = "전체 상품 목록 및 정렬,검색을 통한 상품 목록 조회")
     @GetMapping("/")
-    public ResponseDto<?> findProductsByCustomerId(Long customerId) {
-        List<ProductResponse> productResponseList = productService.findProductsByCustomerId(customerId);
+    public ResponseDto<?> findProductsByCustomerIdAndSearchKeywordOrderBy(Long customerId, SearchRequest searchRequest, @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<ProductResponse> productResponseList = productService.findProducts(customerId, searchRequest, pageable);
         return new ResponseDto<>().ok(productResponseList, "정상출력 데이터");
     }
 
