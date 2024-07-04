@@ -23,18 +23,18 @@ const MemberInfo = ({ member, onlyInfo = true, title, searchable = false }) => {
   return (
     <div className='p-3'>
       <div className='mb-3 flex items-center justify-between'>
-        <h1 className='text-3xl font-bold'>{title}</h1>
+        <h1 className='text-2xl font-bold text-main'>{title}</h1>
         {searchable && <SearchableDropdown options={users} onSelect={handleSelectMember} />}
       </div>
       {onlyInfo ? (
-        <div className='grid grid-cols-2 gap-6'>
+        <div className='grid grid-cols-2 gap-3'>
           <InputLabel labelTitle='회원명' defaultValue={selectedMember.name} disabled={onlyInfo} />
           <InputLabel labelTitle='이메일' defaultValue={selectedMember.email} disabled={onlyInfo} />
           <InputLabel labelTitle='전화번호' defaultValue={selectedMember.phone} disabled={onlyInfo} />
           <InputLabel labelTitle='가입일' defaultValue={selectedMember.createdAt} disabled={onlyInfo} />
         </div>
       ) : (
-        <div className='grid grid-cols-2 gap-6'>
+        <div className='grid grid-cols-2 gap-3'>
           <InputLabel labelTitle='회원명' disabled={onlyInfo} />
           <InputLabel labelTitle='이메일' disabled={onlyInfo} />
           <InputLabel labelTitle='전화번호' disabled={onlyInfo} />
