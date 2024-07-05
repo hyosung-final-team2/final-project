@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.global.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.or.kosa.ubun2_be.global.auth.filter.JwtFilter;
 import kr.or.kosa.ubun2_be.global.auth.filter.LoginFilter;
 import kr.or.kosa.ubun2_be.global.auth.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/customers/login", "/customers/signup").permitAll()
                         .anyRequest().authenticated());
+
+        //JWTFilter 등록
+        http
+                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
+
         // 로그인 필터 등록
         http
                 .addFilterAt(new LoginFilter(authenticationManager, objectMapper, jwtUtil), UsernamePasswordAuthenticationFilter.class);
