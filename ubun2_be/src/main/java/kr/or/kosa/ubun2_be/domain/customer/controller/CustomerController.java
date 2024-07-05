@@ -20,4 +20,5 @@ public class CustomerController {
         customerService.createCustomer(signupRequest);
         return new ResponseDto<>().ok(null, "고객 회원가입 정상 완료");
     }
+
 }
