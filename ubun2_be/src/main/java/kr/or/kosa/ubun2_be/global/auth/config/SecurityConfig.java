@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.global.auth.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.kosa.ubun2_be.global.auth.filter.LoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthenticationManager authenticationManager;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
@@ -39,7 +41,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated());
         // 로그인 필터 등록
         http
-                .addFilterAt(new LoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager, objectMapper), UsernamePasswordAuthenticationFilter.class);
 
         //세션 설정
         http

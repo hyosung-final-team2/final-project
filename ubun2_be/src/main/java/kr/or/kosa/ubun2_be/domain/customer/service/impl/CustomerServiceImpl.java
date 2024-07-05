@@ -7,7 +7,6 @@ import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,34 +16,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
-//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    // 주입
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public Customer findById(Long customerId) {
-        Customer customer = customerRepository.findById(customerId)
+        return customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER));
-        return customer;
     }
 
-//    @Override
-//    @Transactional
-//    public void createCustomer(SignupRequest signupRequest) {
-//        if (isExistCustomerLoginId(signupRequest.getCustomerLoginId())) {
-//            throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER_LOGIN_ID);
-//        }
-//        customerRepository.save(signupRequest.toEntity(bCryptPasswordEncoder));
-//    }
-@Override
-@Transactional
-public void createCustomer(SignupRequest signupRequest) {
-    if (isExistCustomerLoginId(signupRequest.getCustomerLoginId())) {
-        throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER_LOGIN_ID);
+    @Override
+    @Transactional
+    public void createCustomer(SignupRequest signupRequest) {
+        if (isExistCustomerLoginId(signupRequest.getCustomerLoginId())) {
+            throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER_LOGIN_ID);
+        }
+        customerRepository.save(signupRequest.toEntity(passwordEncoder));
     }
-    customerRepository.save(signupRequest.toEntity(passwordEncoder));
-}
-
 
     @Override
     public boolean isExistCustomerLoginId(String customerLoginId) {

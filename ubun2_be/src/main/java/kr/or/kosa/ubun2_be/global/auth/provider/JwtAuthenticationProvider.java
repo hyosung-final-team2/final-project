@@ -1,11 +1,12 @@
 package kr.or.kosa.ubun2_be.global.auth.provider;
 
 import kr.or.kosa.ubun2_be.global.auth.enums.UserRole;
+import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
+import kr.or.kosa.ubun2_be.global.auth.exception.AuthExceptionType;
 import kr.or.kosa.ubun2_be.global.auth.service.CustomerUserDetailsService;
 import kr.or.kosa.ubun2_be.global.auth.service.MemberUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -14,8 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Component
@@ -28,12 +27,11 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String id = (String) authentication.getPrincipal();
+        String loginId = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
         String role = extractRole(authentication);
 
-        UserDetails userDetails = loadUserDetailsByRoleAndId(role, id)
-                .orElseThrow(badCredentialsExceptionSupplier());
+        UserDetails userDetails = loadUserDetailsByRoleAndId(role, loginId);
 
         validatePassword(password, userDetails.getPassword());
 
@@ -46,24 +44,20 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
                 .collect(Collectors.joining(","));
     }
 
-    private Optional<UserDetails> loadUserDetailsByRoleAndId(String role, String id) {
+    private UserDetails loadUserDetailsByRoleAndId(String role, String loginId) {
         if (role.equals(UserRole.ROLE_CUSTOMER.name())) {
-            return Optional.ofNullable(customerUserDetailsService.loadUserByUsername(id));
+            return customerUserDetailsService.loadUserByUsername(loginId);
         } else if (role.equals(UserRole.ROLE_MEMBER.name())) {
-            return Optional.ofNullable(memberUserDetailsService.loadUserByUsername(id));
+            return memberUserDetailsService.loadUserByUsername(loginId);
         } else {
-            return Optional.empty();
+            throw new AuthException(AuthExceptionType.INVALID_LOGIN_ROLE);
         }
     }
 
     private void validatePassword(String rawPassword, String encodedPassword) {
         if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
-            throw new BadCredentialsException("Invalid username or password");
+            throw new AuthException(AuthExceptionType.NO_EXIST_LOGIN_PASSWORD);
         }
-    }
-
-    private Supplier<AuthenticationException> badCredentialsExceptionSupplier() {
-        return () -> new BadCredentialsException("Invalid username or password");
     }
 
     @Override

@@ -6,6 +6,8 @@ import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.or.kosa.ubun2_be.global.auth.dto.LoginRequest;
+import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
+import kr.or.kosa.ubun2_be.global.auth.exception.AuthExceptionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,8 +24,7 @@ import java.util.Collections;
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
+    private final ObjectMapper objectMapper;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -36,7 +37,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             loginRequest = objectMapper.readValue(messageBody, LoginRequest.class);
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to parse login request", e);
+            throw new AuthException(AuthExceptionType.INVALID_LOGIN_FORMAT);
         }
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginRequest.getLoginId(),
@@ -45,7 +46,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         return authenticationManager.authenticate(authToken);
     }
-
 
 
     //로그인 성공시 실행하는 메소드
