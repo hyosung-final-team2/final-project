@@ -1,11 +1,12 @@
 import { Modal } from 'flowbite-react';
+import { useEffect } from 'react';
+import { customModalTheme } from '../common/Modal/modalStyle';
 import MemberInfo from '../common/Info/MemberInfo';
 import MemberAddressTable from './MemberAddressTable/MemberAddressTable';
 import MemberAddressEditModal from './MemberAddressEditModal';
-import { useState, useEffect } from 'react';
-import { customModalTheme } from '../common/Modal/modalStyle';
 import AddressInput from '../common/Input/AddressInput';
 import useAddressStore from '../../store/Address/useAddressStore';
+import { addresses } from './MemberAddressTable/MemberAddressListData';
 
 const MemberAddressModal = ({ isOpen, setOpenModal }) => {
   const { isEditMode, setIsEditMode, setSelectedAddress } = useAddressStore();
@@ -33,30 +34,6 @@ const MemberAddressModal = ({ isOpen, setOpenModal }) => {
     phone: '010-2401-1235',
     createdAt: '2024-01-14',
   };
-
-  const addresses = [
-    {
-      id: 1,
-      city: '서울특별시',
-      town: '중구',
-      detail: '창경궁로 254 403호',
-      zipNo: '85372',
-    },
-    {
-      id: 2,
-      city: '서울특별시',
-      town: '중구',
-      detail: '창경궁로 254 403호',
-      zipNo: '12362',
-    },
-    {
-      id: 3,
-      city: '서울특별시',
-      town: '중구',
-      detail: '창경궁로 254 403호',
-      zipNo: '73312',
-    },
-  ];
 
   useEffect(() => {
     if (!isOpen) {
