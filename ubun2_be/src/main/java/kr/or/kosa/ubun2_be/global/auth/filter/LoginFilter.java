@@ -8,23 +8,30 @@ import jakarta.servlet.http.HttpServletResponse;
 import kr.or.kosa.ubun2_be.global.auth.dto.LoginRequest;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthExceptionType;
+import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
+import kr.or.kosa.ubun2_be.global.auth.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
+    private final JwtUtil jwtUtil;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -48,10 +55,20 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
 
-    //로그인 성공시 실행하는 메소드
+    //로그인 성공시 실행하는 메소드 (jwt 발급)
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
-        System.out.println("success");
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        String loginId = customUserDetails.getUsername();
+
+        Collection<? extends GrantedAuthority> authorities = customUserDetails.getAuthorities();
+        String roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        String token = jwtUtil.createJwt("access", loginId, roles, 60 * 60 * 10L);
+
+        response.addHeader("Authorization", "Bearer " + token);
     }
 
     //로그인 실패시 실행하는 메소드
