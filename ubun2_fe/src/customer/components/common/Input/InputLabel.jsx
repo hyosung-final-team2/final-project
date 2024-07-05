@@ -15,15 +15,15 @@ const InputLabel = ({ labelTitle, defaultValue, type, disabled = false, containe
   return (
     <div className={`form-control w-full ${containerStyle}`}>
       <div className='flex items-center'>
-        <label className='label w-28'>
-          <span className='label-text text-xl font-bold'>{labelTitle}</span>
+        <label className='w-1/3 label'>
+          <span className={`text-lg font-bold label-text`}>{labelTitle}</span>
         </label>
         <input
           type={type || 'text'}
           value={value}
           onChange={e => updateInputValue(e.target.value)}
           disabled={disabled}
-          className='input w-full border-none disabled:bg-custom-input-gray disabled:text-custom-font-gray p-3 flex-grow rounded-lg'
+          className='flex-grow w-full p-3 border-none rounded-lg input disabled:bg-custom-input-gray disabled:text-custom-font-gray'
         />
       </div>
     </div>
