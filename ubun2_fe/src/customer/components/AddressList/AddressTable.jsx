@@ -25,7 +25,7 @@ const AddressTable = ({ addresses }) => {
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      <AddressTableFeature />
+      <AddressTableFeature setOpenModal={setOpenModal} />
       <div className='px-4'>
         <Table hoverable>
           <TableHead tableColumns={tableColumn.address.list} allChecked={selectedAddresses.length === addresses.length} setAllChecked={handleAllChecked} />
