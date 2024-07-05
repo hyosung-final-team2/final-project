@@ -2,6 +2,7 @@ package kr.or.kosa.ubun2_be.global.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.kosa.ubun2_be.global.auth.filter.LoginFilter;
+import kr.or.kosa.ubun2_be.global.auth.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +20,10 @@ public class SecurityConfig {
 
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
+    private final JwtUtil jwtUtil;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //csrf disable
         http
                 .csrf((auth) -> auth.disable());
@@ -37,11 +39,11 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/customers/login","/customers/signup").permitAll()
+                        .requestMatchers("/customers/login", "/customers/signup").permitAll()
                         .anyRequest().authenticated());
         // 로그인 필터 등록
         http
-                .addFilterAt(new LoginFilter(authenticationManager, objectMapper), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager, objectMapper, jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         //세션 설정
         http
