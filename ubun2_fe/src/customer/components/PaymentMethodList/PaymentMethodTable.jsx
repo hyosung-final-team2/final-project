@@ -8,15 +8,18 @@ import TablePagination from '../common/Pagination/TablePagination';
 import PaymentMethodTableFeature from './PaymentMethodTableFeature';
 import PaymentMethodTableRow from './PaymentMethodTableRow';
 import { customTableTheme } from '../common/Table/tableStyle';
+import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
 
 const PaymentMethodTable = ({ payments }) => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [checkedMembers, setCheckedMembers] = useState([]);
+  const { cards, accounts } = payments;
+  const paymentMethodType = paymentMethodStore(state => state.paymentMethodType);
 
   const handleAllChecked = checked => {
     if (checked) {
-      setCheckedMembers(payments.map(payment => payment.id));
+      setCheckedMembers(accounts.map(payment => payment.id));
     } else {
       setCheckedMembers([]);
     }
@@ -31,14 +34,37 @@ const PaymentMethodTable = ({ payments }) => {
       <PaymentMethodTableFeature setOpenModal={setOpenModal} />
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.paymentMethod.list} allChecked={checkedMembers.length === payments.length} setAllChecked={handleAllChecked} />
-          <TableBody
-            users={payments}
-            TableRowComponent={PaymentMethodTableRow}
-            setOpenModal={setOpenModal}
-            selectedMembers={checkedMembers}
-            handleRowChecked={handleRowChecked}
-          />
+          {paymentMethodType === 'ACCOUNT' ? (
+            <>
+              <TableHead
+                tableColumns={tableColumn.paymentMethod.accountList}
+                allChecked={checkedMembers.length === accounts.length}
+                setAllChecked={handleAllChecked}
+              />
+              <TableBody
+                users={accounts}
+                TableRowComponent={PaymentMethodTableRow}
+                setOpenModal={setOpenModal}
+                selectedMembers={checkedMembers}
+                handleRowChecked={handleRowChecked}
+              />
+            </>
+          ) : (
+            <>
+              <TableHead
+                tableColumns={tableColumn.paymentMethod.cardList}
+                allChecked={checkedMembers.length === cards.length}
+                setAllChecked={handleAllChecked}
+              />
+              <TableBody
+                users={cards}
+                TableRowComponent={PaymentMethodTableRow}
+                setOpenModal={setOpenModal}
+                selectedMembers={checkedMembers}
+                handleRowChecked={handleRowChecked}
+              />
+            </>
+          )}
         </Table>
         <TablePagination totalPages={3} containerStyle='bg-white py-4' />
         <MemberPaymentMethodModal isOpen={openModal} setOpenModal={setOpenModal} member={selectedMember} />

@@ -1,8 +1,10 @@
 import React from 'react';
+import paymentMethodStore from '../../../store/PaymentMethod/paymentMethodStore';
+const Dropdown = ({ label, items }) => {
+  const setPaymentMethodType = paymentMethodStore(state => state.setPaymentMethodType);
 
-const Dropdown = ({ label, items, handleDatas }) => {
   const handleOnClick = item => {
-    handleDatas(item.value);
+    setPaymentMethodType(item.value);
   };
 
   return (
