@@ -66,7 +66,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        String token = jwtUtil.createJwt("access", loginId, roles, 60 * 60 * 10L);
+        String token = jwtUtil.createJwt("access", loginId, roles);
 
         response.addHeader("Authorization", "Bearer " + token);
     }

@@ -13,6 +13,9 @@ import java.util.Date;
 public class JwtUtil {
     private SecretKey secretKey;
 
+    @Value(value = "${spring.jwt.access-expiration-time}")
+    private Long accessExpirationTime;
+
     public JwtUtil(@Value("${spring.jwt.secret}")String secret) {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
@@ -33,13 +36,13 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(String tokenType,String loginId, String role, Long expiredMs) {
+    public String createJwt(String tokenType,String loginId, String role) {
         return Jwts.builder()
                 .claim("tokenType", tokenType)
                 .claim("loginId", loginId)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expiredMs))
+                .expiration(new Date(System.currentTimeMillis() + accessExpirationTime))
                 .signWith(secretKey)
                 .compact();
     }
