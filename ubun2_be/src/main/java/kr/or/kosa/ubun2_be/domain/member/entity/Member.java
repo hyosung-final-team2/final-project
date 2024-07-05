@@ -8,6 +8,8 @@ import kr.or.kosa.ubun2_be.domain.notification.entity.Notification;
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
+import kr.or.kosa.ubun2_be.global.auth.enums.UserRole;
+import kr.or.kosa.ubun2_be.global.auth.model.UserType;
 import lombok.Getter;
 
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.List;
 @Entity
 @Getter
 @Table(name = "member")
-public class Member extends BaseTimeEntity {
+public class Member extends BaseTimeEntity implements UserType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
@@ -38,6 +40,10 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private String paymentPassword;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
+
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Address> addresses;
 
@@ -59,4 +65,18 @@ public class Member extends BaseTimeEntity {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Notification> notifications;
 
+    @Override
+    public String getLoginId() {
+        return this.memberLoginId;
+    }
+
+    @Override
+    public String getPassword() {
+        return this.memberPassword;
+    }
+
+    @Override
+    public String getRole() {
+        return this.userRole.name();
+    }
 }

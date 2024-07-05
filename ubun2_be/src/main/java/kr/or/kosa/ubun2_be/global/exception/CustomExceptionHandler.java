@@ -4,6 +4,7 @@ import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.product.exception.category.CategoryException;
 import kr.or.kosa.ubun2_be.domain.product.exception.image.ImageException;
 import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductException;
+import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
 import kr.or.kosa.ubun2_be.global.dto.ErrorDto;
 import kr.or.kosa.ubun2_be.global.exception.base.CustomException;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -66,5 +67,16 @@ public class CustomExceptionHandler implements ErrorController {
                 .build();
 
         return new ResponseEntity(error, customerException.getExceptionType().getHttpStatus());
+    }
+
+    @ExceptionHandler(value = AuthException.class)
+    public ResponseEntity handleGlobalException(AuthException authException) {
+        ErrorDto error = ErrorDto.builder()
+                .errorCode(authException.getExceptionType().getErrorCode())
+                .errorMessage(authException.getExceptionType().getMessage())
+                .httpStatus(authException.getExceptionType().getHttpStatus())
+                .build();
+
+        return new ResponseEntity(error, authException.getExceptionType().getHttpStatus());
     }
 }
