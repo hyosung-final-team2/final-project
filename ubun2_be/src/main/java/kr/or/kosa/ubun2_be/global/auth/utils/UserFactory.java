@@ -19,19 +19,19 @@ public class UserFactory {
     }
 
     private static Customer createCustomer(String loginId) {
-        Customer customer = new Customer();
-        customer.setCustomerLoginId(loginId);
-        customer.setCustomerPassword("tempPassword");
-        customer.setUserRole(UserRole.ROLE_CUSTOMER);
-        return customer;
+        return Customer.builder()
+                .customerLoginId(loginId)
+                .customerPassword("tempPassword")
+                .userRole(UserRole.ROLE_CUSTOMER)
+                .build();
     }
 
     private static Member createMember(String loginId) {
-        Member member = new Member();
-        member.setMemberLoginId(loginId);
-        member.setMemberPassword("tempPassword");
-        member.setUserRole(UserRole.ROLE_MEMBER);
-        return member;
+        return Member.builder()
+                .memberLoginId(loginId)
+                .memberPassword("tempPassword")
+                .userRole(UserRole.ROLE_MEMBER)
+                .build();
     }
 
 }
