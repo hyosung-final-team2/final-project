@@ -37,21 +37,5 @@ public class SignupRequest {
                 .description(description)
                 .userRole(UserRole.ROLE_CUSTOMER)
                 .build();
-//    }    public Customer toEntity(BCryptPasswordEncoder bCryptPasswordEncoder) {
-//        return Customer.builder()
-//                .customerLoginId(customerLoginId)
-//                .customerPassword(bCryptPasswordEncoder.encode(customerPassword))
-//                .customerName(customerName)
-//                .customerPhone(customerPhone)
-//                .customerEmail(customerEmail)
-//                .businessRegistrationNumber(businessRegistrationNumber)
-//                .businessName(businessName)
-//                .businessOwner(businessOwner)
-//                .businessOpenDate(businessOpenDate)
-//                .businessAddress(businessAddress)
-//                .description(description)
-//                .userRole(UserRole.ROLE_CUSTOMER)
-//                .build();
-//    }
     }
 }
