@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import kr.or.kosa.ubun2_be.global.auth.filter.JwtFilter;
 import kr.or.kosa.ubun2_be.global.auth.filter.LoginFilter;
+import kr.or.kosa.ubun2_be.global.auth.service.RefreshTokenService;
 import kr.or.kosa.ubun2_be.global.auth.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +28,7 @@ public class SecurityConfig {
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -73,7 +75,7 @@ public class SecurityConfig {
 
         // 로그인 필터 등록
         http
-                .addFilterAt(new LoginFilter(authenticationManager, objectMapper, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager, objectMapper, jwtUtil, refreshTokenService), UsernamePasswordAuthenticationFilter.class);
 
         //세션 설정
         http
