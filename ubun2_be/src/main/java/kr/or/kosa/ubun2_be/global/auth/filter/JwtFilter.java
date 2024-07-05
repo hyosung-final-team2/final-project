@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.global.auth.filter;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
@@ -22,7 +25,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         String authorization = request.getHeader("Authorization");
 
         //Authorization 헤더 검증
@@ -34,8 +36,21 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authorization.split(" ")[1];
 
         //토큰 만료 시간 검증
-        if (jwtUtil.isExpired(token)) {
-            filterChain.doFilter(request, response);
+        try {
+            jwtUtil.isExpired(token);
+        } catch (ExpiredJwtException e) {
+            PrintWriter writer = response.getWriter();
+            writer.print("access token expired");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        // 토큰이 access인지 확인
+        String tokenType = jwtUtil.getTokenType(token);
+        if (!tokenType.equals("access")) {
+            PrintWriter writer = response.getWriter();
+            writer.print("invalid access token");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
 
