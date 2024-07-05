@@ -17,7 +17,6 @@ public class CustomerController {
     @Operation(summary = "고객 회원가입")
     @PostMapping("/signup")
     public ResponseDto<?> signupCustomer(@RequestBody SignupRequest signupRequest) {
-        System.out.println(signupRequest.toString());
         customerService.createCustomer(signupRequest);
         return new ResponseDto<>().ok(null, "고객 회원가입 정상 완료");
     }
