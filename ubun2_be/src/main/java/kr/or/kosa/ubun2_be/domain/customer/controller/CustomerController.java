@@ -18,6 +18,6 @@ public class CustomerController {
     @PostMapping("/signup")
     public ResponseDto<?> signupCustomer(@RequestBody SignupRequest signupRequest) {
         customerService.createCustomer(signupRequest);
-        return new ResponseDto<>().ok(null, "고객 회원가입 정상 완료");
+        return ResponseDto.ok(null, "고객 회원가입 정상 완료");
     }
 }
