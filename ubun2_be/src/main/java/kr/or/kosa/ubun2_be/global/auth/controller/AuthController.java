@@ -28,6 +28,6 @@ public class AuthController {
         Cookie refreshTokenCookie = refreshTokenService.createRefreshTokenCookie("refreshToken",tokens[1]);
         response.addCookie(refreshTokenCookie);
 
-        return new ResponseDto<>().ok(null, "토큰 정상 발급 완료");
+        return ResponseDto.ok(null, "토큰 정상 발급 완료");
     }
 }
