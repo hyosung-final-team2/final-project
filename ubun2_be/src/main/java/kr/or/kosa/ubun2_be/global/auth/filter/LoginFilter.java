@@ -50,9 +50,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             throw new AuthException(AuthExceptionType.INVALID_LOGIN_FORMAT);
         }
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginRequest.getLoginId(),
-                                                                                                loginRequest.getPassword(),
-                                                                                                Collections.singletonList(loginRequest::getUserType));
+        UsernamePasswordAuthenticationToken authToken = UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getLoginId(),
+                                                                                                            loginRequest.getPassword());
 
         return authenticationManager.authenticate(authToken);
     }
