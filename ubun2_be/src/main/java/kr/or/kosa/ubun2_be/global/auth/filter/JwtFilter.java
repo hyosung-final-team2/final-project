@@ -22,6 +22,7 @@ import java.io.PrintWriter;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final UserFactory userFactory;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -57,7 +58,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String loginId = jwtUtil.getLoginId(token);
         String role = jwtUtil.getRole(token); // "ROLE_CUSTOMER" or "ROLE_MEMBER"
 
-        CustomUserDetails customUserDetails = UserFactory.createUserDetails(loginId, role);
+        CustomUserDetails customUserDetails = userFactory.createUserDetails(loginId, role);
         setAuthentication(customUserDetails);
 
         filterChain.doFilter(request, response);

@@ -6,9 +6,11 @@ import kr.or.kosa.ubun2_be.global.auth.enums.UserRole;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthExceptionType;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserFactory {
-    public static CustomUserDetails createUserDetails(String loginId, String role) {
+    public CustomUserDetails createUserDetails(String loginId, String role) {
         if (role.equals(UserRole.ROLE_CUSTOMER.name())) {
             return new CustomUserDetails(createCustomer(loginId));
         } else if (role.equals(UserRole.ROLE_MEMBER.name())) {
@@ -18,7 +20,7 @@ public class UserFactory {
         }
     }
 
-    private static Customer createCustomer(String loginId) {
+    private Customer createCustomer(String loginId) {
         return Customer.builder()
                 .customerLoginId(loginId)
                 .customerPassword("tempPassword")
@@ -26,7 +28,7 @@ public class UserFactory {
                 .build();
     }
 
-    private static Member createMember(String loginId) {
+    private Member createMember(String loginId) {
         return Member.builder()
                 .memberLoginId(loginId)
                 .memberPassword("tempPassword")
