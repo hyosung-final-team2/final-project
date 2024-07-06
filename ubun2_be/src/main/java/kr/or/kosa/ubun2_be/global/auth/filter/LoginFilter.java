@@ -9,8 +9,11 @@ import kr.or.kosa.ubun2_be.global.auth.dto.LoginRequest;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthExceptionType;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
+import kr.or.kosa.ubun2_be.global.auth.service.RefreshTokenService;
 import kr.or.kosa.ubun2_be.global.auth.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,6 +34,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -46,9 +50,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             throw new AuthException(AuthExceptionType.INVALID_LOGIN_FORMAT);
         }
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginRequest.getLoginId(),
-                                                                                                loginRequest.getPassword(),
-                                                                                                Collections.singletonList(loginRequest::getUserType));
+        UsernamePasswordAuthenticationToken authToken = UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getLoginId(),
+                                                                                                            loginRequest.getPassword());
 
         return authenticationManager.authenticate(authToken);
     }
@@ -65,9 +68,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        String token = jwtUtil.createJwt("access", loginId, roles);
+        String accessToken = jwtUtil.createJwt("access", loginId, roles);
+        String refreshToken = jwtUtil.createJwt("refresh", loginId, roles);
 
-        response.addHeader("Authorization", "Bearer " + token);
+        refreshTokenService.saveRedisRefreshToken(loginId, refreshToken);
+
+        response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        response.addCookie(refreshTokenService.createRefreshTokenCookie("refreshToken", refreshToken));
+        response.setStatus(HttpStatus.OK.value());
     }
 
     //로그인 실패시 실행하는 메소드

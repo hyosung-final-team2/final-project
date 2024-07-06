@@ -35,7 +35,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         validatePassword(password, userDetails.getPassword());
 
-        return new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
+        return UsernamePasswordAuthenticationToken.authenticated(userDetails, password, userDetails.getAuthorities());
     }
 
     private String extractRole(Authentication authentication) {
