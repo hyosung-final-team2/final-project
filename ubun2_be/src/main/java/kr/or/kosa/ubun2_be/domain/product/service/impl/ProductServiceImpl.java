@@ -12,6 +12,7 @@ import kr.or.kosa.ubun2_be.domain.product.service.CategoryService;
 import kr.or.kosa.ubun2_be.domain.product.service.ImageService;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,12 +30,12 @@ public class ProductServiceImpl implements ProductService {
     private final ImageService imageService;
 
     @Override
-    public Page<ProductResponse> findProducts(Long customerId, SearchRequest searchRequest, Pageable pageable) {
+    public Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable) {
         return productRepository.findProducts(customerId, searchRequest, pageable).map(ProductResponse::new);
     }
 
     @Override
-    public ProductDetailResponse findByCustomerIdAndProductId(Long customerId, Long productId) {
+    public ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId) {
         Product findProduct = productRepository.findByCustomerCustomerIdAndProductId(customerId, productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
 
@@ -43,7 +44,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void insertProduct(MultipartFile image, Long customerId, ProductRequest productRequest) {
+    public void registerProduct(MultipartFile image, Long customerId, ProductRequest productRequest) {
         if (isExistProductName(productRequest.getProductName())) {
             throw new ProductException(ProductExceptionType.DUPLICATE_PRODUCT_NAME);
         }
@@ -58,13 +59,12 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void updateProduct(MultipartFile image, Long customerId, ProductRequest productRequest) { //productName 중복 체크
+    public void modifyProduct(MultipartFile image, Long customerId, ProductRequest productRequest) { //productName 중복 체크
         Product findProduct = productRepository.findById(productRequest.getProductId())
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
         if (isExistProductName(productRequest.getProductName())) {
             throw new ProductException(ProductExceptionType.DUPLICATE_PRODUCT_NAME);
         }
-
         String existingImageUrl = findProduct.getProductImagePath();
 
         if (image != null && !image.isEmpty()) { //새로운 이미지 있을때
@@ -85,7 +85,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void deleteProduct(Long customerId, ProductDeleteRequest productDeleteRequest) {
+    public void removeProduct(Long customerId, ProductDeleteRequest productDeleteRequest) {
         Product findProduct = productRepository.findByCustomerCustomerIdAndProductId(customerId, productDeleteRequest.getProductId())
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
         imageService.deleteImage(findProduct.getProductImagePath());
