@@ -8,17 +8,14 @@ import kr.or.kosa.ubun2_be.domain.order.entity.OrderProduct;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
 import kr.or.kosa.ubun2_be.domain.product.dto.ProductRequest;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderOption;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "product")
 public class Product extends BaseTimeEntity {
