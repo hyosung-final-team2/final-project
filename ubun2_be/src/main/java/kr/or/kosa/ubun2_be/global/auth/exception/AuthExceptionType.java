@@ -8,7 +8,8 @@ public enum AuthExceptionType implements CustomExceptionType {
     NO_EXIST_LOGIN_ID(101, HttpStatus.BAD_REQUEST, "존재하지 않는 아이디입니다."),
     NO_EXIST_LOGIN_PASSWORD(102, HttpStatus.BAD_REQUEST, "존재하지 않는 비밀번호입니다."),
     INVALID_LOGIN_ROLE(103, HttpStatus.BAD_REQUEST, "올바르지 않은 역할입니다."),
-    INVALID_JWT_PAYLOAD_ROLE(104,HttpStatus.BAD_REQUEST, "올바르지 않은 JWT Payload(역할)입니다.");
+    INVALID_JWT_PAYLOAD_ROLE(104,HttpStatus.BAD_REQUEST, "올바르지 않은 JWT Payload(역할)입니다."),
+    INVALID_JWT_REFRESH(105,HttpStatus.BAD_REQUEST, "올바르지 않은 refresh토큰입니다.");
 
     private int errorCode;
     private HttpStatus httpStatus;

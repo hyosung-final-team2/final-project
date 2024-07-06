@@ -18,7 +18,7 @@ public class JwtUtil {
     private Long accessExpirationTime;
     @Value(value = "${spring.jwt.refresh-expiration-time}")
     private Long refreshExpirationTime;
-    @Value("spring.jwt.refresh-cookie-expiration-time")
+    @Value("${spring.jwt.refresh-cookie-expiration-time}")
     private int cookieExpirationTime;
 
     public JwtUtil(@Value("${spring.jwt.secret}")String secret) {
@@ -53,13 +53,4 @@ public class JwtUtil {
                 .signWith(secretKey)
                 .compact();
     }
-
-    //TODO: cookie.setSecure(true); https 설정 / cookie.setPath("/"); 쿠키 적용 범위
-    public Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(cookieExpirationTime);
-        cookie.setHttpOnly(true);
-        return cookie;
-    }
-
 }

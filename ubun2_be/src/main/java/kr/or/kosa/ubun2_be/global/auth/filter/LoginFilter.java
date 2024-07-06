@@ -12,6 +12,7 @@ import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.auth.service.RefreshTokenService;
 import kr.or.kosa.ubun2_be.global.auth.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -71,10 +72,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String accessToken = jwtUtil.createJwt("access", loginId, roles);
         String refreshToken = jwtUtil.createJwt("refresh", loginId, roles);
 
-        refreshTokenService.saveRefreshToken(loginId, refreshToken);
+        refreshTokenService.saveRedisRefreshToken(loginId, refreshToken);
 
-        response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addCookie(jwtUtil.createCookie("refresh", refreshToken));
+        response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
+        response.addCookie(refreshTokenService.createRefreshTokenCookie("refreshToken", refreshToken));
         response.setStatus(HttpStatus.OK.value());
     }
 
