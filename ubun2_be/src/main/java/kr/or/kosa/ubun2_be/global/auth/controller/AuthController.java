@@ -19,7 +19,7 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/token/refresh")
-    public ResponseDto<?> reissue(@RequestBody RefreshRequest refreshRequest, HttpServletResponse response, HttpServletRequest request) {
+    public ResponseDto<?> reissue(@RequestBody RefreshRequest refreshRequest, HttpServletResponse response) {
 
         String[] tokens = refreshTokenService.refreshTokens(refreshRequest.getRefreshToken());
 

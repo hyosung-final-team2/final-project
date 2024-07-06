@@ -6,6 +6,7 @@ import kr.or.kosa.ubun2_be.global.auth.filter.JwtFilter;
 import kr.or.kosa.ubun2_be.global.auth.filter.LoginFilter;
 import kr.or.kosa.ubun2_be.global.auth.service.RefreshTokenService;
 import kr.or.kosa.ubun2_be.global.auth.utils.JwtUtil;
+import kr.or.kosa.ubun2_be.global.auth.utils.UserFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,7 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
+    private final UserFactory userFactory;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -66,12 +68,12 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/customers/login", "/customers/signup","/token/refresh","/removecookie").permitAll()
+                        .requestMatchers("/customers/login", "/customers/signup","/token/refresh").permitAll()
                         .anyRequest().authenticated());
 
         //JWTFilter 등록
         http
-                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil,userFactory), LoginFilter.class);
 
         // 로그인 필터 등록
         http

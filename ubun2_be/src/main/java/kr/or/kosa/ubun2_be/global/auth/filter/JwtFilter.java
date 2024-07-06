@@ -5,6 +5,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
+import kr.or.kosa.ubun2_be.global.auth.exception.AuthExceptionType;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.auth.utils.JwtUtil;
 import kr.or.kosa.ubun2_be.global.auth.utils.UserFactory;
@@ -40,19 +42,13 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             jwtUtil.isExpired(token);
         } catch (ExpiredJwtException e) {
-            PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            throw new AuthException(AuthExceptionType.EXPIRED_JWT_ACCESS);
         }
 
         // 토큰이 access인지 확인
         String tokenType = jwtUtil.getTokenType(token);
         if (!tokenType.equals("access")) {
-            PrintWriter writer = response.getWriter();
-            writer.print("invalid access token");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            throw new AuthException(AuthExceptionType.INVALID_JWT_ACCESS);
         }
 
         String loginId = jwtUtil.getLoginId(token);
