@@ -2,13 +2,16 @@ package kr.or.kosa.ubun2_be.domain.product.entity;
 
 import jakarta.persistence.*;
 import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
 @Getter
 @Table(name = "category")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
