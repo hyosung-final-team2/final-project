@@ -3,12 +3,15 @@ package kr.or.kosa.ubun2_be.domain.member.entity;
 import jakarta.persistence.*;
 import kr.or.kosa.ubun2_be.domain.customer.dto.RegisterMemberRequest;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "pending_member")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PendingMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

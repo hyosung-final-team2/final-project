@@ -1,8 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.customer.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import kr.or.kosa.ubun2_be.domain.customer.dto.RegisterMemberRequest;
-import kr.or.kosa.ubun2_be.domain.customer.dto.SignupRequest;
+import kr.or.kosa.ubun2_be.domain.customer.dto.*;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -31,4 +30,12 @@ public class CustomerController {
         customerService.registerMember(registerMemberRequest, Long.valueOf(currentCustomer.getName()));
         return ResponseDto.ok(null,"회원 정상 등록");
     }
+
+    @Operation(summary = "회원 & 가입대기회원 단일 상세조회")
+    @GetMapping("/members/{memberId}")
+    public ResponseDto<?> getMemberDetail(@PathVariable Long memberId, @RequestBody MemberDetailRequest memberDetailRequest) {
+        MemberDetailResponseWrapper<?> getMember = customerService.getMemberDetail(memberId, memberDetailRequest.getIsPending());
+        return ResponseDto.ok(getMember,"회원 상세조회 정상 완료");
+    }
+
 }

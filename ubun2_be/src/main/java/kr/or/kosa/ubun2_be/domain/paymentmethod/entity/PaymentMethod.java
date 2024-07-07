@@ -30,6 +30,5 @@ public class PaymentMethod extends BaseTimeEntity {
     @OneToMany(mappedBy = "paymentMethod", fetch = FetchType.LAZY)
     private List<SubscriptionOrder> subscriptionOrders;
 
-
 }
 

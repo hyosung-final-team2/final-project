@@ -1,8 +1,10 @@
 package kr.or.kosa.ubun2_be.domain.customer.service;
 
-import kr.or.kosa.ubun2_be.domain.customer.dto.RegisterMemberRequest;
-import kr.or.kosa.ubun2_be.domain.customer.dto.SignupRequest;
+import kr.or.kosa.ubun2_be.domain.customer.dto.*;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
+import kr.or.kosa.ubun2_be.domain.member.entity.Member;
+
+import java.util.Optional;
 
 public interface CustomerService {
     Customer findById(Long customerId);
@@ -12,4 +14,7 @@ public interface CustomerService {
     boolean isExistCustomerLoginId(String customerLoginId);
 
     void registerMember(RegisterMemberRequest registerMemberRequest, Long customerId);
+
+    MemberDetailResponseWrapper<?> getMemberDetail(Long memberId, Boolean isPending);
+
 }

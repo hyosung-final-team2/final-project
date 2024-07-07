@@ -1,7 +1,8 @@
 package kr.or.kosa.ubun2_be.domain.customer.service.impl;
 
-import kr.or.kosa.ubun2_be.domain.customer.dto.RegisterMemberRequest;
-import kr.or.kosa.ubun2_be.domain.customer.dto.SignupRequest;
+
+import kr.or.kosa.ubun2_be.domain.address.entity.Address;
+import kr.or.kosa.ubun2_be.domain.customer.dto.*;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
@@ -10,6 +11,10 @@ import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
 import kr.or.kosa.ubun2_be.domain.member.entity.PendingMember;
+import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
+import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
+import kr.or.kosa.ubun2_be.domain.member.exception.pendingmember.PendingMemberException;
+import kr.or.kosa.ubun2_be.domain.member.exception.pendingmember.PendingMemberExceptionType;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberCustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.PendingMemberRepository;
@@ -67,10 +72,47 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    @Override
+    public MemberDetailResponseWrapper<?> getMemberDetail(Long memberId, Boolean isPending) {
+        if (isPending) {
+            PendingMember pendingMember = pendingMemberRepository.findById(memberId)
+                    .orElseThrow(() -> new PendingMemberException(PendingMemberExceptionType.NOT_EXIST_PENDING_MEMBER));
+            return new MemberDetailResponseWrapper<>(createPendingMemberDetailResponse(pendingMember));
+        } else {
+            Member member = memberRepository.findMemberWithPaymentMethodsById(memberId)
+                    .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+            return new MemberDetailResponseWrapper<>(createMemberDetailResponse(member));
+        }
+    }
+
     public boolean validateRegisterRequest(RegisterMemberRequest registerMemberRequest) {
         return !registerMemberRequest.getPendingMemberName().isEmpty() &&
                 !registerMemberRequest.getPendingMemberEmail().isEmpty() &&
                 !registerMemberRequest.getPendingMemberPhone().isEmpty();
+    }
+
+    private PendingMemberDetailResponse createPendingMemberDetailResponse(PendingMember pendingMember) {
+        return PendingMemberDetailResponse.builder()
+                .pendingMemberName(pendingMember.getPendingMemberName())
+                .pendingMemberEmail(pendingMember.getPendingMemberEmail())
+                .pendingMemberPhone(pendingMember.getPendingMemberPhone())
+                .pendingMemberAddress(pendingMember.getPendingMemberAddress())
+                .pendingMemberCardCompanyName(pendingMember.getPendingMemberCardCompanyName())
+                .pendingMemberCardNumber(pendingMember.getPendingMemberCardNumber())
+                .pendingMemberBankName(pendingMember.getPendingMemberBankName())
+                .pendingMemberAccountNumber(pendingMember.getPendingMemberAccountNumber())
+                .build();
+    }
+
+    private MemberDetailResponse createMemberDetailResponse(Member member) {
+        return MemberDetailResponse.builder()
+                .memberName(member.getMemberName())
+                .memberEmail(member.getMemberEmail())
+                .memberPhone(member.getMemberPhone())
+                .createdAt(member.getCreatedAt())
+                .addresses(Address.toDTOList(member.getAddresses()))
+                .paymentMethods(member.getPaymentMethods())
+                .build();
     }
 
 }
