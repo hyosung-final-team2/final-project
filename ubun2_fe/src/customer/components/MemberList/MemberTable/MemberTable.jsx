@@ -7,11 +7,13 @@ import TableBody from '../../common/Table/TableBody';
 import { tableColumn } from '../../common/Table/tableIndex';
 import MemberTableFeature from './MemberTableFeature';
 import MemberTableRow from './MemberTableRow';
+import ExcelModal from '../ExcelModal/ExcelModal';
 
 import { useState } from 'react';
 
 const MemberTable = ({ users }) => {
   const [openMemberDetailModal, setOpenMemberDetailModal] = useState(false);
+  const [openExcelModal, setOpenExcelModal] = useState(false);
 
   const [selectedMembers, setSelectedMembers] = useState([]); // 체크된 멤버 ID
   const [searchTerm, setSearchTerm] = useState(''); // 검색된 단어
@@ -43,7 +45,7 @@ const MemberTable = ({ users }) => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
-      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} />
+      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} />
 
       {/* 테이블 */}
       <div className='px-4 shadow-md'>
@@ -69,6 +71,9 @@ const MemberTable = ({ users }) => {
         primaryButtonText='수정'
         secondaryButtonText='삭제'
       />
+
+      {/* 엑셀 조회 모달 */}
+      <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} />
     </div>
   );
 };

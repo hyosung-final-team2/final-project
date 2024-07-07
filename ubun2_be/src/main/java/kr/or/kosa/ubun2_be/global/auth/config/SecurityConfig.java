@@ -1,9 +1,12 @@
 package kr.or.kosa.ubun2_be.global.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import kr.or.kosa.ubun2_be.global.auth.filter.JwtFilter;
 import kr.or.kosa.ubun2_be.global.auth.filter.LoginFilter;
+import kr.or.kosa.ubun2_be.global.auth.service.RefreshTokenService;
 import kr.or.kosa.ubun2_be.global.auth.utils.JwtUtil;
+import kr.or.kosa.ubun2_be.global.auth.utils.UserFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +16,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -22,9 +29,30 @@ public class SecurityConfig {
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
+    private final UserFactory userFactory;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        http
+                .cors((cors) -> cors.configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration configuration = new CorsConfiguration();
+
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        configuration.setAllowCredentials(true);
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setMaxAge(3600L);
+
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                        return configuration;
+                    }
+                }));
+
         //csrf disable
         http
                 .csrf((auth) -> auth.disable());
@@ -40,16 +68,16 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/customers/login", "/customers/signup").permitAll()
+                        .requestMatchers("/customers/login", "/customers/signup","/token/refresh").permitAll()
                         .anyRequest().authenticated());
 
         //JWTFilter 등록
         http
-                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil,userFactory), LoginFilter.class);
 
         // 로그인 필터 등록
         http
-                .addFilterAt(new LoginFilter(authenticationManager, objectMapper, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager, objectMapper, jwtUtil, refreshTokenService), UsernamePasswordAuthenticationFilter.class);
 
         //세션 설정
         http
