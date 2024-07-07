@@ -8,7 +8,7 @@ const ProductSaleInfo = () => {
           <input
             type='text'
             className='bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 border-transparent'
-            placeholder='10000원 (할인가: 9000원)'
+            placeholder='ex) 10000원'
           />
         </div>
         <div>
@@ -16,7 +16,7 @@ const ProductSaleInfo = () => {
           <input
             type='text'
             className='bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 border-transparent'
-            placeholder='재고'
+            placeholder='ex) 1개'
           />
         </div>
         <div>
@@ -24,13 +24,15 @@ const ProductSaleInfo = () => {
           <input
             type='text'
             className='bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 border-transparent'
-            placeholder='10%'
+            placeholder='ex) 10%'
           />
         </div>
         <div>
           <label className='block mb-2 text-sm font-medium text-gray-900'>배송 종류</label>
           <select className='bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2 border-transparent'>
-            <option value='정기배송'>정기배송</option>
+            <option value='SUBSCRIPTION'>정기배송</option>
+            <option value='SINGLE'>단일배송</option>
+            <option value='BOTH'>정기 & 단일</option>
             {/* Add more options as needed */}
           </select>
         </div>
