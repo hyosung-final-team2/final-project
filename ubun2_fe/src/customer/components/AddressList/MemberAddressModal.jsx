@@ -1,6 +1,6 @@
 import { Modal } from 'flowbite-react';
 import { useEffect } from 'react';
-import { customModalTheme } from '../common/Modal/modalStyle';
+import { customModalTheme } from '../common/Modal/ModalStyle';
 import MemberInfo from '../common/Info/MemberInfo';
 import MemberAddressTable from './MemberAddressTable/MemberAddressTable';
 import MemberAddressEditModal from './MemberAddressEditModal';
