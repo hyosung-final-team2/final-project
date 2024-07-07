@@ -1,6 +1,6 @@
 import { Modal } from 'flowbite-react';
 import MemberInfo from '../common/Info/MemberInfo';
-import { customModalTheme } from '../common/Modal/modalStyle';
+import { customModalTheme } from '../common/Modal/ModalStyle';
 import MemberPaymentTable from './MemberPaymentTable/MemberPaymentTable';
 import PaymentInfo from './PaymentInfo';
 
