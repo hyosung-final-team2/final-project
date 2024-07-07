@@ -1,10 +1,13 @@
 package kr.or.kosa.ubun2_be.domain.customer.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import kr.or.kosa.ubun2_be.domain.customer.dto.RegisterMemberRequest;
 import kr.or.kosa.ubun2_be.domain.customer.dto.SignupRequest;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,5 +22,13 @@ public class CustomerController {
     public ResponseDto<?> signupCustomer(@RequestBody SignupRequest signupRequest) {
         customerService.createCustomer(signupRequest);
         return ResponseDto.ok(null, "고객 회원가입 정상 완료");
+    }
+
+    @Operation(summary = "고객 단일 등록")
+    @PostMapping("/members")
+    public ResponseDto<?> registerMember(@RequestBody RegisterMemberRequest registerMemberRequest) {
+        Authentication currentCustomer = SecurityContextHolder.getContext().getAuthentication();
+        customerService.registerMember(registerMemberRequest, Long.valueOf(currentCustomer.getName()));
+        return ResponseDto.ok(null,"회원 정상 등록");
     }
 }
