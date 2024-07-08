@@ -1,12 +1,17 @@
 package kr.or.kosa.ubun2_be.domain.member.entity;
 
 import jakarta.persistence.*;
+import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.customer.dto.RegisterMemberRequest;
+import kr.or.kosa.ubun2_be.domain.customer.dto.UpdatePendingMemberRequest;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,21 +31,6 @@ public class PendingMember {
     @Column(nullable = false)
     private String pendingMemberPhone;
 
-    @Column
-    private String pendingMemberAddress;
-
-    @Column
-    private String pendingMemberCardCompanyName;
-
-    @Column
-    private String pendingMemberCardNumber;
-
-    @Column
-    private String pendingMemberBankName;
-
-    @Column
-    private String pendingMemberAccountNumber;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
@@ -50,11 +40,6 @@ public class PendingMember {
         this.pendingMemberName = pendingMemberName;
         this.pendingMemberEmail = pendingMemberEmail;
         this.pendingMemberPhone = pendingMemberPhone;
-        this.pendingMemberAddress = pendingMemberAddress;
-        this.pendingMemberCardCompanyName = pendingMemberCardCompanyName;
-        this.pendingMemberCardNumber = pendingMemberCardNumber;
-        this.pendingMemberBankName = pendingMemberBankName;
-        this.pendingMemberAccountNumber = pendingMemberAccountNumber;
         this.customer = customer;
     }
 
@@ -63,13 +48,13 @@ public class PendingMember {
                 .pendingMemberName(registerMemberRequest.getPendingMemberName())
                 .pendingMemberEmail(registerMemberRequest.getPendingMemberEmail())
                 .pendingMemberPhone(registerMemberRequest.getPendingMemberPhone())
-                .pendingMemberAddress(registerMemberRequest.getPendingMemberAddress())
-                .pendingMemberAddress(registerMemberRequest.getPendingMemberAddress())
-                .pendingMemberCardCompanyName(registerMemberRequest.getPendingMemberCardCompanyName())
-                .pendingMemberCardNumber(registerMemberRequest.getPendingMemberCardNumber())
-                .pendingMemberBankName(registerMemberRequest.getPendingMemberBankName())
-                .pendingMemberAccountNumber(registerMemberRequest.getPendingMemberAccountNumber())
                 .customer(customer)
                 .build();
+    }
+
+    public void updatePendingMember(UpdatePendingMemberRequest updatePendingMemberRequest) {
+        this.pendingMemberName = updatePendingMemberRequest.getPendingMemberName();
+        this.pendingMemberEmail = updatePendingMemberRequest.getPendingMemberEmail();
+        this.pendingMemberPhone = updatePendingMemberRequest.getPendingMemberPhone();
     }
 }

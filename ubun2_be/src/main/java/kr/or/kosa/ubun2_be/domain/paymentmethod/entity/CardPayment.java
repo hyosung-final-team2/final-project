@@ -1,19 +1,33 @@
 package kr.or.kosa.ubun2_be.domain.paymentmethod.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import kr.or.kosa.ubun2_be.domain.member.entity.Member;
+import kr.or.kosa.ubun2_be.domain.order.entity.Order;
+import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
+import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @DiscriminatorValue("CARD")
 @Table(name = "card_payment")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@PrimaryKeyJoinColumn(name = "payment_method_id")
 public class CardPayment extends PaymentMethod {
-
 
     @Column(nullable = false)
     private String cardCompanyName;
 
     @Column(nullable = false, length = 16)
     private String cardNumber;
+
+    @Builder
+    public CardPayment(Member member,String cardNumber, String cardCompanyName) {
+        super(member);
+        this.cardNumber = cardNumber;
+        this.cardCompanyName = cardCompanyName;
+    }
 
 }

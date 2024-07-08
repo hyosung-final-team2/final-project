@@ -87,4 +87,11 @@ public class Member extends BaseTimeEntity implements UserType {
     public String getRole() {
         return this.userRole.name();
     }
+
+    public void updateMember(String memberName, String memberEmail, String memberPhone) {
+        this.memberName = memberName;
+        this.memberEmail = memberEmail;
+        this.memberPhone = memberPhone;
+    }
+
 }

@@ -9,11 +9,6 @@ public class RegisterMemberRequest {
     private String pendingMemberName;
     private String pendingMemberEmail;
     private String pendingMemberPhone;
-    private String pendingMemberAddress;
-    private String pendingMemberCardCompanyName;
-    private String pendingMemberCardNumber;
-    private String pendingMemberBankName;
-    private String pendingMemberAccountNumber;
 
     public PendingMember toEntity(Customer customer) {
         return PendingMember.createPendingMember(this, customer);

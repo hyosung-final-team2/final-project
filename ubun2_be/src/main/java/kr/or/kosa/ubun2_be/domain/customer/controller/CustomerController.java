@@ -28,14 +28,22 @@ public class CustomerController {
     public ResponseDto<?> registerMember(@RequestBody RegisterMemberRequest registerMemberRequest) {
         Authentication currentCustomer = SecurityContextHolder.getContext().getAuthentication();
         customerService.registerMember(registerMemberRequest, Long.valueOf(currentCustomer.getName()));
-        return ResponseDto.ok(null,"회원 정상 등록");
+        return ResponseDto.ok(null,"회원 등록 정상 완료");
     }
 
     @Operation(summary = "회원 & 가입대기회원 단일 상세조회")
     @GetMapping("/members/{memberId}")
     public ResponseDto<?> getMemberDetail(@PathVariable Long memberId, @RequestBody MemberDetailRequest memberDetailRequest) {
-        MemberDetailResponseWrapper<?> getMember = customerService.getMemberDetail(memberId, memberDetailRequest.getIsPending());
+        MemberDetailResponse getMember = customerService.getMemberDetail(memberId, memberDetailRequest.getIsPending());
         return ResponseDto.ok(getMember,"회원 상세조회 정상 완료");
     }
+
+    @Operation(summary = "회원 & 가입대기 회원 수정")
+    @PutMapping("/members/{memberId}")
+    public ResponseDto<?> updateMember(@PathVariable Long memberId, @RequestBody MemberRequestWrapper<?> memberRequestWrapper) {
+        customerService.updateMember(memberId,memberRequestWrapper);
+        return ResponseDto.ok(null,"회원 수정 정상 완료");
+    }
+
 
 }

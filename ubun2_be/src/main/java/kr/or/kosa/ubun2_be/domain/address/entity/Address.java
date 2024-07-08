@@ -6,7 +6,7 @@ import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @Table(name = "address")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Address extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +25,13 @@ public class Address extends BaseTimeEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(nullable = false)
+    @Column
     private String addressNickname;
 
-    @Column(nullable = false)
+    @Column
     private String recipientName;
 
-    @Column(nullable = false)
+    @Column
     private String recipientPhone;
 
     @Column(nullable = false)
@@ -43,6 +45,21 @@ public class Address extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
     private List<SubscriptionOrder> subscriptionOrders;
+
+    @Builder
+    public Address(Long addressId, Member member, String addressNickname, String recipientName, String recipientPhone, boolean defaultStatus, String address) {
+        this.addressId = addressId;
+        this.member = member;
+        this.addressNickname = addressNickname;
+        this.recipientName = recipientName;
+        this.recipientPhone = recipientPhone;
+        this.defaultStatus = defaultStatus;
+        this.address = address;
+    }
+
+    public void updateAddress(String address) {
+        this.address = address;
+    }
 
     public MemberDetailAddressResponse toDTO() {
         return MemberDetailAddressResponse.builder()
