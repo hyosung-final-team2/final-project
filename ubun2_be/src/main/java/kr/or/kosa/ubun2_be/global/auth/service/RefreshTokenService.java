@@ -67,9 +67,9 @@ public class RefreshTokenService {
         }
 
         String loginId = jwtUtil.getLoginId(refreshToken);
-        String newRefreshToken = jwtUtil.createJwt("refresh", loginId, jwtUtil.getRole(refreshToken));
+        String newRefreshToken = jwtUtil.createJwt("refresh", jwtUtil.getUserId(refreshToken), loginId, jwtUtil.getRole(refreshToken));
         this.saveRedisRefreshToken(loginId, newRefreshToken);
-        String newAccessToken = jwtUtil.createJwt("access", loginId, jwtUtil.getRole(refreshToken));
+        String newAccessToken = jwtUtil.createJwt("access", jwtUtil.getUserId(refreshToken), loginId, jwtUtil.getRole(refreshToken));
 
         return new String[] { newAccessToken, newRefreshToken };
     }

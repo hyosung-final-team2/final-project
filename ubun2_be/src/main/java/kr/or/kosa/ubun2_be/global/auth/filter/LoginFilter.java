@@ -62,6 +62,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = customUserDetails.getUserId();
         String loginId = customUserDetails.getUsername();
 
         Collection<? extends GrantedAuthority> authorities = customUserDetails.getAuthorities();
@@ -69,8 +70,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        String accessToken = jwtUtil.createJwt("access", loginId, roles);
-        String refreshToken = jwtUtil.createJwt("refresh", loginId, roles);
+        String accessToken = jwtUtil.createJwt("access", userId,loginId, roles);
+        String refreshToken = jwtUtil.createJwt("refresh", userId,loginId, roles);
 
         refreshTokenService.saveRedisRefreshToken(loginId, refreshToken);
 
