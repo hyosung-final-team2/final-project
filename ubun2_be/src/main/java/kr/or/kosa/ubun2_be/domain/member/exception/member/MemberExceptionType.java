@@ -4,7 +4,8 @@ import kr.or.kosa.ubun2_be.global.exception.base.CustomExceptionType;
 import org.springframework.http.HttpStatus;
 
 public enum MemberExceptionType implements CustomExceptionType {
-    NOT_EXIST_MEMBER(-501,HttpStatus.BAD_REQUEST,"존재하지 않는 회원입니다.");
+    NOT_EXIST_MEMBER(-501,HttpStatus.BAD_REQUEST,"존재하지 않는 회원입니다."),
+    DUPLICATE_MEMBER(-502,HttpStatus.BAD_REQUEST,"이미 존재하는 회원입니다.");
 
 
     private int errorCode;

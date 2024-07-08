@@ -25,7 +25,7 @@ public class PendingMember {
     @Column(nullable = false)
     private String pendingMemberName;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String pendingMemberEmail;
 
     @Column(nullable = false)

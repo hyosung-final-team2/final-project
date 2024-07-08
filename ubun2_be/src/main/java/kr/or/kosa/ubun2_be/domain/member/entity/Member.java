@@ -40,7 +40,7 @@ public class Member extends BaseTimeEntity implements UserType {
     @Column(nullable = false)
     private String memberPhone;
 
-    @Column(nullable = false)
+    @Column
     private String paymentPassword;
 
     @Column
