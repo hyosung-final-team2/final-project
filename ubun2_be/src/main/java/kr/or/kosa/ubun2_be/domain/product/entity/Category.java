@@ -2,14 +2,14 @@ package kr.or.kosa.ubun2_be.domain.product.entity;
 
 import jakarta.persistence.*;
 import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @Table(name = "category")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Category extends BaseTimeEntity {
