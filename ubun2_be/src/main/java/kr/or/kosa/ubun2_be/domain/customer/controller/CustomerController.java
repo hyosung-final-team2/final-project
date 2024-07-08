@@ -45,5 +45,11 @@ public class CustomerController {
         return ResponseDto.ok(null,"회원 수정 정상 완료");
     }
 
+    @Operation(summary = "회원 & 가입대기 회원 삭제")
+    @DeleteMapping("/members/{memberId}")
+    public ResponseDto<?> deleteMember(@PathVariable Long memberId,@RequestBody MemberDetailRequest memberDeleteRequest) {
+        customerService.deleteMember(memberId,memberDeleteRequest.getIsPending());
+        return ResponseDto.ok(null, "회원 삭제 정상 완료");
+    }
 
 }

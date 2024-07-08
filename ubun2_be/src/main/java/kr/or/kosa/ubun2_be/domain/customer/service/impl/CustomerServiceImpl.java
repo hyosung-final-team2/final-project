@@ -130,6 +130,21 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
+    @Override
+    public void deleteMember(Long memberId, Boolean isPending) {
+        if (isPending) {
+            if (!pendingMemberRepository.existsById(memberId)) {
+                throw new PendingMemberException(PendingMemberExceptionType.NOT_EXIST_PENDING_MEMBER);
+            }
+            pendingMemberRepository.deleteById(memberId);
+        } else {
+            if (!memberRepository.existsById(memberId)) {
+                throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
+            }
+            memberRepository.deleteById(memberId);
+        }
+    }
+
     public boolean validateRegisterRequest(RegisterMemberRequest registerMemberRequest) {
         return !registerMemberRequest.getPendingMemberName().isEmpty() &&
                 !registerMemberRequest.getPendingMemberEmail().isEmpty() &&

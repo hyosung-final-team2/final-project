@@ -15,4 +15,6 @@ public interface CustomerService {
     MemberDetailResponse getMemberDetail(Long memberId, Boolean isPending);
 
     void updateMember(Long memberId, MemberRequestWrapper<?> memberRequestWrapper);
+
+    void deleteMember(Long memberId, Boolean isPending);
 }
