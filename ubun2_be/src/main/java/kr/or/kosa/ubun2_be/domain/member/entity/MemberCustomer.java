@@ -3,12 +3,15 @@ package kr.or.kosa.ubun2_be.domain.member.entity;
 import jakarta.persistence.*;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "member_customer")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberCustomer extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

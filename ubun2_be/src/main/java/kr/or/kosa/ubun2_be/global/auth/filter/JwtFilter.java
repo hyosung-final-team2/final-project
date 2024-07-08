@@ -51,17 +51,18 @@ public class JwtFilter extends OncePerRequestFilter {
             throw new AuthException(AuthExceptionType.INVALID_JWT_ACCESS);
         }
 
+        Long userId = jwtUtil.getUserId(token);
         String loginId = jwtUtil.getLoginId(token);
         String role = jwtUtil.getRole(token); // "ROLE_CUSTOMER" or "ROLE_MEMBER"
 
-        CustomUserDetails customUserDetails = userFactory.createUserDetails(loginId, role);
+        CustomUserDetails customUserDetails = userFactory.createUserDetails(userId,loginId, role);
         setAuthentication(customUserDetails);
 
         filterChain.doFilter(request, response);
     }
 
     private void setAuthentication(CustomUserDetails customUserDetails) {
-        Authentication authToken = UsernamePasswordAuthenticationToken.authenticated(customUserDetails, null, customUserDetails.getAuthorities());
+        Authentication authToken = UsernamePasswordAuthenticationToken.authenticated(customUserDetails.getUserId(), null, customUserDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 }

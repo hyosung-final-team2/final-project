@@ -1,18 +1,17 @@
-package kr.or.kosa.ubun2_be.domain.customer.exception;
+package kr.or.kosa.ubun2_be.domain.member.exception.member;
 
 import kr.or.kosa.ubun2_be.global.exception.base.CustomExceptionType;
 import org.springframework.http.HttpStatus;
 
-public enum CustomerExceptionType implements CustomExceptionType {
-    NOT_EXIST_CUSTOMER(-401, HttpStatus.BAD_REQUEST, "존재하지 않는 판매자입니다."),
-    DUPLICATE_CUSTOMER_LOGIN_ID(-402, HttpStatus.BAD_REQUEST, "중복된 아이디가 존재합니다."),
-    INVALID_REGISTER_FORMAT(-403, HttpStatus.BAD_REQUEST, "필수 입력 사항을 기입해야합니다.");
+public enum MemberExceptionType implements CustomExceptionType {
+    NOT_EXIST_MEMBER(-501,HttpStatus.BAD_REQUEST,"존재하지 않는 회원입니다.");
+
 
     private int errorCode;
     private HttpStatus httpStatus;
     private String errorMsg;
 
-    CustomerExceptionType(int errorCode, HttpStatus httpStatus, String errorMsg) {
+    MemberExceptionType(int errorCode, HttpStatus httpStatus, String errorMsg) {
         this.errorCode = errorCode;
         this.httpStatus = httpStatus;
         this.errorMsg = errorMsg;
