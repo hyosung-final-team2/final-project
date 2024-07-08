@@ -2,6 +2,7 @@ package kr.or.kosa.ubun2_be.domain.order.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kr.or.kosa.ubun2_be.domain.order.dto.OrderResponse;
+import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderResponse;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,13 @@ public class OrderCustomerController {
     public ResponseDto<?> findOrders(@RequestParam("customerId") Long customerId, @PageableDefault(size = PAGE_SIZE, sort = "orderId", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<OrderResponse> orderResponseList = orderService.getOrders(customerId, pageable);
         return ResponseDto.ok(orderResponseList, "정상출력 데이터");
+    }
+
+    @Operation(summary = "전체 정기 주문 목록 조회")
+    @GetMapping("/subscription")
+    public ResponseDto<?> findSubscriptionOrders(@RequestParam("customerId") Long customerId, @PageableDefault(size = PAGE_SIZE, sort = "subscriptionOrderId", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<SubscriptionOrderResponse> subscriptionOrderResponseList = orderService.getSubscriptionOrders(customerId, pageable);
+        return ResponseDto.ok(subscriptionOrderResponseList, "정상출력 데이터");
     }
 
 }

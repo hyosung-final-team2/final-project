@@ -7,4 +7,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
     Page<OrderResponse> getOrders(Long customerId, Pageable pageable);
+
+    Page<SubscriptionOrderResponse> getSubscriptionOrders(Long customerId, Pageable pageable);
 }

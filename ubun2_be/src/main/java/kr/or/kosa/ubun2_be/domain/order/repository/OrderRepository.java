@@ -28,4 +28,20 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                     "AND o.orderStatus <> " + PENDING_STATUS)
     Page<Order> getOrders(@Param("customerId") Long customerId, Pageable pageable);
 
+    @Query(value = "SELECT DISTINCT so FROM SubscriptionOrder so " +
+            "LEFT JOIN FETCH so.member m " +
+            "JOIN m.memberCustomers mc " +
+            "LEFT JOIN FETCH so.subscriptionOrderProducts sop " +
+            "LEFT JOIN FETCH so.paymentMethod pm " +
+            "LEFT JOIN AccountPayment ap ON pm.paymentMethodId = ap.paymentMethodId " +
+            "LEFT JOIN CardPayment cp ON pm.paymentMethodId = cp.paymentMethodId " +
+            "WHERE mc.customer.customerId = :customerId " +
+            "AND so.orderStatus <> kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus.PENDING",
+            countQuery = "SELECT COUNT(DISTINCT so) FROM SubscriptionOrder so " +
+                    "JOIN so.member m " +
+                    "JOIN m.memberCustomers mc " +
+                    "WHERE mc.customer.customerId = :customerId " +
+                    "AND so.orderStatus <> " + PENDING_STATUS)
+    Page<SubscriptionOrder> getSubscriptionOrders(@Param("customerId") Long customerId, Pageable pageable);
+
 }

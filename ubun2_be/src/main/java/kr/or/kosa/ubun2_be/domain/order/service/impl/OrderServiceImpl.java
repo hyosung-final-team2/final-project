@@ -19,4 +19,10 @@ public class OrderServiceImpl implements OrderService {
     public Page<OrderResponse> getOrders(Long customerId, Pageable pageable) {
         return orderRepository.getOrders(customerId, pageable).map(OrderResponse::new);
     }
+
+    @Override
+    public Page<SubscriptionOrderResponse> getSubscriptionOrders(Long customerId, Pageable pageable) {
+        return orderRepository.getSubscriptionOrders(customerId, pageable).map(SubscriptionOrderResponse::new);
+    }
+
 }

@@ -6,11 +6,14 @@ import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Table(name = "subscription_order")
 public class SubscriptionOrder extends BaseTimeEntity {
@@ -38,14 +41,6 @@ public class SubscriptionOrder extends BaseTimeEntity {
     @Column(nullable = false)
     private int intervalDays;
 
-//    @Column(nullable = false)
-//    private int totalCycles;
-//
-//    @Column(nullable = false)
-//    private int remainingCycles;
-
     @OneToMany(mappedBy = "subscriptionOrder", cascade = CascadeType.ALL)
     private List<SubscriptionOrderProduct> subscriptionOrderProducts;
-
-
 }
