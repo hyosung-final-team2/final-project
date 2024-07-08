@@ -10,9 +10,7 @@ import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.global.auth.enums.UserRole;
 import kr.or.kosa.ubun2_be.global.auth.model.UserType;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -20,6 +18,8 @@ import java.util.List;
 @Getter
 @Builder
 @Table(name = "member")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Member extends BaseTimeEntity implements UserType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +40,7 @@ public class Member extends BaseTimeEntity implements UserType {
     @Column(nullable = false)
     private String memberPhone;
 
-    @Column(nullable = false)
+    @Column
     private String paymentPassword;
 
     @Column

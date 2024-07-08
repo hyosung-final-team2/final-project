@@ -3,6 +3,7 @@ package kr.or.kosa.ubun2_be.domain.member.entity;
 import jakarta.persistence.*;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -20,5 +21,18 @@ public class MemberCustomer extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
+
+    @Builder
+    private MemberCustomer(Member member, Customer customer) {
+        this.member = member;
+        this.customer = customer;
+    }
+
+    public static MemberCustomer createMemberCustomer(Member member, Customer customer) {
+        return MemberCustomer.builder()
+                .customer(customer)
+                .member(member)
+                .build();
+    }
 
 }

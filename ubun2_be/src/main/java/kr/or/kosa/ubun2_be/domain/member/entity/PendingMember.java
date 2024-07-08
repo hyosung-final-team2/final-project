@@ -15,26 +15,11 @@ public class PendingMember {
     @Column(nullable = false)
     private String pendingMemberName;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String pendingMemberEmail;
 
     @Column(nullable = false)
     private String pendingMemberPhone;
-
-    @Column
-    private String pendingMemberAddress;
-
-    @Column
-    private String pendingMemberCardCompanyName;
-
-    @Column
-    private String pendingMemberCardNumber;
-
-    @Column
-    private String pendingMemberBankName;
-
-    @Column
-    private String pendingMemberAccountNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id", nullable = false)
