@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.address.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +27,11 @@ public class AddressController {
                         @PageableDefault(size=PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable) {
         Page<AddressResponse> addressResponsesList = addressService.getAllAddresses(pageable);
         return ResponseDto.ok(addressResponsesList,"정상출력 데이터");
+    public ResponseDto<?> getAllAddresses(
+            @PageableDefault(size = PAGE_SIZE, sort = "addressId", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<AddressResponse> addresses = addressService.getAllAddresses(pageable);
+        return ResponseDto.ok(addresses, "주소 목록을 성공적으로 조회했습니다.");
+    }
     }
 
 }
