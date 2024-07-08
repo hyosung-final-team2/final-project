@@ -4,6 +4,8 @@ import kr.or.kosa.ubun2_be.domain.member.dto.MemberSignUpRequest;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
 import kr.or.kosa.ubun2_be.domain.member.entity.PendingMember;
+import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
+import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberCustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.PendingMemberRepository;
@@ -29,7 +31,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public void createMember(MemberSignUpRequest memberSignUpRequest) {
         if(memberRepository.existsByMemberEmail(memberSignUpRequest.getMemberEmail())){
-            //이미 있는 회원 예외처리
+            throw new MemberException(MemberExceptionType.DUPLICATE_MEMBER);
         }
         Member savedMember = memberRepository.save(Member.builder().memberLoginId(memberSignUpRequest.getMemberLoginId())
                 .memberName(memberSignUpRequest.getMemberName())
