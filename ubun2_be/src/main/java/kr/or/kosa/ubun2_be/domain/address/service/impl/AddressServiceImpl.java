@@ -17,5 +17,8 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public Page<AddressResponse> getAllAddresses(Pageable pageable) {
         return addressRepository.findAll(pageable).map(AddressResponse::new);
+        return addressRepository.findAllAddressesWithMember(pageable);
+    }
+
     }
 }
