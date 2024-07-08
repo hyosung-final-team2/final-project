@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 @Getter
 @Table(name = "address")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
 public class Address extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

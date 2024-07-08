@@ -2,11 +2,8 @@ package kr.or.kosa.ubun2_be.domain.paymentmethod.entity;
 
 import jakarta.persistence.*;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
-import kr.or.kosa.ubun2_be.domain.order.entity.Order;
-import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import lombok.*;
 
-import java.util.List;
 
 @Entity
 @Getter

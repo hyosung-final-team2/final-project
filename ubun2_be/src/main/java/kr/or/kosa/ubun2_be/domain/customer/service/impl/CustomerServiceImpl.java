@@ -208,7 +208,6 @@ public class CustomerServiceImpl implements CustomerService {
                     cardPaymentRepository.save(newCardPayment);
                 } else {
                     AccountPayment newAccountPayment = memberDetailPaymentMethodRequest.toAccountPaymentEntity(member);
-                    System.out.println("이거 왜 ???? " + newAccountPayment.toString());
                     accountPaymentRepository.save(newAccountPayment);
                 }
             }

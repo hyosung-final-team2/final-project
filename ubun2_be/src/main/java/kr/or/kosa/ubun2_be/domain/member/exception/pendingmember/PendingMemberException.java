@@ -7,8 +7,8 @@ import kr.or.kosa.ubun2_be.global.exception.base.CustomExceptionType;
 public class PendingMemberException extends CustomException {
     private PendingMemberExceptionType pendingMemberExceptionType;
 
-    public PendingMemberException(PendingMemberExceptionType memberExceptionType) {
-        this.pendingMemberExceptionType = memberExceptionType;
+    public PendingMemberException(PendingMemberExceptionType pendingMemberExceptionType) {
+        this.pendingMemberExceptionType = pendingMemberExceptionType;
     }
 
     @Override
