@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.order.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import kr.or.kosa.ubun2_be.domain.order.dto.OrderDetailResponse;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.order.dto.UnifiedOrderResponse;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
@@ -16,13 +17,11 @@ import org.springframework.web.bind.annotation.*;
 public class OrderCustomerController {
     private final OrderService orderService;
     private static final String SORT_DEFAULT = "createdAt";
-
-
     private static final int PAGE_SIZE = 9;
 
     @Operation(summary = "전체 주문 목록 조회 (일반 주문 + 구독 주문)")
     @GetMapping("/")
-    public ResponseDto<?> findOrders(
+    public ResponseDto<?> getOrders(
             @RequestParam("customerId") Long customerId,
             SearchRequest searchRequest,
             @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable) {
@@ -31,6 +30,10 @@ public class OrderCustomerController {
         return ResponseDto.ok(orderResponseList, "정상출력 데이터");
     }
 
-
-
+    @Operation(summary = "단건 주문 상세 조회")
+    @GetMapping("{order_id}")
+    public ResponseDto<?> getOrderByOrderId(@PathVariable("order_id") Long orderId, Long customerId){
+        OrderDetailResponse orderDetailResponse = orderService.getOrderByCustomerIdAndOrderId(orderId, customerId);
+        return ResponseDto.ok(orderDetailResponse, "정상출력 데이터");
+    }
 }
