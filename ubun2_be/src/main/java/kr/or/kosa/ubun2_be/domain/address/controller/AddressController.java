@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.address.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberDetailRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberInfoResponse;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
@@ -23,6 +24,7 @@ public class AddressController {
 
     @Operation(summary = "전체 주소 목록 조회")
     @GetMapping("/")
+
     public ResponseDto<?> getAllAddresses(
             @PageableDefault(size = PAGE_SIZE, sort = "addressId", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<AddressResponse> addresses = addressService.getAllAddresses(pageable);
