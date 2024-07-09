@@ -1,13 +1,18 @@
 package kr.or.kosa.ubun2_be.domain.customer.controller;
 
 import kr.or.kosa.ubun2_be.domain.customer.service.ExcelService;
+import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -26,4 +31,12 @@ public class ExcelController {
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(new InputStreamResource(excelService.createExcel().getInputStream()));
     }
+
+    @PostMapping("/upload/excel")
+    public ResponseDto<?> registerExcel(@RequestParam("file") MultipartFile file) throws IOException {
+        Long customerId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
+        excelService.registerExcel(customerId,file);
+        return ResponseDto.ok(null,"회원 일괄 등록 완료");
+    }
+
 }
