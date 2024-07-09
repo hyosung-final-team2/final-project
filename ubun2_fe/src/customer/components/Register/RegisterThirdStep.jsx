@@ -1,7 +1,7 @@
 import InputText from '../common/Input/InputText';
 import InputTextWithBtn from '../common/Input/InputTextWithBtn';
 import { useState, useEffect } from 'react';
-import {useSignup} from "../../api/Register/queris.js";
+import {useSignup} from "../../api/Customer/Register/queris.js";
 
 const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
   const INITIAL_REGISTER_OBJ = {

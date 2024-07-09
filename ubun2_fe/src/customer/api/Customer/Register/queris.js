@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { signUp } from './register.js';
-import useRegisterStepStore from '../../store/Register/registerStepStore';
+import useRegisterStepStore from '../../../store/Register/registerStepStore.js';
 
 export const useSignup = thirdRegisterObj => {
   const { registerFirstData, registerSecondData } = useRegisterStepStore(state => ({
@@ -24,6 +24,7 @@ export const useSignup = thirdRegisterObj => {
 
   return useMutation({
     mutationFn: () => signUp(signUpData),
+    onError: (err) => console.log('회원가입 실패', err),
     onSuccess: () => {},
   });
 };
