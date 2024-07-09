@@ -7,7 +7,9 @@ import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressException;
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressExceptionType;
 import kr.or.kosa.ubun2_be.domain.address.repository.AddressRepository;
-import kr.or.kosa.ubun2_be.domain.customer.dto.*;
+import kr.or.kosa.ubun2_be.domain.customer.dto.request.*;
+import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
+import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
@@ -30,7 +32,11 @@ import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.AccountPaymentRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.CardPaymentRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.PaymentMethodRepository;
+import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -107,7 +113,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public void updateMember(Long memberId,MemberRequestWrapper<?> memberRequestWrapper) {
+    public void updateMember(Long memberId, MemberRequestWrapper<?> memberRequestWrapper) {
         if (memberRequestWrapper.isPending()) {
             PendingMember findMember = pendingMemberRepository.findById(memberId)
                     .orElseThrow(() -> new PendingMemberException(PendingMemberExceptionType.NOT_EXIST_PENDING_MEMBER));
@@ -143,6 +149,22 @@ public class CustomerServiceImpl implements CustomerService {
             }
             memberRepository.deleteById(memberId);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<MemberListResponse> getMembers(Long customerId, SearchRequest searchRequest, Pageable pageable) {
+        List<MemberListResponse> memberListResponses = memberRepository.findMembersByCustomerIdAndSearchRequest(customerId, searchRequest).stream().map(MemberListResponse::new).toList();
+        List<MemberListResponse> pendingMemberListResponses = pendingMemberRepository.findPendingMembersByCustomerIdAndSearchRequest(customerId, searchRequest).stream().map(MemberListResponse::new).toList();
+
+        List<MemberListResponse> combinedList = new ArrayList<>();
+        combinedList.addAll(memberListResponses);
+        combinedList.addAll(pendingMemberListResponses);
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), combinedList.size());
+        List<MemberListResponse> paginatedList = combinedList.subList(start, end);
+        return new PageImpl<>(paginatedList, pageable, combinedList.size());
     }
 
     public boolean validateRegisterRequest(RegisterMemberRequest registerMemberRequest) {

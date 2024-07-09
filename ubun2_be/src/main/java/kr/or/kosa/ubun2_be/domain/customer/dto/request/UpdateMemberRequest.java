@@ -1,4 +1,4 @@
-package kr.or.kosa.ubun2_be.domain.customer.dto;
+package kr.or.kosa.ubun2_be.domain.customer.dto.request;
 
 import kr.or.kosa.ubun2_be.domain.address.dto.MemberDetailAddressRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberDetailPaymentMethodRequest;
