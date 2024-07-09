@@ -1,8 +1,8 @@
 package kr.or.kosa.ubun2_be.domain.address.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.or.kosa.ubun2_be.domain.address.dto.*;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
-import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,15 +12,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = AddressController.class)
@@ -76,4 +78,41 @@ class AddressControllerTest {
         verify(addressService).getAllAddresses(any(PageRequest.class));
     }
 
+    @Test
+    @DisplayName("주소아이디로 회원 정보를 조회한다")
+    void getMemberAddressInfo() throws Exception {
+        // Given
+        Long addressId = 1L;
+        AddressMemberDetailRequest request = AddressMemberDetailRequest.builder()
+                .addressId(addressId)
+                .build();
+
+        AddressMemberInfoResponse response = AddressMemberInfoResponse.builder()
+                .memberName("김철수")
+                .memberPhone("010-1234-5678")
+                .memberEmail("user1@example.com")
+                .registrationDate(LocalDateTime.now())
+                .addresses(Arrays.asList(new AddressDto(1L, "서울시 강남구")))
+                .build();
+
+        when(addressService.getMemberInfoByAddressId(any(AddressMemberDetailRequest.class))).thenReturn(response);
+
+        // When & Then
+        mockMvc.perform(get("/customers/addresses/{address_id}", request.getAddressId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.memberName").value("김철수"))
+                .andExpect(jsonPath("$.data.memberPhone").value("010-1234-5678"))
+                .andExpect(jsonPath("$.data.memberEmail").value("user1@example.com"))
+                .andExpect(jsonPath("$.data.addresses").isArray())
+                .andExpect(jsonPath("$.data.addresses.length()").value(1))
+                .andExpect(jsonPath("$.data.addresses[0].addressId").value(1))
+                .andExpect(jsonPath("$.data.addresses[0].address").value("서울시 강남구"))
+                .andExpect(jsonPath("$.message").value("주소 상세를 성공적으로 조회했습니다."));
+
+        verify(addressService).getMemberInfoByAddressId(argThat(req ->
+                req.getAddressId().equals(addressId)
+        ));
+    }
 }

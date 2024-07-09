@@ -1,6 +1,9 @@
 package kr.or.kosa.ubun2_be.domain.address.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+
+import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberDetailRequest;
+import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberInfoResponse;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
@@ -21,16 +24,20 @@ public class AddressController {
 
     @Operation(summary = "전체 주소 목록 조회")
     @GetMapping("/")
-    public ResponseDto<?> getAddresses(
-                        @PageableDefault(size=PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<AddressResponse> addressResponsesList = addressService.getAllAddresses(pageable);
-        return ResponseDto.ok(addressResponsesList, "정상출력 데이터");
-    }
+
     public ResponseDto<?> getAllAddresses(
             @PageableDefault(size = PAGE_SIZE, sort = "addressId", direction = Sort.Direction.DESC) Pageable pageable) {
         Page<AddressResponse> addresses = addressService.getAllAddresses(pageable);
         return ResponseDto.ok(addresses, "주소 목록을 성공적으로 조회했습니다.");
     }
 
+    @Operation(summary = "주소아이디로 회원 정보 조회")
+    @GetMapping("/{address_id}")
+    public ResponseDto<?> getMemberAddressInfo(@PathVariable("address_id") Long addressId) {
+        AddressMemberDetailRequest addressMemberDetailRequest = AddressMemberDetailRequest.builder()
+                .addressId(addressId).build();
+        AddressMemberInfoResponse response = addressService.getMemberInfoByAddressId(addressMemberDetailRequest);
+        return ResponseDto.ok(response, "주소 상세를 성공적으로 조회했습니다.");
+    }
 
 }
