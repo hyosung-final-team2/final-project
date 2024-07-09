@@ -2,6 +2,8 @@ package kr.or.kosa.ubun2_be.domain.address.service.impl;
 
 import jakarta.persistence.EntityNotFoundException;
 import kr.or.kosa.ubun2_be.domain.address.dto.*;
+import kr.or.kosa.ubun2_be.domain.address.exception.address.AddressException;
+import kr.or.kosa.ubun2_be.domain.address.exception.address.AddressExceptionType;
 import kr.or.kosa.ubun2_be.domain.address.repository.AddressRepository;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ public class AddressServiceImpl implements AddressService {
     public AddressMemberInfoResponse getMemberInfoByAddressId(AddressMemberDetailRequest addressMemberDetailRequest) {
         AddressMemberInfoResponse response = addressRepository.findMemberInfoByAddressId(addressMemberDetailRequest.getAddressId());
         if (response == null) {
-            throw new EntityNotFoundException("주소를 찾을 수 없습니다.");
+            throw new AddressException(AddressExceptionType.NO_MATCHING_ADDRESS);
         }
         return response;
     }

@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.global.exception;
 
+import kr.or.kosa.ubun2_be.domain.address.exception.address.AddressException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.product.exception.category.CategoryException;
 import kr.or.kosa.ubun2_be.domain.product.exception.image.ImageException;
@@ -78,5 +79,16 @@ public class CustomExceptionHandler implements ErrorController {
                 .build();
 
         return new ResponseEntity(error, authException.getExceptionType().getHttpStatus());
+    }
+
+    @ExceptionHandler(value = AddressException.class)
+    public ResponseEntity handleGlobalException(AddressException addressException) {
+        ErrorDto error = ErrorDto.builder()
+                .errorCode(addressException.getExceptionType().getErrorCode())
+                .errorMessage(addressException.getExceptionType().getMessage())
+                .httpStatus(addressException.getExceptionType().getHttpStatus())
+                .build();
+
+        return new ResponseEntity(error, addressException.getExceptionType().getHttpStatus());
     }
 }
