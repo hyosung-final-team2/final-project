@@ -1,7 +1,11 @@
 package kr.or.kosa.ubun2_be.domain.address.repository.impl;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
+import kr.or.kosa.ubun2_be.domain.address.dto.AddressDto;
+import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberInfoResponse;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
 import kr.or.kosa.ubun2_be.domain.address.entity.QAddress;
 import kr.or.kosa.ubun2_be.domain.address.repository.AddressRepositoryCustom;
@@ -23,7 +27,6 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
     public AddressRepositoryImpl() {
         super(Address.class);
     }
-
 
     @Override
     public Page<AddressResponse> findAllAddressesWithMember(Pageable pageable) {
@@ -47,5 +50,44 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
         List<AddressResponse> content = getQuerydsl().applyPagination(pageable, query).fetch();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public AddressMemberInfoResponse findMemberInfoByAddressId(Long addressId) {
+        QAddress address = new QAddress("address");
+        QMember member = new QMember("member");
+
+        Tuple memberInfo = from(address)
+                .join(address.member, member)
+                .where(address.addressId.eq(addressId))
+                .select(member.memberName, member.memberPhone, member.memberEmail, member.createdAt)
+                .fetchOne();
+
+        if (memberInfo == null) {
+            return null;
+        }
+
+        // 해당 회원의 모든 주소 목록 조회
+        List<AddressDto> addresses = from(address)
+                .where(address.member.memberId.eq(
+                        JPAExpressions.select(address.member.memberId)
+                                .from(address)
+                                .where(address.addressId.eq(addressId))
+                ))
+                .select(Projections.constructor(AddressDto.class,
+                        address.addressId,
+                        address.address))
+                .fetch();
+
+
+        // 결과 조합
+        return AddressMemberInfoResponse.builder()
+                .memberName(memberInfo.get(member.memberName))
+                .memberPhone(memberInfo.get(member.memberPhone))
+                .memberEmail(memberInfo.get(member.memberEmail))
+                .registrationDate(memberInfo.get(member.createdAt))
+                .addresses(addresses)
+                .build();
+
     }
 }
