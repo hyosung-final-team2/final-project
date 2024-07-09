@@ -1,7 +1,10 @@
+import ProductTable from '../../components/ProductList/ProductTable/ProductTable';
+import { product } from '../../components/ProductList/ProductListData';
+
 const ProductList = () => {
   return (
     <>
-      <h1>상품 리스트</h1>
+      <ProductTable product={product} />
     </>
   );
 };
