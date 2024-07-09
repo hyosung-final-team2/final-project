@@ -92,7 +92,7 @@ class AddressControllerTest {
                 .memberPhone("010-1234-5678")
                 .memberEmail("user1@example.com")
                 .registrationDate(LocalDateTime.now())
-                .addresses(Arrays.asList(new AddressDto(1L, "서울시 강남구")))
+                .addresses(Arrays.asList(new AddressResponseDto(1L, "서울시 강남구")))
                 .build();
 
         when(addressService.getMemberInfoByAddressId(any(AddressMemberDetailRequest.class))).thenReturn(response);
@@ -115,4 +115,28 @@ class AddressControllerTest {
                 req.getAddressId().equals(addressId)
         ));
     }
-}
+
+    @Test
+    @DisplayName("새로운 주소를 등록한다.")
+    void addAddress() throws Exception {
+        // Given
+        AddressRequest addressRequest = AddressRequest.builder()
+                .memberId(1L)
+                .address("서울시 강남구 테헤란로 123")
+                .recipientName("김철수")
+                .recipientPhone("010-1234-5678")
+                .build();
+
+        doNothing().when(addressService).addAddress(any(AddressRequest.class));
+
+        // When & Then
+        mockMvc.perform(post("/customers/addresses/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(addressRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data").doesNotExist())
+                .andExpect(jsonPath("$.message").value("주소가 성공적으로 등록되었습니다."));
+
+        verify(addressService).addAddress(any(AddressRequest.class));
+    }}
