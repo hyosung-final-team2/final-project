@@ -42,7 +42,8 @@ public class JwtFilter extends OncePerRequestFilter {
         try {
             jwtUtil.isExpired(token);
         } catch (ExpiredJwtException e) {
-            throw new AuthException(AuthExceptionType.EXPIRED_JWT_ACCESS);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
 
         // 토큰이 access인지 확인

@@ -13,5 +13,5 @@ public class AddressMemberInfoResponse {
     private String memberEmail;
     private String memberPhone;
     private LocalDateTime registrationDate;
-    private List<AddressDto> addresses;
+    private List<AddressResponseDto> addresses;
 }
