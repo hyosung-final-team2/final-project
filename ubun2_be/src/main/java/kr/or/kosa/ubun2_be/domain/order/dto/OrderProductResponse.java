@@ -3,12 +3,14 @@ package kr.or.kosa.ubun2_be.domain.order.dto;
 import kr.or.kosa.ubun2_be.domain.order.entity.OrderProduct;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderProductStatus;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class OrderProductResponse {
 
     private Long orderProductId;
