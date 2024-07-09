@@ -8,13 +8,13 @@ const useRegisterStepStore = create(
       registerFirstData: {
         businessRegistrationNumber: '',
         businessOpenDate: '',
-        businessAddressOwner: '',
+        businessOwner: '',
       },
       registerSecondData: {
         customerName: '',
-        email: '',
+        customerEmail: '',
         emailAuthentication: '',
-        customerId: '',
+        customerLoginId: '',
         customerPassword: '',
         customerPasswordCheck: '',
       },

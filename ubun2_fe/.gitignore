@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 .history
+.env
 
 # Editor directories and files
 .vscode/*
