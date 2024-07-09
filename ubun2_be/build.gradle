@@ -55,6 +55,9 @@ dependencies {
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	// excel
+	implementation 'org.apache.poi:poi-ooxml:5.2.3'
+
 	tasks.named('test') {
 		useJUnitPlatform()
 	}
