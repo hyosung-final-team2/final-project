@@ -7,7 +7,7 @@ import lombok.*;
 
 @Entity
 @Getter
-@Setter
+@AllArgsConstructor
 @DiscriminatorValue("CARD")
 @Table(name = "card_payment")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -25,6 +25,11 @@ public class CardPayment extends PaymentMethod {
         super(member);
         this.cardNumber = cardNumber;
         this.cardCompanyName = cardCompanyName;
+    }
+
+    public void update(String cardNumber, String cardCompanyName) {
+        this.cardCompanyName = cardCompanyName;
+        this.cardNumber = cardNumber;
     }
 
 }

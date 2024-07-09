@@ -6,17 +6,19 @@ import kr.or.kosa.ubun2_be.domain.order.entity.Order;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberDetailPaymentMethodResponse;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "payment_type")
-@Table(name = "payment_method")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@DiscriminatorColumn(name = "payment_type")
+@Table(name = "payment_method")
 public class PaymentMethod extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +26,9 @@ public class PaymentMethod extends BaseTimeEntity {
 
     @Column
     private String paymentMethodNickname;
+
+    @Column(name = "payment_type", insertable = false, updatable = false)
+    private String paymentType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
