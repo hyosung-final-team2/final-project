@@ -1,6 +1,5 @@
 package kr.or.kosa.ubun2_be.global.auth.model;
 
-import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +28,8 @@ public class CustomUserDetails implements UserDetails {
     public String getUsername() {
         return user.getLoginId();
     }
+
+    public Long getUserId() { return user.getId(); }
 
     @Override
     public boolean isAccountNonExpired() {

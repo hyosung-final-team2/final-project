@@ -82,6 +82,11 @@ public class Customer extends BaseTimeEntity implements UserType {
     private List<PendingMember> pendingMembers;
 
     @Override
+    public Long getId() {
+        return this.customerId;
+    }
+
+    @Override
     public String getLoginId() {
         return this.customerLoginId;
     }
