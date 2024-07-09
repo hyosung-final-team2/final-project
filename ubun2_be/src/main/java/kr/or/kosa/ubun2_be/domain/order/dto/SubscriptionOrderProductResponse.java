@@ -2,12 +2,14 @@ package kr.or.kosa.ubun2_be.domain.order.dto;
 
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class SubscriptionOrderProductResponse {
 
     private Long subscriptionOrderProductId;

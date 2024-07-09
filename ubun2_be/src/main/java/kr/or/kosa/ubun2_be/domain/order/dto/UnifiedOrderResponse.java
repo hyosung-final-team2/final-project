@@ -5,12 +5,14 @@ import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.AccountPayment;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UnifiedOrderResponse {
     private Long orderId;
     private String orderStatus;

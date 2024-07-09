@@ -9,13 +9,13 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
 import java.util.List;
 
-import static kr.or.kosa.ubun2_be.domain.order.entity.QOrder.order;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMember.member;
+import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCustomer;
+import static kr.or.kosa.ubun2_be.domain.order.entity.QOrder.order;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QOrderProduct.orderProduct;
-import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QPaymentMethod.paymentMethod;
 import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QAccountPayment.accountPayment;
 import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QCardPayment.cardPayment;
-import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCustomer;
+import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QPaymentMethod.paymentMethod;
 
 public class OrderRepositoryImpl extends QuerydslRepositorySupport implements OrderRepositoryCustom {
 
