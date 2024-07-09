@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberDetailRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberInfoResponse;
+import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,4 +42,9 @@ public class AddressController {
         return ResponseDto.ok(response, "주소 상세를 성공적으로 조회했습니다.");
     }
 
-}
+    @Operation(summary = "주소 등록")
+    @PostMapping(value = "/", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseDto<?> addAddress(@RequestBody AddressRequest addressRequest) {
+        addressService.addAddress(addressRequest);
+        return ResponseDto.ok(null, "주소가 성공적으로 등록되었습니다.");
+    }}
