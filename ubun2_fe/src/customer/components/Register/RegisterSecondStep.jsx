@@ -5,9 +5,9 @@ import { useState, useEffect } from 'react';
 const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
   const INITIAL_REGISTER_OBJ = {
     customerName: '',
-    email: '',
+    customerEmail: '',
     emailAuthentication: '',
-    customerId: '',
+    customerLoginId: '',
     customerPassword: '',
     customerPasswordCheck: '',
   };
@@ -19,13 +19,13 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
   const [secondRegisterObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ);
 
   useEffect(() => {
-    const { customerName, email, emailAuthentication, customerId, customerPassword, customerPasswordCheck } = secondRegisterObj;
+    const { customerName, customerEmail, emailAuthentication, customerLoginId, customerPassword, customerPasswordCheck } = secondRegisterObj;
 
     if (
       customerName.trim() !== '' &&
-      email.trim() !== '' &&
+      customerEmail.trim() !== '' &&
       emailAuthentication.trim() !== '' &&
-      customerId.trim() !== '' &&
+      customerLoginId.trim() !== '' &&
       customerPassword.trim() !== '' &&
       customerPasswordCheck.trim() !== ''
       // TODO: 값이 차있는지뿐만 아니라 값이 유효한 인증된 값인지 여부도 판단해야함
@@ -41,18 +41,16 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
     setErrorMessage('');
 
     if (secondRegisterObj.customerName.trim() === '') return setErrorMessage('이름을 입력해주세요');
-    if (secondRegisterObj.email.trim() === '') return setErrorMessage('이메일을 입력해주세요');
+    if (secondRegisterObj.customerEmail.trim() === '') return setErrorMessage('이메일을 입력해주세요');
     if (secondRegisterObj.emailAuthentication.trim() === '') return setErrorMessage('인증번호를 입력해주세요');
-    if (secondRegisterObj.customerId.trim() === '') return setErrorMessage('아이디를 입력해주세요');
+    if (secondRegisterObj.customerLoginId.trim() === '') return setErrorMessage('아이디를 입력해주세요');
     if (secondRegisterObj.customerPassword.trim() === '') return setErrorMessage('비밀번호를 입력해주세요');
     if (secondRegisterObj.customerPasswordCheck.trim() === '') return setErrorMessage('비밀번호 확인을 입력해주세요');
     else {
       setLoading(true);
-      // Call API to check user credentials and save token in localstorage
       setRegisterSecondData(secondRegisterObj);
       setLoading(false);
       setRegisterStep(3);
-      // window.location.href = '/app/welcome';
     }
   };
 
@@ -79,8 +77,8 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
             placeholder='이름을 입력해주세요.'
           />
           <InputTextWithBtn
-            defaultValue={secondRegisterObj.email}
-            updateType='email'
+            defaultValue={secondRegisterObj.customerEmail}
+            updateType='customerEmail'
             containerStyle='mt-1'
             labelTitle='이메일'
             updateFormValue={updateFormValue}
@@ -102,8 +100,8 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
           )}
 
           <InputText
-            defaultValue={secondRegisterObj.customerId}
-            updateType='customerId'
+            defaultValue={secondRegisterObj.customerLoginId}
+            updateType='customerLoginId'
             containerStyle='mt-1'
             labelTitle='아이디'
             updateFormValue={updateFormValue}
