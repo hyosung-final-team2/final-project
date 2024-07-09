@@ -1,4 +1,4 @@
-package kr.or.kosa.ubun2_be.global.auth.config;
+package kr.or.kosa.ubun2_be.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,8 +1,8 @@
-package kr.or.kosa.ubun2_be.domain.member.service.impl;
+package kr.or.kosa.ubun2_be.global.auth.service.impl;
 
-import kr.or.kosa.ubun2_be.domain.member.dto.EmailAuthenticationRequest;
-import kr.or.kosa.ubun2_be.domain.member.dto.EmailRequest;
-import kr.or.kosa.ubun2_be.domain.member.service.EmailService;
+import kr.or.kosa.ubun2_be.global.auth.dto.EmailAuthenticationRequest;
+import kr.or.kosa.ubun2_be.global.auth.dto.EmailRequest;
+import kr.or.kosa.ubun2_be.global.auth.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -46,7 +46,6 @@ public class EmailServiceImpl implements EmailService {
     private void saveAuthenticationNumber(String email, String authenticationNumber) {
         ValueOperations<String, Object> stringObjectValueOperations = redisTemplate.opsForValue();
         stringObjectValueOperations.set(email, authenticationNumber);
-        System.out.println("savecheck"+stringObjectValueOperations.get(email));
         redisTemplate.expire(email, TIME_OUT, TimeUnit.MINUTES);
     }
 
@@ -64,7 +63,6 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public boolean validateAuthenticationNumber(EmailAuthenticationRequest emailAuthenticationRequest) {
         Optional<String> authenticationNumber = getAuthenticationNumber(emailAuthenticationRequest.getEmail());
-        System.out.println("authNum"+authenticationNumber);
         if(authenticationNumber.equals(emailAuthenticationRequest.getAuthenticationNumber())) {
             deleteAuthenticationNumber(emailAuthenticationRequest.getEmail());
             return true;
