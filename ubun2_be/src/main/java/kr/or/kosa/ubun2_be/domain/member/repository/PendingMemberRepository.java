@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface PendingMemberRepository extends JpaRepository<PendingMember,Long> {
+public interface PendingMemberRepository extends JpaRepository<PendingMember,Long>,PendingMemberRepositoryCustom {
     List<PendingMember> findByPendingMemberEmail(String memberEmail);
-
 }

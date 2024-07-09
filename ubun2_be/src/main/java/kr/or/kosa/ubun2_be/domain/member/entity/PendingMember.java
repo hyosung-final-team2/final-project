@@ -1,17 +1,13 @@
 package kr.or.kosa.ubun2_be.domain.member.entity;
 
 import jakarta.persistence.*;
-import kr.or.kosa.ubun2_be.domain.address.entity.Address;
-import kr.or.kosa.ubun2_be.domain.customer.dto.RegisterMemberRequest;
-import kr.or.kosa.ubun2_be.domain.customer.dto.UpdatePendingMemberRequest;
+import kr.or.kosa.ubun2_be.domain.customer.dto.request.RegisterMemberRequest;
+import kr.or.kosa.ubun2_be.domain.customer.dto.request.UpdatePendingMemberRequest;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
