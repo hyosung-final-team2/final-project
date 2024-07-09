@@ -26,5 +26,9 @@ public class AccountPayment extends PaymentMethod {
         this.bankName = bankName;
     }
 
+    public void update(String accountNumber, String bankName) {
+        this.accountNumber = accountNumber;
+        this.bankName = bankName;
+    }
 
 }
