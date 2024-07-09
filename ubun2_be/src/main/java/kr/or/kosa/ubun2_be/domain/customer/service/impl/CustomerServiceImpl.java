@@ -82,6 +82,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public void registerMember(RegisterMemberRequest registerMemberRequest, Long customerId) {
         if (!validateRegisterRequest(registerMemberRequest)) {
             throw new CustomerException(CustomerExceptionType.INVALID_REGISTER_FORMAT);
@@ -99,7 +100,10 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public MemberDetailResponse getMemberDetail(Long memberId, Boolean isPending) {
+    @Transactional(readOnly = true)
+    public MemberDetailResponse getMemberDetail(Long customerId, Long memberId, Boolean isPending) {
+        validateMyMember(customerId, memberId);
+
         if (isPending) {
             PendingMember pendingMember = pendingMemberRepository.findById(memberId)
                     .orElseThrow(() -> new PendingMemberException(PendingMemberExceptionType.NOT_EXIST_PENDING_MEMBER));
@@ -113,7 +117,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     @Transactional
-    public void updateMember(Long memberId, MemberRequestWrapper<?> memberRequestWrapper) {
+    public void updateMember(Long customerId, Long memberId, MemberRequestWrapper<?> memberRequestWrapper) {
+        validateMyMember(customerId, memberId);
+
         if (memberRequestWrapper.isPending()) {
             PendingMember findMember = pendingMemberRepository.findById(memberId)
                     .orElseThrow(() -> new PendingMemberException(PendingMemberExceptionType.NOT_EXIST_PENDING_MEMBER));
@@ -132,22 +138,18 @@ public class CustomerServiceImpl implements CustomerService {
             findMember.updateMember(updateMemberRequest.getMemberName(), updateMemberRequest.getMemberEmail(),updateMemberRequest.getMemberPhone());
             saveOrUpdateAddresses(findMember,updateMemberRequest.getAddresses());
             saveOrDeletePaymentMethods(findMember,updateMemberRequest.getPaymentMethods());
-
         }
     }
 
     @Override
-    public void deleteMember(Long memberId, Boolean isPending) {
+    @Transactional
+    public void deleteMember(Long customerId, Long memberId, Boolean isPending) {
+        validateMyMember(customerId, memberId);
+
         if (isPending) {
-            if (!pendingMemberRepository.existsById(memberId)) {
-                throw new PendingMemberException(PendingMemberExceptionType.NOT_EXIST_PENDING_MEMBER);
-            }
-            pendingMemberRepository.deleteById(memberId);
+            deletePendingMember(memberId);
         } else {
-            if (!memberRepository.existsById(memberId)) {
-                throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
-            }
-            memberRepository.deleteById(memberId);
+            deleteRegularMember(memberId);
         }
     }
 
@@ -197,7 +199,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional
     public void saveOrUpdateAddresses(Member member, List<MemberDetailAddressRequest> addressRequests) {
-
         for (MemberDetailAddressRequest memberDetailAddressRequest : addressRequests) {
             if (memberDetailAddressRequest.getAddressId() == null) {
                 Address newAddress = memberDetailAddressRequest.toEntity(member);
@@ -216,7 +217,6 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Transactional
     public void saveOrDeletePaymentMethods(Member member, List<MemberDetailPaymentMethodRequest> paymentMethodRequests) {
-
         for (MemberDetailPaymentMethodRequest memberDetailPaymentMethodRequest : paymentMethodRequests) {
             if (memberDetailPaymentMethodRequest.getBankName() == null && memberDetailPaymentMethodRequest.getCardCompanyName() == null) {
                 paymentMethodRepository.deleteById(memberDetailPaymentMethodRequest.getPaymentMethodId());
@@ -234,7 +234,25 @@ public class CustomerServiceImpl implements CustomerService {
                 }
             }
         }
-
     }
 
+    private void validateMyMember(Long customerId, Long memberId) {
+        if (!memberCustomerRepository.existsByCustomerIdAndMemberId(customerId, memberId)) {
+            throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
+        }
+    }
+
+    private void deletePendingMember(Long memberId) {
+        if (!pendingMemberRepository.existsById(memberId)) {
+            throw new PendingMemberException(PendingMemberExceptionType.NOT_EXIST_PENDING_MEMBER);
+        }
+        pendingMemberRepository.deleteById(memberId);
+    }
+
+    private void deleteRegularMember(Long memberId) {
+        if (!memberRepository.existsById(memberId)) {
+            throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
+        }
+        memberRepository.deleteById(memberId);
+    }
 }

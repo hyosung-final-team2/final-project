@@ -19,11 +19,11 @@ public interface CustomerService {
 
     void registerMember(RegisterMemberRequest registerMemberRequest, Long customerId);
 
-    MemberDetailResponse getMemberDetail(Long memberId, Boolean isPending);
+    MemberDetailResponse getMemberDetail(Long customerId,Long memberId, Boolean isPending);
 
-    void updateMember(Long memberId, MemberRequestWrapper<?> memberRequestWrapper);
+    void updateMember(Long customerId, Long memberId, MemberRequestWrapper<?> memberRequestWrapper);
 
-    void deleteMember(Long memberId, Boolean isPending);
+    void deleteMember(Long customerId,Long memberId, Boolean isPending);
 
     Page<MemberListResponse> getMembers(Long customerId, SearchRequest searchRequest, Pageable pageable);
 }
