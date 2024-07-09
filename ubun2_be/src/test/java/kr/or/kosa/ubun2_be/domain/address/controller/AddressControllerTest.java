@@ -139,4 +139,50 @@ class AddressControllerTest {
                 .andExpect(jsonPath("$.message").value("주소가 성공적으로 등록되었습니다."));
 
         verify(addressService).addAddress(any(AddressRequest.class));
-    }}
+    }
+
+    @Test
+    @DisplayName("주소를 성공적으로 수정한다")
+    void updateAddress() throws Exception {
+        // Given
+        Long addressId = 12L;
+        AddressRequest addressRequest = AddressRequest.builder()
+                .memberId(1L)
+                .addressId(addressId)
+                .address("서울시 강남구 테헤란로 123")
+                .recipientName("홍길동")
+                .recipientPhone("010-1234-5678")
+                .build();
+
+        doNothing().when(addressService).updateAddress(addressId, addressRequest);
+
+        // When & Then
+        mockMvc.perform(put("/customers/addresses/{address_id}", addressId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(addressRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data").doesNotExist())
+                .andExpect(jsonPath("$.message").value("주소가 성공적으로 수정되었습니다."));
+
+        verify(addressService).updateAddress(eq(addressId), any(AddressRequest.class));
+    }
+
+    @Test
+    @DisplayName("주소를 성공적으로 삭제한다")
+    void deleteAddress_ShouldDeleteSuccessfully() throws Exception {
+        // Given
+        Long addressId = 1L;
+        doNothing().when(addressService).deleteAddress(addressId);
+
+        // When & Then
+        mockMvc.perform(delete("/customers/addresses/{address_id}", addressId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data").doesNotExist())
+                .andExpect(jsonPath("$.message").value("주소가 성공적으로 삭제되었습니다."));
+
+        verify(addressService).deleteAddress(addressId);
+    }
+}

@@ -11,4 +11,6 @@ public interface AddressService {
     public Page<AddressResponse> getAllAddresses(Pageable pageable);
     public AddressMemberInfoResponse getMemberInfoByAddressId(AddressMemberDetailRequest addressMemberDetailRequest);
     public void addAddress(AddressRequest addressRequest);
+    public void updateAddress(Long addressId, AddressRequest addressRequest);
+    public void deleteAddress(Long addressId);
 }

@@ -47,4 +47,21 @@ public class AddressController {
     public ResponseDto<?> addAddress(@RequestBody AddressRequest addressRequest) {
         addressService.addAddress(addressRequest);
         return ResponseDto.ok(null, "주소가 성공적으로 등록되었습니다.");
-    }}
+    }
+
+    @Operation(summary = "회원의 주소 수정")
+    @PutMapping(value = "/{address_id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseDto<?> updateAddress(@PathVariable("address_id") Long addressId, @RequestBody AddressRequest addressRequest) {
+        addressService.updateAddress(addressId, addressRequest);
+        return ResponseDto.ok(null, "주소가 성공적으로 수정되었습니다.");
+    }
+
+    @Operation(summary = "주소 삭제")
+    @DeleteMapping("/{address_id}")
+    public ResponseDto<?> deleteAddress(@PathVariable("address_id") Long addressId) {
+        addressService.deleteAddress(addressId);
+        return ResponseDto.ok(null, "주소가 성공적으로 삭제되었습니다.");
+    }
+
+
+}

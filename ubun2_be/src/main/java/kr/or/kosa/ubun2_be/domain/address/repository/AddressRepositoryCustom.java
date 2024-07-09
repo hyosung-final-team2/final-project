@@ -9,5 +9,4 @@ import org.springframework.data.domain.Pageable;
 public interface AddressRepositoryCustom {
     Page<AddressResponse> findAllAddressesWithMember(Pageable pageable);
     AddressMemberInfoResponse findMemberInfoByAddressId(Long addressId);
-
 }
