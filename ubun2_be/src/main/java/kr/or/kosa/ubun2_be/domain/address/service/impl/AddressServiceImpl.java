@@ -2,8 +2,8 @@ package kr.or.kosa.ubun2_be.domain.address.service.impl;
 
 import kr.or.kosa.ubun2_be.domain.address.dto.*;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
-import kr.or.kosa.ubun2_be.domain.address.exception.address.AddressException;
-import kr.or.kosa.ubun2_be.domain.address.exception.address.AddressExceptionType;
+import kr.or.kosa.ubun2_be.domain.address.exception.AddressException;
+import kr.or.kosa.ubun2_be.domain.address.exception.AddressExceptionType;
 import kr.or.kosa.ubun2_be.domain.address.repository.AddressRepository;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +33,7 @@ public class AddressServiceImpl implements AddressService {
     public AddressMemberInfoResponse getMemberInfoByAddressId(AddressMemberDetailRequest addressMemberDetailRequest) {
         AddressMemberInfoResponse response = addressRepository.findMemberInfoByAddressId(addressMemberDetailRequest.getAddressId());
         if (response == null) {
-            throw new AddressException(AddressExceptionType.NO_MATCHING_ADDRESS);
+            throw new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS);
         }
         return response;
     }
@@ -52,4 +53,18 @@ public class AddressServiceImpl implements AddressService {
                 .build();
 
         addressRepository.save(address);
-    }}
+    }
+
+    @Transactional
+    @Override
+    public void updateAddress(Long addressId, AddressRequest addressRequest) {
+        Address address = addressRepository.findById(addressId).orElse(null);
+        address.updateAddress(addressRequest.getAddress());
+    }
+
+    @Override
+    public void deleteAddress(Long addressId) {
+        Address address = addressRepository.findById(addressId).orElse(null);
+        addressRepository.delete(address);
+    }
+}
