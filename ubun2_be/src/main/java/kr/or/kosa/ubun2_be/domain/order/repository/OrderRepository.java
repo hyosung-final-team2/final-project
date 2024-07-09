@@ -20,7 +20,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "LEFT JOIN AccountPayment ap ON pm.paymentMethodId = ap.paymentMethodId " +
             "LEFT JOIN CardPayment cp ON pm.paymentMethodId = cp.paymentMethodId " +
             "WHERE mc.customer.customerId = :customerId " +
-            "AND o.orderStatus <> kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus.PENDING",
+            "AND o.orderStatus <> " + PENDING_STATUS,
             countQuery = "SELECT COUNT(DISTINCT o) FROM Order o " +
                     "JOIN o.member m " +
                     "JOIN m.memberCustomers mc " +
@@ -36,7 +36,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "LEFT JOIN AccountPayment ap ON pm.paymentMethodId = ap.paymentMethodId " +
             "LEFT JOIN CardPayment cp ON pm.paymentMethodId = cp.paymentMethodId " +
             "WHERE mc.customer.customerId = :customerId " +
-            "AND so.orderStatus <> kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus.PENDING",
+            "AND so.orderStatus <> " + PENDING_STATUS,
             countQuery = "SELECT COUNT(DISTINCT so) FROM SubscriptionOrder so " +
                     "JOIN so.member m " +
                     "JOIN m.memberCustomers mc " +

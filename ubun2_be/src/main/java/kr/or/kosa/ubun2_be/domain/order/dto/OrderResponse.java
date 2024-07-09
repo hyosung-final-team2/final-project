@@ -18,11 +18,7 @@ public class OrderResponse {
     private Long orderId;
     private String orderStatus;
     private String createdAt;
-    private String updatedAt;
     private String memberName;
-    private Long customerId;
-    private List<OrderProductResponse> orderProducts;
-    private Long paymentMethodId;
     private String paymentType;
     private int totalOrderPrice;
 
@@ -30,14 +26,8 @@ public class OrderResponse {
         this.orderId = order.getOrderId();
         this.orderStatus = order.getOrderStatus().name();
         this.createdAt = order.getCreatedAt().toString();
-        this.updatedAt = order.getUpdatedAt().toString();
         this.memberName = order.getMember().getMemberName();
-        this.customerId = order.getMember().getMemberCustomers().get(0).getCustomer().getCustomerId();
-        this.orderProducts = order.getOrderProducts().stream()
-                .map(OrderProductResponse::new)
-                .collect(Collectors.toList());
-        this.paymentMethodId = order.getPaymentMethod().getPaymentMethodId();
-        this.totalOrderPrice = calculateTotalOrderPrice();
+        this.totalOrderPrice = calculateTotalOrderPrice(order);
 
         if (order.getPaymentMethod() instanceof AccountPayment) {
             this.paymentType = "ACCOUNT";
@@ -46,9 +36,9 @@ public class OrderResponse {
         }
     }
 
-    private int calculateTotalOrderPrice() {
-        return this.orderProducts.stream()
-                .mapToInt(OrderProductResponse::getTotalPrice)
+    private int calculateTotalOrderPrice(Order order) {
+        return order.getOrderProducts().stream()
+                .mapToInt(op -> new OrderProductResponse(op).getTotalPrice())
                 .sum();
     }
 }

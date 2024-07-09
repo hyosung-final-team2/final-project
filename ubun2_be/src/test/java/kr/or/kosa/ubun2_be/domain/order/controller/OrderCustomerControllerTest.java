@@ -64,12 +64,7 @@ class OrderCustomerControllerTest {
                 1L,
                 "APPROVED",
                 "2024-01-01T15:00",
-                "2024-01-01T15:00",
                 "김철수",
-                1L,
-                Arrays.asList(new OrderProductResponse(1L, 2, 10000, OrderProductStatus.APPROVED, 20000),
-                        new OrderProductResponse(2L, 1, 15000, OrderProductStatus.APPROVED, 15000)),
-                1L,
                 "CARD",
                 35000
         );
@@ -80,12 +75,7 @@ class OrderCustomerControllerTest {
                 1L,
                 "APPROVED",
                 "2024-01-01T13:00",
-                "2024-01-01T15:00",
                 "김철수",
-                1L,
-                Arrays.asList(new SubscriptionOrderProductResponse(1L, 2, 10000, 20000),
-                        new SubscriptionOrderProductResponse(6L, 1, 15000, 15000)),
-                1L,
                 "CARD",
                 35000
         );
@@ -113,7 +103,8 @@ class OrderCustomerControllerTest {
                 .andExpect(jsonPath("$.data.content[0].orderId").value(1))
                 .andExpect(jsonPath("$.data.content[0].orderStatus").value("APPROVED"))
                 .andExpect(jsonPath("$.data.content[0].memberName").value("김철수"))
-                .andExpect(jsonPath("$.data.content[0].customerId").value(1))
+                .andExpect(jsonPath("$.data.content[0].paymentType").value("CARD"))
+                .andExpect(jsonPath("$.data.content[0].totalOrderPrice").value(35000))
                 .andExpect(jsonPath("$.data.totalElements").value(1)) // 데이터가 1개만 들어있음
                 .andExpect(jsonPath("$.data.totalPages").value(1))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
@@ -143,7 +134,8 @@ class OrderCustomerControllerTest {
                 .andExpect(jsonPath("$.data.content[0].subscriptionOrderId").value(1))
                 .andExpect(jsonPath("$.data.content[0].orderStatus").value("APPROVED"))
                 .andExpect(jsonPath("$.data.content[0].memberName").value("김철수"))
-                .andExpect(jsonPath("$.data.content[0].customerId").value(1))
+                .andExpect(jsonPath("$.data.content[0].paymentType").value("CARD"))
+                .andExpect(jsonPath("$.data.content[0].totalSubscriptionOrderPrice").value(35000))
                 .andExpect(jsonPath("$.data.totalElements").value(1)) // 데이터가 1개만 들어있음
                 .andExpect(jsonPath("$.data.totalPages").value(1))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));

@@ -18,11 +18,7 @@ public class SubscriptionOrderResponse {
     private Long subscriptionOrderId;
     private String orderStatus;
     private String createdAt;
-    private String updatedAt;
     private String memberName;
-    private Long customerId;
-    private List<SubscriptionOrderProductResponse> subscriptionOrderProducts;
-    private Long paymentMethodId;
     private String paymentType;
     private int totalSubscriptionOrderPrice;
 
@@ -30,14 +26,8 @@ public class SubscriptionOrderResponse {
         this.subscriptionOrderId = subscriptionOrder.getSubscriptionOrderId();
         this.orderStatus = subscriptionOrder.getOrderStatus().name();
         this.createdAt = subscriptionOrder.getCreatedAt().toString();
-        this.updatedAt = subscriptionOrder.getUpdatedAt().toString();
         this.memberName = subscriptionOrder.getMember().getMemberName();
-        this.customerId = subscriptionOrder.getMember().getMemberCustomers().get(0).getCustomer().getCustomerId();
-        this.subscriptionOrderProducts = subscriptionOrder.getSubscriptionOrderProducts().stream()
-                .map(SubscriptionOrderProductResponse::new)
-                .collect(Collectors.toList());
-        this.paymentMethodId = subscriptionOrder.getPaymentMethod().getPaymentMethodId();
-        this.totalSubscriptionOrderPrice = calculateTotalSubscriptionOrderPrice();
+        this.totalSubscriptionOrderPrice = calculateTotalSubscriptionOrderPrice(subscriptionOrder);
 
         if (subscriptionOrder.getPaymentMethod() instanceof AccountPayment) {
             this.paymentType = "ACCOUNT";
@@ -46,9 +36,9 @@ public class SubscriptionOrderResponse {
         }
     }
 
-    private int calculateTotalSubscriptionOrderPrice() {
-        return this.subscriptionOrderProducts.stream()
-                .mapToInt(SubscriptionOrderProductResponse::getTotalPrice)
+    private int calculateTotalSubscriptionOrderPrice(SubscriptionOrder subscriptionOrder) {
+        return subscriptionOrder.getSubscriptionOrderProducts().stream()
+                .mapToInt(op -> new SubscriptionOrderProductResponse(op).getTotalPrice())
                 .sum();
     }
 
