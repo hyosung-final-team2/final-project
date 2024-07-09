@@ -1,4 +1,4 @@
-package kr.or.kosa.ubun2_be.domain.member.dto;
+package kr.or.kosa.ubun2_be.global.auth.dto;
 
 import lombok.Getter;
 @Getter

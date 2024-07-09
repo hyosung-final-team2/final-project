@@ -1,7 +1,11 @@
 package kr.or.kosa.ubun2_be.domain.order.service.impl;
 
+import kr.or.kosa.ubun2_be.domain.order.dto.OrderDetailResponse;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.order.dto.UnifiedOrderResponse;
+import kr.or.kosa.ubun2_be.domain.order.entity.Order;
+import kr.or.kosa.ubun2_be.domain.order.exception.OrderException;
+import kr.or.kosa.ubun2_be.domain.order.exception.OrderExceptionType;
 import kr.or.kosa.ubun2_be.domain.order.repository.OrderRepository;
 import kr.or.kosa.ubun2_be.domain.order.repository.SubscriptionOrderRepository;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
@@ -37,6 +41,13 @@ public class OrderServiceImpl implements OrderService {
         List<UnifiedOrderResponse> paginatedList = combinedList.subList(start, end);
 
         return new PageImpl<>(paginatedList, pageable, combinedList.size());
+    }
+
+    @Override
+    public OrderDetailResponse getOrderByCustomerIdAndOrderId(Long orderId, Long customerId) {
+        Order findOrder = orderRepository.findOrderByIdAndCustomerId(orderId, customerId)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
+        return new OrderDetailResponse(findOrder);
     }
 
 }

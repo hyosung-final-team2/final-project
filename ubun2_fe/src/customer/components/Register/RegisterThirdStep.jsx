@@ -1,6 +1,7 @@
 import InputText from '../common/Input/InputText';
 import InputTextWithBtn from '../common/Input/InputTextWithBtn';
 import { useState, useEffect } from 'react';
+import {useSignup} from "../../api/Customer/Register/queris.js";
 
 const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
   const INITIAL_REGISTER_OBJ = {
@@ -15,6 +16,8 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [thirdRegisterObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ);
+
+  const { mutate: signUpMutate, isError } = useSignup(thirdRegisterObj);
 
   useEffect(() => {
     const { businessName, customerPhone, businessAddressNumber, businessAddressDefault, businessAddressDetail } = thirdRegisterObj;
@@ -44,9 +47,11 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
     else {
       setLoading(true);
       setRegisterThirdData(thirdRegisterObj);
-      // TODO: 스토어에서 데이터 꺼내서 회원가입 API 호출
+      signUpMutate()
       setLoading(false);
-      setRegisterStep(4);
+      if (!isError) {
+        setRegisterStep(4);
+      }
     }
   };
 

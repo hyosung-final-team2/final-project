@@ -8,7 +8,7 @@ const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
   const INITIAL_REGISTER_OBJ = {
     businessRegistrationNumber: '',
     businessOpenDate: '',
-    businessAddressOwner: '',
+    businessOwner: '',
   };
 
   const [isAllValuePossible, setIsAllValuePossible] = useState(false);
@@ -18,13 +18,13 @@ const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
   const [registerObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ);
 
   useEffect(() => {
-    const { businessRegistrationNumber, businessOpenDate, businessAddressOwner } = registerObj;
+    const { businessRegistrationNumber, businessOpenDate, businessOwner } = registerObj;
     console.log(registerObj);
     console.log(isAllValuePossible);
     if (
       businessRegistrationNumber.trim() !== '' &&
       businessOpenDate.trim() !== '' &&
-      businessAddressOwner.trim() !== ''
+        businessOwner.trim() !== ''
       // TODO: 값이 차있는지뿐만 아니라 값이 유효한 인증된 값인지 여부도 판단해야함
     ) {
       setIsAllValuePossible(true);
@@ -39,7 +39,7 @@ const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
 
     if (registerObj.businessRegistrationNumber.trim() === '') return setErrorMessage('사업자 등록 번호를 인증해주세요');
     if (registerObj.businessOpenDate.trim() === '') return setErrorMessage('사업장 주소를 입력해주세요');
-    if (registerObj.businessAddressOwner.trim() === '') return setErrorMessage('대표자 명을 입력해주세요');
+    if (registerObj.businessOwner.trim() === '') return setErrorMessage('대표자 명을 입력해주세요');
     else {
       setLoading(true);
       setRegisterFirstData(registerObj);
@@ -84,8 +84,8 @@ const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
           </div>
 
           <InputTextWithBtn
-            defaultValue={registerObj.businessAddressOwner}
-            updateType='businessAddressOwner'
+            defaultValue={registerObj.businessOwner}
+            updateType='businessOwner'
             containerStyle='mt-4'
             labelTitle='대표자 명'
             updateFormValue={updateFormValue}

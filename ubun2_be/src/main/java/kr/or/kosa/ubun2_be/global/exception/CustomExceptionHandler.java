@@ -2,7 +2,9 @@ package kr.or.kosa.ubun2_be.global.exception;
 
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
+
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodException;
+import kr.or.kosa.ubun2_be.domain.order.exception.OrderException;
 import kr.or.kosa.ubun2_be.domain.product.exception.category.CategoryException;
 import kr.or.kosa.ubun2_be.domain.product.exception.image.ImageException;
 import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductException;
@@ -93,6 +95,7 @@ public class CustomExceptionHandler implements ErrorController {
         return new ResponseEntity(error, addressException.getExceptionType().getHttpStatus());
     }
 
+
     @ExceptionHandler(value = PaymentMethodException.class)
     public ResponseEntity handleGlobalException(PaymentMethodException paymentMethodException) {
         ErrorDto error = ErrorDto.builder()
@@ -102,6 +105,18 @@ public class CustomExceptionHandler implements ErrorController {
                 .build();
 
         return new ResponseEntity(error, paymentMethodException.getExceptionType().getHttpStatus());
+    }
+
+
+    @ExceptionHandler(value = OrderException.class)
+    public ResponseEntity handleGlobalException(OrderException orderException) {
+        ErrorDto error = ErrorDto.builder()
+                .errorCode(orderException.getExceptionType().getErrorCode())
+                .errorMessage(orderException.getExceptionType().getMessage())
+                .httpStatus(orderException.getExceptionType().getHttpStatus())
+                .build();
+
+        return new ResponseEntity(error, orderException.getExceptionType().getHttpStatus());
     }
 
 }
