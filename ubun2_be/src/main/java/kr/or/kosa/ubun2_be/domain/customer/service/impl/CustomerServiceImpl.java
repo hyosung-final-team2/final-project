@@ -3,6 +3,7 @@ package kr.or.kosa.ubun2_be.domain.customer.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.kosa.ubun2_be.domain.address.dto.MemberDetailAddressRequest;
+import kr.or.kosa.ubun2_be.domain.address.dto.MemberDetailAddressResponse;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressException;
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressExceptionType;
@@ -186,12 +187,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private MemberDetailResponse createMemberDetailResponse(Member member) {
+
+        List<MemberDetailAddressResponse> addresses = member.getAddresses().stream()
+                .map(MemberDetailAddressResponse::new)
+                .toList();
+
         return MemberDetailResponse.builder()
                 .memberName(member.getMemberName())
                 .memberEmail(member.getMemberEmail())
                 .memberPhone(member.getMemberPhone())
                 .createdAt(member.getCreatedAt())
-                .addresses(Address.toDTOList(member.getAddresses()))
+                .addresses(addresses)
                 .paymentMethods(PaymentMethod.toDTOList(member.getPaymentMethods()))
                 .build();
     }
