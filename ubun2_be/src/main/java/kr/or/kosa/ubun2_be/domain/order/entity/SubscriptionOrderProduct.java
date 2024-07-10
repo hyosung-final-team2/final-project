@@ -40,5 +40,9 @@ public class SubscriptionOrderProduct extends BaseTimeEntity {
 
     @Column
     private int discount;
+
+    public void changeSubscriptionOrderProductStatus(OrderProductStatus newStatus) {
+        this.orderProductStatus = newStatus;
+    }
 }
 
