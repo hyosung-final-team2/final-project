@@ -8,9 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface AddressService {
-    public Page<AddressResponse> getAllAddresses(Pageable pageable);
-    public AddressMemberInfoResponse getMemberInfoByAddressId(AddressMemberDetailRequest addressMemberDetailRequest);
-    public void addAddress(AddressRequest addressRequest);
-    public void updateAddress(Long addressId, AddressRequest addressRequest);
-    public void deleteAddress(Long addressId);
+    public Page<AddressResponse> getAllAddresses(Pageable pageable, Long customerId);
+    public AddressMemberInfoResponse getMemberInfoByAddressId(AddressMemberDetailRequest addressMemberDetailRequest,Long customerId);
+    public void addAddress(AddressRequest addressRequest,Long customerId);
+    public void updateAddress(Long addressId, AddressRequest addressRequest,Long customerId);
+    public void deleteAddress(Long addressId,Long customerId);
 }
