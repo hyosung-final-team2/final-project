@@ -43,4 +43,9 @@ public class SubscriptionOrder extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "subscriptionOrder", cascade = CascadeType.ALL)
     private List<SubscriptionOrderProduct> subscriptionOrderProducts;
+
+    // OrderStatus 변경 메서드
+    public void changeOrderStatus(OrderStatus newOrderStatus) {
+        this.orderStatus = newOrderStatus;
+    }
 }

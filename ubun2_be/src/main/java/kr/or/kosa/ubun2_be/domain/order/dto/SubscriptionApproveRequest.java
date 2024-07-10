@@ -8,5 +8,5 @@ import lombok.Setter;
 @Setter
 public class SubscriptionApproveRequest {
     private Long subscriptionOrderId;
-    private OrderStatus orderStatus;
+    private String orderStatus;
 }
