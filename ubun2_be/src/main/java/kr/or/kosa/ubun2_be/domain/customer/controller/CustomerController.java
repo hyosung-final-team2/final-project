@@ -56,7 +56,7 @@ public class CustomerController {
     @Operation(summary = "회원 & 가입대기 회원 수정")
     @PutMapping("/members/{memberId}")
     public ResponseDto<?> updateMember(@PathVariable Long memberId,
-                                       @RequestBody MemberRequestWrapper<?> memberRequestWrapper,
+                                       @ModelAttribute MemberRequestWrapper<?> memberRequestWrapper,
                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         customerService.updateMember(customUserDetails.getUserId() ,memberId, memberRequestWrapper);
         return ResponseDto.ok(null, "회원 수정 정상 완료");
@@ -67,7 +67,6 @@ public class CustomerController {
     public ResponseDto<?> deleteMember(@PathVariable Long memberId,
                                        @RequestBody MemberDetailRequest memberDeleteRequest,
                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        System.out.println(customUserDetails);
         customerService.deleteMember(customUserDetails.getUserId() ,memberId, memberDeleteRequest.getIsPending());
         return ResponseDto.ok(null, "회원 삭제 정상 완료");
     }
