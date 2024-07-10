@@ -3,11 +3,14 @@ package kr.or.kosa.ubun2_be.domain.order.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import kr.or.kosa.ubun2_be.domain.order.dto.OrderDetailResponse;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
+import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderDetailResponse;
 import kr.or.kosa.ubun2_be.domain.order.dto.UnifiedOrderResponse;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +35,18 @@ public class OrderCustomerController {
 
     @Operation(summary = "단건 주문 상세 조회")
     @GetMapping("{order_id}")
-    public ResponseDto<?> getOrderByOrderId(@PathVariable("order_id") Long orderId, Long customerId){
+    public ResponseDto<?> getOrderByOrderId(@PathVariable("order_id") Long orderId, Long customerId) {
         OrderDetailResponse orderDetailResponse = orderService.getOrderByCustomerIdAndOrderId(orderId, customerId);
         return ResponseDto.ok(orderDetailResponse, "정상출력 데이터");
     }
+
+    @Operation(summary = "정기 주문 상세 조회")
+    @GetMapping("/subscription/{order_id}/{cycle_number}")
+    public ResponseDto<?> getSubscriptionOrderByOrderId(@PathVariable("order_id") Long orderId,
+                                                        @RequestParam Long customerId,
+                                                        @PathVariable("cycle_number") int cycleNumber) {
+        SubscriptionOrderDetailResponse response = orderService.getSubscriptionOrderByCustomerIdAndOrderIdAndCycleNumber(orderId, customerId, cycleNumber);
+        return ResponseDto.ok(response, "정상출력 데이터");
+    }
+
 }

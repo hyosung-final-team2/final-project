@@ -1,21 +1,16 @@
 package kr.or.kosa.ubun2_be.domain.order.dto;
 
-import kr.or.kosa.ubun2_be.domain.order.entity.Order;
+import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.AccountPayment;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class OrderDetailResponse {
+public class SubscriptionOrderDetailResponse {
     private String memberName;
     private String memberEmail;
     private String memberPhone;
@@ -28,25 +23,25 @@ public class OrderDetailResponse {
     private String cardCompanyName;
     private String cardNumber;
     private String paymentMethodNickname;
+    private int intervalDays;
     private int orderAmount;
     private int discountAmount;
     private int paymentAmount;
-    private List<OrderDetailProductResponse> orderProducts;
+    private List<SubscriptionOrderDetailProductResponse> subscriptionOrderProducts;
     private OrderStatus orderStatus;
 
-    public OrderDetailResponse(Order order) {
+    public SubscriptionOrderDetailResponse(SubscriptionOrder order, List<SubscriptionOrderDetailProductResponse> productResponses) {
         this.memberName = order.getMember().getMemberName();
         this.memberEmail = order.getMember().getMemberEmail();
         this.memberPhone = order.getMember().getMemberPhone();
         this.createdAt = order.getCreatedAt().toString();
         this.addressNickname = order.getAddress().getAddressNickname();
         this.address = order.getAddress().getAddress();
+        this.intervalDays = order.getIntervalDays();
+        this.orderStatus = order.getOrderStatus();
+        this.subscriptionOrderProducts = productResponses;
         setPaymentDetails(order.getPaymentMethod());
         calculateOrderAmounts(order);
-        this.orderProducts = order.getOrderProducts().stream()
-                .map(OrderDetailProductResponse::new)
-                .collect(Collectors.toList());
-        this.orderStatus = order.getOrderStatus();
     }
 
     private void setPaymentDetails(PaymentMethod paymentMethod) {
@@ -62,13 +57,14 @@ public class OrderDetailResponse {
         this.paymentMethodNickname = paymentMethod.getPaymentMethodNickname();
     }
 
-    private void calculateOrderAmounts(Order order) {
-        this.orderAmount = order.getOrderProducts().stream()
+    private void calculateOrderAmounts(SubscriptionOrder order) {
+        this.orderAmount = subscriptionOrderProducts.stream()
                 .mapToInt(op -> op.getPrice() * op.getQuantity())
                 .sum();
-        this.discountAmount = order.getOrderProducts().stream()
-                .mapToInt(op -> op.getPrice() * op.getDiscount() * op.getQuantity())
+        this.discountAmount = subscriptionOrderProducts.stream()
+                .mapToInt(op -> (int) (op.getPrice() * op.getDiscount() * op.getQuantity()))
                 .sum();
         this.paymentAmount = this.orderAmount - this.discountAmount;
     }
 }
+
