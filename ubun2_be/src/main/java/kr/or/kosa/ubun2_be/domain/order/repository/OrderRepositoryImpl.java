@@ -8,6 +8,7 @@ import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;
+import java.util.Optional;
 
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMember.member;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCustomer;
@@ -41,6 +42,41 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
 
         return query.fetch();
     }
+
+    @Override
+    public List<Order> findPendingOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
+        JPQLQuery<Order> query = from(order)
+                .distinct()
+                .leftJoin(order.member, member).fetchJoin()
+                .join(member.memberCustomers, memberCustomer)
+                .leftJoin(order.orderProducts, orderProduct).fetchJoin()
+                .leftJoin(order.paymentMethod, paymentMethod).fetchJoin()
+                .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
+                .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
+                .where(
+                        memberCustomer.customer.customerId.eq(customerId),
+                        order.orderStatus.eq(OrderStatus.PENDING),
+                        searchCondition(searchRequest)
+                );
+
+        return query.fetch();
+    }
+
+    @Override
+    public Optional<Order> findPendingOrderByIdAndCustomerId(Long orderId, Long customerId) {
+        JPQLQuery<Order> query = from(order)
+                .distinct()
+                .leftJoin(order.member, member).fetchJoin()
+                .join(member.memberCustomers, memberCustomer)
+                .where(
+                        order.orderId.eq(orderId),
+                        memberCustomer.customer.customerId.eq(customerId),
+                        order.orderStatus.eq(OrderStatus.PENDING)  // PENDING 상태 필터링
+                );
+
+        return Optional.ofNullable(query.fetchOne());
+    }
+
 
     private BooleanBuilder searchCondition(SearchRequest searchRequest) {
         BooleanBuilder builder = new BooleanBuilder();

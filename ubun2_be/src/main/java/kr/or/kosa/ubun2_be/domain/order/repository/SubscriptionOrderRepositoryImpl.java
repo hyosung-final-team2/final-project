@@ -42,6 +42,26 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
         return query.fetch();
     }
 
+    @Override
+    public List<SubscriptionOrder> findPendingSubscriptionOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
+        JPQLQuery<SubscriptionOrder> query = from(subscriptionOrder)
+                .distinct()
+                .leftJoin(subscriptionOrder.member, member).fetchJoin()
+                .join(member.memberCustomers, memberCustomer)
+                .leftJoin(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct).fetchJoin()
+                .leftJoin(subscriptionOrder.paymentMethod, paymentMethod).fetchJoin()
+                .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
+                .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
+                .where(
+                        memberCustomer.customer.customerId.eq(customerId),
+                        subscriptionOrder.orderStatus.eq(OrderStatus.PENDING),
+                        searchCondition(searchRequest)
+                );
+
+        return query.fetch();
+    }
+
+
     private BooleanBuilder searchCondition(SearchRequest searchRequest) {
         BooleanBuilder builder = new BooleanBuilder();
         if (searchRequest != null && searchRequest.getSearchKeyword() != null) {

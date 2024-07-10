@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface SubscriptionOrderRepositoryCustom {
     List<SubscriptionOrder> findSubscriptionOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest);
+    List<SubscriptionOrder> findPendingSubscriptionOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest);
 }
+
