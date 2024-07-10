@@ -44,4 +44,9 @@ public class Order extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderProduct> orderProducts;
+
+    // OrderStatus 변경 메서드
+    public void changeOrderStatus(OrderStatus newStatus) {
+        this.orderStatus = newStatus;
+    }
 }
