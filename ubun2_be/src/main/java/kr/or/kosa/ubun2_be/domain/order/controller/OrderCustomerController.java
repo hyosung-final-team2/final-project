@@ -46,7 +46,7 @@ public class OrderCustomerController {
                                                         @RequestParam Long customerId,
                                                         @PathVariable("cycle_number") int cycleNumber) {
         SubscriptionOrderDetailResponse response = orderService.getSubscriptionOrderByCustomerIdAndOrderIdAndCycleNumber(orderId, customerId, cycleNumber);
-        return ResponseDto.ok(response, "정기 주문 상세 조회 성공");
+        return ResponseDto.ok(response, "정상출력 데이터");
     }
 
 }
