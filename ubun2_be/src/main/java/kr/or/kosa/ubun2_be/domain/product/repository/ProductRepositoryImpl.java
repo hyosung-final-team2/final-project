@@ -41,7 +41,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
     }
 
     private BooleanBuilder productSearch(SearchRequest searchRequest) {
-        if (searchRequest == null) {
+        if (searchRequest == null || searchRequest.getSearchKeyword() == null|| searchRequest.getSearchCategory()==null) {
             return null;
         }
         return new BooleanBuilder().and(product.productName.containsIgnoreCase(searchRequest.getSearchKeyword()));
