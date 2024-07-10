@@ -33,11 +33,10 @@ public class OrderProduct extends BaseTimeEntity {
     @Column(nullable = false)
     private int price;
 
-    @Column
-    private int discount;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderProductStatus orderProductStatus;
 
+    @Column
+    private int discount;
 }

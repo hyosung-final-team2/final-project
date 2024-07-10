@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDetailResponse {
-
     private String memberName;
     private String memberEmail;
     private String memberPhone;
