@@ -1,4 +1,4 @@
-import MemberAddressTable from '../../../AddressList/MemberAddressTable/MemberAddressTable';
+import MemberAddressTable from './MemberAddressTable.jsx'
 import AddressInput from '../../../common/Input/AddressInput';
 const addresses = [
   {
@@ -41,13 +41,14 @@ const infos = [
   },
 ];
 
-const MemberAddressInfo = () => {
+const MemberAddressInfo = ({memberAddresses , isUpdate}) => {
+
   return (
     <>
       <div className='mb-4'>
         <div className='w-full flex flex-col'>
-          <MemberAddressTable addresses={addresses} title='주소 목록' />
-          <AddressInput infos={infos} title='주소 추가' />
+          <MemberAddressTable memberAddresses={memberAddresses} title='주소 목록' />
+          {isUpdate && <AddressInput infos={infos} title='주소 추가' />}
         </div>
       </div>
     </>

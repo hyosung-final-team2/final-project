@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const InputLabel = ({ labelTitle, defaultValue, type, disabled = false, containerStyle = '' }) => {
+const InputLabel = ({ labelTitle, defaultValue, type, disabled = false, containerStyle = '' , isUpdate=false}) => {
   const [value, setValue] = useState(defaultValue);
 
   // defaultValue가 변경될 때마다 value를 업데이트
@@ -23,7 +23,7 @@ const InputLabel = ({ labelTitle, defaultValue, type, disabled = false, containe
           value={value}
           onChange={e => updateInputValue(e.target.value)}
           disabled={disabled}
-          className='flex-grow w-full p-3 border-none rounded-lg input disabled:bg-custom-input-gray disabled:text-custom-font-gray'
+          className={`flex-grow w-full p-3 ${isUpdate ? 'border border-gray-400' : 'border-none'} rounded-lg input disabled:bg-custom-input-gray disabled:text-custom-font-gray`}
         />
       </div>
     </div>
