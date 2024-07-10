@@ -19,11 +19,14 @@ const MemberTable = () => {
   const [openExcelModal, setOpenExcelModal] = useState(false);
 
   const [selectedMembers, setSelectedMembers] = useState([]); // 체크된 멤버
+  console.log(selectedMembers)
+  const [selectedMemberDetail, setSelectedMemberDetail] = useState({ memberId: null, pending: null }); // 선택된 멤버 ID - 모달 오픈 시
   const [searchTerm, setSearchTerm] = useState(''); // 검색된 단어
   const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
 
   const [currentPage, setCurrentPage] = useState(1);
   const { data: members } = useGetMembers(currentPage);
+
   const totalPages = members?.data?.data?.totalPages ?? 5;
   const memberList = members?.data?.data?.content || [];
 
@@ -58,6 +61,11 @@ const MemberTable = () => {
     });
   };
 
+  const handleRowClick = (memberId,pending) => {
+    setSelectedMemberDetail({memberId: memberId, pending:pending });
+    setOpenMemberDetailModal(true);
+  };
+
   const handleSearch = (term, category) => {
     setSearchTerm(term);
     setSearchCategory(category);
@@ -84,7 +92,8 @@ const MemberTable = () => {
             dynamicId='memberId'
             selectedMembers={selectedMembers}
             handleRowChecked={handleRowChecked}
-            setOpenModal={setOpenMemberDetailModal}
+            // setOpenModal={setOpenMemberDetailModal}
+            setOpenModal={handleRowClick} // 변경된 부분: handleRowClick 사용
           />
         </Table>
       </div>
@@ -98,6 +107,7 @@ const MemberTable = () => {
         title='회원 상세'
         primaryButtonText='수정'
         secondaryButtonText='삭제'
+        selectedMemberDetail={selectedMemberDetail}
       />
 
       {/* 엑셀 조회 모달 */}

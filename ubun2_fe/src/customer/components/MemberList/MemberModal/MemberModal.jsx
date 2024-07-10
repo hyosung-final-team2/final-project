@@ -5,13 +5,19 @@ import { Modal } from 'flowbite-react';
 import { memo } from 'react';
 
 import { customModalTheme } from './modalStyle';
+import {useGetMemberDetail} from "../../../api/Customer/MemberList/MemberModal/queris.js";
 
-const MemberModal = ({ isOpen, setOpenModal, title, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick }) => {
-  const hong = {
-    memberName: '홍길동',
-    memberEmail: 'owen123@naver.com',
-    memberPhone: '010-2401-1235',
-    memberCreatedAt: '2024-01-14',
+const MemberModal = ({ isOpen, setOpenModal, title, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick, selectedMemberDetail }) => {
+
+  const {data: memberDetail, isLoading} = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending)
+  const member = memberDetail?.data?.data
+  
+
+  const MemberInfoData = {
+    memberName: member?.memberName || '',
+    memberEmail: member?.memberEmail || '',
+    memberPhone: member?.memberPhone || '',
+    memberCreatedAt: member?.createdAt !== null ? member?.createdAt || '' : "-",
   };
 
   const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
@@ -24,9 +30,10 @@ const MemberModal = ({ isOpen, setOpenModal, title, primaryButtonText, secondary
         </Modal.Header>
         <Modal.Body>
           <div className='space-y-4 flex-2'>
-            <MemberInfo member={hong} onlyInfo={true} title='회원정보' />
-            <MemberAddressTable />
-            <MemberPaymentTable />
+            {!isLoading ? <><MemberInfo member={MemberInfoData} onlyInfo={true} title='회원정보' />
+              <MemberAddressTable />
+              <MemberPaymentTable /></> : <div>Loading</div>}
+
           </div>
         </Modal.Body>
         <Modal.Footer>

@@ -2,8 +2,9 @@ import InputLabel from './InputLabel';
 import SearchInput from './SearchInput';
 
 const MemberInfo = ({ member, onlyInfo = false, title }) => {
-  const customTheme = {};
+
   const { memberName, memberEmail, memberPhone, memberCreatedAt } = member;
+
   return (
     <>
       <div className='p-3'>
