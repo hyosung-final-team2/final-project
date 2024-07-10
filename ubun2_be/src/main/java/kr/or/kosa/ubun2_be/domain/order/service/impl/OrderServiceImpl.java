@@ -4,6 +4,7 @@ import kr.or.kosa.ubun2_be.domain.order.dto.*;
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
 import kr.or.kosa.ubun2_be.domain.order.entity.OrderProduct;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
+import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderException;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderExceptionType;
 import kr.or.kosa.ubun2_be.domain.order.repository.OrderRepository;
@@ -95,23 +96,45 @@ public class OrderServiceImpl implements OrderService {
         Order findPendingOrder = orderRepository.findPendingOrderByIdAndCustomerId(orderApproveRequest.getOrderId(), customerId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
-        OrderStatus newOrderStatus = orderApproveRequest.getOrderStatus();
-        findPendingOrder.changeOrderStatus(newOrderStatus);
-        for(OrderProduct orderProduct:findPendingOrder.getOrderProducts()){
-            if(newOrderStatus.equals(OrderStatus.APPROVED)){
+        // OrderStatus 검증 및 업데이트
+        OrderStatus newStatus = validateAndGetOrderStatus(orderApproveRequest.getOrderStatus());
+        findPendingOrder.changeOrderStatus(newStatus);
+        for (OrderProduct orderProduct : findPendingOrder.getOrderProducts()) {
+            if (newStatus.equals(OrderStatus.APPROVED)) {
                 orderProduct.changeOrderProductStatus(OrderProductStatus.APPROVED);
-            }else{
+            } else {
                 orderProduct.changeOrderProductStatus(OrderProductStatus.DENIED);
             }
         }
+        orderRepository.save(findPendingOrder);
     }
 
     @Override
+    @Transactional
     public void updateSubscriptionOrderApprove(Long customerId, SubscriptionApproveRequest subscriptionApproveRequest) {
+        SubscriptionOrder findSubscriptionPendingOrder = subscriptionOrderRepository.findPendingSubscriptionOrderByIdAndCustomerId(subscriptionApproveRequest.getSubscriptionOrderId(), customerId)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
+        // OrderStatus 검증 및 업데이트
+        OrderStatus newOrderStatus = validateAndGetOrderStatus(subscriptionApproveRequest.getOrderStatus());
+        findSubscriptionPendingOrder.changeOrderStatus(newOrderStatus);
+        for (SubscriptionOrderProduct subscriptionOrderProduct : findSubscriptionPendingOrder.getSubscriptionOrderProducts()) {
+            if (newOrderStatus.equals(OrderStatus.APPROVED)) {
+                subscriptionOrderProduct.changeSubscriptionOrderProductStatus(OrderProductStatus.APPROVED);
+            } else {
+                subscriptionOrderProduct.changeSubscriptionOrderProductStatus(OrderProductStatus.DENIED);
+            }
+        }
+        subscriptionOrderRepository.save(findSubscriptionPendingOrder);
     }
 
-
+    private OrderStatus validateAndGetOrderStatus(String orderStatus) {
+        try {
+            return OrderStatus.valueOf(orderStatus.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new OrderException(OrderExceptionType.INVALID_ORDER_STATUS);
+        }
+    }
 
 
 }
