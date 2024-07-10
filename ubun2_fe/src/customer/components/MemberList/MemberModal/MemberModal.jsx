@@ -30,10 +30,9 @@ const MemberModal = ({ isOpen, setOpenModal, title, primaryButtonText, secondary
         </Modal.Header>
         <Modal.Body>
           <div className='space-y-4 flex-2'>
-            {!isLoading ? <><MemberInfo member={MemberInfoData} onlyInfo={true} title='회원정보' />
+            <MemberInfo member={MemberInfoData} onlyInfo={true} title='회원정보' />
               <MemberAddressTable />
-              <MemberPaymentTable /></> : <div>Loading</div>}
-
+              <MemberPaymentTable />
           </div>
         </Modal.Body>
         <Modal.Footer>

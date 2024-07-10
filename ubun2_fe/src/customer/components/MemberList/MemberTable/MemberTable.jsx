@@ -13,13 +13,13 @@ import { useEffect, useState } from 'react';
 import { useGetMembers } from '../../../api/Customer/MemberList/MemberTable/queris.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { getMembers } from '../../../api/Customer/MemberList/MemberTable/memberTable.js';
+import {useGetMemberDetail} from "../../../api/Customer/MemberList/MemberModal/queris.js";
 
 const MemberTable = () => {
   const [openMemberDetailModal, setOpenMemberDetailModal] = useState(false);
   const [openExcelModal, setOpenExcelModal] = useState(false);
 
   const [selectedMembers, setSelectedMembers] = useState([]); // 체크된 멤버
-  console.log(selectedMembers)
   const [selectedMemberDetail, setSelectedMemberDetail] = useState({ memberId: null, pending: null }); // 선택된 멤버 ID - 모달 오픈 시
   const [searchTerm, setSearchTerm] = useState(''); // 검색된 단어
   const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
@@ -29,6 +29,9 @@ const MemberTable = () => {
 
   const totalPages = members?.data?.data?.totalPages ?? 5;
   const memberList = members?.data?.data?.content || [];
+
+  const {data, refetch} = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending)
+
 
   const queryClient = useQueryClient();
 
@@ -61,9 +64,10 @@ const MemberTable = () => {
     });
   };
 
-  const handleRowClick = (memberId,pending) => {
-    setSelectedMemberDetail({memberId: memberId, pending:pending });
-    setOpenMemberDetailModal(true);
+  const handleRowClick = async (memberId,pending) => {
+    await setSelectedMemberDetail({memberId: memberId, pending:pending });
+    await refetch()
+    await setOpenMemberDetailModal(true);
   };
 
   const handleSearch = (term, category) => {

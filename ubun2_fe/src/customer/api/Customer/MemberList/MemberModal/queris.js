@@ -5,6 +5,7 @@ export const useGetMemberDetail = (memberId, pending) => {
     return useQuery({
         queryKey: ['member', memberId, pending],
         queryFn: () => getMemberDetail(memberId,pending),
-        enabled: memberId !== null && pending !== null
+        enabled: memberId !== null && pending !== null,
+        staleTime: 5000
     });
 };
