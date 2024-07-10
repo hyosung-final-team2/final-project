@@ -1,9 +1,9 @@
 package kr.or.kosa.ubun2_be.domain.order.service.impl;
 
-import kr.or.kosa.ubun2_be.domain.order.dto.OrderDetailResponse;
-import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
-import kr.or.kosa.ubun2_be.domain.order.dto.UnifiedOrderResponse;
+import kr.or.kosa.ubun2_be.domain.order.dto.*;
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
+import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
+import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderException;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderExceptionType;
 import kr.or.kosa.ubun2_be.domain.order.repository.OrderRepository;
@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -49,5 +50,25 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
         return new OrderDetailResponse(findOrder);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SubscriptionOrderDetailResponse getSubscriptionOrderByCustomerIdAndOrderIdAndCycleNumber(Long orderId, Long customerId, int cycleNumber) {
+        SubscriptionOrder subscriptionOrder = subscriptionOrderRepository.findSubscriptionOrderByIdAndCustomerIdAndCycleNumber(orderId, customerId, cycleNumber)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
+
+        List<SubscriptionOrderProduct> subscriptionOrderProducts = subscriptionOrderRepository.findSubscriptionOrderProductsByOrderIdAndCustomerIdAndCycleNumber(orderId, customerId, cycleNumber);
+
+        if (subscriptionOrderProducts.isEmpty()) {
+            throw new OrderException(OrderExceptionType.NO_PRODUCTS_FOUND);
+        }
+
+        List<SubscriptionOrderDetailProductResponse> productResponses = subscriptionOrderProducts.stream()
+                .map(SubscriptionOrderDetailProductResponse::new)
+                .collect(Collectors.toList());
+
+        return new SubscriptionOrderDetailResponse(subscriptionOrder, productResponses);
+    }
+
 
 }
