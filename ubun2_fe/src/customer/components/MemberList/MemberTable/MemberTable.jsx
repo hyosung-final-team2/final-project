@@ -64,8 +64,8 @@ const MemberTable = () => {
   };
 
   const handleRowClick = async (memberId, pending, page) => {
-    await setSelectedMemberDetail({ memberId: memberId, pending: pending, currentPage: page });
-    await refetch();
+    await setSelectedMemberDetail({ memberId: memberId, pending: pending, currentPage: page }); // 1. 세팅
+    await refetch(); // 2. 상세 데이터
     await setOpenMemberDetailModal(true);
   };
 

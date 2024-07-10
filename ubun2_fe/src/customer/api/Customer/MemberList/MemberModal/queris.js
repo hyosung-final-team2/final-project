@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getMemberDetail, getMembers } from '../MemberTable/memberTable.js';
+import { getMemberDetail } from '../MemberTable/memberTable.js';
 import { deleteMember } from './memberModal.js';
 import { toast } from 'react-hot-toast';
 

@@ -16,7 +16,6 @@ const MemberModal = ({
   onPrimaryClick,
   onSecondaryClick,
   selectedMemberDetail,
-  currentPage,
 }) => {
   const { data: memberDetail } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
   const member = memberDetail?.data?.data;
