@@ -38,5 +38,7 @@ public class SubscriptionOrderProduct extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private OrderProductStatus orderProductStatus;
 
+    @Column
+    private int discount;
 }
 
