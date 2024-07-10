@@ -1,7 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.customer.dto.response;
 
 import kr.or.kosa.ubun2_be.domain.address.dto.MemberDetailAddressResponse;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberDetailPaymentMethodResponse;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberPaymentMethodsResponse;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,5 +16,5 @@ public class MemberDetailResponse {
     private String memberPhone;
     private LocalDateTime createdAt;
     private List<MemberDetailAddressResponse> addresses;
-    private List<MemberDetailPaymentMethodResponse> paymentMethods;
+    private List<MemberPaymentMethodsResponse> paymentMethods;
 }

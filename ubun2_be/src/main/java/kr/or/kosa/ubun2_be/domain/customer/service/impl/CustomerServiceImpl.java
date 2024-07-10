@@ -27,9 +27,9 @@ import kr.or.kosa.ubun2_be.domain.member.repository.MemberCustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.PendingMemberRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberDetailPaymentMethodRequest;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberPaymentMethodsResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.AccountPayment;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.AccountPaymentRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.CardPaymentRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.PaymentMethodRepository;
@@ -192,13 +192,17 @@ public class CustomerServiceImpl implements CustomerService {
                 .map(MemberDetailAddressResponse::new)
                 .toList();
 
+        List<MemberPaymentMethodsResponse> paymentMethods = member.getPaymentMethods().stream()
+                .map(MemberPaymentMethodsResponse::from)
+                .toList();
+
         return MemberDetailResponse.builder()
                 .memberName(member.getMemberName())
                 .memberEmail(member.getMemberEmail())
                 .memberPhone(member.getMemberPhone())
                 .createdAt(member.getCreatedAt())
                 .addresses(addresses)
-                .paymentMethods(PaymentMethod.toDTOList(member.getPaymentMethods()))
+                .paymentMethods(paymentMethods)
                 .build();
     }
 

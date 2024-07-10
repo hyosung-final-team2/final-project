@@ -3,11 +3,13 @@ package kr.or.kosa.ubun2_be.domain.paymentmethod.service.impl;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
+import kr.or.kosa.ubun2_be.domain.member.repository.MemberCustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentResponse;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberPaymentMethodsResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodRequest;
@@ -24,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,25 +35,44 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     private final PaymentMethodRepository paymentMethodRepository;
     private final MemberRepository memberRepository;
+    private final MemberCustomerRepository memberCustomerRepository;
 
     @Override
-    public Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(CardPaymentRequest request, Pageable pageable) {
-        return paymentMethodRepository.findAllCardPaymentMethodsByMemberId(request.getMemberId(), pageable);
+    public Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(CardPaymentRequest request, Pageable pageable, Long customerId) {
+        return paymentMethodRepository.findAllCardPaymentMethodsByMemberId(request.getMemberId(), pageable, customerId)
+                .map(paymentMethod -> new CardPaymentResponse((CardPayment) paymentMethod));
     }
 
     @Override
-    public Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(AccountPaymentRequest request, Pageable pageable) {
-        return paymentMethodRepository.findAllAccountPaymentMethodsByMemberId(request.getMemberId(), pageable);
+    public Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(AccountPaymentRequest request, Pageable pageable, Long customerId) {
+        return paymentMethodRepository.findAllAccountPaymentMethodsByMemberId(request.getMemberId(), pageable,customerId)
+                .map(paymentMethod -> new AccountPaymentResponse((AccountPayment) paymentMethod));
     }
 
     @Override
-    public PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(PaymentMethodDetailRequest request) {
-        return paymentMethodRepository.findPaymentMethodDetailbyPaymentMethodId(request.getPaymentMethodId())
+    public PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(PaymentMethodDetailRequest request, Long customerId) {
+        PaymentMethod paymentMethod = paymentMethodRepository.findPaymentMethodbyPaymentMethodIdAndCustomerId(request.getPaymentMethodId(),customerId)
                 .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+
+        Member member = paymentMethod.getMember();
+
+        List<MemberPaymentMethodsResponse> paymentMethods = member.getPaymentMethods().stream()
+                .map(MemberPaymentMethodsResponse::from)
+                .toList();
+
+        PaymentMethodDetailResponse response = PaymentMethodDetailResponse.of(member, paymentMethods);
+
+        if(response == null){
+            throw new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD);
+        }
+
+        return response;
     }
 
     @Override
-    public void addPaymentMethod(PaymentMethodRequest paymentMethodRequest) {
+    public void addPaymentMethod(PaymentMethodRequest paymentMethodRequest, Long customerId) {
+        validateMyMember(customerId,paymentMethodRequest.getMemberId());
+
         Member member = memberRepository.findById(paymentMethodRequest.getMemberId()).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
 
         if ("CARD".equals(paymentMethodRequest.getPaymentType())) {
@@ -90,7 +112,9 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     @Transactional
     @Override
-    public void updatePaymentMethod(Long paymentMethodId, PaymentMethodRequest request) {
+    public void updatePaymentMethod(Long paymentMethodId, PaymentMethodRequest request, Long customerId) {
+        validateMyMember(customerId,request.getMemberId());
+
         Optional<PaymentMethod> paymentMethodOpt = paymentMethodRepository.findById(paymentMethodId);
 
         if (paymentMethodOpt.isPresent()) {
@@ -117,7 +141,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     @Override
-    public void deletePaymentMethod(Long paymentMethodId) {
+    public void deletePaymentMethod(Long paymentMethodId, Long customerId) {
         PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
         paymentMethodRepository.delete(paymentMethod);
     }
@@ -132,5 +156,11 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         // 계좌번호 정규식 (예: 11~14자리 숫자, 대시 허용)
         String regex = "^\\d{3,6}-?\\d{2,6}-?\\d{3,6}$";
         return accountNumber != null && accountNumber.matches(regex);
+    }
+
+    private void validateMyMember(Long customerId, Long memberId) {
+        if (!memberCustomerRepository.existsByCustomerIdAndMemberId(customerId, memberId)) {
+            throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
+        }
     }
 }

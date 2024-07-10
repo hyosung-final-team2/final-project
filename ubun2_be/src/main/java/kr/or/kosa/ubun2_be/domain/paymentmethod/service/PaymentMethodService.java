@@ -11,15 +11,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PaymentMethodService {
-    Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(CardPaymentRequest request, Pageable pageable);
+    Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(CardPaymentRequest request, Pageable pageable, Long customerId);
 
-    Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(AccountPaymentRequest request, Pageable pageable);
+    Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(AccountPaymentRequest request, Pageable pageable, Long customerId);
 
-    PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(PaymentMethodDetailRequest request);
+    PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(PaymentMethodDetailRequest request, Long customerId);
 
-    void addPaymentMethod(PaymentMethodRequest paymentMethodRequest);
+    void addPaymentMethod(PaymentMethodRequest paymentMethodRequest, Long customerId);
 
-    void updatePaymentMethod(Long paymentMethodId, PaymentMethodRequest paymentMethodRequest);
+    void updatePaymentMethod(Long paymentMethodId, PaymentMethodRequest paymentMethodRequest, Long customerId);
 
-    void deletePaymentMethod(Long paymentMethodId);
+    void deletePaymentMethod(Long paymentMethodId, Long customerId);
 }
