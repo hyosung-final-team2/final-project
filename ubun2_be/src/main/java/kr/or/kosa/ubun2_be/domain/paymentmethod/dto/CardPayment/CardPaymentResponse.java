@@ -1,12 +1,9 @@
 package kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment;
 
-import lombok.AllArgsConstructor;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class CardPaymentResponse {
     private Long paymentMethodId;
     private String memberEmail;
@@ -14,4 +11,13 @@ public class CardPaymentResponse {
     private String paymentType;
     private String cardCompanyName;
     private String cardNumber;
+
+    public CardPaymentResponse(CardPayment cardPayment) {
+        this.paymentMethodId = cardPayment.getPaymentMethodId();
+        this.memberEmail = cardPayment.getMember().getMemberEmail();
+        this.memberName = cardPayment.getMember().getMemberName();
+        this.paymentType = cardPayment.getPaymentType();
+        this.cardCompanyName = cardPayment.getCardCompanyName();
+        this.cardNumber = cardPayment.getCardNumber();
+    }
 }
