@@ -8,6 +8,7 @@ import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.util.List;
+import java.util.Optional;
 
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMember.member;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCustomer;
@@ -59,6 +60,22 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                 );
 
         return query.fetch();
+    }
+
+    @Override
+    public Optional<SubscriptionOrder> findPendingSubscriptionOrderByIdAndCustomerId(Long subscriptionOrderId, Long customerId) {
+        JPQLQuery<SubscriptionOrder> query = from(subscriptionOrder)
+                .distinct()
+                .leftJoin(subscriptionOrder.member, member).fetchJoin()
+                .join(member.memberCustomers, memberCustomer)
+                .where(
+                        subscriptionOrder.subscriptionOrderId.eq(subscriptionOrderId),
+                        memberCustomer.customer.customerId.eq(customerId),
+                        subscriptionOrder.orderStatus.eq(OrderStatus.PENDING),
+                        subscriptionOrder.subscriptionOrderProducts.any().cycleNumber.eq(1)
+                );
+
+        return Optional.ofNullable(query.fetchOne());
     }
 
 
