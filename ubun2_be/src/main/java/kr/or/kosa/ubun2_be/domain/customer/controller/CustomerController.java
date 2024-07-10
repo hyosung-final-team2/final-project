@@ -47,7 +47,7 @@ public class CustomerController {
     @Operation(summary = "회원 & 가입대기회원 단일 상세조회")
     @GetMapping("/members/{memberId}")
     public ResponseDto<?> getMemberDetail(@PathVariable Long memberId,
-                                          @RequestBody MemberDetailRequest memberDetailRequest,
+                                          @ModelAttribute MemberDetailRequest memberDetailRequest,
                                           @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         MemberDetailResponse getMember = customerService.getMemberDetail(customUserDetails.getUserId(), memberId, memberDetailRequest.getIsPending());
         return ResponseDto.ok(getMember, "회원 상세조회 정상 완료");

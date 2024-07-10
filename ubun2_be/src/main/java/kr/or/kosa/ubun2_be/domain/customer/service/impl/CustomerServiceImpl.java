@@ -243,7 +243,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private void validateMyMember(Long customerId, Long memberId) {
-        if (!memberCustomerRepository.existsByCustomerIdAndMemberId(customerId, memberId) ||
+        if (!memberCustomerRepository.existsByCustomerIdAndMemberId(customerId, memberId) &&
             pendingMemberRepository.existsByCustomerIdAndPendingMemberId(customerId,memberId)) {
             throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
         }

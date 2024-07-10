@@ -10,7 +10,7 @@ const MemberTableRow = ({ memberId, memberEmail, memberName, memberPhone, create
 
   return (
     <>
-      <Table.Row className='bg-white' onClick={() => setOpenModal(true)}>
+      <Table.Row className='bg-white' onClick={() => setOpenModal(memberId,pending)}>
         <Table.Cell>
           <Checkbox checked={isChecked} onChange={() => handleRowChecked(memberId, pending)} onClick={e => e.stopPropagation()} />
         </Table.Cell>
