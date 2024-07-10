@@ -1,10 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.order.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import kr.or.kosa.ubun2_be.domain.order.dto.OrderDetailResponse;
-import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
-import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderDetailResponse;
-import kr.or.kosa.ubun2_be.domain.order.dto.UnifiedOrderResponse;
+import kr.or.kosa.ubun2_be.domain.order.dto.*;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +44,31 @@ public class OrderCustomerController {
                                                         @PathVariable("cycle_number") int cycleNumber) {
         SubscriptionOrderDetailResponse response = orderService.getSubscriptionOrderByCustomerIdAndOrderIdAndCycleNumber(orderId, customerId, cycleNumber);
         return ResponseDto.ok(response, "정상출력 데이터");
+    }
+
+    @Operation(summary = "전체 주문 대기 목록 조회 (일반 단건 주문 + 구독 주문)")
+    @GetMapping("/pending")
+    public ResponseDto<?> getPendingOrders(@RequestParam("customerId") Long customerId,
+                                           SearchRequest searchRequest,
+                                           @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable) {
+
+        Page<UnifiedOrderResponse> orderResponseList = orderService.getPendingOrders(customerId, searchRequest, pageable);
+        return ResponseDto.ok(orderResponseList, "정상출력 데이터");
+    }
+
+
+    @Operation(summary = "대기 단건 주문 승인, 취소")
+    @PutMapping("/approve/{order_id}")
+    public ResponseDto<?> updateOrderApprove(@RequestBody OrderApproveRequest orderApproveRequest, Long customerId){
+        orderService.updateOrderApprove(customerId, orderApproveRequest);
+        return ResponseDto.ok(null, "정상출력 데이터");
+    }
+
+    @Operation(summary = "대기 정기 주문(최초 정기주문만) 승인, 취소")
+    @PutMapping("/subscription/approve/{order_id}")
+    public ResponseDto<?> updateSubscriptionOrderApprove(@RequestBody SubscriptionApproveRequest subscriptionApproveRequest, Long customerId){
+        orderService.updateSubscriptionOrderApprove(customerId, subscriptionApproveRequest);
+        return ResponseDto.ok(null, "정상출력 데이터");
     }
 
 }

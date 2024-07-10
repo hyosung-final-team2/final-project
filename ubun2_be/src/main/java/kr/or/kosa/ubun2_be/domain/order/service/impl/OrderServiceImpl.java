@@ -2,12 +2,15 @@ package kr.or.kosa.ubun2_be.domain.order.service.impl;
 
 import kr.or.kosa.ubun2_be.domain.order.dto.*;
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
+import kr.or.kosa.ubun2_be.domain.order.entity.OrderProduct;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderException;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderExceptionType;
 import kr.or.kosa.ubun2_be.domain.order.repository.OrderRepository;
 import kr.or.kosa.ubun2_be.domain.order.repository.SubscriptionOrderRepository;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
+import kr.or.kosa.ubun2_be.domain.product.enums.OrderProductStatus;
+import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -68,4 +71,47 @@ public class OrderServiceImpl implements OrderService {
 
         return new SubscriptionOrderDetailResponse(subscriptionOrder, productResponses);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UnifiedOrderResponse> getPendingOrders(Long customerId, SearchRequest searchRequest, Pageable pageable) {
+        List<UnifiedOrderResponse> orderResponseLists = orderRepository.findPendingOrdersByCustomerIdAndSearchRequest(customerId, searchRequest).stream().map(UnifiedOrderResponse::new).toList();
+        List<UnifiedOrderResponse> subscriptionOrderResponseList = subscriptionOrderRepository.findPendingSubscriptionOrdersByCustomerIdAndSearchRequest(customerId, searchRequest).stream().map(UnifiedOrderResponse::new).toList();
+
+        List<UnifiedOrderResponse> combinedList = new ArrayList<>();
+        combinedList.addAll(orderResponseLists);
+        combinedList.addAll(subscriptionOrderResponseList);
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), combinedList.size());
+        List<UnifiedOrderResponse> paginatedList = combinedList.subList(start, end);
+
+        return new PageImpl<>(paginatedList, pageable, combinedList.size());
+    }
+
+    @Override
+    @Transactional
+    public void updateOrderApprove(Long customerId, OrderApproveRequest orderApproveRequest) {
+        Order findPendingOrder = orderRepository.findPendingOrderByIdAndCustomerId(orderApproveRequest.getOrderId(), customerId)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
+
+        OrderStatus newOrderStatus = orderApproveRequest.getOrderStatus();
+        findPendingOrder.changeOrderStatus(newOrderStatus);
+        for(OrderProduct orderProduct:findPendingOrder.getOrderProducts()){
+            if(newOrderStatus.equals(OrderStatus.APPROVED)){
+                orderProduct.changeOrderProductStatus(OrderProductStatus.APPROVED);
+            }else{
+                orderProduct.changeOrderProductStatus(OrderProductStatus.DENIED);
+            }
+        }
+    }
+
+    @Override
+    public void updateSubscriptionOrderApprove(Long customerId, SubscriptionApproveRequest subscriptionApproveRequest) {
+
+    }
+
+
+
+
 }
