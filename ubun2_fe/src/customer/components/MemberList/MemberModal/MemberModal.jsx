@@ -9,9 +9,8 @@ import {useGetMemberDetail} from "../../../api/Customer/MemberList/MemberModal/q
 
 const MemberModal = ({ isOpen, setOpenModal, title, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick, selectedMemberDetail }) => {
 
-  const {data: memberDetail, isLoading} = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending)
+  const {data: memberDetail} = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending)
   const member = memberDetail?.data?.data
-  
 
   const MemberInfoData = {
     memberName: member?.memberName || '',
@@ -31,8 +30,8 @@ const MemberModal = ({ isOpen, setOpenModal, title, primaryButtonText, secondary
         <Modal.Body>
           <div className='space-y-4 flex-2'>
             <MemberInfo member={MemberInfoData} onlyInfo={true} title='회원정보' />
-              <MemberAddressTable />
-              <MemberPaymentTable />
+              <MemberAddressTable memberAddresses={member?.addresses}/>
+              <MemberPaymentTable memberPaymentMethods={member?.paymentMethods}/>
           </div>
         </Modal.Body>
         <Modal.Footer>
