@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Getter
 @DiscriminatorColumn(name = "payment_type")
 @Table(name = "payment_method")
 @Getter
