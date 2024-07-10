@@ -5,21 +5,32 @@ import { Modal } from 'flowbite-react';
 import { memo } from 'react';
 
 import { customModalTheme } from './modalStyle';
-import {useGetMemberDetail} from "../../../api/Customer/MemberList/MemberModal/queris.js";
+import { useDeleteMember, useGetMemberDetail } from '../../../api/Customer/MemberList/MemberModal/queris.js';
 
-const MemberModal = ({ isOpen, setOpenModal, title, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick, selectedMemberDetail }) => {
-
-  const {data: memberDetail} = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending)
-  const member = memberDetail?.data?.data
+const MemberModal = ({
+  isOpen,
+  setOpenModal,
+  title,
+  primaryButtonText,
+  secondaryButtonText,
+  onPrimaryClick,
+  onSecondaryClick,
+  selectedMemberDetail,
+  currentPage,
+}) => {
+  const { data: memberDetail } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
+  const member = memberDetail?.data?.data;
 
   const MemberInfoData = {
     memberName: member?.memberName || '',
     memberEmail: member?.memberEmail || '',
     memberPhone: member?.memberPhone || '',
-    memberCreatedAt: member?.createdAt !== null ? member?.createdAt || '' : "-",
+    memberCreatedAt: member?.createdAt !== null ? member?.createdAt || '' : '-',
   };
 
   const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
+
+  const { mutate: deleteMutate } = useDeleteMember(selectedMemberDetail.memberId, selectedMemberDetail.pending, selectedMemberDetail.currentPage);
 
   return (
     <>
@@ -30,8 +41,8 @@ const MemberModal = ({ isOpen, setOpenModal, title, primaryButtonText, secondary
         <Modal.Body>
           <div className='space-y-4 flex-2'>
             <MemberInfo member={MemberInfoData} onlyInfo={true} title='회원정보' />
-              <MemberAddressTable memberAddresses={member?.addresses}/>
-              <MemberPaymentTable memberPaymentMethods={member?.paymentMethods}/>
+            <MemberAddressTable memberAddresses={member?.addresses} />
+            <MemberPaymentTable memberPaymentMethods={member?.paymentMethods} />
           </div>
         </Modal.Body>
         <Modal.Footer>
@@ -43,7 +54,13 @@ const MemberModal = ({ isOpen, setOpenModal, title, primaryButtonText, secondary
           </button>
           <button
             className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 `}
-            onClick={onSecondaryClick || (() => setOpenModal(false))}
+            onClick={
+              onSecondaryClick ||
+              (() => {
+                deleteMutate();
+                setOpenModal(false);
+              })
+            }
           >
             {secondaryButtonText || '취소'}
           </button>
