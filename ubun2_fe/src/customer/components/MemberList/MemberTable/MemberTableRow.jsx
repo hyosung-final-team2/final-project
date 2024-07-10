@@ -1,19 +1,25 @@
 import { Table, Checkbox } from 'flowbite-react';
 import StatusBadge from '../../common/Badge/StatusBadge';
+import { memo } from 'react';
 
-const MemberTableRow = ({ id, memberEmail, memberName, memberPhone, memberRegisterDate, memberRegisterStatus, setOpenModal, isChecked, handleRowChecked }) => {
+const MemberTableRow = ({ memberId, memberEmail, memberName, memberPhone, createdAt, pending, setOpenModal, isChecked, handleRowChecked }) => {
+  const parseDate = createdAt => {
+    const date = new Date(createdAt);
+    return date.toISOString().split('T')[0];
+  };
+
   return (
     <>
       <Table.Row className='bg-white' onClick={() => setOpenModal(true)}>
         <Table.Cell>
-          <Checkbox checked={isChecked} onChange={() => handleRowChecked(id)} onClick={e => e.stopPropagation()} />
+          <Checkbox checked={isChecked} onChange={() => handleRowChecked(memberId, pending)} onClick={e => e.stopPropagation()} />
         </Table.Cell>
         <Table.Cell>{memberEmail}</Table.Cell>
         <Table.Cell>{memberName}</Table.Cell>
         <Table.Cell>{memberPhone}</Table.Cell>
-        <Table.Cell>{memberRegisterDate}</Table.Cell>
+        <Table.Cell>{createdAt ? parseDate(createdAt) : null}</Table.Cell>
         <Table.Cell>
-          {memberRegisterStatus ? (
+          {!pending ? (
             <StatusBadge bgColor='bg-badge-green' txtColor='text-badge-green' badgeText='완료' />
           ) : (
             <StatusBadge bgColor='bg-badge-yellow' txtColor='text-badge-yellow' badgeText='대기' />
@@ -24,4 +30,4 @@ const MemberTableRow = ({ id, memberEmail, memberName, memberPhone, memberRegist
   );
 };
 
-export default MemberTableRow;
+export default memo(MemberTableRow);

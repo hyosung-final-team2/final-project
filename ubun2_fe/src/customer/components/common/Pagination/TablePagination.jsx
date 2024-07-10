@@ -1,9 +1,8 @@
 import { Pagination } from 'flowbite-react';
-import { useState } from 'react';
 import { custumPaginationTheme } from './PaginationStyle';
 
-const TablePagination = ({ totalPages, containerStyle }) => {
-  const [currentPage, setCurrentPage] = useState(1);
+const TablePagination = ({ totalPages, currentPage, setCurrentPage, containerStyle }) => {
+  console.log(`total : ${totalPages}, current : ${currentPage}`);
 
   const onPageChange = page => setCurrentPage(page);
 
@@ -48,7 +47,7 @@ const TablePagination = ({ totalPages, containerStyle }) => {
       )}
 
       {/* pagination */}
-      <Pagination theme={custumPaginationTheme} currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
+      <Pagination theme={custumPaginationTheme} currentPage={currentPage || 1} totalPages={totalPages} onPageChange={onPageChange} />
 
       {/* right arrow  */}
       {totalPages === 1 ? null : (
