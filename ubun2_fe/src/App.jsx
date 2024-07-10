@@ -1,8 +1,5 @@
-import { useState } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
-
-// Importing pages
 
 import CustomerLogin from './customer/pages/external/Login';
 import CustomerRegister from './customer/pages/external/Register';
@@ -11,7 +8,7 @@ import CustomerLayout from './customer/layouts/Layout';
 import AddressSearchPopUp from './customer/components/common/AddressSearch/AddressSearchPopUp';
 
 const App = () => {
-  const [token, setToken] = useState(true);
+  const token = localStorage.getItem('token');
 
   return (
     <>

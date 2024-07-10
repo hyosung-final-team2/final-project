@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 @DiscriminatorColumn(name = "payment_type")
 @Table(name = "payment_method")
+@Getter
 public class PaymentMethod extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
