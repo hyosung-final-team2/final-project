@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class MemberListResponse {
+    private Long memberId;
     private String memberEmail;
     private String memberName;
     private String memberPhone;
@@ -15,18 +16,20 @@ public class MemberListResponse {
     private boolean isPending;
 
     public MemberListResponse(Member member) {
+        this.memberId = member.getMemberId();
         this.memberEmail = member.getMemberEmail();
         this.memberName = member.getMemberName();
         this.memberPhone = member.getMemberPhone();
         this.createdAt = member.getCreatedAt();
-        this.isPending = true;
+        this.isPending = false;
     }
 
     public MemberListResponse(PendingMember pendingMember) {
+        this.memberId = pendingMember.getPendingMemberId();
         this.memberEmail = pendingMember.getPendingMemberEmail();
         this.memberName = pendingMember.getPendingMemberName();
         this.memberPhone = pendingMember.getPendingMemberPhone();
         this.createdAt = null;
-        this.isPending = false;
+        this.isPending = true;
     }
 }
