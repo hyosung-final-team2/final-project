@@ -1,24 +1,37 @@
-import InputLabel from '../common/Input/InputLabel';
-import SearchInput from '../common/Input/SearchInput';
 
-const MemberInfo = ({ member, onlyInfo = false, title }) => {
-  const { memberName, memberEmail, memberPhone, memberCreatedAt } = member;
+import InputLabel from "../common/Input/InputLabel.jsx";
+import StatusBadge from "../common/Badge/StatusBadge.jsx";
+
+const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchable = false,isPending }) => {
+
   return (
-    <>
       <div className='p-3'>
-        <div className='flex items-center justify-between mb-3'>
-          <h1 className='text-3xl font-bold'>{title}</h1>
-          {onlyInfo || <SearchInput placeholder='회원검색' />}
-        </div>
+        <div className='mb-3 flex items-center gap-4'>
 
-        <div className='grid grid-cols-2 gap-6'>
-          <InputLabel labelTitle='회원명' defaultValue={memberName} disabled={true} />
-          <InputLabel labelTitle='이메일' defaultValue={memberEmail} disabled={true} />
-          <InputLabel labelTitle='전화번호' defaultValue={memberPhone} disabled={true} />
-          <InputLabel labelTitle='가입일' defaultValue={memberCreatedAt} disabled={true} />
+              <span className='text-2xl font-bold text-main'>{title}</span>
+              <span>{!isPending ? (
+                  <StatusBadge bgColor='bg-badge-green' txtColor='text-badge-green' badgeText='완료' />
+              ) : (
+                  <StatusBadge bgColor='bg-badge-yellow' txtColor='text-badge-yellow' badgeText='대기' />
+              )}</span>
+
         </div>
+        {onlyInfo ? (
+            <div className='grid grid-cols-2 gap-3'>
+              <InputLabel labelTitle='회원명' defaultValue={MemberInfoData.memberName} disabled={!isUpdate} isUpdate={isUpdate}/>
+              <InputLabel labelTitle='이메일' defaultValue={MemberInfoData.memberEmail} disabled={!isUpdate} isUpdate={isUpdate}/>
+              <InputLabel labelTitle='전화번호' defaultValue={MemberInfoData.memberPhone} disabled={!isUpdate} isUpdate={isUpdate}/>
+              <InputLabel labelTitle='가입일' defaultValue={MemberInfoData.memberCreatedAt} disabled={onlyInfo} />
+            </div>
+        ) : (
+            <div className='grid grid-cols-2 gap-3'>
+              <InputLabel labelTitle='회원명' disabled={onlyInfo} />
+              <InputLabel labelTitle='이메일' disabled={onlyInfo} />
+              <InputLabel labelTitle='전화번호' disabled={onlyInfo} />
+              <InputLabel labelTitle='가입일' disabled={onlyInfo} />
+            </div>
+        )}
       </div>
-    </>
   );
 };
 

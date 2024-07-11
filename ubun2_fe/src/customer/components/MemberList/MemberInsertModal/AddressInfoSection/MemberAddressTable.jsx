@@ -1,11 +1,14 @@
 import { Table } from 'flowbite-react';
 
-import MemberAddressTableHead from './MemberAddressTableHead';
-import MemberAddressTableBody from './MemberAddressTableBody';
-import TablePagination from '../../../common/Pagination/TablePagination';
+import MemberAddressTableRow from './MemberAddressTableRow';
+import {tableColumn} from "../../../common/Table/tableIndex.js";
+import TableBody from "../../../common/Table/TableBody.jsx";
+import TableHead from "../../../common/Table/TableHead.jsx";
 import {useEffect, useState} from "react";
+import TablePagination from "../../../common/Pagination/TablePagination.jsx";
 
-const MemberAddressTable = ({memberAddresses}) => {
+const MemberAddressTable = ({ memberAddresses, title }) => {
+
     const [currentPage, setCurrentPage] = useState(1);
     const [paginatedData, setPaginatedData] = useState([]);
     const itemsPerPage = 3;
@@ -32,12 +35,12 @@ const MemberAddressTable = ({memberAddresses}) => {
 
     return (
     <div className='p-3'>
-      <h2 className='text-xl font-bold mb-3 text-main'>주소</h2>
-      <Table striped>
-        <MemberAddressTableHead />
-        <MemberAddressTableBody paginatedData={paginatedData}/>
+      <h2 className='text-2xl font-bold mb-3 text-main'>{title}</h2>
+      <Table hoverable>
+        <TableHead tableColumns={tableColumn.address.detail} isCheckable={false} />
+        <TableBody users={paginatedData} TableRowComponent={MemberAddressTableRow} isCheckable={false} />
       </Table>
-      {totalPages < 1 ? null : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+        {totalPages < 1 ? null : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
     </div>
   );
 };

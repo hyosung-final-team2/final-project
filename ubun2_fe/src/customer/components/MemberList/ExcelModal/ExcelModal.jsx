@@ -4,6 +4,8 @@ import InputExcelFile from './InputExcelFile';
 import { useState, memo } from 'react';
 import ImportFileInfo from './ImportFileInfo';
 import ExcelUploadResult from './ExcelUploadResult';
+import { excelDownload } from '../../../api/Customer/MemberList/ExcelModal/excel.js';
+import { useUploadExcel } from '../../../api/Customer/MemberList/ExcelModal/queris.js';
 
 const ExcelModal = ({ isOpen, setOpenModal }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
@@ -11,10 +13,18 @@ const ExcelModal = ({ isOpen, setOpenModal }) => {
   const [fileInfo, setFileInfo] = useState(null);
   const [isSuccess, setIsSuccess] = useState(null);
 
+  const { mutate: excelMutate } = useUploadExcel();
+
   const handleUploadFile = () => {
     if (fileInfo === null) return;
-    //TODO: 엑셀 업로드 API 호출 성공하면 true, 실패하면 false
-    setIsSuccess(false);
+    excelMutate(fileInfo, {
+      onSuccess: () => {
+        setIsSuccess(true);
+      },
+      onError: () => {
+        setIsSuccess(false);
+      },
+    });
   };
 
   return (
@@ -24,6 +34,7 @@ const ExcelModal = ({ isOpen, setOpenModal }) => {
       theme={customModalTheme}
       onClose={() => {
         setFileInfo(null);
+        setIsSuccess(null);
         setOpenModal(false);
       }}
       size='3xl'
@@ -38,7 +49,9 @@ const ExcelModal = ({ isOpen, setOpenModal }) => {
               <p className='m-0 font-semibold'>엑셀을 업로드하여 회원들의 정보를 한번에 입력할 수 있습니다.</p>
               <p className='m-0'>정해진 엑셀 양식에 입력하여 업로드 하세요.</p>
               <p className='m-0'>(지원하는 파일 양식: xlsx)</p>
-              <p className='cursor-pointer text-info font-bold my-2 hover:underline'>엑셀 양식 다운로드</p>
+              <p onClick={() => excelDownload()} className='cursor-pointer text-info font-bold my-2 hover:underline'>
+                엑셀 양식 다운로드
+              </p>
             </div>
             {fileInfo ? <ImportFileInfo fileInfo={fileInfo} setFileInfo={setFileInfo} /> : <InputExcelFile setFileInfo={setFileInfo} />}
           </Modal.Body>

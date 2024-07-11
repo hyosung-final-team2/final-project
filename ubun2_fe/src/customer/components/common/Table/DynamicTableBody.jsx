@@ -1,6 +1,6 @@
 import { Table } from 'flowbite-react';
 
-const DynamicTableBody = ({ dataList, TableRowComponent, dynamicKey, dynamicId, setOpenModal, selectedMembers, handleRowChecked, isCheckable = true }) => {
+const DynamicTableBody = ({ dataList, TableRowComponent, dynamicKey, dynamicId, setOpenModal, selectedMembers, handleRowChecked, isCheckable = true,currentPage }) => {
   return (
     <Table.Body className='divide-y'>
       {dataList?.map(data => {
@@ -14,10 +14,9 @@ const DynamicTableBody = ({ dataList, TableRowComponent, dynamicKey, dynamicId, 
               key={keyValue}
               {...data}
               setOpenModal={setOpenModal}
-              // isChecked={selectedMembers.includes(idValue)}
-              // handleRowChecked={handleRowChecked}
               isChecked={selectedMembers.some(member => member.memberId === idValue && member.pending === pending)}
               handleRowChecked={() => handleRowChecked(idValue, pending)}
+              currentPage={currentPage}
             />
           ) : (
             <TableRowComponent key={keyValue} {...data} setOpenModal={setOpenModal} />

@@ -2,7 +2,7 @@ import { Radio } from 'flowbite-react';
 import { useState } from 'react';
 import Select from '../Select/Select';
 
-const PaymentInput = ({}) => {
+const PaymentInput = () => {
   const [paymentMethod, setPaymentMethod] = useState('카드 결제');
   const cardOptions = [
     { value: 'US', label: '국민카드' },
