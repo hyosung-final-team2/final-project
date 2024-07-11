@@ -5,9 +5,7 @@ import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberCustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentResponse;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberPaymentMethodsResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailRequest;
@@ -38,14 +36,14 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     private final MemberCustomerRepository memberCustomerRepository;
 
     @Override
-    public Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(CardPaymentRequest request, Pageable pageable, Long customerId) {
-        return paymentMethodRepository.findAllCardPaymentMethodsByMemberId(request.getMemberId(), pageable, customerId)
+    public Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(Pageable pageable, Long customerId) {
+        return paymentMethodRepository.findAllCardPaymentMethodsByMemberId(pageable, customerId)
                 .map(paymentMethod -> new CardPaymentResponse((CardPayment) paymentMethod));
     }
 
     @Override
-    public Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(AccountPaymentRequest request, Pageable pageable, Long customerId) {
-        return paymentMethodRepository.findAllAccountPaymentMethodsByMemberId(request.getMemberId(), pageable,customerId)
+    public Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(Pageable pageable, Long customerId) {
+        return paymentMethodRepository.findAllAccountPaymentMethodsByMemberId(pageable,customerId)
                 .map(paymentMethod -> new AccountPaymentResponse((AccountPayment) paymentMethod));
     }
 

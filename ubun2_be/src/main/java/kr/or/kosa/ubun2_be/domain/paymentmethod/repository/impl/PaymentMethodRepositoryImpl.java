@@ -27,7 +27,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public Page<PaymentMethod> findAllCardPaymentMethodsByMemberId(Long memberId, Pageable pageable, Long customerId) {
+    public Page<PaymentMethod> findAllCardPaymentMethodsByMemberId(Pageable pageable, Long customerId) {
 
         QueryResults<PaymentMethod> results = from(paymentMethod)
                 .join(paymentMethod.member, member)
@@ -44,7 +44,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
     }
 
     @Override
-    public Page<PaymentMethod> findAllAccountPaymentMethodsByMemberId(Long memberId, Pageable pageable, Long customerId) {
+    public Page<PaymentMethod> findAllAccountPaymentMethodsByMemberId(Pageable pageable, Long customerId) {
         QueryResults<PaymentMethod> results = from(paymentMethod)
                 .join(paymentMethod.member, member)
                 .join(accountPayment)
