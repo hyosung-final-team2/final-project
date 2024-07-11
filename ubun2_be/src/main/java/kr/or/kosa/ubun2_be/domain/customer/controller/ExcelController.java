@@ -1,12 +1,14 @@
 package kr.or.kosa.ubun2_be.domain.customer.controller;
 
 import kr.or.kosa.ubun2_be.domain.customer.service.ExcelService;
+import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,9 +35,8 @@ public class ExcelController {
     }
 
     @PostMapping("/upload/excel")
-    public ResponseDto<?> registerExcel(@RequestParam("file") MultipartFile file) throws IOException {
-        Long customerId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getName());
-        excelService.registerExcel(customerId,file);
+    public ResponseDto<?> registerExcel(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+        excelService.registerExcel(customUserDetails.getUserId(), file);
         return ResponseDto.ok(null,"회원 일괄 등록 완료");
     }
 
