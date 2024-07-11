@@ -1,13 +1,20 @@
 
 import InputLabel from "../common/Input/InputLabel.jsx";
+import StatusBadge from "../common/Badge/StatusBadge.jsx";
 
-const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchable = false }) => {
+const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchable = false,isPending }) => {
 
   return (
       <div className='p-3'>
-        <div className='mb-3 flex items-center justify-between'>
-          <h1 className='text-2xl font-bold text-main'>{title}</h1>
-          {/*{searchable && <SearchableDropdown options={users} onSelect={handleSelectMember} />}*/}
+        <div className='mb-3 flex items-center gap-4'>
+
+              <span className='text-2xl font-bold text-main'>{title}</span>
+              <span>{!isPending ? (
+                  <StatusBadge bgColor='bg-badge-green' txtColor='text-badge-green' badgeText='완료' />
+              ) : (
+                  <StatusBadge bgColor='bg-badge-yellow' txtColor='text-badge-yellow' badgeText='대기' />
+              )}</span>
+
         </div>
         {onlyInfo ? (
             <div className='grid grid-cols-2 gap-3'>

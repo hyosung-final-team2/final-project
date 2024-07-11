@@ -48,6 +48,15 @@ const MemberAddressInfo = ({memberAddresses , isUpdate}) => {
       <div className='mb-4'>
         <div className='w-full flex flex-col'>
           <MemberAddressTable memberAddresses={memberAddresses} title='주소 목록' />
+          {!memberAddresses?.length ?
+              <>
+                <div className="flex justify-center items-center mx-3 py-16 bg-gray-100 rounded-lg">
+                  <h1>등록된 주소지가 없습니다.</h1>
+                </div>
+              </>
+              :
+              null
+          }
           {isUpdate && <AddressInput infos={infos} title='주소 추가' />}
         </div>
       </div>

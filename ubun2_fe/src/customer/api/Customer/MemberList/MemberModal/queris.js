@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getMemberDetail } from '../MemberTable/memberTable.js';
-import { deleteMember } from './memberModal.js';
+import {deleteMember, registerMember} from './memberModal.js';
 import { toast } from 'react-hot-toast';
+import error from "eslint-plugin-react/lib/util/error.js";
 
 export const useGetMemberDetail = (memberId, pending) => {
   return useQuery({
@@ -14,7 +15,6 @@ export const useGetMemberDetail = (memberId, pending) => {
 
 export const useDeleteMember = (memberId, pending, currentPage) => {
   const queryClient = useQueryClient();
-  console.log(memberId, pending, currentPage);
 
   return useMutation({
     mutationFn: () => deleteMember(memberId, pending),
@@ -28,3 +28,11 @@ export const useDeleteMember = (memberId, pending, currentPage) => {
     },
   });
 };
+
+export const useRegisterMember = (registerData) => {
+  return useMutation({
+    mutationFn: () => registerMember(registerData),
+    onSuccess: () => toast.success('Member registered successfully'),
+    onError: () => toast.error(`Member registered failed: ${error.message}`),
+  })
+}

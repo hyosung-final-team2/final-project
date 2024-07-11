@@ -1,6 +1,6 @@
 import SearchBarWithDrop from '../../common/SearchBar/SearchBarWithDrop';
 
-const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal, setOpenInsertModal }) => {
+const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegisterModal }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
   return (
@@ -45,7 +45,7 @@ const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal, setOpenInse
           </svg>
           엑셀 등록
         </button>
-        <button onClick={() => setOpenInsertModal(true)} className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`}>
+        <button onClick={() => setOpenRegisterModal(true)} className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`}>
           회원 등록
         </button>
         <button className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제</button>

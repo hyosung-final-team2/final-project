@@ -15,19 +15,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { getMembers } from '../../../api/Customer/MemberList/MemberTable/memberTable.js';
 import { useGetMemberDetail } from '../../../api/Customer/MemberList/MemberModal/queris.js';
 import MemberInsertModal from "../MemberInsertModal/MemberInsertModal.jsx";
+import MemberRegisterModal from "../MemberRegisterModal/MemberRegisterModal.jsx";
 
 const MemberTable = () => {
-  // const { insertModalStatus,updateModalStatus, setInsertModalStatus,setUpdateModalStatus } = useMemberInsertStatusStore(state => ({
-  //   insertModalStatus: state.insertModalStatus,
-  //   updateModalStatus: state.updateModalStatus,
-  //   setInsertModalStatus: state.setInsertModalStatus,
-  //   setUpdateModalStatus: state.setIsInsertModalOpen,
-  // }));
 
   const [openMemberDetailModal, setOpenMemberDetailModal] = useState(false);
   const [openExcelModal, setOpenExcelModal] = useState(false);
-
   const [openInsertModal, setOpenInsertModal] = useState(false);
+  const [openRegisterModal, setOpenRegisterModal] = useState(false);
 
   const [selectedMembers, setSelectedMembers] = useState([]); // 체크된 멤버
   const [selectedMemberDetail, setSelectedMemberDetail] = useState({ memberId: null, pending: null, currentPage: null }); // 선택된 멤버 ID - 모달 오픈 시
@@ -92,7 +87,7 @@ const MemberTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
-      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenInsertModal={setOpenInsertModal}/>
+      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} />
 
       {/* 테이블 */}
       <div className='px-4 shadow-md'>
@@ -128,8 +123,11 @@ const MemberTable = () => {
       {/* 엑셀 조회 모달 */}
       <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} />
 
-    {/* 멤버 등록 모달 */}
+    {/* 회원 조회 & 수정 모달 */}
       <MemberInsertModal isOpen={openInsertModal} setOpenModal={setOpenInsertModal} selectedMemberDetail={selectedMemberDetail}/>
+
+    {/*  회원 등록 모달*/}
+      <MemberRegisterModal isOpen={openRegisterModal} setOpenModal={setOpenRegisterModal} />
     </div>
   );
 };

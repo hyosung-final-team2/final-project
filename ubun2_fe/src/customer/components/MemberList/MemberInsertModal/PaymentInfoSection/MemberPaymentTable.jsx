@@ -33,7 +33,7 @@ const MemberPaymentTable = ({ memberPaymentMethods, title }) => {
   }, [currentPage, memberPaymentMethods]);
 
   return (
-    <div className='p-2'>
+    <div className='p-3'>
       <h1 className='text-2xl font-bold mb-3 text-main'>{title}</h1>
       <Table hoverable>
         <TableHead tableColumns={tableColumn.paymentMethod.detail} isCheckable={false} />

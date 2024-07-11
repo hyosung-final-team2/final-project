@@ -1,6 +1,6 @@
 import {Modal} from 'flowbite-react';
 import {customModalTheme} from '../../common/Modal/ModalStyle';
-import {useState, memo} from 'react';
+import {useState, memo, useEffect} from 'react';
 
 import PaymentInfoSection from './PaymentInfoSection/PaymentInfoSection';
 import AddressInfoSection from './AddressInfoSection/AddressInfoSection';
@@ -43,12 +43,17 @@ const MemberInsertModal = ({isOpen, setOpenModal, selectedMemberDetail}) => {
 
     const [isUpdate, setIsUpdate] = useState(false);
 
+    useEffect(() => {
+
+    },[])
+
     return (
         <Modal
             dismissible
             show={isOpen}
             theme={customModalTheme}
             onClose={() => {
+                setIsUpdate(false)
                 setOpenModal(false);
             }}
             size='4xl'
@@ -58,13 +63,21 @@ const MemberInsertModal = ({isOpen, setOpenModal, selectedMemberDetail}) => {
             </Modal.Header>
 
             <Modal.Body>
-                <MemberInfo MemberInfoData={MemberInfoData} isUpdate={isUpdate} onlyInfo={true} searchable={false} title='회원정보'/>
+                <MemberInfo MemberInfoData={MemberInfoData} isUpdate={isUpdate} onlyInfo={true} searchable={false} title='회원정보' isPending={selectedMemberDetail.pending}/>
 
-                {/* 회원 결제수단 정보 */}
-                <PaymentInfoSection memberPaymentMethods={member?.paymentMethods} isUpdate={isUpdate}/>
+                { !selectedMemberDetail.pending ?
+                    <>
+                        {/* 회원 결제수단 정보 */}
+                        <PaymentInfoSection memberPaymentMethods={member?.paymentMethods} isUpdate={isUpdate}/>
 
-                {/* 회원 주소지 정보 */}
-                <AddressInfoSection memberAddresses={member?.addresses} isUpdate={isUpdate}/>
+                        {/* 회원 주소지 정보 */}
+                        <AddressInfoSection memberAddresses={member?.addresses} isUpdate={isUpdate}/>
+                    </>
+                    :
+                   null
+
+                }
+
             </Modal.Body>
             <Modal.Footer>
                 {
