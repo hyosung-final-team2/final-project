@@ -5,16 +5,16 @@ const MemberAddressTableHead = () => {
     <>
       <Table.Head>
         <Table.HeadCell className='bg-gray-100'>
-          주소지명 <span className='text-gray-400'>↓</span>
+          우편번호
         </Table.HeadCell>
         <Table.HeadCell className='bg-gray-100'>
-          주소(시, 도) <span className='text-gray-400'>↓</span>
+          주소(시, 도)
         </Table.HeadCell>
         <Table.HeadCell className='bg-gray-100'>
-          주소(시,군,구) <span className='text-gray-400'>↓</span>
+          주소(시,군,구)
         </Table.HeadCell>
         <Table.HeadCell className='bg-gray-100'>
-          상세주소 <span className='text-gray-400'>↓</span>
+          상세주소
         </Table.HeadCell>
       </Table.Head>
     </>

@@ -1,12 +1,12 @@
 import { Table } from 'flowbite-react';
 
-const MemberAddressTableRow = ({ addressNickname, addressTop, addressMid, addressBottom }) => {
+const MemberAddressTableRow = ({ addressNum, addressFirst, addressSecond, addressThird }) => {
   return (
     <Table.Row className='bg-white'>
-      <Table.Cell>{addressNickname}</Table.Cell>
-      <Table.Cell>{addressTop}</Table.Cell>
-      <Table.Cell>{addressMid}</Table.Cell>
-      <Table.Cell>{addressBottom}</Table.Cell>
+      <Table.Cell>{addressNum}</Table.Cell>
+      <Table.Cell>{addressFirst}</Table.Cell>
+      <Table.Cell>{addressSecond}</Table.Cell>
+      <Table.Cell>{addressThird}</Table.Cell>
     </Table.Row>
   );
 };

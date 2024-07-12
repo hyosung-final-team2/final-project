@@ -13,14 +13,19 @@ import { useEffect, useState } from 'react';
 import { useGetMembers } from '../../../api/Customer/MemberList/MemberTable/queris.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { getMembers } from '../../../api/Customer/MemberList/MemberTable/memberTable.js';
-import {useGetMemberDetail} from "../../../api/Customer/MemberList/MemberModal/queris.js";
+import { useGetMemberDetail } from '../../../api/Customer/MemberList/MemberModal/queris.js';
+import MemberInsertModal from "../MemberInsertModal/MemberInsertModal.jsx";
+import MemberRegisterModal from "../MemberRegisterModal/MemberRegisterModal.jsx";
 
 const MemberTable = () => {
+
   const [openMemberDetailModal, setOpenMemberDetailModal] = useState(false);
   const [openExcelModal, setOpenExcelModal] = useState(false);
+  const [openInsertModal, setOpenInsertModal] = useState(false);
+  const [openRegisterModal, setOpenRegisterModal] = useState(false);
 
   const [selectedMembers, setSelectedMembers] = useState([]); // 체크된 멤버
-  const [selectedMemberDetail, setSelectedMemberDetail] = useState({ memberId: null, pending: null }); // 선택된 멤버 ID - 모달 오픈 시
+  const [selectedMemberDetail, setSelectedMemberDetail] = useState({ memberId: null, pending: null, currentPage: null }); // 선택된 멤버 ID - 모달 오픈 시
   const [searchTerm, setSearchTerm] = useState(''); // 검색된 단어
   const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
 
@@ -30,8 +35,7 @@ const MemberTable = () => {
   const totalPages = members?.data?.data?.totalPages ?? 5;
   const memberList = members?.data?.data?.content || [];
 
-  const {data, refetch} = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending)
-
+  const { data, refetch } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
 
   const queryClient = useQueryClient();
 
@@ -64,10 +68,11 @@ const MemberTable = () => {
     });
   };
 
-  const handleRowClick = async (memberId,pending) => {
-    await setSelectedMemberDetail({memberId: memberId, pending:pending });
-    await refetch()
-    await setOpenMemberDetailModal(true);
+  const handleRowClick = async (memberId, pending, page) => {
+    await setSelectedMemberDetail({ memberId: memberId, pending: pending, currentPage: page });
+    await refetch();
+    // await setOpenMemberDetailModal(true);
+    await setOpenInsertModal(true)
   };
 
   const handleSearch = (term, category) => {
@@ -82,7 +87,7 @@ const MemberTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
-      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} />
+      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} />
 
       {/* 테이블 */}
       <div className='px-4 shadow-md'>
@@ -98,6 +103,7 @@ const MemberTable = () => {
             handleRowChecked={handleRowChecked}
             // setOpenModal={setOpenMemberDetailModal}
             setOpenModal={handleRowClick} // 변경된 부분: handleRowClick 사용
+            currentPage={currentPage}
           />
         </Table>
       </div>
@@ -116,6 +122,12 @@ const MemberTable = () => {
 
       {/* 엑셀 조회 모달 */}
       <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} />
+
+    {/* 회원 조회 & 수정 모달 */}
+      <MemberInsertModal isOpen={openInsertModal} setOpenModal={setOpenInsertModal} selectedMemberDetail={selectedMemberDetail} currentPage={currentPage}/>
+
+    {/*  회원 등록 모달*/}
+      <MemberRegisterModal isOpen={openRegisterModal} setOpenModal={setOpenRegisterModal} />
     </div>
   );
 };

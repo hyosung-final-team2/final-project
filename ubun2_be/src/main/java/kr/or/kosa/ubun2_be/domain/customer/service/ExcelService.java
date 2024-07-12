@@ -87,7 +87,7 @@ public class ExcelService {
     private void populateSheetWithData(Workbook workbook, Sheet sheet) {
         String[][] data = {
                 {"회원 이메일", "회원 이름", "전화번호"},
-                {"ex) example@example.com", "ex) 김효성", "ex) 01077778888"}
+                {"ex) example@example.com", "ex) 김효성", "ex) 010-7777-8888"}
         };
 
         CellStyle headerStyle = workbook.createCellStyle();

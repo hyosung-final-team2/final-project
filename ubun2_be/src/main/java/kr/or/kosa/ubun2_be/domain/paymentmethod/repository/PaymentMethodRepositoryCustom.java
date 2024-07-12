@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Optional;
 
 public interface PaymentMethodRepositoryCustom {
-    Page<PaymentMethod> findAllCardPaymentMethodsByMemberId(Long memberId, Pageable pageable, Long customerId);
-    Page<PaymentMethod> findAllAccountPaymentMethodsByMemberId(Long memberId, Pageable pageable, Long customerId);
+    Page<PaymentMethod> findAllCardPaymentMethodsByMemberId(Pageable pageable, Long customerId);
+    Page<PaymentMethod> findAllAccountPaymentMethodsByMemberId(Pageable pageable, Long customerId);
     Optional<PaymentMethod> findPaymentMethodbyPaymentMethodIdAndCustomerId(Long paymentMethodId, Long customerId);
 }

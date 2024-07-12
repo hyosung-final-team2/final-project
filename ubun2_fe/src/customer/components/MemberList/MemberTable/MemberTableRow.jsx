@@ -2,7 +2,7 @@ import { Table, Checkbox } from 'flowbite-react';
 import StatusBadge from '../../common/Badge/StatusBadge';
 import { memo } from 'react';
 
-const MemberTableRow = ({ memberId, memberEmail, memberName, memberPhone, createdAt, pending, setOpenModal, isChecked, handleRowChecked }) => {
+const MemberTableRow = ({ memberId, memberEmail, memberName, memberPhone, createdAt, pending, setOpenModal, isChecked, handleRowChecked, currentPage }) => {
   const parseDate = createdAt => {
     const date = new Date(createdAt);
     return date.toISOString().split('T')[0];
@@ -10,7 +10,7 @@ const MemberTableRow = ({ memberId, memberEmail, memberName, memberPhone, create
 
   return (
     <>
-      <Table.Row className='bg-white' onClick={() => setOpenModal(memberId,pending)}>
+      <Table.Row className='bg-white' onClick={() => setOpenModal(memberId, pending, currentPage)}>
         <Table.Cell>
           <Checkbox checked={isChecked} onChange={() => handleRowChecked(memberId, pending)} onClick={e => e.stopPropagation()} />
         </Table.Cell>
