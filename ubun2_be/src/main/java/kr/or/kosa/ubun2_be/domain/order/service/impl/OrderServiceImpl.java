@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -56,21 +55,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public SubscriptionOrderDetailResponse getSubscriptionOrderByCustomerIdAndOrderIdAndCycleNumber(Long orderId, Long customerId, int cycleNumber) {
-        SubscriptionOrder subscriptionOrder = subscriptionOrderRepository.findSubscriptionOrderByIdAndCustomerIdAndCycleNumber(orderId, customerId, cycleNumber)
+    public SubscriptionOrderDetailResponse getSubscriptionOrderByCustomerIdAndOrderId(Long orderId, Long customerId) {
+        SubscriptionOrder subscriptionOrder = subscriptionOrderRepository.findSubscriptionOrderByIdAndCustomerId(orderId, customerId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
-        // 필터링된 제품 리스트 생성
-        List<SubscriptionOrderDetailProductResponse> productResponses = subscriptionOrder.getSubscriptionOrderProducts().stream()
-                .filter(product -> product.getCycleNumber() == cycleNumber)
-                .map(SubscriptionOrderDetailProductResponse::new)
-                .collect(Collectors.toList());
+        int latestCycleNumber = findLatestCycleNumber(customerId, orderId);
+        return new SubscriptionOrderDetailResponse(subscriptionOrder, latestCycleNumber);
+    }
 
-        if (productResponses.isEmpty()) {
-            throw new OrderException(OrderExceptionType.NO_PRODUCTS_FOUND);
-        }
-
-        return new SubscriptionOrderDetailResponse(subscriptionOrder, productResponses);
+    private int findLatestCycleNumber(Long customerId, Long orderId) {
+        return subscriptionOrderRepository.findLatestCycleNumberByCustomerIdAndOrderId(customerId, orderId)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
     }
 
     @Override
@@ -135,6 +130,5 @@ public class OrderServiceImpl implements OrderService {
             throw new OrderException(OrderExceptionType.INVALID_ORDER_STATUS);
         }
     }
-
 
 }

@@ -1,31 +1,73 @@
-import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Table } from 'flowbite-react';
-import TableHead from '../../common/Table/TableHead';
-import TableBody from '../../common/Table/TableBody';
-import { customTableTheme } from '../../common/Table/tableStyle';
-import { tableColumn } from '../../common/Table/tableIndex';
-import OrderDetailModal from '../OrderDetailModal/OrderDetailModal';
-import TablePagination from '../../common/Pagination/TablePagination';
-import OrderTableRow from './OrderTableRow';
-import OrderTableFeature from './OrderTableFeature';
+import { useEffect, useState } from 'react';
+import { useGetOrderDetail } from '../../../api/Order/OrderList/OrderModal/queris.js';
+import { getOrders } from '../../../api/Order/OrderList/OrderTable/orderTable.js';
+import { useGetOrders } from '../../../api/Order/OrderList/OrderTable/queris.js';
+import TablePagination from '../../common/Pagination/TablePagination.jsx';
+import TableHead from '../../common/Table/TableHead.jsx';
+import { tableColumn } from '../../common/Table/tableIndex.js';
+import { customTableTheme } from '../../common/Table/tableStyle.js';
+import UnifiedOrderTableBody from '../../common/Table/UnifiedOrderTableBody.jsx';
+import OrderDetailModal from '../OrderDetailModal/OrderDetailModal.jsx';
+import OrderTableFeature from './OrderTableFeature.jsx';
+import OrderTableRow from './OrderTableRow.jsx';
 
-const OrderTable = ({ orders }) => {
-  const [openModal, setOpenModal] = useState(false);
-
+const OrderTable = () => {
+  const [openOrderDetailModal, setOpenOrderDetailModal] = useState(false);
   const [selectedOrders, setSelectedOrders] = useState([]); // 체크된 멤버 ID
+  const [selectedOrderDetail, setSelectedOrderDetail] = useState({ orderId: null, subscription: false });
   const [searchTerm, setSearchTerm] = useState(''); // 검색된 단어
   const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data: orders } = useGetOrders(currentPage);
+
+  const totalPages = orders?.data?.data?.totalPages ?? 5;
+  const orderList = orders?.data?.data?.content || [];
+
+  const { data, refetch } = useGetOrderDetail(selectedOrderDetail.orderId, selectedOrderDetail.subscription);
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (currentPage < totalPages) {
+      const nextPage = currentPage + 1;
+      queryClient.prefetchQuery({
+        queryKey: ['order', nextPage],
+        queryFn: () => getOrders(nextPage),
+      });
+    }
+  }, [currentPage, queryClient, totalPages]);
+
   const handleAllChecked = checked => {
     if (checked) {
-      setSelectedOrders(orders.map(order => order.id));
+      setSelectedOrders(
+        orderList.map(order => ({
+          orderId: order.orderId,
+          subscription: order.subscription,
+        }))
+      );
     } else {
       setSelectedOrders([]);
     }
   };
 
-  const handleRowChecked = id => {
-    setSelectedOrders(prev => (prev.includes(id) ? prev.filter(id => id !== id) : [...prev, id]));
+  const handleRowChecked = (id, subscription) => {
+    setSelectedOrders(prev => {
+      const isSelected = prev.some(order => order.orderId === id && order.subscription === subscription); // 변경된 부분
+      if (isSelected) {
+        return prev.filter(order => !(order.orderId === id && order.subscription === subscription)); // 변경된 부분
+      } else {
+        return [...prev, { orderId: id, subscription }];
+      }
+    });
+  };
+
+  const handleRowClick = async (orderId, subscription) => {
+    await setSelectedOrderDetail({ orderId, subscription });
+    await refetch();
+    setOpenOrderDetailModal(true);
   };
 
   const handleSearch = (term, category) => {
@@ -45,20 +87,26 @@ const OrderTable = ({ orders }) => {
       {/* 테이블 */}
       <div className='px-4 shadow-md'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.orders} allChecked={selectedOrders.length === orders.length} setAllChecked={handleAllChecked} />
-          <TableBody
-            users={orders}
+          <TableHead tableColumns={tableColumn.orders} allChecked={selectedOrders.length === orderList?.length} setAllChecked={handleAllChecked} />
+          <UnifiedOrderTableBody
+            dataList={orderList}
             TableRowComponent={OrderTableRow}
-            selectedMembers={selectedOrders}
-            setOpenModal={setOpenModal}
+            setOpenModal={handleRowClick}
+            selectedOrders={selectedOrders}
             handleRowChecked={handleRowChecked}
           />
         </Table>
       </div>
       {/* 페이지네이션 */}
-      <TablePagination totalPages={3} containerStyle='bg-white py-4' />
+      <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
       {/* 모달 */}
-      <OrderDetailModal isOpen={openModal} setOpenModal={setOpenModal} title='주문 상세' />
+      <OrderDetailModal
+        isOpen={openOrderDetailModal}
+        setOpenModal={setOpenOrderDetailModal}
+        title='주문 상세'
+        primaryButtonText={'확인'}
+        selectedOrderDetail={selectedOrderDetail}
+      />
     </div>
   );
 };

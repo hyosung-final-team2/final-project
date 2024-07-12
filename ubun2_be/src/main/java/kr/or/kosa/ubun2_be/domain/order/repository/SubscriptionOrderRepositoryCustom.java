@@ -12,5 +12,9 @@ public interface SubscriptionOrderRepositoryCustom {
     List<SubscriptionOrder> findPendingSubscriptionOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest);
 
     Optional<SubscriptionOrder> findPendingSubscriptionOrderByIdAndCustomerId(Long subscriptionOrderId, Long customerId);
+
+    Optional<SubscriptionOrder> findSubscriptionOrderByIdAndCustomerId(Long orderId, Long customerId);
+
+    Optional<Integer> findLatestCycleNumberByCustomerIdAndOrderId(Long customerId, Long orderId);
 }
 
