@@ -11,9 +11,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useGetAddresses } from '../../api/Address/AddressTable/queris.js';
 import { useGetAddressDetail } from '../../api/Address/AddressModal/queris.js';
 import { getAddresses } from '../../api/Address/AddressTable/addressTable.js';
-import TableBody from '../common/Table/TableBody.jsx';
 
 import useAddressStore from '../../store/Address/useAddressStore.js';
+import DynamicTableBody from '../common/Table/DynamicTableBody.jsx';
 
 const AddressTable = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -68,12 +68,15 @@ const AddressTable = () => {
       <div className='px-4'>
         <Table hoverable>
           <TableHead tableColumns={tableColumn.address.list} allChecked={selectedAddresses.length === addressList.length} setAllChecked={handleAllChecked} />
-          <TableBody
+          <DynamicTableBody
             TableRowComponent={AddressTableRow}
-            users={addressList}
+            dataList={addressList}
             setOpenModal={handleRowClick}
+            dynamicKey='addressId'
+            dynamicId='addressId'
             selectedMembers={selectedAddresses}
             handleRowChecked={handleRowChecked}
+            currentPage={currentPage}
           />
         </Table>
         <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />

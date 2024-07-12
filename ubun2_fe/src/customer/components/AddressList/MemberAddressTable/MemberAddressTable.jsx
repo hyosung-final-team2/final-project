@@ -2,10 +2,10 @@ import { Table } from 'flowbite-react';
 
 import MemberAddressTableRow from './MemberAddressTableRow';
 import { tableColumn } from '../../common/Table/tableIndex.js';
-import TableBody from '../../common/Table/TableBody.jsx';
 import TableHead from '../../common/Table/TableHead.jsx';
 import { useEffect, useState } from 'react';
 import TablePagination from '../../common/Pagination/TablePagination.jsx';
+import DynamicTableBody from '../../common/Table/DynamicTableBody.jsx';
 
 const MemberAddressTable = ({ memberAddresses, title }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,7 +38,14 @@ const MemberAddressTable = ({ memberAddresses, title }) => {
       <h2 className='text-2xl font-bold mb-3 text-main'>{title}</h2>
       <Table hoverable>
         <TableHead tableColumns={tableColumn.address.detail} isCheckable={false} />
-        <TableBody users={paginatedData} TableRowComponent={MemberAddressTableRow} isCheckable={false} />
+        <DynamicTableBody
+          dataList={paginatedData}
+          TableRowComponent={MemberAddressTableRow}
+          isCheckable={false}
+          dynamicId='addressId'
+          dynamicKey='addressId'
+          currentPage={currentPage}
+        />
       </Table>
       {totalPages < 1 ? null : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
       {!memberAddresses?.length ? (
