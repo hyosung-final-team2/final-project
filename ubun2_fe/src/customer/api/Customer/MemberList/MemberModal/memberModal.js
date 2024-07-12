@@ -18,3 +18,15 @@ export const registerMember = async (registerData) => await privateFetch.post("/
     pendingMemberEmail:registerData.pendingMemberEmail,
     pendingMemberPhone:registerData.pendingMemberPhone
 })
+
+// 회원 정보 수정
+export const updateMember = async (memberId, isPending, requestData) => {
+    const requestPayload = {
+        isPending: isPending,
+        request: requestData
+    };
+
+    console.log(requestPayload)
+    const res = await privateFetch.put(`/customers/members/${memberId}`, requestPayload);
+    return res.data;
+};

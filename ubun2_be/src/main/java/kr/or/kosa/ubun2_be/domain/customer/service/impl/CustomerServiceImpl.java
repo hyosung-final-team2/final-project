@@ -120,7 +120,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     public void updateMember(Long customerId, Long memberId, MemberRequestWrapper<?> memberRequestWrapper) {
         validateMyMember(customerId, memberId);
-
+        System.out.println(memberRequestWrapper.isPending());
         if (memberRequestWrapper.isPending()) {
             PendingMember findMember = pendingMemberRepository.findById(memberId)
                     .orElseThrow(() -> new PendingMemberException(PendingMemberExceptionType.NOT_EXIST_PENDING_MEMBER));

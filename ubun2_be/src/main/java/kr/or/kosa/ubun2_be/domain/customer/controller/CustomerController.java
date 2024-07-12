@@ -56,7 +56,7 @@ public class CustomerController {
     @Operation(summary = "회원 & 가입대기 회원 수정")
     @PutMapping("/members/{memberId}")
     public ResponseDto<?> updateMember(@PathVariable Long memberId,
-                                       @ModelAttribute MemberRequestWrapper<?> memberRequestWrapper,
+                                       @RequestBody MemberRequestWrapper<?> memberRequestWrapper,
                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         customerService.updateMember(customUserDetails.getUserId() ,memberId, memberRequestWrapper);
         return ResponseDto.ok(null, "회원 수정 정상 완료");

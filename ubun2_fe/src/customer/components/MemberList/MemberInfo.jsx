@@ -2,7 +2,7 @@
 import InputLabel from "../common/Input/InputLabel.jsx";
 import StatusBadge from "../common/Badge/StatusBadge.jsx";
 
-const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchable = false,isPending }) => {
+const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchable = false,isPending , handleInputChange}) => {
 
   return (
       <div className='p-3'>
@@ -18,9 +18,9 @@ const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchab
         </div>
         {onlyInfo ? (
             <div className='grid grid-cols-2 gap-3'>
-              <InputLabel labelTitle='회원명' defaultValue={MemberInfoData.memberName} disabled={!isUpdate} isUpdate={isUpdate}/>
-              <InputLabel labelTitle='이메일' defaultValue={MemberInfoData.memberEmail} disabled={!isUpdate} isUpdate={isUpdate}/>
-              <InputLabel labelTitle='전화번호' defaultValue={MemberInfoData.memberPhone} disabled={!isUpdate} isUpdate={isUpdate}/>
+              <InputLabel labelTitle='회원명' defaultValue={MemberInfoData.memberName} disabled={!isUpdate} isUpdate={isUpdate} onChange={(value) => handleInputChange('memberName', value)}/>
+              <InputLabel labelTitle='이메일' defaultValue={MemberInfoData.memberEmail} disabled={!isUpdate} isUpdate={isUpdate} onChange={(value) => handleInputChange('memberEmail', value)}/>
+              <InputLabel labelTitle='전화번호' defaultValue={MemberInfoData.memberPhone} disabled={!isUpdate} isUpdate={isUpdate} onChange={(value) => handleInputChange('memberPhone', value)}/>
               <InputLabel labelTitle='가입일' defaultValue={MemberInfoData.memberCreatedAt} disabled={onlyInfo} />
             </div>
         ) : (

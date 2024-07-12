@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getMemberDetail } from '../MemberTable/memberTable.js';
-import {deleteMember, registerMember} from './memberModal.js';
+import {deleteMember, registerMember, updateMember} from './memberModal.js';
 import { toast } from 'react-hot-toast';
 import error from "eslint-plugin-react/lib/util/error.js";
 
@@ -34,5 +34,17 @@ export const useRegisterMember = (registerData) => {
     mutationFn: () => registerMember(registerData),
     onSuccess: () => toast.success('Member registered successfully'),
     onError: () => toast.error(`Member registered failed: ${error.message}`),
+  })
+}
+
+export const useUpdateMember = (currentPage) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({memberId, isPending, requestData}) => updateMember(memberId, isPending, requestData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['member', currentPage] });
+      toast.success('Member updated successfully')
+    },
+    onError: () => toast.error(`Member updated failed: ${error.message}`),
   })
 }
