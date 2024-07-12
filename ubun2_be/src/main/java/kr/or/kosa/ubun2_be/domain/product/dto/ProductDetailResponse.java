@@ -13,6 +13,11 @@ public class ProductDetailResponse {
     private int productDiscount;
     private boolean productStatus;
     private OrderOption orderOption;
+    private String productDescription;
+    private String productImagePath;
+    private String categoryName;
+
+
 
     public ProductDetailResponse(Product product) {
         this.productId = product.getProductId();
@@ -22,6 +27,9 @@ public class ProductDetailResponse {
         this.orderOption = product.getOrderOption();
         this.stockQuantity = product.getStockQuantity();
         this.productStatus = product.isProductStatus();
+        this.productDescription = product.getProductDescription();
+        this.productImagePath = product.getProductImagePath();
+        this.categoryName = product.getCategory().getCategoryName();
     }
 
 }

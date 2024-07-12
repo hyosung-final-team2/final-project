@@ -152,14 +152,13 @@ class ProductServiceImplTest {
     @DisplayName("상품 삭제 - 성공")
     void removeProduct() {
         //given
-        ProductDeleteRequest deleteRequest = new ProductDeleteRequest();
-        deleteRequest.setProductId(1L);
+        Long productId = 1L;
 
         when(productRepository.findByCustomerCustomerIdAndProductId(anyLong(), anyLong()))
                 .thenReturn(Optional.of(testProduct));
 
         //when
-        assertDoesNotThrow(() -> productService.removeProduct(1L, deleteRequest));
+        assertDoesNotThrow(() -> productService.removeProduct(1L, productId));
 
         //then
         verify(imageService).deleteImage(anyString());

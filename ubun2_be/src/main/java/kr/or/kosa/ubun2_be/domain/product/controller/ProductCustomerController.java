@@ -35,7 +35,7 @@ public class ProductCustomerController {
     @Operation(summary = "상품 상세 조회")
     @GetMapping("/{product_id}")
     public ResponseDto<?> getProductByProductId(@PathVariable("product_id") Long productId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        ProductDetailResponse productDetailResponse = productService.getProductByCustomerIdAndProductId(productId, customUserDetails.getUserId());
+        ProductDetailResponse productDetailResponse = productService.getProductByCustomerIdAndProductId(customUserDetails.getUserId(),productId);
         return ResponseDto.ok(productDetailResponse, "정상출력 데이터");
     }
 
@@ -54,9 +54,9 @@ public class ProductCustomerController {
     }
 
     @Operation(summary = "상품 삭제")
-    @DeleteMapping
-    public ResponseDto<?> removeProduct(@RequestBody ProductDeleteRequest productDeleteRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        productService.removeProduct(customUserDetails.getUserId(), productDeleteRequest);
+    @DeleteMapping("/{product_id}")
+    public ResponseDto<?> removeProduct(@PathVariable("product_id") Long productId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        productService.removeProduct(customUserDetails.getUserId(), productId);
         return ResponseDto.ok(null, "정상출력 데이터");
     }
 
