@@ -103,6 +103,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
                     .bankName(paymentMethodRequest.getBankName())
                     .build();
             paymentMethodRepository.save(accountPayment);
+
         } else {
             throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
         }
@@ -157,7 +158,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     private void validateMyMember(Long customerId, Long memberId) {
-        if (!memberCustomerRepository.existsByCustomerIdAndMemberId(customerId, memberId)) {
+        if (!paymentMethodRepository.checkIsMyMember(customerId, memberId)) {
             throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
         }
     }

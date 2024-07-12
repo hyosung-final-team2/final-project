@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface AddressRepositoryCustom {
     Page<Address> findAllAddressesWithMember(Pageable pageable, Long customerId);
     Optional<Address> findAddressByIdAndCustomerId(Long addressId, Long customerId);
+    boolean checkIsMyMember(Long customerId, Long memberId);
 }

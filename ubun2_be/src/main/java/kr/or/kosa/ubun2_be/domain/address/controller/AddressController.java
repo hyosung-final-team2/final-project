@@ -1,7 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.address.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberDetailRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberInfoResponse;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
@@ -14,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,14 +43,14 @@ public class AddressController {
     }
 
     @Operation(summary = "주소 등록")
-    @PostMapping(value = "/", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/")
     public ResponseDto<?> addAddress(@RequestBody AddressRequest addressRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
         addressService.addAddress(addressRequest,userDetails.getUserId());
         return ResponseDto.ok(null, "주소가 성공적으로 등록되었습니다.");
     }
 
     @Operation(summary = "회원의 주소 수정")
-    @PutMapping(value = "/{address_id}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(value = "/{address_id}")
     public ResponseDto<?> updateAddress(@PathVariable("address_id") Long addressId, @RequestBody AddressRequest addressRequest,@AuthenticationPrincipal CustomUserDetails userDetails) {
         addressService.updateAddress(addressId, addressRequest,userDetails.getUserId());
         return ResponseDto.ok(null, "주소가 성공적으로 수정되었습니다.");
