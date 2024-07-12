@@ -1,14 +1,22 @@
+import { useState } from 'react';
 import { Button, Modal } from 'flowbite-react';
+import { useGetOrderDetail } from '../../../api/Order/OrderList/OrderModal/queris';
+import { customModalTheme } from '../../common/Modal/ModalStyle';
 import MemberInfo from '../../MemberList/MemberInfo';
 import StatusBadge from '../../common/Badge/StatusBadge';
-import { customModalTheme } from '../../common/Modal/ModalStyle';
 import OrderDetailInfo from '../OrderDetailModal/OrderDetailInfo';
 import SingleOrderProduct from '../OrderDetailModal/SingleOrderProduct';
-import SubScriptionOrderProduct from '../OrderDetailModal/SubScriptionOrderProduct';
+import SubscriptionOrderProduct from '../OrderDetailModal/SubScriptionOrderProduct';
 
-import { orderInfo } from '../OrderDetailData'; // DUMMY DATA
+const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPrimaryClick, selectedOrderDetail }) => {
+  const { data: orderDetail, isLoading } = useGetOrderDetail(selectedOrderDetail.orderId, selectedOrderDetail.subscription);
+  const orderInfo = orderDetail?.data?.data;
+  const [selectedCycle, setSelectedCycle] = useState(orderInfo?.latestCycleNumber || 1);
 
-const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPrimaryClick }) => {
+  const handleCycleChange = cycle => {
+    setSelectedCycle(cycle);
+  };
+
   return (
     <>
       <Modal dismissible show={isOpen} onClose={() => setOpenModal(false)} theme={customModalTheme} size='4xl'>
@@ -16,7 +24,7 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
           <div className='flex items-center justify-between w-full'>
             <div className='text-3xl font-bold'>{title}</div>
             <div className='ml-4 text-xs'>
-              {orderInfo.orderStatus === 'APPROVED' ? (
+              {orderInfo?.orderStatus === 'APPROVED' ? (
                 <StatusBadge bgColor='bg-badge-green' txtColor='text-badge-green' badgeText='승인' />
               ) : (
                 <StatusBadge bgColor='bg-badge-orange' txtColor='text-badge-orange' badgeText='변경' />
@@ -27,17 +35,26 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
         <Modal.Body>
           <div className='space-y-4 flex-2'>
             {/* 회원정보 */}
-            <MemberInfo member={orderInfo.member} title='주문 정보' />
+            <MemberInfo
+              member={{
+                memberName: orderInfo?.memberName ?? '',
+                memberEmail: orderInfo?.memberEmail ?? '',
+                memberPhone: orderInfo?.memberPhone ?? '',
+                memberCreatedAt: orderInfo?.createdAt ?? '',
+              }}
+              onlyInfo={true}
+              title='주문 정보'
+            />
 
-            {/* 상품목록 */}
-            {orderInfo.orderOption === 'SINGLE' ? (
-              <SingleOrderProduct orderProductList={orderInfo.products} />
+            {/* 상품 목록 */}
+            {selectedOrderDetail.subscription ? (
+              <SubscriptionOrderProduct orderInfo={orderInfo} selectedCycle={selectedCycle} onCycleChange={handleCycleChange} />
             ) : (
-              <SubScriptionOrderProduct orderProductList={orderInfo.products} subscription={orderInfo.subscription} />
+              <SingleOrderProduct orderInfo={orderInfo} />
             )}
 
             {/* 배송지 및 결제정보 */}
-            <OrderDetailInfo delivery={orderInfo.delivery} payment={orderInfo.payment} />
+            <OrderDetailInfo orderInfo={orderInfo} selectedCycle={selectedCycle} isSubscription={selectedOrderDetail.subscription} />
           </div>
         </Modal.Body>
         <Modal.Footer>
