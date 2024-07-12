@@ -7,10 +7,12 @@ import lombok.Getter;
 
 @Getter
 public class SubscriptionOrderDetailProductResponse {
+    private Long productId;
     private String productName;
     private String productDescription;
     private String productImageOriginalName;
     private String productImagePath;
+    private int cycleNumber;
     private int price;
     private int quantity;
     private double discount;
@@ -19,14 +21,16 @@ public class SubscriptionOrderDetailProductResponse {
 
     public SubscriptionOrderDetailProductResponse(SubscriptionOrderProduct subscriptionOrderProduct) {
         Product product = subscriptionOrderProduct.getProduct();
+        this.productId = product.getProductId();
         this.productName = product.getProductName();
         this.productDescription = product.getProductDescription();
         this.productImageOriginalName = product.getProductImageOriginalName();
         this.productImagePath = product.getProductImagePath();
+        this.cycleNumber = subscriptionOrderProduct.getCycleNumber();
         this.price = subscriptionOrderProduct.getPrice();
         this.quantity = subscriptionOrderProduct.getQuantity();
         this.discount = subscriptionOrderProduct.getDiscount();
-        this.totalPrice = (int) ((price - (price * discount)) * quantity);
+        this.totalPrice = (int) (price * quantity * (100 - discount) / 100.0);
         this.orderProductStatus = subscriptionOrderProduct.getOrderProductStatus();
     }
 }
