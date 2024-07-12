@@ -4,16 +4,18 @@ import { persist } from 'zustand/middleware';
 const useMemberUpdateStore = create(
     persist(
         set => ({
-            memberName: '',
-            memberEmail:'',
-            memberPhone:'',
-            addresses: [],
-            paymentMethods: [],
-            setMemberName: memberName => set({ memberName: memberName }),
-            setMemberEmail: memberEmail => set({ memberName: memberEmail }),
-            setMemberPhone: memberPhone => set({ memberName: memberPhone }),
-            setAddresses: newCard => set(state => ({ cardList: [...state.cardList, newCard] })),
-            setAccountList: newAccount => set(state => ({ accountList: [...state.accountList, newAccount] })),
+            isUpdateGlobal: false,
+            deletedPaymentMethods: [],
+            deletedAddresses: [],
+            setIsUpdateGlobal: bool => set({ isUpdateGlobal: bool }),
+            addDeletedPaymentMethod: method => set(state => ({
+                deletedPaymentMethods: [...state.deletedPaymentMethods, method],
+            })),
+            addDeletedAddresses: address => set(state => ({
+                deletedAddresses: [...state.deletedAddresses, address],
+            })),
+            resetDeletedPaymentMethods: () => set({ deletedPaymentMethods: [] }),
+            resetDeletedAddresses: () => set({ deletedAddresses: [] }),
         }),
         {
             name: 'memberUpdate-storage',

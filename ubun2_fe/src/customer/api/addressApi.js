@@ -23,6 +23,8 @@ const fetchAddressData = (keyword, confmKey = 'devU01TX0FVVEgyMDI0MDcwMTIwMzcxMD
       // JSON 문자열을 객체로 파싱
       const data = JSON.parse(jsonString);
 
+      console.log(data)
+
       return data;
     })
     .catch(error => {

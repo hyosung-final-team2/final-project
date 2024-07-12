@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { FileInput, Label } from 'flowbite-react';
 
 function InputExcelFile({ setFileInfo }) {

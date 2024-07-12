@@ -1,13 +1,13 @@
 import PaymentRegisterTable from './PaymentRegisterTable';
 import PaymentInput from '../../../common/Input/PaymentInput';
 
-const PaymentInfoSection = ({ memberRegisterObj, memberPaymentMethods,isUpdate }) => {
+const PaymentInfoSection = ({ memberRegisterObj, memberPaymentMethods,isUpdate,handlePaymentMethodAdd, handlePaymentMethodDelete }) => {
 
 
   return (
     <>
       {/* PaymentRegisterTable 테이블 추가 */}
-      <PaymentRegisterTable memberPaymentMethods={memberPaymentMethods}/>
+      <PaymentRegisterTable memberPaymentMethods={memberPaymentMethods} isUpdate={isUpdate} handlePaymentMethodDelete={handlePaymentMethodDelete}/>
         {!memberPaymentMethods.length ?
             <>
                 <div className="flex justify-center items-center mx-3 py-16 bg-gray-100 rounded-lg">
@@ -18,7 +18,7 @@ const PaymentInfoSection = ({ memberRegisterObj, memberPaymentMethods,isUpdate }
             null
         }
 
-        {isUpdate && <PaymentInput />}
+        {isUpdate && <PaymentInput handlePaymentMethodAdd={handlePaymentMethodAdd}/>}
     </>
   );
 };

@@ -124,7 +124,7 @@ const MemberTable = () => {
       <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} />
 
     {/* 회원 조회 & 수정 모달 */}
-      <MemberInsertModal isOpen={openInsertModal} setOpenModal={setOpenInsertModal} selectedMemberDetail={selectedMemberDetail}/>
+      <MemberInsertModal isOpen={openInsertModal} setOpenModal={setOpenInsertModal} selectedMemberDetail={selectedMemberDetail} currentPage={currentPage}/>
 
     {/*  회원 등록 모달*/}
       <MemberRegisterModal isOpen={openRegisterModal} setOpenModal={setOpenRegisterModal} />

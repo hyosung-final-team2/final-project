@@ -7,7 +7,9 @@ import TableHead from "../../../common/Table/TableHead.jsx";
 import {useEffect, useState} from "react";
 import TablePagination from "../../../common/Pagination/TablePagination.jsx";
 
-const MemberAddressTable = ({ memberAddresses, title }) => {
+const MemberAddressTable = ({ memberAddresses, title, handleAddressDelete }) => {
+
+    console.log(memberAddresses);
 
     const [currentPage, setCurrentPage] = useState(1);
     const [paginatedData, setPaginatedData] = useState([]);
@@ -27,9 +29,11 @@ const MemberAddressTable = ({ memberAddresses, title }) => {
                 addressFirst,
                 addressSecond,
                 addressThird,
+                noneSplitAddress : item
             };
         });
         setPaginatedData(currentData);
+        console.log(currentData)
     }, [currentPage, memberAddresses]);
 
 
@@ -38,7 +42,7 @@ const MemberAddressTable = ({ memberAddresses, title }) => {
       <h2 className='text-2xl font-bold mb-3 text-main'>{title}</h2>
       <Table hoverable>
         <TableHead tableColumns={tableColumn.address.detail} isCheckable={false} />
-        <TableBody users={paginatedData} TableRowComponent={MemberAddressTableRow} isCheckable={false} />
+        <TableBody dataList={paginatedData} TableRowComponent={MemberAddressTableRow} isCheckable={false} dynamicId="addressId" handleDelete={handleAddressDelete}/>
       </Table>
         {totalPages < 1 ? null : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
     </div>
