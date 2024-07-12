@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Modal } from 'flowbite-react';
+import { Modal } from 'flowbite-react';
 import { useGetOrderDetail } from '../../../api/Order/OrderList/OrderModal/queris';
 import { customModalTheme } from '../../common/Modal/ModalStyle';
 import MemberInfo from '../../MemberList/MemberInfo';
@@ -36,7 +36,7 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
           <div className='space-y-4 flex-2'>
             {/* 회원정보 */}
             <MemberInfo
-              member={{
+              MemberInfoData={{
                 memberName: orderInfo?.memberName ?? '',
                 memberEmail: orderInfo?.memberEmail ?? '',
                 memberPhone: orderInfo?.memberPhone ?? '',
@@ -58,9 +58,13 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button className='w-28 bg-custom-button-purple text-custom-font-purple' onClick={onPrimaryClick || (() => setOpenModal(false))}>
+          <button
+            type='button'
+            className='focus:outline-none w-20 text-custom-font-purple bg-custom-button-purple hover:bg-purple-400 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900'
+            onClick={onPrimaryClick || (() => setOpenModal(false))}
+          >
             <div>{primaryButtonText || '확인'}</div>
-          </Button>
+          </button>
         </Modal.Footer>
       </Modal>
     </>

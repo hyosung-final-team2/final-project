@@ -9,7 +9,7 @@ public interface OrderService {
 
     OrderDetailResponse getOrderByCustomerIdAndOrderId(Long orderId, Long customerId);
 
-    SubscriptionOrderDetailResponse getSubscriptionOrderByCustomerIdAndOrderIdAndCycleNumber(Long orderId, Long customerId);
+    SubscriptionOrderDetailResponse getSubscriptionOrderByCustomerIdAndOrderId(Long orderId, Long customerId);
 
     Page<UnifiedOrderResponse> getPendingOrders(Long customerId, SearchRequest searchRequest, Pageable pageable);
 

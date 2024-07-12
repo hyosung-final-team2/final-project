@@ -54,7 +54,7 @@ const SubscriptionOrderProduct = ({ orderInfo, selectedCycle, onCycleChange }) =
             <div className='relative w-2/12' style={{ paddingBottom: '20%' }}>
               <img
                 src={product.productImagePath || '/placeholder-image.jpg'}
-                alt='상품이미지'
+                alt={product.productImageOriginalName}
                 className='absolute inset-0 object-cover w-full h-full rounded-md'
               />
             </div>

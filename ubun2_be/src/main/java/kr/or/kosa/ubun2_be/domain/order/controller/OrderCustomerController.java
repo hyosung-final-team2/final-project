@@ -42,7 +42,7 @@ public class OrderCustomerController {
     @GetMapping("/subscription/{order_id}")
     public ResponseDto<?> getSubscriptionOrderByOrderId(@PathVariable("order_id") Long orderId,
                                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        SubscriptionOrderDetailResponse response = orderService.getSubscriptionOrderByCustomerIdAndOrderIdAndCycleNumber(orderId, customUserDetails.getUserId());
+        SubscriptionOrderDetailResponse response = orderService.getSubscriptionOrderByCustomerIdAndOrderId(orderId, customUserDetails.getUserId());
         return ResponseDto.ok(response, "정상출력 데이터");
     }
 
@@ -58,7 +58,7 @@ public class OrderCustomerController {
 
 
     @Operation(summary = "대기 단건 주문 승인, 취소")
-    @PutMapping("/approve/{order_id}")
+    @PutMapping("/approve")
     public ResponseDto<?> updateOrderApprove(@RequestBody OrderApproveRequest orderApproveRequest,
                                              @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         orderService.updateOrderApprove(customUserDetails.getUserId(), orderApproveRequest);
@@ -66,7 +66,7 @@ public class OrderCustomerController {
     }
 
     @Operation(summary = "대기 정기 주문(최초 정기주문만) 승인, 취소")
-    @PutMapping("/subscription/approve/{order_id}")
+    @PutMapping("/subscription/approve")
     public ResponseDto<?> updateSubscriptionOrderApprove(@RequestBody SubscriptionApproveRequest subscriptionApproveRequest,
                                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         orderService.updateSubscriptionOrderApprove(customUserDetails.getUserId(), subscriptionApproveRequest);

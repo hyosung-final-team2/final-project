@@ -2,8 +2,7 @@ import { List } from 'flowbite-react';
 
 const SingleOrderProduct = ({ orderInfo }) => {
   const getPriceClassName = discount => {
-    const discountClass = discount > 0 ? 'line-through text-red-500 dark:text-red-500' : 'text-gray-900 dark:text-white';
-    return `${discountClass}`;
+    return discount > 0 ? 'line-through text-red-500 dark:text-red-500' : 'text-gray-900 dark:text-white';
   };
 
   return (

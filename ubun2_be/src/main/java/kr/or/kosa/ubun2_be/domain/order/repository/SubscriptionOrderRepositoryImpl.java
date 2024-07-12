@@ -97,7 +97,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     }
 
     @Override
-    public Optional<SubscriptionOrder> findSubscriptionOrderByIdAndCustomerIdAndCycleNumber(Long orderId, Long customerId) {
+    public Optional<SubscriptionOrder> findSubscriptionOrderByIdAndCustomerId(Long orderId, Long customerId) {
         return Optional.ofNullable(
                 from(subscriptionOrder)
                         .join(subscriptionOrder.member, member).fetchJoin()
