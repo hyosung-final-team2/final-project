@@ -58,7 +58,6 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public void addAddress(AddressRequest addressRequest,Long customerId) {
-        System.out.println(addressRequest.getMemberId());
         validateMyMember(customerId,addressRequest.getMemberId());
 
         Member member = memberRepository.findById(addressRequest.getMemberId())

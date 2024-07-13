@@ -30,9 +30,6 @@ const PaymentMethodTable = () => {
   const cardList = cards?.data?.data?.content || [];
   const accountList = accounts?.data?.data?.content || [];
 
-  console.log(cardList);
-  console.log(accountList);
-
   const isAccount = paymentMethodType === 'ACCOUNT';
 
   const totalPages = (isAccount ? accounts : cards)?.data?.data?.totalPages ?? 5;
@@ -69,17 +66,15 @@ const PaymentMethodTable = () => {
   };
 
   const handleRowClick = async (paymentMethodId, memberId) => {
-    console.log(paymentMethodId);
     await setPaymentMethodId(paymentMethodId);
     await refetch();
     await setOpenModal(true);
-    console.log(memberId);
     setSelectedMemberId(memberId);
   };
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      <PaymentMethodTableFeature setOpenModal={setOpenModal} />
+      <PaymentMethodTableFeature setOpenModal={setOpenModal} setCurrentPage={setCurrentPage} />
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           {

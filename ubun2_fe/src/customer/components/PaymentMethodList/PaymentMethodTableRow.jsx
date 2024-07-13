@@ -19,7 +19,6 @@ const PaymentMethodTableRow = ({
   const paymentMethodType = paymentMethodStore(state => state.paymentMethodType);
 
   const isAccount = paymentMethodType === 'ACCOUNT';
-  console.log(memberId);
   return (
     <>
       <Table.Row className='bg-white' onClick={() => setOpenModal(paymentMethodId, memberId)}>

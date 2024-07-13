@@ -35,6 +35,8 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
                 .on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .join(member.memberCustomers, memberCustomer)
                 .where(paymentMethod.paymentType.eq("CARD").and(memberCustomer.customer.customerId.eq(customerId)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetchResults();
 
         long total = results.getTotal();
@@ -51,6 +53,8 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
                 .on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
                 .join(member.memberCustomers, memberCustomer)
                 .where(paymentMethod.paymentType.eq("ACCOUNT").and(memberCustomer.customer.customerId.eq(customerId)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetchResults();
 
         long total = results.getTotal();

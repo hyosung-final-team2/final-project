@@ -28,10 +28,10 @@ const MemberInfo = ({ member, onlyInfo = true, title, searchable = false }) => {
       </div>
       {onlyInfo ? (
         <div className='grid grid-cols-2 gap-3'>
-          <InputLabel labelTitle='회원명' defaultValue={selectedMember.name} disabled={onlyInfo} />
-          <InputLabel labelTitle='이메일' defaultValue={selectedMember.email} disabled={onlyInfo} />
-          <InputLabel labelTitle='전화번호' defaultValue={selectedMember.phone} disabled={onlyInfo} />
-          <InputLabel labelTitle='가입일' defaultValue={selectedMember.createdAt} disabled={onlyInfo} />
+          <InputLabel labelTitle='회원명' defaultValue={selectedMember?.name} disabled={onlyInfo} />
+          <InputLabel labelTitle='이메일' defaultValue={selectedMember?.email} disabled={onlyInfo} />
+          <InputLabel labelTitle='전화번호' defaultValue={selectedMember?.phone} disabled={onlyInfo} />
+          <InputLabel labelTitle='가입일' defaultValue={selectedMember?.createdAt} disabled={onlyInfo} />
         </div>
       ) : (
         <div className='grid grid-cols-2 gap-3'>
