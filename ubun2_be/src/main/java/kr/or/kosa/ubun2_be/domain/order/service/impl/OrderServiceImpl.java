@@ -87,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void updateOrderApprove(Long customerId, List<OrderApproveRequest> orderApproveRequests) {
+    public void updateOrderStatus(Long customerId, List<OrderApproveRequest> orderApproveRequests) {
         for (OrderApproveRequest request : orderApproveRequests) {
             Order findPendingOrder = orderRepository.findPendingOrderByIdAndCustomerId(request.getOrderId(), customerId)
                     .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
@@ -108,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void updateSubscriptionOrderApprove(Long customerId, List<SubscriptionApproveRequest> subscriptionApproveRequests) {
+    public void updateSubscriptionOrderStatus(Long customerId, List<SubscriptionApproveRequest> subscriptionApproveRequests) {
         for (SubscriptionApproveRequest request : subscriptionApproveRequests) {
             SubscriptionOrder findSubscriptionPendingOrder = subscriptionOrderRepository
                     .findPendingSubscriptionOrderByIdAndCustomerId(request.getSubscriptionOrderId(), customerId)
