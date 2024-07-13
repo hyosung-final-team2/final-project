@@ -14,8 +14,6 @@ export const useSendSms = (selectedMembers) => {
     return { memberName: member.memberName, phoneNumber: member.memberPhone}
   })
 
-  console.log(nameAndPhoneNumbers);
-
   return useMutation({
     mutationFn: () => sendSms(nameAndPhoneNumbers),
     onSuccess: () => toast.success(`${nameAndPhoneNumbers.length}명의 회원에게 성공적으로 전송되었습니다.`),

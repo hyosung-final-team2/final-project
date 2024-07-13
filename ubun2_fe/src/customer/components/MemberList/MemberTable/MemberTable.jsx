@@ -25,8 +25,6 @@ const MemberTable = () => {
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
 
   const [selectedMembers, setSelectedMembers] = useState([]); // 체크된 멤버
-  console.log(selectedMembers)
-
   const [selectedMemberDetail, setSelectedMemberDetail] = useState({ memberId: null, pending: null, currentPage: null }); // 선택된 멤버 ID - 모달 오픈 시
   const [searchTerm, setSearchTerm] = useState(''); // 검색된 단어
   const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
