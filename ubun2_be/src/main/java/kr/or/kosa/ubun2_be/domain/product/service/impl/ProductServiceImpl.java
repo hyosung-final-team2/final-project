@@ -61,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
     public void modifyProduct(MultipartFile image, Long customerId, ProductRequest productRequest) { //productName 중복 체크
         Product findProduct = productRepository.findById(productRequest.getProductId())
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
-        if (isExistProductName(productRequest.getProductName())) {
+        if (!findProduct.getProductName().equals(productRequest.getProductName())&&isExistProductName(productRequest.getProductName())) {
             throw new ProductException(ProductExceptionType.DUPLICATE_PRODUCT_NAME);
         }
         String existingImageUrl = findProduct.getProductImagePath();
@@ -87,11 +87,9 @@ public class ProductServiceImpl implements ProductService {
     public void removeProduct(Long customerId, Long productId) {
         Product findProduct = productRepository.findByCustomerCustomerIdAndProductId(customerId, productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
-        System.out.println("어디서");
         productRepository.delete(findProduct);
         if(findProduct.getProductImagePath()==null) return;
         imageService.deleteImage(findProduct.getProductImagePath());
-        System.out.println("터지는거지");
     }
 
     @Override
