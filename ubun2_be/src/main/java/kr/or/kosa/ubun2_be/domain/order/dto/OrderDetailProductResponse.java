@@ -7,6 +7,7 @@ import lombok.Getter;
 
 @Getter
 public class OrderDetailProductResponse {
+    private Long productId;
     private String productName;
     private String productDescription;
     private String productImageOriginalName;
@@ -20,6 +21,7 @@ public class OrderDetailProductResponse {
 
     public OrderDetailProductResponse(OrderProduct orderProduct) {
         Product product = orderProduct.getProduct();
+        this.productId = product.getProductId();
         this.productName = product.getProductName();
         this.productDescription = product.getProductDescription();
         this.productImageOriginalName = product.getProductImageOriginalName();
@@ -27,7 +29,7 @@ public class OrderDetailProductResponse {
         this.price = orderProduct.getPrice();
         this.quantity = orderProduct.getQuantity();
         this.discount = orderProduct.getDiscount();
-        this.totalPrice = (int) ((price - (price * discount)) * quantity);
+        this.totalPrice = (int) (price * quantity * (100 - discount) / 100.0);
         this.orderProductStatus = orderProduct.getOrderProductStatus();
     }
 }

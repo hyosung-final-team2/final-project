@@ -51,19 +51,19 @@ const MemberTable = () => {
 
   const handleAllChecked = checked => {
     if (checked) {
-      setSelectedMembers(memberList.map(member => ({ memberId: member.memberId, pending: member.pending })));
+      setSelectedMembers(memberList.map(member => ({ memberId: member.memberId, pending: member.pending, memberName:member.memberName , memberPhone:member.memberPhone.split("-").join("") })));
     } else {
       setSelectedMembers([]);
     }
   };
 
-  const handleRowChecked = (id, pending) => {
+  const handleRowChecked = (id, pending, memberName, memberPhone) => {
     setSelectedMembers(prev => {
       const isSelected = prev.find(member => member.memberId === id);
       if (isSelected) {
         return prev.filter(member => member.memberId !== id);
       } else {
-        return [...prev, { memberId: id, pending }];
+        return [...prev, { memberId: id, pending,memberName,memberPhone:memberPhone.split("-").join("")}];
       }
     });
   };
@@ -87,7 +87,7 @@ const MemberTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
-      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} />
+      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} selectedMembers={selectedMembers}/>
 
       {/* 테이블 */}
       <div className='px-4 shadow-md'>

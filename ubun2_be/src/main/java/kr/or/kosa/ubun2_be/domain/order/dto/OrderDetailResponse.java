@@ -67,7 +67,7 @@ public class OrderDetailResponse {
                 .mapToInt(op -> op.getPrice() * op.getQuantity())
                 .sum();
         this.discountAmount = order.getOrderProducts().stream()
-                .mapToInt(op -> op.getPrice() * op.getDiscount() * op.getQuantity())
+                .mapToInt(op -> (int) (op.getPrice() * op.getQuantity() * op.getDiscount() / 100.0))
                 .sum();
         this.paymentAmount = this.orderAmount - this.discountAmount;
     }

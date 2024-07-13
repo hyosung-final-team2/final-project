@@ -1,12 +1,15 @@
 import SearchBarWithDrop from '../../common/SearchBar/SearchBarWithDrop';
+import {useSendSms} from "../../../api/Customer/MemberList/MemberTable/queris.js";
 
-const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegisterModal }) => {
+const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegisterModal,selectedMembers }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
+
+  const {mutate: smsMutate} = useSendSms(selectedMembers)
 
   return (
     <div className='flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4 bg-white dark:bg-gray-900'>
       <div className='flex gap-2'>
-        <button className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`}>링크 전송</button>
+        <button onClick={() => smsMutate()} className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`}>링크 전송</button>
         <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} />
       </div>
       <div className='flex gap-2'>

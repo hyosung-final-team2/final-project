@@ -58,6 +58,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public void addAddress(AddressRequest addressRequest,Long customerId) {
+        System.out.println(addressRequest.getMemberId());
         validateMyMember(customerId,addressRequest.getMemberId());
 
         Member member = memberRepository.findById(addressRequest.getMemberId())
@@ -94,7 +95,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     private void validateMyMember(Long customerId, Long memberId) {
-        if (!memberCustomerRepository.existsByCustomerIdAndMemberId(customerId, memberId)) {
+        if (!addressRepository.checkIsMyMember(customerId, memberId)) {
             throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
         }
     }
