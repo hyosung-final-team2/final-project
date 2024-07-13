@@ -16,7 +16,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
   const [isSendEmail, setIsSendEmail] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [secondRegisterObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ);
+  const [secondRegisterObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ)
 
   useEffect(() => {
     const { customerName, customerEmail, emailAuthentication, customerLoginId, customerPassword, customerPasswordCheck } = secondRegisterObj;
