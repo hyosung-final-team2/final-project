@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 
 public interface ProductService {
 
@@ -13,7 +12,7 @@ public interface ProductService {
     ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId);
     void registerProduct(MultipartFile image, Long customerId, ProductRequest productRequest);
     void modifyProduct(MultipartFile image,Long customerId, ProductRequest productUpdateRequest);
-    void removeProduct(Long customerId, ProductDeleteRequest productDeleteRequest);
+    void removeProduct(Long customerId, Long productId);
     boolean isExistProductName(String productName);
     boolean checkValidation(ProductRequest productRequest);
 }

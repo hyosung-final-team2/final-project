@@ -12,7 +12,6 @@ import kr.or.kosa.ubun2_be.domain.product.service.CategoryService;
 import kr.or.kosa.ubun2_be.domain.product.service.ImageService;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
         Category category = categoryService.findCategoryByCategoryName(productRequest.getCategoryName());
         Customer customer = customerService.findById(customerId);
         Product saveProduct = productRepository.save(productRequest.toEntity(customer, category));
-        if (image.isEmpty() || Objects.isNull(image.getOriginalFilename())) return;
+        if (image==null ||image.isEmpty() || Objects.isNull(image.getOriginalFilename())) return;
         String url = imageService.uploadImage(image);
         saveProduct.saveImage(image.getOriginalFilename(), url);
 
@@ -85,11 +84,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void removeProduct(Long customerId, ProductDeleteRequest productDeleteRequest) {
-        Product findProduct = productRepository.findByCustomerCustomerIdAndProductId(customerId, productDeleteRequest.getProductId())
+    public void removeProduct(Long customerId, Long productId) {
+        Product findProduct = productRepository.findByCustomerCustomerIdAndProductId(customerId, productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
-        imageService.deleteImage(findProduct.getProductImagePath());
+        System.out.println("어디서");
         productRepository.delete(findProduct);
+        if(findProduct.getProductImagePath()==null) return;
+        imageService.deleteImage(findProduct.getProductImagePath());
+        System.out.println("터지는거지");
     }
 
     @Override

@@ -64,12 +64,12 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public void deleteImage(String imagePath) {
+
         String storedImageName = getStoredImageName(imagePath);
-        try {
-            amazonS3.deleteObject(new DeleteObjectRequest(bucket, storedImageName));
-        } catch (Exception e) {
+        if(storedImageName.isEmpty()) {
             throw new ImageException(ImageExceptionType.IMAGE_DELETE_FAILED);
         }
+        amazonS3.deleteObject(new DeleteObjectRequest(bucket, storedImageName));
     }
 
     private String getStoredImageName(String imagePath) {
