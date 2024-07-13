@@ -7,6 +7,7 @@ import lombok.Getter;
 public class AddressResponse {
     private Long addressId;
     private String memberEmail;
+    private Long memberId;
     private String memberName;
     private String address;
     private String addressNickname;
@@ -23,5 +24,6 @@ public class AddressResponse {
         this.defaultStatus = address.isDefaultStatus();
         this.memberEmail = address.getMember().getMemberEmail();
         this.memberName = address.getMember().getMemberName();
+        this.memberId = address.getMember().getMemberId();
     }
 }

@@ -16,5 +16,9 @@ public interface SubscriptionOrderRepositoryCustom {
 
     List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
 
-    }
+    Optional<SubscriptionOrder> findSubscriptionOrderByIdAndCustomerId(Long orderId, Long customerId);
+
+    Optional<Integer> findLatestCycleNumberByCustomerIdAndOrderId(Long customerId, Long orderId);
+}
+
 

@@ -1,7 +1,9 @@
+import DashboardIndex from "../../components/Dashboard/DashboardIndex.jsx";
+
 const Dashboard = () => {
   return (
     <>
-      <h1>DashBoard</h1>
+      <DashboardIndex/>
     </>
   );
 };

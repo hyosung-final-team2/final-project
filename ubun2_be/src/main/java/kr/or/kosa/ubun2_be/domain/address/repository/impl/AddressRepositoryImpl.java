@@ -52,4 +52,14 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
 
         return Optional.ofNullable(result);
     }
+
+    @Override
+    public boolean checkIsMyMember(Long customerId, Long memberId) {
+        Long count = from(memberCustomer)
+                .where(memberCustomer.customer.customerId.eq(customerId)
+                        .and(memberCustomer.member.memberId.eq(memberId)))
+                .fetchCount();
+
+        return count > 0;
+    }
 }

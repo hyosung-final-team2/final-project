@@ -1,4 +1,4 @@
-import MemberAddressTable from './MemberAddressTable.jsx'
+import CusMemberAddressTable from './CusMemberAddressTable.jsx'
 import MemberAddressInput from "../MemberAddressInput.jsx";
 
 const infos = [
@@ -25,7 +25,7 @@ const MemberAddressInfo = ({memberAddresses , isUpdate, handleAddressAdd ,handle
     <>
       <div className='mb-4'>
         <div className='w-full flex flex-col'>
-          <MemberAddressTable memberAddresses={memberAddresses} title='주소 목록' handleAddressDelete={handleAddressDelete}/>
+          <CusMemberAddressTable memberAddresses={memberAddresses} title='주소 목록' handleAddressDelete={handleAddressDelete}/>
           {!memberAddresses?.length ?
               <>
                 <div className="flex justify-center items-center mx-3 py-16 bg-gray-100 rounded-lg">

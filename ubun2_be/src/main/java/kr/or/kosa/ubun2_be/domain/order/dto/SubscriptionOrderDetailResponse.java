@@ -8,6 +8,7 @@ import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 public class SubscriptionOrderDetailResponse {
@@ -29,8 +30,9 @@ public class SubscriptionOrderDetailResponse {
     private int paymentAmount;
     private List<SubscriptionOrderDetailProductResponse> subscriptionOrderProducts;
     private OrderStatus orderStatus;
+    private int latestCycleNumber;
 
-    public SubscriptionOrderDetailResponse(SubscriptionOrder order, List<SubscriptionOrderDetailProductResponse> productResponses) {
+    public SubscriptionOrderDetailResponse(SubscriptionOrder order, int latestCycleNumber) {
         this.memberName = order.getMember().getMemberName();
         this.memberEmail = order.getMember().getMemberEmail();
         this.memberPhone = order.getMember().getMemberPhone();
@@ -39,7 +41,11 @@ public class SubscriptionOrderDetailResponse {
         this.address = order.getAddress().getAddress();
         this.intervalDays = order.getIntervalDays();
         this.orderStatus = order.getOrderStatus();
-        this.subscriptionOrderProducts = productResponses;
+        this.subscriptionOrderProducts = order.getSubscriptionOrderProducts().stream()
+                .map(SubscriptionOrderDetailProductResponse::new)
+                .collect(Collectors.toList());
+        this.orderStatus = order.getOrderStatus();
+        this.latestCycleNumber = latestCycleNumber;
         setPaymentDetails(order.getPaymentMethod());
         calculateOrderAmounts(order);
     }
@@ -62,7 +68,7 @@ public class SubscriptionOrderDetailResponse {
                 .mapToInt(op -> op.getPrice() * op.getQuantity())
                 .sum();
         this.discountAmount = subscriptionOrderProducts.stream()
-                .mapToInt(op -> (int) (op.getPrice() * op.getDiscount() * op.getQuantity()))
+                .mapToInt(op -> (int) (op.getPrice() * op.getQuantity() * op.getDiscount() / 100.0))
                 .sum();
         this.paymentAmount = this.orderAmount - this.discountAmount;
     }

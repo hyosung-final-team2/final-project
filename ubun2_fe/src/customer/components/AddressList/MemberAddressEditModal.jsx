@@ -38,7 +38,7 @@ const MemberAddressEditModal = () => {
   }, [selectedAddress]);
 
   return (
-    <>
+    <Modal>
       <Modal.Header>
         <div className='text-3xl font-bold'>회원 주소지 수정</div>
       </Modal.Header>
@@ -48,7 +48,7 @@ const MemberAddressEditModal = () => {
           <AddressInput infos={infos} title='주소 수정' />
         </div>
       </Modal.Body>
-    </>
+    </Modal>
   );
 };
 

@@ -1,12 +1,12 @@
 import { Table } from 'flowbite-react';
-const MemberPaymentTableRow = ({ type, company, number, expiry }) => {
+const MemberPaymentTableRow = ({ paymentType, cardCompanyName, bankName, cardNumber, accountNumber }) => {
+  const isAccount = paymentType === 'ACCOUNT';
   return (
     <>
       <Table.Row className='bg-white'>
-        <Table.Cell>{type}</Table.Cell>
-        <Table.Cell>{company}</Table.Cell>
-        <Table.Cell>{number}</Table.Cell>
-        <Table.Cell>{expiry}</Table.Cell>
+        <Table.Cell>{isAccount ? '계좌' : '카드'}</Table.Cell>
+        <Table.Cell>{isAccount ? bankName : cardCompanyName}</Table.Cell>
+        <Table.Cell>{isAccount ? accountNumber : cardNumber}</Table.Cell>
       </Table.Row>
     </>
   );

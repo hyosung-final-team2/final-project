@@ -62,6 +62,8 @@ dependencies {
 	//email
 	implementation 'org.springframework.boot:spring-boot-starter-mail:3.2.2'
 
+	//sms
+	implementation 'net.nurigo:sdk:4.3.0'
 
 	tasks.named('test') {
 		useJUnitPlatform()

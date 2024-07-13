@@ -15,6 +15,12 @@ const MemberRegisterModal = ({isOpen, setOpenModal}) => {
     const handleMemberEmailChange = (value) => setPendingMemberEmail(value);
     const handleMemberPhoneChange = (value) => setPendingMemberPhone(value);
 
+    const resetValues = () => {
+        setPendingMemberName('')
+        setPendingMemberEmail('')
+        setPendingMemberPhone('')
+    }
+
     const {mutate: memberRegisterMutate } = useRegisterMember({pendingMemberName,pendingMemberEmail,pendingMemberPhone})
 
     return (
@@ -24,6 +30,7 @@ const MemberRegisterModal = ({isOpen, setOpenModal}) => {
             theme={customModalTheme}
             onClose={() => {
                 setOpenModal(false);
+                resetValues()
             }}
             size='2xl'
         >
@@ -40,13 +47,17 @@ const MemberRegisterModal = ({isOpen, setOpenModal}) => {
             </Modal.Body>
             <Modal.Footer>
                 <button
-                    onClick={() => {
-                        memberRegisterMutate()
+                    onClick={ async () => {
+                        await memberRegisterMutate()
                         setOpenModal(false);
+                        resetValues()
                     }}
                     className={`${commonButtonStyles} bg-green-300 text-green-600 hover:text-white hover:bg-green-600`}>등록
                 </button>
                 <button
+                    onClick={() => {
+                        resetValues()
+                    }}
                     className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 `}>취소
                 </button>
             </Modal.Footer>

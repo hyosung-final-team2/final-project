@@ -98,7 +98,8 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
         }
         return builder;
     }
-    public List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+
+  public List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
 
         return from(subscriptionOrder)
                 .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
@@ -109,6 +110,35 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                         .and(subscriptionOrder.createdAt.between(startDate, endDate)
                                 .and(order.orderStatus.eq(OrderStatus.APPROVED))))
                 .fetch();
+  }
 
+    @Override
+    public Optional<SubscriptionOrder> findSubscriptionOrderByIdAndCustomerId(Long orderId, Long customerId) {
+        return Optional.ofNullable(
+                from(subscriptionOrder)
+                        .join(subscriptionOrder.member, member).fetchJoin()
+                        .join(subscriptionOrder.paymentMethod).fetchJoin()
+                        .join(subscriptionOrder.address).fetchJoin()
+                        .leftJoin(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct).fetchJoin()
+                        .join(member.memberCustomers, memberCustomer)
+                        .join(memberCustomer.customer)
+                        .where(subscriptionOrder.subscriptionOrderId.eq(orderId)
+                                .and(memberCustomer.customer.customerId.eq(customerId)))
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<Integer> findLatestCycleNumberByCustomerIdAndOrderId(Long customerId, Long orderId) {
+        return Optional.ofNullable(
+                from(subscriptionOrder)
+                        .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
+                        .join(subscriptionOrder.member, member)
+                        .join(member.memberCustomers, memberCustomer)
+                        .where(memberCustomer.customer.customerId.eq(customerId)
+                                .and(subscriptionOrder.subscriptionOrderId.eq(orderId)))
+                        .select(subscriptionOrderProduct.cycleNumber.max())
+                        .fetchOne()
+        );
     }
 }
