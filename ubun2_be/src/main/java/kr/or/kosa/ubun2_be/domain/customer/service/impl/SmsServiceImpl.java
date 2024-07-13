@@ -20,12 +20,12 @@ public class SmsServiceImpl implements SmsService {
 
 
     @Override
-    public ResponseEntity<String> sendSms(List<SmsRequest> NameAndPhoneNumbers, Long customerId) {
+    public ResponseEntity<String> sendSms(List<SmsRequest> nameAndPhoneNumbers, Long customerId) {
 
         String businessName = customerRepository.findBusinessNameByCustomerId(customerId);
 
         try {
-            boolean result = smsProvider.sendSms(NameAndPhoneNumbers,businessName);
+            boolean result = smsProvider.sendSms(nameAndPhoneNumbers,businessName);
             if (!result) ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("메시지 전송에 실패했습니다");
         } catch (Exception exception) {
             exception.printStackTrace();
