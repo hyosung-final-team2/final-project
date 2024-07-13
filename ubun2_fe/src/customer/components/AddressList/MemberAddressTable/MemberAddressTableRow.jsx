@@ -1,18 +1,13 @@
 import { Table } from 'flowbite-react';
 import useAddressStore from '../../../store/Address/useAddressStore';
-const MemberAddressTableRow = ({ zipNo, city, town, detail }) => {
-  const { selectedAddress, setIsEditMode, setSelectedAddress } = useAddressStore();
-  const handleClick = () => {
-    setSelectedAddress({ city, town, detail, zipNo });
-    setIsEditMode(true);
-  };
+const MemberAddressTableRow = ({ addressNum, addressFirst, addressSecond, addressThird }) => {
   return (
     <>
-      <Table.Row className='bg-white cursor-pointer' onClick={handleClick}>
-        <Table.Cell>{city}</Table.Cell>
-        <Table.Cell>{town}</Table.Cell>
-        <Table.Cell>{detail}</Table.Cell>
-        <Table.Cell>{zipNo}</Table.Cell>
+      <Table.Row className='bg-white cursor-pointer'>
+        <Table.Cell>{addressFirst}</Table.Cell>
+        <Table.Cell>{addressSecond}</Table.Cell>
+        <Table.Cell>{addressThird}</Table.Cell>
+        <Table.Cell>{addressNum}</Table.Cell>
       </Table.Row>
     </>
   );

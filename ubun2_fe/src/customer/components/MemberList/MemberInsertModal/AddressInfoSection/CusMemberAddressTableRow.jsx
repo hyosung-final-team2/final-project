@@ -1,7 +1,8 @@
 import { Table } from 'flowbite-react';
 import useMemberUpdateStore from "../../../../store/MemberInsertModal/memberUpdateStore.js";
 
-const MemberAddressTableRow = ({ addressId, addressNum, addressFirst, addressSecond, addressThird,noneSplitAddress, handleDelete }) => {
+const CusMemberAddressTableRow = ({ addressId, addressNum, addressFirst, addressSecond, addressThird,noneSplitAddress, handleDelete }) => {
+
     const {isUpdateGlobal} = useMemberUpdateStore(state => ({
         isUpdateGlobal: state.isUpdateGlobal,
     }));
@@ -54,4 +55,4 @@ const MemberAddressTableRow = ({ addressId, addressNum, addressFirst, addressSec
   );
 };
 
-export default MemberAddressTableRow;
+export default CusMemberAddressTableRow;

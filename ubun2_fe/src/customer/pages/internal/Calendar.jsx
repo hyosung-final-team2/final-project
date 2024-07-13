@@ -1,7 +1,9 @@
+import CalendarIndex from "../../components/Calendar/CalendarIndex.jsx";
+
 const Calendar = () => {
   return (
     <>
-      <h1>캘린더</h1>
+      <CalendarIndex/>
     </>
   );
 };

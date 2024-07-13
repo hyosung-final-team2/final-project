@@ -2,11 +2,13 @@ package kr.or.kosa.ubun2_be.domain.customer.dto.request;
 
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.global.auth.enums.UserRole;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
+@AllArgsConstructor
 public class SignupRequest {
     private String customerLoginId;
     private String customerPassword;

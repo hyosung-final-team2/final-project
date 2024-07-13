@@ -1,15 +1,13 @@
 import { Table } from 'flowbite-react';
 
-import MemberAddressTableRow from './MemberAddressTableRow';
+import CusMemberAddressTableRow from './CusMemberAddressTableRow.jsx';
 import {tableColumn} from "../../../common/Table/tableIndex.js";
 import TableBody from "../../../common/Table/TableBody.jsx";
 import TableHead from "../../../common/Table/TableHead.jsx";
 import {useEffect, useState} from "react";
 import TablePagination from "../../../common/Pagination/TablePagination.jsx";
 
-const MemberAddressTable = ({ memberAddresses, title, handleAddressDelete }) => {
-
-    console.log(memberAddresses);
+const CusMemberAddressTable = ({ memberAddresses, title, handleAddressDelete }) => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [paginatedData, setPaginatedData] = useState([]);
@@ -29,24 +27,24 @@ const MemberAddressTable = ({ memberAddresses, title, handleAddressDelete }) => 
                 addressFirst,
                 addressSecond,
                 addressThird,
-                noneSplitAddress : item
+                noneSplitAddress : item.address
             };
         });
         setPaginatedData(currentData);
-        console.log(currentData)
     }, [currentPage, memberAddresses]);
 
+    console.log(paginatedData)
 
     return (
     <div className='p-3'>
       <h2 className='text-2xl font-bold mb-3 text-main'>{title}</h2>
       <Table hoverable>
         <TableHead tableColumns={tableColumn.address.detail} isCheckable={false} />
-        <TableBody dataList={paginatedData} TableRowComponent={MemberAddressTableRow} isCheckable={false} dynamicId="addressId" handleDelete={handleAddressDelete}/>
+        <TableBody dataList={paginatedData} TableRowComponent={CusMemberAddressTableRow} isCheckable={false} dynamicId="addressId" handleDelete={handleAddressDelete} />
       </Table>
-        {totalPages < 1 ? null : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+        {totalPages < 1 ? null : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage}  />}
     </div>
   );
 };
 
-export default MemberAddressTable;
+export default CusMemberAddressTable;
