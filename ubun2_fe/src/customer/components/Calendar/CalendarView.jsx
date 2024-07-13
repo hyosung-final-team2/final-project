@@ -3,6 +3,7 @@ import ChevronLeftIcon from "@heroicons/react/24/solid/ChevronLeftIcon";
 import ChevronRightIcon from "@heroicons/react/24/solid/ChevronRightIcon";
 import moment from "moment";
 import { CALENDAR_EVENT_STYLE } from "./util";
+import {useGetCalendarOrders} from "../../api/Calendar/queris.js";
 
 const THEME_BG = CALENDAR_EVENT_STYLE;
 
@@ -22,6 +23,18 @@ function CalendarView({ calendarEvents }) {
     const [firstDayOfMonth, setFirstDayOfMonth] = useState(moment().startOf('month'));
     const [events, setEvents] = useState([]);
     const [currMonth, setCurrMonth] = useState(() => moment(today).format("MMM-yyyy"));
+    const [yearMonth, setYearMonth] = useState({ year: firstDayOfMonth.year(), month: firstDayOfMonth.month() + 1 });
+
+    useEffect(() => {
+        setYearMonth({ year: firstDayOfMonth.year(), month: firstDayOfMonth.month() + 1 });
+    }, [firstDayOfMonth]);
+
+
+    console.log(yearMonth)
+    console.log(currMonth)
+
+    const {data:calendarData} = useGetCalendarOrders(yearMonth.year,yearMonth.month)
+    console.log(calendarData)
 
     useEffect(() => {
         const mappedEvents = calendarEvents.map(event => ({
