@@ -70,7 +70,7 @@ const MemberAddressModal = ({ isOpen, setOpenModal, addressId, setAddressId, cur
               <div className='space-y-4 flex-2'>
                 <MemberInfo member={member} searchable={true} title='회원정보' isUpdate={isUpdate} />
                 {isUpdate && <AddressInput infos={initialInfos} title='주소 추가' isUpdate={isUpdate} />}
-                <MemberAddressTable memberAddresses={memberInfo?.addresses} title='홍길동님의 주소 목록' />
+                <MemberAddressTable memberAddresses={memberInfo?.addresses} title={`${member.name}님의 주소 목록`} />
               </div>
             </Modal.Body>
           </>
