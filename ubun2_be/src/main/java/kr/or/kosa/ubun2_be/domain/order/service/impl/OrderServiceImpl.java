@@ -87,40 +87,45 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void updateOrderApprove(Long customerId, OrderApproveRequest orderApproveRequest) {
-        Order findPendingOrder = orderRepository.findPendingOrderByIdAndCustomerId(orderApproveRequest.getOrderId(), customerId)
-                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
+    public void updateOrderApprove(Long customerId, List<OrderApproveRequest> orderApproveRequests) {
+        for (OrderApproveRequest request : orderApproveRequests) {
+            Order findPendingOrder = orderRepository.findPendingOrderByIdAndCustomerId(request.getOrderId(), customerId)
+                    .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
-        // OrderStatus 검증 및 업데이트
-        OrderStatus newStatus = validateAndGetOrderStatus(orderApproveRequest.getOrderStatus());
-        findPendingOrder.changeOrderStatus(newStatus);
-        for (OrderProduct orderProduct : findPendingOrder.getOrderProducts()) {
-            if (newStatus.equals(OrderStatus.APPROVED)) {
-                orderProduct.changeOrderProductStatus(OrderProductStatus.APPROVED);
-            } else {
-                orderProduct.changeOrderProductStatus(OrderProductStatus.DENIED);
+            OrderStatus newStatus = validateAndGetOrderStatus(request.getOrderStatus());
+            findPendingOrder.changeOrderStatus(newStatus);
+
+            for (OrderProduct orderProduct : findPendingOrder.getOrderProducts()) {
+                if (newStatus.equals(OrderStatus.APPROVED)) {
+                    orderProduct.changeOrderProductStatus(OrderProductStatus.APPROVED);
+                } else {
+                    orderProduct.changeOrderProductStatus(OrderProductStatus.DENIED);
+                }
             }
+            orderRepository.save(findPendingOrder);
         }
-        orderRepository.save(findPendingOrder);
     }
 
     @Override
     @Transactional
-    public void updateSubscriptionOrderApprove(Long customerId, SubscriptionApproveRequest subscriptionApproveRequest) {
-        SubscriptionOrder findSubscriptionPendingOrder = subscriptionOrderRepository.findPendingSubscriptionOrderByIdAndCustomerId(subscriptionApproveRequest.getSubscriptionOrderId(), customerId)
-                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
+    public void updateSubscriptionOrderApprove(Long customerId, List<SubscriptionApproveRequest> subscriptionApproveRequests) {
+        for (SubscriptionApproveRequest request : subscriptionApproveRequests) {
+            SubscriptionOrder findSubscriptionPendingOrder = subscriptionOrderRepository
+                    .findPendingSubscriptionOrderByIdAndCustomerId(request.getSubscriptionOrderId(), customerId)
+                    .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
-        // OrderStatus 검증 및 업데이트
-        OrderStatus newOrderStatus = validateAndGetOrderStatus(subscriptionApproveRequest.getOrderStatus());
-        findSubscriptionPendingOrder.changeOrderStatus(newOrderStatus);
-        for (SubscriptionOrderProduct subscriptionOrderProduct : findSubscriptionPendingOrder.getSubscriptionOrderProducts()) {
-            if (newOrderStatus.equals(OrderStatus.APPROVED)) {
-                subscriptionOrderProduct.changeSubscriptionOrderProductStatus(OrderProductStatus.APPROVED);
-            } else {
-                subscriptionOrderProduct.changeSubscriptionOrderProductStatus(OrderProductStatus.DENIED);
+            OrderStatus newOrderStatus = validateAndGetOrderStatus(request.getOrderStatus());
+            findSubscriptionPendingOrder.changeOrderStatus(newOrderStatus);
+
+            for (SubscriptionOrderProduct subscriptionOrderProduct : findSubscriptionPendingOrder.getSubscriptionOrderProducts()) {
+                if (newOrderStatus.equals(OrderStatus.APPROVED)) {
+                    subscriptionOrderProduct.changeSubscriptionOrderProductStatus(OrderProductStatus.APPROVED);
+                } else {
+                    subscriptionOrderProduct.changeSubscriptionOrderProductStatus(OrderProductStatus.DENIED);
+                }
             }
+            subscriptionOrderRepository.save(findSubscriptionPendingOrder);
         }
-        subscriptionOrderRepository.save(findSubscriptionPendingOrder);
     }
 
     private OrderStatus validateAndGetOrderStatus(String orderStatus) {
