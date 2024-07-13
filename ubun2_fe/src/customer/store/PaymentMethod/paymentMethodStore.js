@@ -5,6 +5,8 @@ const paymentMethodStore = create(set => ({
   setPaymentMethodType: type => set({ paymentMethodType: type }),
   selectedMemberId: null,
   setSelectedMemberId: memberId => set({ selectedMemberId: memberId }),
+  isUpdate: false,
+  setIsUpdate: state => set({ isUpdate: state }),
 }));
 
 export default paymentMethodStore;

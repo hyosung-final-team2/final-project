@@ -2,15 +2,16 @@ import { Modal } from 'flowbite-react';
 import MemberInfo from '../common/Info/MemberInfo';
 import { customModalTheme } from '../common/Modal/ModalStyle';
 import MemberPaymentTable from './MemberPaymentTable/MemberPaymentTable';
-import { useGetPaymentDetail } from '../../api/PaymentMethod/Modal/queris';
+import { useGetPaymentDetail, useDeletePaymentMethod } from '../../api/PaymentMethod/Modal/queris';
 import PaymentInfo from './PaymentInfo';
-import { useState } from 'react';
+import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
 
-const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId, setPaymentMethodId }) => {
+const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId, setPaymentMethodId, currentPage }) => {
   const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
+  const { isUpdate, setIsUpdate } = paymentMethodStore();
   const { data: detail } = useGetPaymentDetail(paymentMethodId);
-  const [isUpdate, setIsUpdate] = useState(false);
+  const { mutate: deleteMutate } = useDeletePaymentMethod(currentPage);
 
   const memberInfo = detail?.data?.data;
 
@@ -51,6 +52,7 @@ const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId
               </button>
               <button
                 onClick={() => {
+                  deleteMutate(paymentMethodId);
                   setIsUpdate(false);
                   setOpenModal(false);
                 }}
