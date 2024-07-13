@@ -1,21 +1,60 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Table } from 'flowbite-react';
 import MemberPaymentMethodModal from './MemberPaymentMethodModal';
 import { tableColumn } from '../common/Table/tableIndex';
 import TableHead from '../common/Table/TableHead';
-import TableBody from '../common/Table/TableBody';
+import DynamicTableBody from '../common/Table/DynamicTableBody';
+import { useQueryClient } from '@tanstack/react-query';
 import TablePagination from '../common/Pagination/TablePagination';
 import PaymentMethodTableFeature from './PaymentMethodTableFeature';
 import PaymentMethodTableRow from './PaymentMethodTableRow';
 import { customTableTheme } from '../common/Table/tableStyle';
+
 import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
 
-const PaymentMethodTable = ({ payments }) => {
+import { getCardPayments } from '../../api/PaymentMethod/Table/cardPaymentTable';
+import { getAccountPayments } from '../../api/PaymentMethod/Table/accountPaymentTable';
+import { useGetCardPayments, useGetAccountPayments } from '../../api/PaymentMethod/Table/queris';
+import { useGetPaymentDetail } from '../../api/PaymentMethod/Modal/queris';
+
+const PaymentMethodTable = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [selectedMember, setSelectedMember] = useState(null);
   const [checkedMembers, setCheckedMembers] = useState([]);
-  const { cards, accounts } = payments;
-  const paymentMethodType = paymentMethodStore(state => state.paymentMethodType);
+  const { setSelectedMemberId, paymentMethodType } = paymentMethodStore();
+  const [paymentMethodId, setPaymentMethodId] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const { data: cards } = useGetCardPayments(currentPage);
+  const { data: accounts } = useGetAccountPayments(currentPage);
+
+  const cardList = cards?.data?.data?.content || [];
+  const accountList = accounts?.data?.data?.content || [];
+
+  console.log(cardList);
+  console.log(accountList);
+
+  const isAccount = paymentMethodType === 'ACCOUNT';
+
+  const totalPages = (isAccount ? accounts : cards)?.data?.data?.totalPages ?? 5;
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (currentPage < totalPages) {
+      const nextPage = currentPage + 1;
+      isAccount
+        ? queryClient.prefetchQuery({
+            queryKey: ['payment', { type: 'ACCOUNT', page: nextPage }],
+            queryFn: () => getAccountPayments(nextPage),
+          })
+        : queryClient.prefetchQuery({
+            queryKey: ['payment', { type: 'CARD', page: nextPage }],
+            queryFn: () => getCardPayments(nextPage),
+          });
+    }
+  }, [currentPage, queryClient, totalPages]);
+
+  const { refetch } = useGetPaymentDetail(paymentMethodId);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -29,45 +68,42 @@ const PaymentMethodTable = ({ payments }) => {
     setCheckedMembers(prev => (prev.includes(id) ? prev.filter(id => id !== id) : [...prev, id]));
   };
 
+  const handleRowClick = async (paymentMethodId, memberId) => {
+    console.log(paymentMethodId);
+    await setPaymentMethodId(paymentMethodId);
+    await refetch();
+    await setOpenModal(true);
+    console.log(memberId);
+    setSelectedMemberId(memberId);
+  };
+
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       <PaymentMethodTableFeature setOpenModal={setOpenModal} />
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
-          {paymentMethodType === 'ACCOUNT' ? (
+          {
             <>
               <TableHead
-                tableColumns={tableColumn.paymentMethod.accountList}
-                allChecked={checkedMembers.length === accounts.length}
+                tableColumns={isAccount ? tableColumn.paymentMethod.accountList : tableColumn.paymentMethod.cardList}
+                allChecked={isAccount ? checkedMembers.length === accountList.length : checkedMembers.length === cardList.length}
                 setAllChecked={handleAllChecked}
               />
-              <TableBody
-                users={accounts}
+              <DynamicTableBody
+                dataList={isAccount ? accountList : cardList}
                 TableRowComponent={PaymentMethodTableRow}
-                setOpenModal={setOpenModal}
+                dynamicKey='paymentMethodId'
+                dynamicId='paymentMethodId'
+                setOpenModal={handleRowClick}
                 selectedMembers={checkedMembers}
                 handleRowChecked={handleRowChecked}
+                currentPage={currentPage}
               />
             </>
-          ) : (
-            <>
-              <TableHead
-                tableColumns={tableColumn.paymentMethod.cardList}
-                allChecked={checkedMembers.length === cards.length}
-                setAllChecked={handleAllChecked}
-              />
-              <TableBody
-                users={cards}
-                TableRowComponent={PaymentMethodTableRow}
-                setOpenModal={setOpenModal}
-                selectedMembers={checkedMembers}
-                handleRowChecked={handleRowChecked}
-              />
-            </>
-          )}
+          }
         </Table>
-        <TablePagination totalPages={3} containerStyle='bg-white py-4' />
-        <MemberPaymentMethodModal isOpen={openModal} setOpenModal={setOpenModal} member={selectedMember} />
+        <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+        <MemberPaymentMethodModal isOpen={openModal} setOpenModal={setOpenModal} paymentMethodId={paymentMethodId} setPaymentMethodId={setPaymentMethodId} />
       </div>
     </div>
   );

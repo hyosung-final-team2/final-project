@@ -2,51 +2,70 @@ import { Modal } from 'flowbite-react';
 import MemberInfo from '../common/Info/MemberInfo';
 import { customModalTheme } from '../common/Modal/ModalStyle';
 import MemberPaymentTable from './MemberPaymentTable/MemberPaymentTable';
+import { useGetPaymentDetail } from '../../api/PaymentMethod/Modal/queris';
 import PaymentInfo from './PaymentInfo';
+import { useState } from 'react';
 
-const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, children, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick }) => {
-  const hong = {
-    name: '홍길동',
-    email: 'owen123@naver.com',
-    phone: '010-2401-1235',
-    createdAt: '2024-01-14',
+const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId, setPaymentMethodId }) => {
+  const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
+
+  const { data: detail } = useGetPaymentDetail(paymentMethodId);
+  const [isUpdate, setIsUpdate] = useState(false);
+
+  const memberInfo = detail?.data?.data;
+
+  const member = {
+    name: memberInfo?.memberName || '',
+    email: memberInfo?.memberEmail || '',
+    phone: memberInfo?.memberPhone || '',
+    createdAt: memberInfo?.registrationDate !== null ? memberInfo?.registrationDate || '' : '-',
   };
 
-  const existingPaymentMethods = [
-    { id: 1, type: '카드', company: '현대카드', number: '1111-****-****-4444', expiry: '24/08' },
-    { id: 2, type: '계좌', company: '국민은행', number: '1002-***-***-004', expiry: '24/08' },
-    { id: 3, type: '카드', company: '우리카드', number: '1111-****-****-4444', expiry: '24/08' },
-  ];
   return (
     <>
-      <Modal dismissible show={isOpen} onClose={() => setOpenModal(false)} theme={customModalTheme} size='5xl'>
+      <Modal
+        dismissible
+        show={isOpen}
+        onClose={() => {
+          setIsUpdate(false), setOpenModal(false);
+        }}
+        theme={customModalTheme}
+        size='5xl'
+      >
         <Modal.Header>
-          <div className='text-3xl font-bold'>
-            {title}
-            <div className='text-3xl font-bold'>결제수단 등록</div>
-          </div>
+          <div className='text-3xl font-bold'>{isUpdate ? '결제수단 수정' : '회원 상세'}</div>
         </Modal.Header>
         <Modal.Body>
           <div className='space-y-4 flex-2'>
             {/* {children} */}
-            <MemberInfo member={hong} searchable={true} title='회원정보' />
-            <PaymentInfo />
-            <MemberPaymentTable payments={existingPaymentMethods} title='홍길동님의 결제수단 목록' />
+            <MemberInfo member={member} searchable={true} title='회원정보' />
+            {isUpdate && <PaymentInfo isUpdate={isUpdate} />}
+            <MemberPaymentTable payments={memberInfo?.paymentMethods} title='홍길동님의 결제수단 목록' />
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <button
-            type='button'
-            className='focus:outline-none w-20 text-custom-font-purple bg-custom-button-purple hover:bg-purple-400 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900'
-          >
-            등록
-          </button>
-          <button
-            type='button'
-            className='focus:outline-none w-20 text-custom-font-purple bg-custom-button-purple hover:bg-purple-400 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900'
-          >
-            취소
-          </button>
+          {!isUpdate ? (
+            <>
+              <button onClick={() => setIsUpdate(true)} className={`${commonButtonStyles} bg-green-300 text-green-600 hover:text-white hover:bg-green-600`}>
+                수정
+              </button>
+              <button
+                onClick={() => {
+                  setIsUpdate(false);
+                  setOpenModal(false);
+                }}
+                className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 `}
+              >
+                삭제
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={() => setIsUpdate(false)} className={`${commonButtonStyles} bg-green-300 text-green-600 hover:text-white hover:bg-green-600`}>
+                확인
+              </button>
+            </>
+          )}
         </Modal.Footer>
       </Modal>
     </>
