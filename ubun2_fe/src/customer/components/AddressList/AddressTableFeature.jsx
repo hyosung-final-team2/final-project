@@ -1,7 +1,7 @@
 import React from 'react';
 import SearchInput from '../common/Input/SearchInput';
 
-const AddressTableFeature = ({ setOpenModal }) => {
+const AddressTableFeature = ({ setOpenModal  }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
   const handleClick = () => {

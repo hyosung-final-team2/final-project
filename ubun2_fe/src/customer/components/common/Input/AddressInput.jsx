@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useRegisterAddress } from '../../../api/Address/AddressTable/queris';
+import { useRegisterAddress } from '../../../api/Address/AddressModal/queris';
 import useAddressStore from '../../../store/Address/useAddressStore';
 
 const POPUP_URL = '/customer/address-search';
