@@ -7,7 +7,7 @@ import {useGetCalendarOrders} from "../../api/Calendar/queris.js";
 
 const THEME_BG = CALENDAR_EVENT_STYLE;
 
-function CalendarView({ calendarEvents }) {
+const CalendarView = () => {
     const today = moment().startOf('day');
     const weekdays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
     const colStartClasses = [
@@ -29,21 +29,17 @@ function CalendarView({ calendarEvents }) {
         setYearMonth({ year: firstDayOfMonth.year(), month: firstDayOfMonth.month() + 1 });
     }, [firstDayOfMonth]);
 
-
-    console.log(yearMonth)
-    console.log(currMonth)
-
     const {data:calendarData} = useGetCalendarOrders(yearMonth.year,yearMonth.month)
-    console.log(calendarData)
 
     useEffect(() => {
-        const mappedEvents = calendarEvents.map(event => ({
+        const mappedEvents = calendarData?.data?.data?.map(event => ({
             ...event,
             startTime: moment(event.startTime),
             endTime: moment(event.endTime)
         }));
         setEvents(mappedEvents);
-    }, [calendarEvents]);
+    }, [calendarData]);
+
 
     const allDaysInMonth = () => {
         let start = moment(firstDayOfMonth).startOf('week');
@@ -60,13 +56,15 @@ function CalendarView({ calendarEvents }) {
     };
 
     const getEventsForCurrentDate = (date) => {
-        let filteredEvents = events.filter(e => {
-            return moment(date).isSame(e.startTime, 'day');
+        let filteredEvents = events?.filter(e => {
+            if (e.count !== 0) {
+                return moment(date).isSame(e.startTime, 'day');
+            }
         });
 
-        if (filteredEvents.length > 0) {
-            const totalDaySales = filteredEvents.reduce((total, event) => total + (event.price || 0), 0);
-            filteredEvents.push({ title: `일 매출 : ${totalDaySales.toLocaleString('ko-KR')} 원 `, type: "PRICE" });
+        if (filteredEvents?.length > 0) {
+            const totalDaySales = filteredEvents?.reduce((total, event) => total + (event.price || 0), 0);
+            filteredEvents?.push({ title: `일 매출 : ${totalDaySales.toLocaleString('ko-KR')} 원 `, type: "PRICE" });
         }
 
         return filteredEvents;
@@ -132,7 +130,7 @@ function CalendarView({ calendarEvents }) {
                         <p className={`inline-block flex items-center justify-center h-8 w-8 rounded-full mx-1 mt-1 text-sm cursor-pointer hover:bg-base-300 ${isToday(day) ? "bg-blue-100 dark:bg-blue-400 dark:hover:bg-base-300 dark:text-white" : ""} ${isDifferentMonth(day) ? "text-slate-400 dark:text-slate-600" : ""}`}>
                             {moment(day).format("D")}
                         </p>
-                        {getEventsForCurrentDate(day).map((e, k) => (
+                        {getEventsForCurrentDate(day)?.map((e, k) => (
                             <p key={k} className={`text-xs px-2 mt-1 truncate ${THEME_BG[e.type] || ""}`}>
                                 {e.title} { e.type !== "PRICE" && <span> : <span className="font-extrabold">{e.count}</span>건</span>}
                             </p>
