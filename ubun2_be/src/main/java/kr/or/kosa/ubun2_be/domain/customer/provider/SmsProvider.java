@@ -24,15 +24,15 @@ public class SmsProvider {
         this.messageService = NurigoApp.INSTANCE.initialize(API_KEY,API_SECRET,DOMAIN);
     }
 
-    public boolean sendSms(List<SmsRequest> NameAndPhoneNumbers, String businessName) {
+    public boolean sendSms(List<SmsRequest> nameAndPhoneNumbers, String businessName) {
 
-        for (SmsRequest NameAndPhoneNumber : NameAndPhoneNumbers) {
+        for (SmsRequest nameAndPhoneNumber : nameAndPhoneNumbers) {
             try {
                 Message message = new Message();
                 message.setFrom(from);
-                message.setTo(NameAndPhoneNumber.getPhoneNumber());
+                message.setTo(nameAndPhoneNumber.getPhoneNumber());
 
-                String smsText = "[효성CMS+ SQUARE] " + NameAndPhoneNumber.getMemberName() +"님, \n" + businessName + "(스토어)의 상품을 확인해보세요. \n <실제 url 보낼 곳> ";
+                String smsText = "[효성CMS+ SQUARE] " + nameAndPhoneNumber.getMemberName() +"님, \n" + businessName + "(스토어)의 상품을 확인해보세요. \n <실제 url 보낼 곳> ";
                 message.setText(smsText);
 
                 messageService.sendOne(new SingleMessageSendingRequest(message));

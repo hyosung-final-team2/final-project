@@ -15,3 +15,5 @@ export const getMemberDetail = async (memberId,pending) => await privateFetch.ge
         isPending: pending
     },
 })
+
+export const sendSms = async nameAndPhoneNumbers => await privateFetch.post(`/customers/sms`, nameAndPhoneNumbers)

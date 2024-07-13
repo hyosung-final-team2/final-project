@@ -18,8 +18,8 @@ public class SmsController {
     private final SmsService smsService;
 
     @PostMapping("/sms")
-    public ResponseEntity<String> sendSms(@RequestBody List<SmsRequest> NameAndPhoneNumbers,
+    public ResponseEntity<String> sendSms(@RequestBody List<SmsRequest> nameAndPhoneNumbers,
                                           @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        return smsService.sendSms(NameAndPhoneNumbers, customUserDetails.getUserId());
+        return smsService.sendSms(nameAndPhoneNumbers, customUserDetails.getUserId());
     }
 }

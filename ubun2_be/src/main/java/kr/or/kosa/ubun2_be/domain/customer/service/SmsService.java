@@ -6,5 +6,5 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface SmsService {
-    ResponseEntity<String> sendSms(List<SmsRequest> NameAndPhoneNumbers, Long customerId);
+    ResponseEntity<String> sendSms(List<SmsRequest> nameAndPhoneNumbers, Long customerId);
 }
