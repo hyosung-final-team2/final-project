@@ -14,7 +14,6 @@ import java.util.Optional;
 import static kr.or.kosa.ubun2_be.domain.customer.entity.QCustomer.customer;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMember.member;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCustomer;
-import static kr.or.kosa.ubun2_be.domain.order.entity.QOrder.order;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QSubscriptionOrder.subscriptionOrder;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QSubscriptionOrderProduct.subscriptionOrderProduct;
 import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QAccountPayment.accountPayment;
@@ -108,7 +107,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                 .join(memberCustomer.customer, customer)
                 .where(customer.customerId.eq(customerId)
                         .and(subscriptionOrder.createdAt.between(startDate, endDate)
-                                .and(order.orderStatus.eq(OrderStatus.APPROVED))))
+                                .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED))))
                 .fetch();
   }
 
