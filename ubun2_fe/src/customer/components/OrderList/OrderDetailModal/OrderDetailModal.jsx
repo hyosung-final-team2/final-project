@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import { Modal } from 'flowbite-react';
+import { useEffect, useState } from 'react';
 import { useGetOrderDetail } from '../../../api/Order/OrderList/OrderModal/queris';
 import { customModalTheme } from '../../common/Modal/ModalStyle';
 import MemberInfo from '../../MemberList/MemberInfo';
-import StatusBadge from '../../common/Badge/StatusBadge';
 import OrderDetailInfo from '../OrderDetailModal/OrderDetailInfo';
 import SingleOrderProduct from '../OrderDetailModal/SingleOrderProduct';
 import SubscriptionOrderProduct from '../OrderDetailModal/SubScriptionOrderProduct';
@@ -11,25 +10,29 @@ import SubscriptionOrderProduct from '../OrderDetailModal/SubScriptionOrderProdu
 const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPrimaryClick, selectedOrderDetail }) => {
   const { data: orderDetail, isLoading } = useGetOrderDetail(selectedOrderDetail.orderId, selectedOrderDetail.subscription);
   const orderInfo = orderDetail?.data?.data;
-  const [selectedCycle, setSelectedCycle] = useState(orderInfo?.latestCycleNumber || 1);
+  const [selectedCycle, setSelectedCycle] = useState(1);
+
+  useEffect(() => {
+    if (orderInfo) {
+      setSelectedCycle(orderInfo.latestCycleNumber || 1);
+    }
+  }, [orderInfo]);
 
   const handleCycleChange = cycle => {
     setSelectedCycle(cycle);
   };
 
+  const handleCloseModal = () => {
+    setSelectedCycle(1);
+    setOpenModal(false);
+  };
+
   return (
     <>
-      <Modal dismissible show={isOpen} onClose={() => setOpenModal(false)} theme={customModalTheme} size='4xl'>
+      <Modal dismissible show={isOpen} onClose={handleCloseModal} theme={customModalTheme} size='4xl'>
         <Modal.Header>
           <div className='flex items-center justify-between w-full'>
             <div className='text-3xl font-bold'>{title}</div>
-            <div className='ml-4 text-xs'>
-              {orderInfo?.orderStatus === 'APPROVED' ? (
-                <StatusBadge bgColor='bg-badge-green' txtColor='text-badge-green' badgeText='승인' />
-              ) : (
-                <StatusBadge bgColor='bg-badge-orange' txtColor='text-badge-orange' badgeText='변경' />
-              )}
-            </div>
           </div>
         </Modal.Header>
         <Modal.Body>
@@ -44,6 +47,7 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
               }}
               onlyInfo={true}
               title='주문 정보'
+              isPending={orderInfo?.orderStatus === 'PENDING'}
             />
 
             {/* 상품 목록 */}
@@ -61,7 +65,7 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
           <button
             type='button'
             className='focus:outline-none w-20 text-custom-font-purple bg-custom-button-purple hover:bg-purple-400 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900'
-            onClick={onPrimaryClick || (() => setOpenModal(false))}
+            onClick={onPrimaryClick || handleCloseModal}
           >
             <div>{primaryButtonText || '확인'}</div>
           </button>
