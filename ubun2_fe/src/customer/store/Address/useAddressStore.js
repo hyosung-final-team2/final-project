@@ -7,6 +7,8 @@ const useAddressStore = create(set => ({
   setSelectedAddress: address => set({ selectedAddress: address }),
   selectedMemberId: null,
   setSelectedMemberId: memberId => set({ selectedMemberId: memberId }),
+  isUpdate: false,
+  setIsUpdate: state => set({ isUpdate: state }),
 }));
 
 export default useAddressStore;

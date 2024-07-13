@@ -32,10 +32,13 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
         QueryResults<Address> results = from(address)
                 .join(address.member, member)
                 .join(member.memberCustomers, memberCustomer)
-                .where(memberCustomer.customer.customerId.eq(customerId)).fetchResults();
+                .where(memberCustomer.customer.customerId.eq(customerId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
 
-        long total = results.getTotal();
         List<Address> content = results.getResults();
+        long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
     }

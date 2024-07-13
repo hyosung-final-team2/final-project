@@ -1,7 +1,7 @@
 import { Radio } from 'flowbite-react';
 import { useState } from 'react';
 import Select from '../common/Select/Select';
-import { useRegisterPayment } from '../../api/PaymentMethod/Table/queris';
+import { useRegisterPayment } from '../../api/PaymentMethod/Modal/queris';
 import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
 
 const PaymentInfo = ({}) => {
@@ -46,11 +46,6 @@ const PaymentInfo = ({}) => {
       return;
     }
 
-    console.log('selectedMemberId', selectedMemberId);
-    console.log('cardCompany', cardCompany);
-    console.log('cardNumber', cardNumber);
-    console.log('accountNumber', accountNumber);
-    console.log('bankName', bankName);
     const apiData = {
       memberId: selectedMemberId,
       paymentType: paymentMethod === '카드 결제' ? 'CARD' : 'ACCOUNT',
@@ -110,7 +105,7 @@ const PaymentInfo = ({}) => {
               defaultOption='카드사를 선택해주세요'
               options={cardOptions}
               onChange={e => {
-                setCardCompany(e.target.value);
+                setCardCompany(e);
               }}
             />
             <button
@@ -122,7 +117,7 @@ const PaymentInfo = ({}) => {
           </div>
         )}
         {paymentMethod === 'CMS 결제' && (
-          <div className='grid grid-cols-2 gap-4'>
+          <div className='grid grid-cols-2 gap-4' style={{ gridTemplateColumns: '5fr 3fr 2fr' }}>
             <div className='relative'>
               <input
                 className='w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-700'
@@ -131,7 +126,7 @@ const PaymentInfo = ({}) => {
               />
               <label className='absolute text-xs text-gray-500 left-3 -top-2 bg-white px-1'>계좌 번호</label>
             </div>
-            <Select id='bank' defaultOption='은행사를 선택해주세요' options={bankOptions} onChange={e => setBankName(e.target.value)} />
+            <Select id='bank' defaultOption='은행사를 선택해주세요' options={bankOptions} onChange={e => setBankName(e)} />
             <button
               className={`${commonButtonStyles} bg-custom-button-purple text-custom-font-purple hover:text-white hover:bg-custom-font-purple`}
               onClick={handleOnClick}

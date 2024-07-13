@@ -13,8 +13,6 @@ const MemberAddressTable = ({ memberAddresses, title }) => {
   const itemsPerPage = 3;
   const totalPages = Math.ceil(memberAddresses.length / itemsPerPage);
 
-  console.log(memberAddresses);
-
   useEffect(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;

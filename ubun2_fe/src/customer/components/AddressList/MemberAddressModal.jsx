@@ -1,18 +1,17 @@
 import { Modal } from 'flowbite-react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { customModalTheme } from '../common/Modal/ModalStyle';
 import MemberInfo from '../common/Info/MemberInfo';
 import MemberAddressTable from './MemberAddressTable/MemberAddressTable';
 import MemberAddressEditModal from './MemberAddressEditModal';
 import AddressInput from '../common/Input/AddressInput';
 import useAddressStore from '../../store/Address/useAddressStore';
-import { useGetAddressDetail } from '../../api/Address/AddressModal/queris';
+import { useGetAddressDetail, useDeleteAddress } from '../../api/Address/AddressModal/queris';
 
-const MemberAddressModal = ({ isOpen, setOpenModal, addressId, setAddressId }) => {
+const MemberAddressModal = ({ isOpen, setOpenModal, addressId, setAddressId, currentPage }) => {
   const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
-  const { isEditMode, setIsEditMode, selectedMemberId } = useAddressStore();
-  const [isUpdate, setIsUpdate] = useState(false);
+  const { isEditMode, setIsEditMode, isUpdate, setIsUpdate, selectedMemberId } = useAddressStore();
 
   const initialInfos = [
     {
@@ -33,7 +32,7 @@ const MemberAddressModal = ({ isOpen, setOpenModal, addressId, setAddressId }) =
   ];
 
   const { data: detail, isLoading } = useGetAddressDetail(addressId);
-
+  const { mutate: deleteMutate } = useDeleteAddress(currentPage);
   const memberInfo = detail?.data?.data;
 
   const member = {
@@ -87,6 +86,7 @@ const MemberAddressModal = ({ isOpen, setOpenModal, addressId, setAddressId }) =
               </button>
               <button
                 onClick={() => {
+                  deleteMutate(addressId);
                   setIsUpdate(false);
                   setOpenModal(false);
                 }}
