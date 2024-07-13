@@ -10,4 +10,5 @@ public interface PaymentMethodRepositoryCustom {
     Page<PaymentMethod> findAllCardPaymentMethodsByMemberId(Pageable pageable, Long customerId);
     Page<PaymentMethod> findAllAccountPaymentMethodsByMemberId(Pageable pageable, Long customerId);
     Optional<PaymentMethod> findPaymentMethodbyPaymentMethodIdAndCustomerId(Long paymentMethodId, Long customerId);
+    boolean checkIsMyMember(Long customerId, Long memberId);
 }
