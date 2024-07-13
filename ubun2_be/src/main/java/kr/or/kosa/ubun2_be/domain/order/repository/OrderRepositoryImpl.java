@@ -7,9 +7,11 @@ import kr.or.kosa.ubun2_be.domain.order.entity.Order;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static kr.or.kosa.ubun2_be.domain.customer.entity.QCustomer.customer;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMember.member;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCustomer;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QOrder.order;
@@ -93,5 +95,19 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
             }
         }
         return builder;
+    }
+    @Override
+    public List<Order> findOrdersByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+
+        return from(order)
+                .join(order.orderProducts, orderProduct)
+                .join(order.member, member)
+                .join(member.memberCustomers, memberCustomer)
+                .join(memberCustomer.customer, customer)
+                .where(customer.customerId.eq(customerId)
+                        .and(order.createdAt.between(startDate, endDate)
+                                .and(order.orderStatus.eq(OrderStatus.APPROVED))))
+                .fetch();
+
     }
 }
