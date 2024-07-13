@@ -98,7 +98,8 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
         }
         return builder;
     }
-    public List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+
+  public List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
 
         return from(subscriptionOrder)
                 .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
@@ -109,8 +110,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                         .and(subscriptionOrder.createdAt.between(startDate, endDate)
                                 .and(order.orderStatus.eq(OrderStatus.APPROVED))))
                 .fetch();
-
-    }
+  }
 
     @Override
     public Optional<SubscriptionOrder> findSubscriptionOrderByIdAndCustomerId(Long orderId, Long customerId) {
