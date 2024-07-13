@@ -5,42 +5,50 @@ import IconButton from '../../common/Button/IconButton';
 import { CheckIcon, CreditCardIcon, CurrencyDollarIcon, UserIcon, UsersIcon, XMarkIcon } from '@heroicons/react/16/solid';
 
 const PendingOrderTableRow = ({
-  id,
-  orderCreatedAt,
-  orderMemberId,
+  orderId,
+  createdAt,
+  memberName,
+  paymentType,
+  subscription,
   totalOrderPrice,
-  orderPaymentMethod,
-  orderStatus,
-  orderOption,
   setOpenModal,
   isChecked,
   handleRowChecked,
-  orderApprove,
-  orderCancel,
+  handleOrderUpdate,
 }) => {
+  const handleApprove = e => {
+    e.stopPropagation();
+    handleOrderUpdate([{ orderId, subscription }], 'APPROVED');
+  };
+
+  const handleCancel = e => {
+    e.stopPropagation();
+    handleOrderUpdate([{ orderId, subscription }], 'DENIED');
+  };
+
   return (
-    <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800' onClick={() => setOpenModal(true)}>
+    <Table.Row className='bg-white' onClick={() => setOpenModal(orderId, subscription)}>
       <Table.Cell>
-        <Checkbox checked={isChecked} onChange={() => handleRowChecked(id)} onClick={e => e.stopPropagation()} />
+        <Checkbox checked={isChecked} onChange={() => handleRowChecked(orderId, subscription)} onClick={e => e.stopPropagation()} />
       </Table.Cell>
-      <Table.Cell>{id}</Table.Cell>
-      <Table.Cell>{orderCreatedAt}</Table.Cell>
-      <Table.Cell>{orderMemberId}</Table.Cell>
+      <Table.Cell>
+        {subscription ? <OrderOptionBadge icon={UsersIcon} orderOptionText='정기' /> : <OrderOptionBadge icon={UserIcon} orderOptionText='단건' />}
+      </Table.Cell>
+      <Table.Cell>{orderId}</Table.Cell>
+      <Table.Cell>{createdAt}</Table.Cell>
+      <Table.Cell>{memberName}</Table.Cell>
       <Table.Cell>{totalOrderPrice}</Table.Cell>
       <Table.Cell>
-        {orderPaymentMethod === 'CARD' ? (
+        {paymentType === 'CARD' ? (
           <PaymentMethodBadge icon={CreditCardIcon} paymentText='카드' />
         ) : (
           <PaymentMethodBadge icon={CurrencyDollarIcon} paymentText='계좌' />
         )}
       </Table.Cell>
       <Table.Cell>
-        {orderOption === 'SINGLE' ? <OrderOptionBadge icon={UserIcon} orderOptionText='단건' /> : <OrderOptionBadge icon={UsersIcon} orderOptionText='정기' />}
-      </Table.Cell>
-      <Table.Cell>
         <div className='flex gap-2'>
-          <IconButton IconComponent={CheckIcon} onClickBtn={e => orderApprove(e, id)} btnColor='success' />
-          <IconButton IconComponent={XMarkIcon} onClickBtn={e => orderCancel(e, id)} btnColor='failure' />
+          <IconButton IconComponent={CheckIcon} onClickBtn={handleApprove} btnColor='success' />
+          <IconButton IconComponent={XMarkIcon} onClickBtn={handleCancel} btnColor='failure' />
         </div>
       </Table.Cell>
     </Table.Row>

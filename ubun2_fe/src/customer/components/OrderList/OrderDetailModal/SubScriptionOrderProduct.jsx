@@ -1,10 +1,11 @@
-import { useMemo } from 'react';
 import { List, Select } from 'flowbite-react';
+import { useMemo } from 'react';
 import StatusBadge from '../../common/Badge/StatusBadge';
 
+// subscription_order_product 개별 상태 뱃지 (APPROVED, DENIED, PENDING, MODIFIED)
 const BADGE_STYLES = {
   APPROVED: { bgColor: 'bg-badge-green', txtColor: 'text-badge-green', text: '승인' },
-  MODIFIED: { bgColor: 'bg-badge-orange', txtColor: 'text-badge-orange', text: '변경' },
+  PENDING: { bgColor: 'bg-badge-orange', txtColor: 'text-badge-orange', text: '대기' },
   REJECTED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '거절' },
   DENIED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '취소' },
 };
@@ -30,23 +31,25 @@ const SubscriptionOrderProduct = ({ orderInfo, selectedCycle, onCycleChange }) =
       <div className='flex items-center justify-between mb-3 text-main'>
         <h3 className='text-xl font-bold'>{selectedCycle}회차 정기배송 상품 목록</h3>
         <div className='font-bold text-md text-custom-primary'>
-          <h5>{`${orderInfo.latestCycleNumber} 회`}</h5>
+          <h5>{orderInfo?.orderStatus !== 'PENDING' && `${orderInfo.latestCycleNumber} 회`}</h5>
           <h5>{orderInfo.createdAt}</h5>
         </div>
       </div>
 
-      <div className='mb-4'>
-        <label htmlFor='cycle-select' className='block mb-2 text-sm font-medium text-gray-500'>
-          * 정기주문 회차
-        </label>
-        <Select value={selectedCycle} onChange={e => onCycleChange(Number(e.target.value))} className='mt-2 w-fit'>
-          {Array.from({ length: orderInfo.latestCycleNumber }, (_, i) => i + 1).map(cycleNum => (
-            <option key={cycleNum} value={cycleNum}>
-              {cycleNum} 회차
-            </option>
-          ))}
-        </Select>
-      </div>
+      {orderInfo?.orderStatus !== 'PENDING' && (
+        <div className='mb-4'>
+          <label htmlFor='cycle-select' className='block mb-2 text-sm font-medium text-gray-500'>
+            * 정기주문 회차
+          </label>
+          <Select value={selectedCycle} onChange={e => onCycleChange(Number(e.target.value))} className='mt-2 w-fit'>
+            {Array.from({ length: orderInfo.latestCycleNumber }, (_, i) => i + 1).map(cycleNum => (
+              <option key={cycleNum} value={cycleNum}>
+                {cycleNum} 회차
+              </option>
+            ))}
+          </Select>
+        </div>
+      )}
 
       <List unstyled className='px-8 py-6 divide-y divide-gray-200 rounded-md dark:divide-gray-700 bg-custom-alert-bg-gray'>
         {filteredProducts.map(product => (

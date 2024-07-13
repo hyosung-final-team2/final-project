@@ -13,6 +13,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/customers/orders")
@@ -56,20 +58,19 @@ public class OrderCustomerController {
         return ResponseDto.ok(orderResponseList, "정상출력 데이터");
     }
 
-
-    @Operation(summary = "대기 단건 주문 승인, 취소")
+    @Operation(summary = "대기 단건 주문 리스트 승인, 취소")
     @PutMapping("/approve")
-    public ResponseDto<?> updateOrderApprove(@RequestBody OrderApproveRequest orderApproveRequest,
+    public ResponseDto<?> updateOrderStatus(@RequestBody List<OrderApproveRequest> orderApproveRequests,
                                              @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        orderService.updateOrderApprove(customUserDetails.getUserId(), orderApproveRequest);
+        orderService.updateOrderStatus(customUserDetails.getUserId(), orderApproveRequests);
         return ResponseDto.ok(null, "정상출력 데이터");
     }
 
-    @Operation(summary = "대기 정기 주문(최초 정기주문만) 승인, 취소")
+    @Operation(summary = "대기 정기 주문(최초 정기주문만) 리스트 승인, 취소")
     @PutMapping("/subscription/approve")
-    public ResponseDto<?> updateSubscriptionOrderApprove(@RequestBody SubscriptionApproveRequest subscriptionApproveRequest,
+    public ResponseDto<?> updateSubscriptionOrderStatus(@RequestBody List<SubscriptionApproveRequest> subscriptionApproveRequests,
                                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        orderService.updateSubscriptionOrderApprove(customUserDetails.getUserId(), subscriptionApproveRequest);
+        orderService.updateSubscriptionOrderStatus(customUserDetails.getUserId(), subscriptionApproveRequests);
         return ResponseDto.ok(null, "정상출력 데이터");
     }
 
