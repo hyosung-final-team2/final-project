@@ -12,10 +12,11 @@ const ProductTableRow = ({
   setOpenModal,
   isChecked,
   handleRowChecked,
+    currentPage
 }) => {
   return (
     <>
-      <Table.Row className='bg-white' onClick={() => setOpenModal(productId)}>
+      <Table.Row className='bg-white' onClick={() => setOpenModal(productId,currentPage)}>
         <Table.Cell>
           <Checkbox checked={isChecked} onChange={() => handleRowChecked(productId)} onClick={e => e.stopPropagation()} />
         </Table.Cell>

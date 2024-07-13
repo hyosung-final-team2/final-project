@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Table } from 'flowbite-react';
 import TableHead from '../../common/Table/TableHead';
-import TableBody from '../../common/Table/TableBody';
 import ProductTableFeature from './ProductTableFeature';
 import { tableColumn } from '../../common/Table/tableIndex';
 import { customTableTheme } from '../../common/Table/tableStyle';
@@ -12,6 +11,8 @@ import { useGetProducts } from '../../../api/Product/ProductList/ProductList/que
 import { useQueryClient } from '@tanstack/react-query';
 import { getProducts } from '../../../api/Product/ProductList/ProductList/productTable.js';
 import { useGetProductDetail } from '../../../api/Product/ProductList/ProductDetailModal/queris.js';
+import DynamicTableBody from "../../common/Table/DynamicTableBody.jsx";
+import TableBody from "../../common/Table/TableBody.jsx";
 
 const ProductTable = () => {
   const [openProductDetailModal, setOpenProductDetailModal] = useState(false);
@@ -51,9 +52,9 @@ const ProductTable = () => {
   const handleRowChecked = id => {
     setSelectedProducts(prev => (prev.includes(id) ? prev.filter(id => id !== id) : [...prev, id]));
   };
-
-  const handleRowClick = async productId => {
-    await setSelectedProductDetail({ productId: productId });
+//
+  const handleRowClick = async (productId,page )=> {
+    await setSelectedProductDetail({ productId: productId, currentPage:page });
     await refetch();
     await setOpenProductDetailModal(true);
   };
@@ -74,11 +75,13 @@ const ProductTable = () => {
         <Table hoverable theme={customTableTheme}>
           <TableHead tableColumns={tableColumn.product} allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} />
           <TableBody
-            users={productList}
+            dataList={productList}
             TableRowComponent={ProductTableRow}
-            selectedMembers={selectedProducts}
+            dynamicId='productId'
             setOpenModal={handleRowClick}
+            selectedMembers={selectedProducts}
             handleRowChecked={handleRowChecked}
+            currentPage={currentPage}
           />
         </Table>
         <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />

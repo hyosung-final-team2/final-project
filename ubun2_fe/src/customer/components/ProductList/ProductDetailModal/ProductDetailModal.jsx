@@ -13,20 +13,44 @@ import {
 
 const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail, currentPage}) => {
   const {data: productDetail} = useGetProductDetail(selectedProductDetail?.productId)
-  const product = productDetail?.data?.data
+  const product = productDetail?.data?.data;
 
-  const ProductInfoData = {
-    productId: product?.productId || '',
-    productName: product?.productName || '',
-    productDescription: product?.productDescription || '',
-    categoryName: product?.categoryName||'',
-    stockQuantity: product?.stockQuantity || '',
-    productPrice: product?.productPrice || '',
-    productDiscount: product?.productDiscount || '',
-    productStatus: product?.productStatus || false,
-    orderOption: product?.orderOption|| '',
-    productImagePath: product?.productImagePath||''
+  const INITIAL_PRODUCT_OBJ = {
+    productId: '',
+    productName: '',
+    productDescription: '',
+    categoryName: '과일', //기본
+    stockQuantity: '',
+    productPrice: '',
+    productDiscount: '',
+    productStatus: 'true',
+    orderOption: 'SINGLE', //기본
+    productImageOriginalName: '',
+    productImagePath: '',
   };
+
+  const [productData, setProductData] = useState(INITIAL_PRODUCT_OBJ); // 변경용 데이터
+  const [initialData, setInitialData] = useState(INITIAL_PRODUCT_OBJ); // 복원용 데이터
+
+  console.log(productData)
+
+
+  useEffect(() => {
+      const newData = {
+        productId: product?.productId || '',
+        productName: product?.productName || '',
+        productDescription: product?.productDescription || '',
+        categoryName: product?.categoryName||'',
+        stockQuantity: product?.stockQuantity || '',
+        productPrice: product?.productPrice || '',
+        productDiscount: product?.productDiscount || '',
+        productStatus: product?.productStatus ===true? "true":"false"|| "false",
+        orderOption: product?.orderOption|| '',
+        productImagePath: product?.productImagePath||''
+      };
+      setProductData(newData);
+      setInitialData(newData);
+  },[isOpen,product])
 
   const [imageFile, setImageFile] = useState(null);
 
@@ -38,23 +62,22 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
   useEffect(() => {
   }, [product]);
 
-  const { mutate: productDeleteMutate } = useDeleteProduct(ProductInfoData.productId, currentPage)
-  const { mutate: productModifyMutate } = useModifyProduct(ProductInfo,imageFile,currentPage)
+  const { mutate: productDeleteMutate } = useDeleteProduct(productData.productId, currentPage)
+  const { mutate: productModifyMutate } = useModifyProduct(productData,imageFile,currentPage)
 
-  const handleInputChange = () => {
+  const handleInputChange = (e) => {
     //console.log( typeof e.target.value)
-    //(prev => ({ ...prev, [e.target.name]: e.target.value }));
+    setProductData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
 
   return (
     <>
       <Modal dismissible show={isOpen} onClose={() => {
         setIsEditing(false)
         setOpenModal(false)
+        setProductData(initialData)
+        setIsEditing(false)
       }} theme={customModalTheme} size='4xl'>
         <Modal.Header>
           <div className='flex items-center justify-between w-full'>
@@ -65,15 +88,15 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
           <div className='flex gap-3 w-full'>
             <div className='flex gap-3 flex-col w-2/5'>
               {/* 이미지 카드 */}
-              <ProductImageCard product={ProductInfoData} onlyInfo={!isEditing} title='상품 사진' handleInputImageChange={handleInputImageChange}/>
+              <ProductImageCard product={productData} onlyInfo={!isEditing} title='상품 사진' handleInputImageChange={handleInputImageChange}/>
               {/* 카테고리 */}
-              <ProductCategory product={ProductInfoData} onlyInfo={!isEditing} title='카테고리' handleInputChange={handleInputChange}/>
+              <ProductCategory product={productData} onlyInfo={!isEditing} title='카테고리' handleInputChange={handleInputChange}/>
             </div>
             <div className='flex gap-3 flex-col w-3/5 justify-between'>
               {/* 상품 상세 정보 */}
-              <ProductInfo product={ProductInfoData} onlyInfo={!isEditing} title='상품 정보' handleInputChange={handleInputChange}/>
+              <ProductInfo product={productData} onlyInfo={!isEditing} title='상품 정보' handleInputChange={handleInputChange}/>
               {/* 상품 판매 정보 */}
-              <ProductSaleInfo product={ProductInfoData} onlyInfo={!isEditing} title='가격 및 재고' handleInputChange={handleInputChange}/>
+              <ProductSaleInfo product={productData} onlyInfo={!isEditing} title='가격 및 재고' handleInputChange={handleInputChange}/>
             </div>
           </div>
         </Modal.Body>
@@ -84,7 +107,10 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
                   <>
                     <Button
                         className="w-28 bg-custom-button-purple text-custom-font-purple"
-                        onClick={handleEditClick}
+                        onClick={()=>{
+                          productModifyMutate()
+                          setIsEditing(true)
+                        }}
                     >
                       수정
                     </Button>
@@ -99,11 +125,9 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
                   </>
               ) : (
                   <Button
-                      className="w-28 bg-custom-button-purple text-custom-font-purple" onClick={() => {
-                    productModifyMutate()
-                    setOpenModal(false);
-                    //setNewProduct(null)
-                    //setImageFile(null)
+                      className="w-28 bg-custom-button-purple text-custom-font-purple" onClick={async () => {
+                    await productModifyMutate()
+                    setIsEditing(false)
                   }}>
                     저장
                   </Button>
