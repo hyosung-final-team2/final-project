@@ -1,5 +1,9 @@
-import { CreditCardIcon, CurrencyDollarIcon, UserIcon, UsersIcon } from '@heroicons/react/16/solid';
+import { CreditCardIcon, CurrencyDollarIcon } from '@heroicons/react/16/solid';
 import { Checkbox, Table } from 'flowbite-react';
+import SingleIcon from '../../../../assets/images/single.svg';
+import SubscriptionIcon from '../../../../assets/images/subscription.svg';
+import { formatCurrency } from '../../../utils/currencyFormat';
+import { formatDate } from '../../../utils/dateFormat';
 import OrderOptionBadge from '../../common/Badge/OrderOptionBadge';
 import PaymentMethodBadge from '../../common/Badge/PaymentMethodBadge';
 import StatusBadge from '../../common/Badge/StatusBadge';
@@ -22,12 +26,11 @@ const OrderTableRow = ({
         <Checkbox checked={isChecked} onChange={() => handleRowChecked(orderId, subscription)} onClick={e => e.stopPropagation()} />
       </Table.Cell>
       <Table.Cell>
-        {subscription ? <OrderOptionBadge icon={UsersIcon} orderOptionText='정기' /> : <OrderOptionBadge icon={UserIcon} orderOptionText='단건' />}
+        {subscription ? <OrderOptionBadge icon={SubscriptionIcon} orderOptionText='정기' /> : <OrderOptionBadge icon={SingleIcon} orderOptionText='단건' />}
       </Table.Cell>
-      <Table.Cell>{orderId}</Table.Cell>
-      <Table.Cell>{createdAt}</Table.Cell>
+      <Table.Cell>{formatDate(createdAt)}</Table.Cell>
       <Table.Cell>{memberName}</Table.Cell>
-      <Table.Cell>{totalOrderPrice}</Table.Cell>
+      <Table.Cell>{`${formatCurrency(totalOrderPrice)} 원`}</Table.Cell>
       <Table.Cell>
         {paymentType === 'CARD' ? (
           <PaymentMethodBadge icon={CreditCardIcon} paymentText='카드' />

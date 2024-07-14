@@ -30,6 +30,7 @@
     "react-router-dom": "^6.24.0",
     "react-tailwindcss-datepicker": "^1.6.0",
     "theme-change": "^2.2.0",
+    "vite-plugin-svgr": "^4.2.0",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
