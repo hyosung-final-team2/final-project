@@ -1,7 +1,6 @@
 import toast from 'react-hot-toast';
 import { getPendingOrders, updatePendingOrder, updateSubscriptionOrder } from './pendingOrderTable';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import error from 'eslint-plugin-react/lib/util/error';
 
 // 대기 주문 목록 불러오기
 export const useGetPendingOrders = (page, size) => {
