@@ -2,18 +2,6 @@ import { List } from 'flowbite-react';
 import StatusBadge from '../../common/Badge/StatusBadge';
 import { formatCurrency } from '../../../utils/currencyFormat';
 
-const BADGE_STYLES = {
-  APPROVED: { bgColor: 'bg-badge-green', txtColor: 'text-badge-green', text: '승인' },
-  PENDING: { bgColor: 'bg-badge-orange', txtColor: 'text-badge-orange', text: '대기' },
-  REJECTED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '거절' },
-  DENIED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '취소' },
-};
-
-const renderStatusBadge = status => {
-  const { bgColor, txtColor, text } = BADGE_STYLES[status];
-  return <StatusBadge bgColor={bgColor} txtColor={txtColor} badgeText={text} />;
-};
-
 const SingleOrderProduct = ({ orderInfo }) => {
   const getPriceClassName = discount => {
     return discount > 0 ? 'line-through text-red-500 dark:text-red-500' : 'text-gray-900 dark:text-white';
@@ -38,7 +26,9 @@ const SingleOrderProduct = ({ orderInfo }) => {
             </div>
             <div className='flex flex-col flex-1 min-w-0 gap-2 ml-4'>
               <div className='flex gap-3'>
-                <span className='text-xs'>{renderStatusBadge(orderProduct.orderProductStatus)}</span>
+                <span className='text-xs'>
+                  <StatusBadge status={orderProduct.orderProductStatus} />
+                </span>
                 <p className='text-lg font-bold text-gray-900 dark:text-white'>{orderProduct.productDescription}</p>
               </div>
               <div className='flex items-center gap-2'>

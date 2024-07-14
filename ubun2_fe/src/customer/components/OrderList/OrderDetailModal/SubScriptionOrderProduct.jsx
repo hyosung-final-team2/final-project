@@ -3,19 +3,6 @@ import { useMemo } from 'react';
 import { formatCurrency } from '../../../utils/currencyFormat';
 import StatusBadge from '../../common/Badge/StatusBadge';
 
-// subscription_order_product 개별 상태 뱃지 (APPROVED, DENIED, PENDING, MODIFIED)
-const BADGE_STYLES = {
-  APPROVED: { bgColor: 'bg-badge-green', txtColor: 'text-badge-green', text: '승인' },
-  PENDING: { bgColor: 'bg-badge-orange', txtColor: 'text-badge-orange', text: '대기' },
-  REJECTED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '거절' },
-  DENIED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '취소' },
-};
-
-const renderStatusBadge = status => {
-  const { bgColor, txtColor, text } = BADGE_STYLES[status];
-  return <StatusBadge bgColor={bgColor} txtColor={txtColor} badgeText={text} />;
-};
-
 const SubscriptionOrderProduct = ({ orderInfo, selectedCycle, onCycleChange }) => {
   const filteredProducts = useMemo(() => {
     return orderInfo.subscriptionOrderProducts.filter(product => product.cycleNumber === selectedCycle);
@@ -63,7 +50,9 @@ const SubscriptionOrderProduct = ({ orderInfo, selectedCycle, onCycleChange }) =
             </div>
             <div className='flex flex-col flex-1 min-w-0 gap-2 ml-4'>
               <div className='flex gap-3'>
-                <span className='text-xs'>{renderStatusBadge(product.orderProductStatus)}</span>
+                <span className='text-xs'>
+                  <StatusBadge status={product.orderProductStatus} />
+                </span>
                 <p className='text-lg font-bold text-gray-900 dark:text-white'>{product.productDescription}</p>
               </div>
               <div className='flex items-center gap-2'>
