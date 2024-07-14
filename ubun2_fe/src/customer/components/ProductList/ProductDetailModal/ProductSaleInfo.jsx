@@ -8,7 +8,7 @@ const ProductSaleInfo = ({ product, onlyInfo = false, title, handleInputChange }
           <input
             type='text'
             name='productPrice'
-            value={product.productPrice}
+            value={product?.productPrice}
             onChange={e => handleInputChange(e)}
             disabled={onlyInfo}
             className={`
@@ -24,7 +24,7 @@ const ProductSaleInfo = ({ product, onlyInfo = false, title, handleInputChange }
           <input
             type='text'
             name='stockQuantity'
-            value={product.stockQuantity}
+            value={product?.stockQuantity}
             onChange={e => handleInputChange(e)}
             disabled={onlyInfo}
             className={`
@@ -40,7 +40,7 @@ const ProductSaleInfo = ({ product, onlyInfo = false, title, handleInputChange }
           <input
             type='text'
             name='productDiscount'
-            value={product.productDiscount}
+            value={product?.productDiscount}
             onChange={e => handleInputChange(e)}
             disabled={onlyInfo}
             className={`
@@ -59,7 +59,7 @@ const ProductSaleInfo = ({ product, onlyInfo = false, title, handleInputChange }
         focus:ring-blue-500 block w-full p-2 mb-4 
         ${onlyInfo ? 'bg-gray-100 border-transparent' : 'bg-white border-gray-300'}
     `}
-            value={product.orderOption}
+            value={product?.orderOption}
             name='orderOption'
             onChange={e => handleInputChange(e)}
             disabled={onlyInfo}

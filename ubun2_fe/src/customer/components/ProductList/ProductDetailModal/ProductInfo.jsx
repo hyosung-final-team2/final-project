@@ -12,7 +12,7 @@ const ProductInfo = ({product, onlyInfo = false, title ,handleInputChange} ) => 
             <input
                 type='text'
                 name="productName"
-                value={product.productName}
+                value={product?.productName}
                 onChange={(e)=>handleInputChange(e)}
                 className={`
         text-gray-900 text-sm rounded-lg 
@@ -32,7 +32,7 @@ const ProductInfo = ({product, onlyInfo = false, title ,handleInputChange} ) => 
         text-gray-900 text-sm rounded-lg 
         focus:ring-blue-500 block w-full p-2 mb-4 
         ${onlyInfo ? 'bg-gray-100 border-transparent' : 'bg-white border-gray-300'}
-    `}                value={product.productDescription}
+    `}                value={product?.productDescription}
                 onChange={(e)=>(handleInputChange(e))}
                 placeholder='상품 소개를 입력하세요'
                 rows='4'
@@ -48,7 +48,7 @@ const ProductInfo = ({product, onlyInfo = false, title ,handleInputChange} ) => 
                   name='productStatus'
                   disabled={onlyInfo}
                    value="true"
-                  checked={product.productStatus === "true"}
+                  checked={product?.productStatus === "true"}
                   onChange={(e)=>(handleInputChange(e))}
               />
               <label className='text-custom-font-gray' htmlFor='publish'>
@@ -59,7 +59,7 @@ const ProductInfo = ({product, onlyInfo = false, title ,handleInputChange} ) => 
                   name='productStatus'
                   value="false"
                   disabled={onlyInfo}
-                  checked={product.productStatus === "false"}
+                  checked={product?.productStatus === "false"}
                   onChange={(e)=>handleInputChange(e)}
               />
               <label className='text-custom-font-gray' htmlFor='unpublish'>미게시</label>
