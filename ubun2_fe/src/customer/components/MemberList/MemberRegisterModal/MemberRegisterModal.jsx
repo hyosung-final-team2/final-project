@@ -4,7 +4,7 @@ import InputLabel from "../../common/Input/InputLabel.jsx";
 import {useState} from "react";
 import {useRegisterMember} from "../../../api/Customer/MemberList/MemberModal/queris.js";
 
-const MemberRegisterModal = ({isOpen, setOpenModal}) => {
+const MemberRegisterModal = ({isOpen, setOpenModal, handleRegisterSuccess}) => {
     const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
     const [pendingMemberName,setPendingMemberName] = useState('');
@@ -21,7 +21,17 @@ const MemberRegisterModal = ({isOpen, setOpenModal}) => {
         setPendingMemberPhone('')
     }
 
-    const {mutate: memberRegisterMutate } = useRegisterMember({pendingMemberName,pendingMemberEmail,pendingMemberPhone})
+    const { mutate: memberRegisterMutate } = useRegisterMember({
+        pendingMemberName,
+        pendingMemberEmail,
+        pendingMemberPhone
+    }, {
+        onSuccess: () => {
+            handleRegisterSuccess();
+            setOpenModal(false);
+            resetValues();
+        }
+    });
 
     return (
         <Modal
@@ -48,6 +58,7 @@ const MemberRegisterModal = ({isOpen, setOpenModal}) => {
             <Modal.Footer>
                 <button
                     onClick={ async () => {
+                        // await memberRegisterMutate2
                         await memberRegisterMutate()
                         setOpenModal(false);
                         resetValues()

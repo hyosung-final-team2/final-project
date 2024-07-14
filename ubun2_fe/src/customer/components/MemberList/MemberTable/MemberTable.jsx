@@ -1,4 +1,3 @@
-import MemberModal from '../MemberModal/MemberModal';
 import { Table } from 'flowbite-react';
 import TablePagination from '../../common/Pagination/TablePagination';
 import { customTableTheme } from '../../common/Table/tableStyle';
@@ -9,17 +8,17 @@ import MemberTableRow from './MemberTableRow';
 import ExcelModal from '../ExcelModal/ExcelModal';
 import DynamicTableBody from '../../common/Table/DynamicTableBody.jsx';
 
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import { useGetMembers } from '../../../api/Customer/MemberList/MemberTable/queris.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { getMembers } from '../../../api/Customer/MemberList/MemberTable/memberTable.js';
-import { useGetMemberDetail } from '../../../api/Customer/MemberList/MemberModal/queris.js';
+import {useGetMemberDetail} from '../../../api/Customer/MemberList/MemberModal/queris.js';
 import MemberInsertModal from "../MemberInsertModal/MemberInsertModal.jsx";
 import MemberRegisterModal from "../MemberRegisterModal/MemberRegisterModal.jsx";
 
 const MemberTable = () => {
 
-  const [openMemberDetailModal, setOpenMemberDetailModal] = useState(false);
+  // const [openMemberDetailModal, setOpenMemberDetailModal] = useState(false);
   const [openExcelModal, setOpenExcelModal] = useState(false);
   const [openInsertModal, setOpenInsertModal] = useState(false);
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
@@ -30,7 +29,9 @@ const MemberTable = () => {
   const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
 
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: members } = useGetMembers(currentPage);
+
+  const PAGE_SIZE = 8
+  const { data: members,refetch: refetchMembers } = useGetMembers(currentPage,PAGE_SIZE);
 
   const totalPages = members?.data?.data?.totalPages ?? 5;
   const memberList = members?.data?.data?.content || [];
@@ -44,7 +45,7 @@ const MemberTable = () => {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['member', nextPage],
-        queryFn: () => getMembers(nextPage),
+        queryFn: () => getMembers(nextPage,PAGE_SIZE),
       });
     }
   }, [currentPage, queryClient, totalPages]);
@@ -71,7 +72,6 @@ const MemberTable = () => {
   const handleRowClick = async (memberId, pending, page) => {
     await setSelectedMemberDetail({ memberId: memberId, pending: pending, currentPage: page });
     await refetch();
-    // await setOpenMemberDetailModal(true);
     await setOpenInsertModal(true)
   };
 
@@ -82,6 +82,15 @@ const MemberTable = () => {
 
     // TODO: 검색 API 호출
     console.log(`${category} : ${term}`);
+  };
+
+  const handleRegisterSuccess = () => {
+    const newTotalPages = Math.ceil((members.data.data.totalElements + 1) / PAGE_SIZE); //  받고싶은 데이터 양 , 페이지네이션 불러오는 함수도 size 해당 변수로 넣어줘야함
+    if (currentPage === newTotalPages) {
+      refetchMembers();
+    } else {
+      setCurrentPage(newTotalPages);
+    }
   };
 
   return (
@@ -102,7 +111,7 @@ const MemberTable = () => {
             selectedMembers={selectedMembers}
             handleRowChecked={handleRowChecked}
             // setOpenModal={setOpenMemberDetailModal}
-            setOpenModal={handleRowClick} // 변경된 부분: handleRowClick 사용
+            setOpenModal={handleRowClick}
             currentPage={currentPage}
           />
         </Table>
@@ -110,24 +119,14 @@ const MemberTable = () => {
       {/* 페이지네이션 */}
       <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
 
-      {/* 회원 조회 모달 */}
-      <MemberModal
-        isOpen={openMemberDetailModal}
-        setOpenModal={setOpenMemberDetailModal}
-        title='회원 상세'
-        primaryButtonText='수정'
-        secondaryButtonText='삭제'
-        selectedMemberDetail={selectedMemberDetail}
-      />
-
       {/* 엑셀 조회 모달 */}
       <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} />
 
     {/* 회원 조회 & 수정 모달 */}
-      <MemberInsertModal isOpen={openInsertModal} setOpenModal={setOpenInsertModal} selectedMemberDetail={selectedMemberDetail} currentPage={currentPage}/>
+      <MemberInsertModal isOpen={openInsertModal} setOpenModal={setOpenInsertModal} selectedMemberDetail={selectedMemberDetail} setCurrentPage={setCurrentPage} currentPage={currentPage} setSelectedMemberDetail={setSelectedMemberDetail}/>
 
     {/*  회원 등록 모달*/}
-      <MemberRegisterModal isOpen={openRegisterModal} setOpenModal={setOpenRegisterModal} />
+      <MemberRegisterModal isOpen={openRegisterModal} setOpenModal={setOpenRegisterModal} handleRegisterSuccess={handleRegisterSuccess}/>
     </div>
   );
 };

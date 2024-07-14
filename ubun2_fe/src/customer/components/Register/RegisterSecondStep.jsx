@@ -1,6 +1,8 @@
 import InputText from '../common/Input/InputText';
 import InputTextWithBtn from '../common/Input/InputTextWithBtn';
 import { useState, useEffect } from 'react';
+import {emailRegex, loginIdRegex, passwordRegex ,authNumRegex} from "../common/Regex/registerRegex.js";
+import {useAuthEmail, useSendEmail} from "../../api/Register/queris.js";
 
 const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
   const INITIAL_REGISTER_OBJ = {
@@ -17,18 +19,31 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [secondRegisterObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ)
+  const [timerValue, setTimerValue] = useState(300);
+  const [isAuthSuccess, setIsAuthSuccess] = useState(null);
+
+  const {mutate:sendEmailMutate} = useSendEmail(secondRegisterObj.customerEmail)
+  const {mutate:authEmailMutate} = useAuthEmail();
+
+  useEffect(() => {
+    setIsSendEmail(false);
+    setIsAuthSuccess(null);
+    setTimerValue(300);
+  }, []);
 
   useEffect(() => {
     const { customerName, customerEmail, emailAuthentication, customerLoginId, customerPassword, customerPasswordCheck } = secondRegisterObj;
 
     if (
-      customerName.trim() !== '' &&
-      customerEmail.trim() !== '' &&
-      emailAuthentication.trim() !== '' &&
-      customerLoginId.trim() !== '' &&
-      customerPassword.trim() !== '' &&
-      customerPasswordCheck.trim() !== ''
-      // TODO: 값이 차있는지뿐만 아니라 값이 유효한 인증된 값인지 여부도 판단해야함
+        customerName.trim() !== '' &&
+        customerEmail.trim() !== '' &&
+        emailAuthentication.trim() !== '' &&
+        emailRegex.test(customerEmail.trim()) &&
+        authNumRegex.test(emailAuthentication.trim()) &&
+        loginIdRegex.test(customerLoginId.trim()) &&
+        passwordRegex.test(customerPassword.trim()) &&
+        customerPassword === customerPasswordCheck &&
+        isAuthSuccess
     ) {
       setIsAllValuePossible(true);
     } else {
@@ -59,9 +74,28 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
     setRegisterObj({ ...secondRegisterObj, [updateType]: value });
   };
 
-  const buttonFuncSendEmail = () => {
+  const buttonFuncSendEmail = (e) => {
+    e.preventDefault();
+    sendEmailMutate()
     setIsSendEmail(true);
+    setTimerValue(300);
   };
+
+  const buttonFuncAuthEmail = (e) => {
+    e.preventDefault();
+    authEmailMutate({
+      email: secondRegisterObj.customerEmail,
+      authenticationNumber: secondRegisterObj.emailAuthentication
+    }, {
+      onSuccess: () => {
+        setIsAuthSuccess(true)
+      },
+      onError: () => {
+        setIsAuthSuccess(false)
+      }
+    });
+  };
+
 
   return (
     <>
@@ -84,7 +118,9 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
             updateFormValue={updateFormValue}
             placeholder='이메일을 입력해주세요.'
             buttonText='전송하기'
+            clickPossibleWithoutData={false}
             buttonFunc={buttonFuncSendEmail}
+            regex={emailRegex}
           />
 
           {isSendEmail && (
@@ -96,6 +132,11 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
               updateFormValue={updateFormValue}
               placeholder='인증번호를 입력해주세요.'
               buttonText='인증하기'
+              buttonFunc={buttonFuncAuthEmail}
+              regex={authNumRegex}
+              showTimer ={true}
+              timerValue={timerValue}
+              isAuthSuccess={isAuthSuccess}
             />
           )}
 
@@ -106,6 +147,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
             labelTitle='아이디'
             updateFormValue={updateFormValue}
             placeholder='아이디를 입력해주세요.'
+            regex={loginIdRegex}
           />
           <div className='w-full flex'>
             <InputText
@@ -116,6 +158,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
               labelTitle='비밀번호'
               updateFormValue={updateFormValue}
               placeholder='비밀번호'
+              password={passwordRegex}
             />
             <div className='w-4/100'></div>
             <InputText
@@ -126,6 +169,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
               labelTitle='비밀번호 확인'
               updateFormValue={updateFormValue}
               placeholder='비밀번호 확인'
+              password={passwordRegex}
             />
           </div>
         </div>
