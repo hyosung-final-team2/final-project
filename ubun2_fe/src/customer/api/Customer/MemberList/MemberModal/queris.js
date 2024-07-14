@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getMemberDetail } from '../MemberTable/memberTable.js';
+import {getMemberDetail} from '../MemberTable/memberTable.js';
 import {deleteMember, registerMember, updateMember} from './memberModal.js';
 import { toast } from 'react-hot-toast';
 import error from "eslint-plugin-react/lib/util/error.js";
@@ -8,7 +8,7 @@ export const useGetMemberDetail = (memberId, pending) => {
   return useQuery({
     queryKey: ['member', memberId, pending],
     queryFn: () => getMemberDetail(memberId, pending),
-    enabled: memberId !== null && pending !== null,
+    enabled: memberId !== null && memberId !== undefined && pending !== null && pending !== undefined,
     staleTime: 5000,
   });
 };
@@ -29,13 +29,20 @@ export const useDeleteMember = (memberId, pending, currentPage) => {
   });
 };
 
-export const useRegisterMember = (registerData) => {
+export const useRegisterMember = (registerData, options) => {
   return useMutation({
     mutationFn: () => registerMember(registerData),
-    onSuccess: () => toast.success('Member registered successfully'),
-    onError: () => toast.error(`Member registered failed: ${error.message}`),
-  })
-}
+    onSuccess: () => {
+      toast.success('Member registered successfully');
+      if (options && options.onSuccess) {
+        options.onSuccess();
+      }
+    },
+    onError: (error) => {
+      toast.error(`Member registration failed: ${error.message}`);
+    },
+  });
+};
 
 export const useUpdateMember = (currentPage) => {
   const queryClient = useQueryClient();

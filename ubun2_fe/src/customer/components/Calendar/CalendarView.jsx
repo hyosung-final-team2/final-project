@@ -127,7 +127,7 @@ const CalendarView = () => {
             <div className="grid grid-cols-7 mt-1 place-items-center">
                 {allDaysInMonth().map((day, idx) => (
                     <div key={idx} className={`${colStartClasses[moment(day).day()]} border border-solid w-full h-28`} style={{ height: "6.5rem" }}>
-                        <p className={`inline-block flex items-center justify-center h-8 w-8 rounded-full mx-1 mt-1 text-sm cursor-pointer hover:bg-base-300 ${isToday(day) ? "bg-blue-100 dark:bg-blue-400 dark:hover:bg-base-300 dark:text-white" : ""} ${isDifferentMonth(day) ? "text-slate-400 dark:text-slate-600" : ""}`}>
+                        <p className={`inline-block flex items-center justify-center h-8 w-8 rounded-full mx-1 mt-1 text-sm cursor-pointer hover:bg-base-300 ${isToday(day) ? "bg-blue-100 dark:bg-blue-400 dark:hover:bg-base-300 dark:text-white" : ""} ${isDifferentMonth(day) ? "text-slate-400 dark:text-slate-600" : ""} ${moment(day).day() === 0 ? "text-red-500" : ""} ${moment(day).day() === 6 ? "text-blue-500" : ""}`}>
                             {moment(day).format("D")}
                         </p>
                         {getEventsForCurrentDate(day)?.map((e, k) => (

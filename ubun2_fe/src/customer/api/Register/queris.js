@@ -7,8 +7,8 @@ export const useSendEmail = (email) => {
     })
 }
 
-export const useAuthEmail = (email, authenticationNumber) => {
+export const useAuthEmail = () => {
     return useMutation({
-        mutationFn: () => authEmail(email, authenticationNumber)
+        mutationFn: ({email,authenticationNumber}) => authEmail(email, authenticationNumber)
     })
 }
