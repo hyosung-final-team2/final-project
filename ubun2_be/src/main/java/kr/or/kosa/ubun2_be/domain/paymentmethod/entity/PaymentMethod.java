@@ -9,6 +9,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -18,6 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 @DiscriminatorColumn(name = "payment_type")
 @Table(name = "payment_method")
+@SQLDelete(sql="UPDATE payment_method SET is_deleted = true WHERE payment_method_id=?")
+@SQLRestriction("is_deleted = false")
 @Getter
 public class PaymentMethod extends BaseTimeEntity {
     @Id
@@ -29,6 +34,10 @@ public class PaymentMethod extends BaseTimeEntity {
 
     @Column(name = "payment_type", insertable = false, updatable = false)
     private String paymentType;
+
+    @Column
+    @ColumnDefault("false")
+    private boolean isDeleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
