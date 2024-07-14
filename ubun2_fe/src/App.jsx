@@ -34,6 +34,20 @@ const App = () => {
           }
         />
 
+        {/* Member Routes */}
+        <Route
+          path='/member/*'
+          element={
+            <Routes>
+              <Route path='login' element={<MemberLogin />} />
+              <Route path='forgot-password' element={<MemberForgotPassword />} />
+              <Route path='register' element={<MemberRegister />} />
+              <Route path='app/*' element={<MemberLayout />} />
+              <Route path='*' element={<Navigate to={token ? '/member/app/welcome' : '/member/login'} replace />} />
+            </Routes>
+          }
+        />
+
         {/* Fallback Route */}
         <Route path='*' element={<Navigate to={token ? '/customer/app/dashboard' : '/customer/login'} replace />} />
       </Routes>
