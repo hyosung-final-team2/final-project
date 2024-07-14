@@ -41,7 +41,7 @@ const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId
             {/* {children} */}
             <MemberInfo member={member} searchable={true} title='회원정보' />
             {isUpdate && <PaymentInfo isUpdate={isUpdate} />}
-            <MemberPaymentTable payments={memberInfo?.paymentMethods} title='홍길동님의 결제수단 목록' />
+            <MemberPaymentTable payments={memberInfo?.paymentMethods} title={`${member.name}님의 결제수단`} />
           </div>
         </Modal.Body>
         <Modal.Footer>
