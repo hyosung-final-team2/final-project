@@ -1,5 +1,6 @@
 import { Table, Checkbox } from 'flowbite-react';
 import StatusBadge from '../../common/Badge/StatusBadge';
+import ProductOptionBadge from '../../common/Badge/ProductOptionBadge';
 
 const ProductTableRow = ({
   productId,
@@ -12,11 +13,11 @@ const ProductTableRow = ({
   setOpenModal,
   isChecked,
   handleRowChecked,
-    currentPage
+  currentPage,
 }) => {
   return (
     <>
-      <Table.Row className='bg-white' onClick={() => setOpenModal(productId,currentPage)}>
+      <Table.Row className='bg-white' onClick={() => setOpenModal(productId, currentPage)}>
         <Table.Cell>
           <Checkbox checked={isChecked} onChange={() => handleRowChecked(productId)} onClick={e => e.stopPropagation()} />
         </Table.Cell>
@@ -25,21 +26,9 @@ const ProductTableRow = ({
         <Table.Cell>{stockQuantity}</Table.Cell>
         <Table.Cell>{productPrice}</Table.Cell>
         <Table.Cell>{productDiscount}</Table.Cell>
+        <Table.Cell>{productStatus ? <StatusBadge status={'PUBLIC'} /> : <StatusBadge status={'PRIVATE'} />}</Table.Cell>
         <Table.Cell>
-          {productStatus ? (
-            <StatusBadge bgColor='bg-badge-blue' txtColor='text-badge-blue' badgeText='공개' />
-          ) : (
-            <StatusBadge bgColor='bg-badge-red' txtColor='text-badge-red' badgeText='비공개' />
-          )}
-        </Table.Cell>
-        <Table.Cell>
-          {orderOption === 'SINGLE' ? (
-            <StatusBadge bgColor='bg-badge-red' txtColor='text-badge-red' badgeText='단일' />
-          ) : orderOption === 'SUBSCRIPTION' ? (
-            <StatusBadge bgColor='bg-badge-yellow' txtColor='text-badge-yellow' badgeText='정기' />
-          ) : (
-            <StatusBadge bgColor='bg-badge-green' txtColor='text-badge-green' badgeText='단일 & 정기' />
-          )}
+          <ProductOptionBadge productOption={orderOption} />
         </Table.Cell>
       </Table.Row>
     </>
