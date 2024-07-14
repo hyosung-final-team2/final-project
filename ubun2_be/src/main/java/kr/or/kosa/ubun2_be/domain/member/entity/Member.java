@@ -53,10 +53,10 @@ public class Member extends BaseTimeEntity implements UserType {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<PaymentMethod> paymentMethods;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Order> orders ;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<SubscriptionOrder> subscriptionOrders;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
