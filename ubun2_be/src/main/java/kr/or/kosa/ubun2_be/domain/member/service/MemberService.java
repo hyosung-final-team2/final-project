@@ -9,5 +9,6 @@ public interface MemberService {
     void createMember(MemberSignUpRequest memberSignUpRequest);
 
     List<CustomerResponse> getCustomers(Long memberId);
+    boolean isExistMemberCustomer(Long memberId, Long customerId) ;
 
 }

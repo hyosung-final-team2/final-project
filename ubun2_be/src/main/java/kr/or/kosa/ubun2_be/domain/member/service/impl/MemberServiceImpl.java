@@ -1,5 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.member.service.impl;
 
+import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
+import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.dto.CustomerResponse;
 import kr.or.kosa.ubun2_be.domain.member.dto.MemberSignUpRequest;
@@ -55,5 +57,12 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public List<CustomerResponse> getCustomers(Long memberId) {
         return customerRepository.findCustomersByMemberId(memberId).stream().map(CustomerResponse::new).toList();
+    }
+
+    public boolean isExistMemberCustomer(Long memberId, Long customerId) {
+        if(memberCustomerRepository.existsByCustomerIdAndMemberId(customerId,memberId)){
+            return true;
+        }
+        throw new CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER);
     }
 }
