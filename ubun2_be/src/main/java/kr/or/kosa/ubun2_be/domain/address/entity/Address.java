@@ -9,6 +9,9 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -16,6 +19,8 @@ import java.util.List;
 @Getter
 @Table(name = "address")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE address SET is_deleted = true WHERE address_id=?")
+@SQLRestriction("is_deleted = false")
 public class Address extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +44,10 @@ public class Address extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String address;
+
+    @Column
+    @ColumnDefault("false")
+    private boolean isDeleted;
 
     @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
     private List<Order> orders;
