@@ -27,9 +27,9 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
     }
 
     @Override
-    public Page<Product> findProducts(Long customerId, SearchRequest searchRequest, Pageable pageable) {
+    public Page<Product> findProducts(Long customerId, SearchRequest searchRequest, Pageable pageable, boolean isMember) {
         QueryResults<Product> results = from(product)
-                .where(product.customer.customerId.eq(customerId), productSearch(searchRequest))
+                .where(product.customer.customerId.eq(customerId), productSearch(searchRequest), productStatusForMember(isMember))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(productSort(pageable).stream().toArray(OrderSpecifier[]::new))
@@ -40,8 +40,12 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
         return new PageImpl<>(content, pageable, total);
     }
 
+    private BooleanBuilder productStatusForMember(boolean isMember) {
+        return isMember ? new BooleanBuilder().and(product.productStatus.isTrue()) : null;
+    }
+
     private BooleanBuilder productSearch(SearchRequest searchRequest) {
-        if (searchRequest == null || searchRequest.getSearchKeyword() == null|| searchRequest.getSearchCategory()==null) {
+        if (searchRequest == null || searchRequest.getSearchKeyword() == null || searchRequest.getSearchCategory() == null) {
             return null;
         }
         return new BooleanBuilder().and(product.productName.containsIgnoreCase(searchRequest.getSearchKeyword()));
