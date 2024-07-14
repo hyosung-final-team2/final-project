@@ -69,7 +69,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/customers/login", "/customers/signup","/token/refresh").permitAll()
+                        .requestMatchers("/customers/login", "/customers/signup","/token/refresh","auth/send","auth").permitAll()
                         .requestMatchers("/customers/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated());
 
