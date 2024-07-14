@@ -132,6 +132,7 @@ const PendingOrderTable = () => {
         title='승인 대기 주문 상세'
         primaryButtonText={'확인'}
         selectedOrderDetail={selectedPendingOrderDetail}
+        handleOrderUpdate={handleOrderUpdate}
       />
     </div>
   );

@@ -8,7 +8,14 @@ import OrderDetailInfo from '../OrderDetailModal/OrderDetailInfo';
 import SingleOrderProduct from '../OrderDetailModal/SingleOrderProduct';
 import SubscriptionOrderProduct from '../OrderDetailModal/SubScriptionOrderProduct';
 
-const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPrimaryClick, selectedOrderDetail }) => {
+const commonButtonStyles = {
+  APPROVED:
+    'px-6 py-3 rounded-lg transition duration-200 border border-gray-200 shadow-md bg-badge-green bg-opacity-30 text-badge-green hover:text-white hover:bg-badge-green',
+  DENIED:
+    'px-6 py-3 rounded-lg transition duration-200 border border-gray-200 shadow-md bg-badge-red bg-opacity-30 text-badge-red hover:text-white hover:bg-badge-red',
+};
+
+const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPrimaryClick, selectedOrderDetail, handleOrderUpdate }) => {
   const { data: orderDetail, isLoading } = useGetOrderDetail(selectedOrderDetail.orderId, selectedOrderDetail.subscription);
   const orderInfo = orderDetail?.data?.data;
   const [selectedCycle, setSelectedCycle] = useState(1);
@@ -26,6 +33,16 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
   const handleCloseModal = () => {
     setSelectedCycle(1);
     setOpenModal(false);
+  };
+
+  const handleApprove = () => {
+    handleOrderUpdate([{ orderId: selectedOrderDetail.orderId, subscription: selectedOrderDetail.subscription }], 'APPROVED');
+    handleCloseModal();
+  };
+
+  const handleCancel = () => {
+    handleOrderUpdate([{ orderId: selectedOrderDetail.orderId, subscription: selectedOrderDetail.subscription }], 'DENIED');
+    handleCloseModal();
   };
 
   return (
@@ -63,13 +80,24 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <button
-            type='button'
-            className='focus:outline-none w-20 text-custom-font-purple bg-custom-button-purple hover:bg-purple-400 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900'
-            onClick={onPrimaryClick || handleCloseModal}
-          >
-            <div>{primaryButtonText || '확인'}</div>
-          </button>
+          {orderInfo?.orderStatus === 'PENDING' ? (
+            <div className='flex gap-2'>
+              <button onClick={handleApprove} className={`${commonButtonStyles.APPROVED}`}>
+                승인
+              </button>
+              <button onClick={handleCancel} className={`${commonButtonStyles.DENIED}`}>
+                취소
+              </button>
+            </div>
+          ) : (
+            <button
+              type='button'
+              className='focus:outline-none w-20 text-custom-font-purple bg-custom-button-purple hover:bg-purple-400 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900'
+              onClick={onPrimaryClick || handleCloseModal}
+            >
+              <div>{primaryButtonText || '확인'}</div>
+            </button>
+          )}
         </Modal.Footer>
       </Modal>
     </>
