@@ -1,5 +1,6 @@
 import { List } from 'flowbite-react';
 import StatusBadge from '../../common/Badge/StatusBadge';
+import { formatCurrency } from '../../../utils/currencyFormat';
 
 const BADGE_STYLES = {
   APPROVED: { bgColor: 'bg-badge-green', txtColor: 'text-badge-green', text: '승인' },
@@ -28,7 +29,11 @@ const SingleOrderProduct = ({ orderInfo }) => {
           <List.Item key={orderProduct.productId} className='flex items-start gap-6 py-4'>
             <div className='w-2/12 relativecd'>
               <div className='relative' style={{ paddingBottom: '100%' }}>
-                <img src={orderProduct.productImagePath} alt='상품이미지' className='absolute inset-0 object-cover w-full h-full rounded-md' />
+                <img
+                  src={orderProduct.productImagePath || '/image.jpg'}
+                  alt={orderProduct.productImageOriginalName}
+                  className='absolute inset-0 object-cover w-full h-full rounded-md'
+                />
               </div>
             </div>
             <div className='flex flex-col flex-1 min-w-0 gap-2 ml-4'>
@@ -39,16 +44,18 @@ const SingleOrderProduct = ({ orderInfo }) => {
               <div className='flex items-center gap-2'>
                 <span className='text-sm text-gray-500 dark:text-gray-400'>{orderProduct.productName}</span>
                 <span>|</span>
-                <span className='text-sm text-gray-500 dark:text-gray-400'>{`${orderProduct.price} 원`}</span>
+                <span className='text-sm text-gray-500 dark:text-gray-400'>{`${formatCurrency(orderProduct.price)} 원`}</span>
                 <span>|</span>
                 <span className='text-sm text-gray-500 dark:text-gray-400'>{`${orderProduct.quantity} 개`}</span>
               </div>
               <div className='flex gap-3'>
-                <p className='text-lg font-bold text-gray-900 dark:text-white'>{`${Math.round(
-                  orderProduct.price * orderProduct.quantity * (1 - orderProduct.discount / 100)
+                <p className='text-lg font-bold text-gray-900 dark:text-white'>{`${formatCurrency(
+                  Math.round(orderProduct.price * orderProduct.quantity * (1 - orderProduct.discount / 100))
                 )} 원`}</p>
                 <div className='flex items-center gap-3'>
-                  <p className={`text-sm font-bold ${getPriceClassName(orderProduct.discount)}`}>{`${orderProduct.price * orderProduct.quantity} 원`}</p>
+                  <p className={`text-sm font-bold ${getPriceClassName(orderProduct.discount)}`}>{`${formatCurrency(
+                    orderProduct.price * orderProduct.quantity
+                  )} 원`}</p>
                   {orderProduct.discount > 0 && <span className='text-sm text-red-500 dark:text-red-500'>{`${orderProduct.discount} % 할인`}</span>}
                 </div>
               </div>

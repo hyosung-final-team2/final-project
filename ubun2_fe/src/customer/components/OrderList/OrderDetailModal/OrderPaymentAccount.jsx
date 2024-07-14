@@ -1,4 +1,5 @@
 import { Card } from 'flowbite-react';
+import { formatAccountNumber } from '../../../utils/accountFormat';
 
 const OrderPaymentAccount = ({ payment, customTheme }) => {
   return (
@@ -8,7 +9,7 @@ const OrderPaymentAccount = ({ payment, customTheme }) => {
         <span className='mr-2 text-lg'>{payment.bankName}</span>
         <span className='text-sm'>{`( ${payment.paymentMethodNickname} )`}</span>
       </p>
-      <p className='text-gray-700'>{payment.accountNumber}</p>
+      <p className='text-gray-700'>{formatAccountNumber(payment.accountNumber)}</p>
     </Card>
   );
 };

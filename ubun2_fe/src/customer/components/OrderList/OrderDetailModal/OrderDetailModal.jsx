@@ -1,6 +1,7 @@
 import { Modal } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { useGetOrderDetail } from '../../../api/Order/OrderList/OrderModal/queris';
+import { formatDate } from '../../../utils/dateFormat';
 import { customModalTheme } from '../../common/Modal/ModalStyle';
 import MemberInfo from '../../MemberList/MemberInfo';
 import OrderDetailInfo from '../OrderDetailModal/OrderDetailInfo';
@@ -43,7 +44,7 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
                 memberName: orderInfo?.memberName ?? '',
                 memberEmail: orderInfo?.memberEmail ?? '',
                 memberPhone: orderInfo?.memberPhone ?? '',
-                memberCreatedAt: orderInfo?.createdAt ?? '',
+                memberCreatedAt: formatDate(orderInfo?.createdAt) ?? '',
               }}
               onlyInfo={true}
               title='주문 정보'

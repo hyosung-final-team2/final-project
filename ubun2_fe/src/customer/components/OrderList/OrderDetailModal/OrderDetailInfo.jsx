@@ -1,6 +1,7 @@
 import { Card } from 'flowbite-react';
-import OrderPaymentCard from './OrderPaymentCard';
+import { formatCurrency } from '../../../utils/currencyFormat';
 import OrderPaymentAccount from './OrderPaymentAccount';
+import OrderPaymentCard from './OrderPaymentCard';
 
 const customTheme = {
   root: {
@@ -62,15 +63,15 @@ const OrderDetailInfo = ({ orderInfo, selectedCycle, isSubscription }) => {
               <Card className='flex flex-col h-full bg-gray-50' theme={customTheme}>
                 <div className='flex items-center justify-between'>
                   <span className='text-xl font-bold text-black'>주문금액</span>
-                  <span className='text-gray-500'>{`${orderAmount} 원`}</span>
+                  <span className='text-gray-500'>{`${formatCurrency(orderAmount)} 원`}</span>
                 </div>
                 <div className='flex items-center justify-between'>
                   <span className='font-bold text-red-500'>총 할인</span>
-                  <span className='text-red-500'>{`- ${discountAmount} 원`}</span>
+                  <span className='text-red-500'>{`- ${formatCurrency(discountAmount)} 원`}</span>
                 </div>
                 <div className='flex items-center justify-between'>
                   <span className='text-xl font-bold text-custom-primary'>결제 금액</span>
-                  <span className='font-bold text-gray-500'>{`${paymentAmount} 원`}</span>
+                  <span className='font-bold text-gray-500'>{`${formatCurrency(paymentAmount)} 원`}</span>
                 </div>
               </Card>
             </div>
