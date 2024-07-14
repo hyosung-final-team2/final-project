@@ -1,18 +1,23 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import paymentMethodStore from '../../../store/PaymentMethod/paymentMethodStore';
+import { initDropdowns } from 'flowbite';
 const Dropdown = ({ label, items, onChange }) => {
   const setPaymentMethodType = paymentMethodStore(state => state.setPaymentMethodType);
+  const dropdownRef = useRef(null);
 
+  initDropdowns();
   const handleOnClick = item => {
     setPaymentMethodType(item.value);
     if (onChange) {
       onChange(item.value);
+      dropdownRef.current.click();
     }
   };
 
   return (
     <div className='flex items-center'>
       <button
+        ref={dropdownRef}
         id='dropdownDefaultButton'
         data-dropdown-toggle='dropdown'
         type='button'
