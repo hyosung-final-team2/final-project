@@ -1,5 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.member.service.impl;
 
+import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
+import kr.or.kosa.ubun2_be.domain.member.dto.CustomerResponse;
 import kr.or.kosa.ubun2_be.domain.member.dto.MemberSignUpRequest;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
@@ -26,6 +28,7 @@ public class MemberServiceImpl implements MemberService {
     private final PendingMemberRepository pendingMemberRepository;
     private final MemberCustomerRepository memberCustomerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CustomerRepository customerRepository;
 
     @Override
     @Transactional
@@ -48,5 +51,9 @@ public class MemberServiceImpl implements MemberService {
             memberCustomerRepository.save(MemberCustomer.createMemberCustomer(savedMember,findPendingMember.getCustomer()));
             pendingMemberRepository.delete(findPendingMember);
         }
+    }
+    @Override
+    public List<CustomerResponse> getCustomers(Long memberId) {
+        return customerRepository.findCustomersByMemberId(memberId).stream().map(CustomerResponse::new).toList();
     }
 }

@@ -9,6 +9,9 @@ import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
 import kr.or.kosa.ubun2_be.domain.product.dto.ProductRequest;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderOption;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -18,6 +21,8 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Table(name = "product")
+@SQLDelete(sql = "UPDATE product SET is_deleted = true WHERE product_id=?")
+@SQLRestriction("is_deleted = false")
 public class Product extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,6 +63,10 @@ public class Product extends BaseTimeEntity {
 
     @Column
     private String productImagePath;
+
+    @Column
+    @ColumnDefault("false")
+    private boolean isDeleted;
 
     @OneToMany(mappedBy = "product")
     private List<OrderProduct> orderProducts;

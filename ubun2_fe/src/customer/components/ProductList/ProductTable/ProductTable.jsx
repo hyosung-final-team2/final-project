@@ -71,7 +71,7 @@ const ProductTable = () => {
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       <ProductTableFeature tableColumns={tableColumn.product} onSearch={handleSearch} currentPage={currentPage} />
 
-      <div className='px-4 shadow-md'>
+      <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead tableColumns={tableColumn.product} allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} />
           <TableBody
