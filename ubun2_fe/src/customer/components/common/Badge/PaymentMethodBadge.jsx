@@ -1,8 +1,15 @@
-const PaymentMethodBadge = ({ icon: IconComponent, paymentText }) => {
-  return (
+import { CreditCardIcon, CurrencyDollarIcon } from '@heroicons/react/16/solid';
+
+const PaymentMethodBadge = ({ paymentType }) => {
+  return paymentType === 'CARD' ? (
     <div className='flex items-center space-x-2'>
-      <IconComponent className='w-6 h-6' />
-      <span>{paymentText}</span>
+      <CreditCardIcon className='w-6 h-6' />
+      <span>카드</span>
+    </div>
+  ) : (
+    <div className='flex items-center space-x-2'>
+      <CurrencyDollarIcon className='w-6 h-6' />
+      <span>계좌</span>
     </div>
   );
 };
