@@ -1,3 +1,6 @@
+import React, { useState, useRef } from 'react';
+import { initDropdowns } from 'flowbite';
+
 const DropDownMenu = ({ menuTitle, handleCategorySelect }) => {
   return (
     <li>
@@ -11,12 +14,13 @@ const DropDownMenu = ({ menuTitle, handleCategorySelect }) => {
     </li>
   );
 };
-import React, { useState, useRef } from 'react';
 
 const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('카테고리');
   const dropdownRef = useRef(null);
+
+  initDropdowns();
 
   const handleSearchChange = e => {
     setSearchTerm(e.target.value);
