@@ -2,11 +2,18 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
 import { Toaster, toast } from 'react-hot-toast';
 
+// Customer
 import CustomerLogin from './customer/pages/external/Login';
 import CustomerRegister from './customer/pages/external/Register';
 import CustomerForgotPassword from './customer/pages/external/ForgotPassword';
 import CustomerLayout from './customer/layouts/Layout';
 import AddressSearchPopUp from './customer/components/common/AddressSearch/AddressSearchPopUp';
+
+//Member
+import MemberLogin from './member/pages/external/Login.jsx'
+import MemberRegister from './member/pages/external/Register.jsx'
+import MemberForgotPassword from './member/pages/external/ForgotPassword.jsx'
+import MemberLayout from './member/layouts/Layout.jsx'
 
 const App = () => {
   const customToastStyle = {
