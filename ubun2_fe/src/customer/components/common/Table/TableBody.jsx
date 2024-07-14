@@ -1,7 +1,7 @@
 import { Table } from 'flowbite-react';
 
 
-const TableBody = ({ dataList, TableRowComponent, dynamicId,setOpenModal, selectedMembers, handleRowChecked, isCheckable = true, handleDelete, noneSplitAddress }) => {
+const TableBody = ({ dataList, TableRowComponent, dynamicId,setOpenModal, selectedMembers, handleRowChecked, isCheckable = true, handleDelete, noneSplitAddress, currentPage }) => {
 
   return (
     <Table.Body className='divide-y'>
