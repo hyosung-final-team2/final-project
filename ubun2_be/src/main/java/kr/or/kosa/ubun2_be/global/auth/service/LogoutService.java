@@ -1,6 +1,5 @@
 package kr.or.kosa.ubun2_be.global.auth.service;
 
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
@@ -23,18 +22,6 @@ public class LogoutService implements LogoutHandler {
     private final RedisTemplate<String, Object> redisTemplate;
     private final JwtUtil jwtUtil;
 
-//    public void logout(String token) {
-//        System.out.println("logout : " + token);
-//        if (token == null || !token.startsWith("Bearer ")) {
-//            throw new AuthException(AuthExceptionType.NO_EXIST_TOKEN);
-//        }
-//        token = token.substring(7);
-//
-//        long expiration = jwtUtil.getExpirationDate(token).getTime() - System.currentTimeMillis();
-//        redisTemplate.opsForValue().set(BLACKLIST_PREFIX + token, true, expiration, TimeUnit.MILLISECONDS);
-//
-//    }
-
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String token = request.getHeader("Authorization");
@@ -46,6 +33,5 @@ public class LogoutService implements LogoutHandler {
 
         long expiration = jwtUtil.getExpirationDate(token).getTime() - System.currentTimeMillis();
         redisTemplate.opsForValue().set(BLACKLIST_PREFIX + token, true, expiration, TimeUnit.MILLISECONDS);
-
     }
 }
