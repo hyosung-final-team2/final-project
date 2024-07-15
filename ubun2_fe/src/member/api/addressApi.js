@@ -1,6 +1,7 @@
 import axios from 'axios';
+const apikey = import.meta.env.ADDRESS_SEARCH_API_KEY;
 
-const fetchAddressData = (keyword, confmKey = 'devU01TX0FVVEgyMDI0MDcwMTIwMzcxMDExNDg3Njk=') => {
+const fetchAddressData = (keyword, confmKey = apikey) => {
   const url = 'https://business.juso.go.kr/addrlink/addrLinkApiJsonp.do';
 
   const params = new URLSearchParams({
@@ -23,7 +24,7 @@ const fetchAddressData = (keyword, confmKey = 'devU01TX0FVVEgyMDI0MDcwMTIwMzcxMD
       // JSON 문자열을 객체로 파싱
       const data = JSON.parse(jsonString);
 
-      console.log(data)
+      console.log(data);
 
       return data;
     })
