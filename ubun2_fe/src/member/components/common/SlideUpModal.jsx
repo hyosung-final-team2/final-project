@@ -45,3 +45,4 @@ const SlideUpModal = ({ isOpen, setIsModalOpen, children, headerText, buttonText
 };
 
 export default SlideUpModal;
+

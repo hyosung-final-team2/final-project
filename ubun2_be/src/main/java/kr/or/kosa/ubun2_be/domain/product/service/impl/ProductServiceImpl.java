@@ -2,7 +2,11 @@ package kr.or.kosa.ubun2_be.domain.product.service.impl;
 
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
-import kr.or.kosa.ubun2_be.domain.product.dto.*;
+import kr.or.kosa.ubun2_be.domain.member.service.MemberService;
+import kr.or.kosa.ubun2_be.domain.product.dto.ProductDetailResponse;
+import kr.or.kosa.ubun2_be.domain.product.dto.ProductRequest;
+import kr.or.kosa.ubun2_be.domain.product.dto.ProductResponse;
+import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.product.entity.Category;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductException;
@@ -12,7 +16,8 @@ import kr.or.kosa.ubun2_be.domain.product.service.CategoryService;
 import kr.or.kosa.ubun2_be.domain.product.service.ImageService;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,14 +32,15 @@ public class ProductServiceImpl implements ProductService {
     private final CustomerService customerService;
     private final CategoryService categoryService;
     private final ImageService imageService;
+    private final MemberService memberService;
 
     @Override
-    public Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable) {
-        return productRepository.findProducts(customerId, searchRequest, pageable).map(ProductResponse::new);
+    public Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable,boolean isMember) {
+        return productRepository.findProducts(customerId, searchRequest, pageable,isMember).map(ProductResponse::new);
     }
 
     @Override
-    public ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId) {
+    public ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId, boolean isMember) {
         Product findProduct = productRepository.findByCustomerCustomerIdAndProductId(customerId, productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
 
@@ -102,5 +108,16 @@ public class ProductServiceImpl implements ProductService {
         return true;
     }
 
+    @Override
+    public Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable,Long memberId) {
+        memberService.isExistMemberCustomer(memberId, customerId);
+        return getProducts(customerId,searchRequest,pageable, true);
+    }
+
+    @Override
+    public ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId,Long memberId) {
+        memberService.isExistMemberCustomer(memberId, customerId);
+        return getProductByCustomerIdAndProductId(customerId, productId,true);
+    }
 
 }

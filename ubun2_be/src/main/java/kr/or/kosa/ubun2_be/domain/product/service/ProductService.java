@@ -8,11 +8,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ProductService {
 
-    Page<ProductResponse> getProducts(Long customerId,SearchRequest searchRequest,Pageable pageable);
-    ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId);
+    Page<ProductResponse> getProducts(Long customerId,SearchRequest searchRequest,Pageable pageable,boolean isMember);
+    ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId,boolean isMember);
     void registerProduct(MultipartFile image, Long customerId, ProductRequest productRequest);
     void modifyProduct(MultipartFile image,Long customerId, ProductRequest productUpdateRequest);
     void removeProduct(Long customerId, Long productId);
     boolean isExistProductName(String productName);
     boolean checkValidation(ProductRequest productRequest);
+    Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable,Long memberId);
+    ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId,Long memberId);
+
 }
