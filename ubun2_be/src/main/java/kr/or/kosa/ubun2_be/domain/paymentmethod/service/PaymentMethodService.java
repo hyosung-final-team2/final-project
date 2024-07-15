@@ -13,7 +13,7 @@ public interface PaymentMethodService {
 
     Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(Pageable pageable, Long customerId);
 
-    PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(PaymentMethodDetailRequest request, Long customerId);
+    PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(Long paymentMethodId, Long customerId);
 
     void addPaymentMethod(PaymentMethodRequest paymentMethodRequest, Long customerId);
 

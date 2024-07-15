@@ -3,9 +3,6 @@ package kr.or.kosa.ubun2_be.domain.paymentmethod.entity;
 import jakarta.persistence.*;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Getter

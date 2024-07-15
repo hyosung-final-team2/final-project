@@ -48,7 +48,8 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     @Override
-    public PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(PaymentMethodDetailRequest request, Long customerId) {
+    public PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(Long paymentMethodId, Long customerId) {
+        PaymentMethodDetailRequest request = PaymentMethodDetailRequest.builder().paymentMethodId(paymentMethodId).build();
         PaymentMethod paymentMethod = paymentMethodRepository.findPaymentMethodbyPaymentMethodIdAndCustomerId(request.getPaymentMethodId(),customerId)
                 .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
 
