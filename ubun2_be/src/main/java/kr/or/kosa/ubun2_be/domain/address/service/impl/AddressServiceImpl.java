@@ -38,7 +38,9 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressMemberInfoResponse getMemberInfoByAddressId(AddressMemberDetailRequest addressMemberDetailRequest, Long customerId) {
+    public AddressMemberInfoResponse getMemberInfoByAddressId(Long addressId, Long customerId) {
+        AddressMemberDetailRequest addressMemberDetailRequest = AddressMemberDetailRequest.builder()
+                .addressId(addressId).build();
         Address address = addressRepository.findAddressByIdAndCustomerId(addressMemberDetailRequest.getAddressId(), customerId)
                 .orElseThrow(()->new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
 
