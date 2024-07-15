@@ -12,6 +12,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, Custo
 
     Optional<Customer> findByCustomerLoginId(String CustomerLoginId);
 
+    Optional<Customer> findByCustomerEmail(String customerEmail);
+
     @Query("SELECT c.businessName FROM Customer c WHERE c.customerId = :customerId")
     String findBusinessNameByCustomerId(Long customerId);
 }

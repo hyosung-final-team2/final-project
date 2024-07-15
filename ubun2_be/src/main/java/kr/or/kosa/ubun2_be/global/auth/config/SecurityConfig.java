@@ -83,7 +83,8 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/customers/login", "/customers/signup", "/token/refresh", "auth/send", "auth", "members/signup").permitAll()
+                        .requestMatchers("/customers/login", "/customers/signup", "/token/refresh",
+                                         "auth/send", "auth", "members/signup", "/find/id").permitAll()
                         .requestMatchers("/customers/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated());
 
