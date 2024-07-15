@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.global.auth.service.impl;
 
+import jakarta.transaction.Transactional;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
@@ -11,6 +12,7 @@ import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthExceptionType;
 import kr.or.kosa.ubun2_be.global.auth.service.FindInfoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +21,7 @@ public class FindInfoServiceImpl implements FindInfoService {
 
     private final MemberRepository memberRepository;
     private final CustomerRepository customerRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public FindIdResponse findId(String userName, String userEmail, String role) {
@@ -49,6 +52,32 @@ public class FindInfoServiceImpl implements FindInfoService {
                     .filter(member -> member.getMemberName().equals(userName)
                             && member.getMemberLoginId().equals(userLoginId))
                     .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+        } else {
+            throw new AuthException(AuthExceptionType.INVALID_LOGIN_ROLE);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void resetPassword(String userEmail, String newPassword, String role) {
+        if (role.equals("ROLE_CUSTOMER")) {
+            customerRepository.findByCustomerEmail(userEmail).ifPresentOrElse(customer -> {
+                if (passwordEncoder.matches(newPassword, customer.getCustomerPassword())) {
+                    throw new AuthException(AuthExceptionType.SAME_AS_OLD_PASSWORD);
+                }
+                customer.updateCustomerPassword(passwordEncoder.encode(newPassword));
+            }, () -> {
+                throw new  CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER);
+            });
+        } else if (role.equals("ROLE_MEMBER")) {
+            memberRepository.findByMemberEmail(userEmail).ifPresentOrElse(member -> {
+                if (passwordEncoder.matches(newPassword, member.getMemberPassword())) {
+                    throw new AuthException(AuthExceptionType.SAME_AS_OLD_PASSWORD);
+                }
+                member.updateMemberPassword(passwordEncoder.encode(newPassword));
+            }, () -> {
+                throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
+            });
         } else {
             throw new AuthException(AuthExceptionType.INVALID_LOGIN_ROLE);
         }

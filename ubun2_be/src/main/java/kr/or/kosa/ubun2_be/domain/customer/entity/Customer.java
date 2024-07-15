@@ -100,5 +100,9 @@ public class Customer extends BaseTimeEntity implements UserType {
     public String getRole() {
         return this.userRole.name();
     }
+
+    public void updateCustomerPassword(String newPassword) {
+        this.customerPassword = newPassword;
+    }
 }
 

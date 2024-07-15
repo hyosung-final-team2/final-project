@@ -13,8 +13,9 @@ public enum AuthExceptionType implements CustomExceptionType {
     EXPIRED_JWT_ACCESS(106,HttpStatus.UNAUTHORIZED, "AccessToken이 만료되었습니다."),
     INVALID_JWT_ACCESS(107,HttpStatus.UNAUTHORIZED, "AccessToken이 아닙니다."),
     NO_EXIST_TOKEN(108,HttpStatus.UNAUTHORIZED, "AccessToken이 없습니다.."),
-    BLACKLIST_TOKEN(109,HttpStatus.UNAUTHORIZED, "블랙리스트에 등록된 토큰입니다.");
-
+    BLACKLIST_TOKEN(109,HttpStatus.UNAUTHORIZED, "블랙리스트에 등록된 토큰입니다."),
+    SAME_AS_OLD_PASSWORD(110,HttpStatus.BAD_REQUEST, "이전 비밀번호와 같은 비밀번호입니다."),
+    NO_EXIST_EMAIL(111,HttpStatus.BAD_REQUEST, "존재하지 않는 이메일입니다.");
 
     private int errorCode;
     private HttpStatus httpStatus;
