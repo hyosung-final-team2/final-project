@@ -4,16 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import kr.or.kosa.ubun2_be.global.auth.filter.JwtFilter;
 import kr.or.kosa.ubun2_be.global.auth.filter.LoginFilter;
+import kr.or.kosa.ubun2_be.global.auth.service.LogoutService;
 import kr.or.kosa.ubun2_be.global.auth.service.RefreshTokenService;
 import kr.or.kosa.ubun2_be.global.auth.utils.JwtUtil;
 import kr.or.kosa.ubun2_be.global.auth.utils.UserFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -31,6 +34,8 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final UserFactory userFactory;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final LogoutService logoutService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -54,6 +59,15 @@ public class SecurityConfig {
                     }
                 }));
 
+        // 로그아웃
+        http
+                .logout(logout -> logout
+                .logoutUrl("/logout")
+                .deleteCookies("refreshToken")
+                .addLogoutHandler(logoutService)
+                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                );
+
         //csrf disable
         http
                 .csrf((auth) -> auth.disable());
@@ -69,13 +83,13 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/customers/login", "/customers/signup","/token/refresh","auth/send","auth", "members/signup").permitAll()
+                        .requestMatchers("/customers/login", "/customers/signup", "/token/refresh", "auth/send", "auth", "members/signup").permitAll()
                         .requestMatchers("/customers/**").hasRole("CUSTOMER")
                         .anyRequest().authenticated());
 
         //JWTFilter 등록
         http
-                .addFilterBefore(new JwtFilter(jwtUtil,userFactory), LoginFilter.class);
+                .addFilterBefore(new JwtFilter(jwtUtil, userFactory, redisTemplate), LoginFilter.class);
 
         // 로그인 필터 등록
         http
