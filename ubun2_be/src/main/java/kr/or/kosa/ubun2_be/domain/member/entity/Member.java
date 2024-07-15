@@ -94,4 +94,9 @@ public class Member extends BaseTimeEntity implements UserType {
         this.memberPhone = memberPhone;
     }
 
+    public void updateMemberPassword(String newPassword) {
+        this.memberPassword = newPassword;
+    }
+
+
 }
