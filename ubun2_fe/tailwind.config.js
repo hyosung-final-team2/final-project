@@ -60,9 +60,6 @@ module.exports = {
         '46/100': '46%',
         '6/100': '8%',
       },
-      margin: {
-        'reverse-margin': '-4rem',
-      },
     },
   },
   plugins: [require('@tailwindcss/typography'), require('daisyui'), require('flowbite/plugin'), flowbite.plugin()],
