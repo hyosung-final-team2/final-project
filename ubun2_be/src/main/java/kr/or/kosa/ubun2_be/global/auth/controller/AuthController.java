@@ -2,15 +2,11 @@ package kr.or.kosa.ubun2_be.global.auth.controller;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import kr.or.kosa.ubun2_be.global.auth.dto.RefreshRequest;
 import kr.or.kosa.ubun2_be.global.auth.service.RefreshTokenService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController

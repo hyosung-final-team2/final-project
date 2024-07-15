@@ -11,6 +11,7 @@ import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.auth.utils.JwtUtil;
 import kr.or.kosa.ubun2_be.global.auth.utils.UserFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserFactory userFactory;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private static final String BLACKLIST_PREFIX = "blacklist:";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -37,6 +40,12 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String token = authorization.split(" ")[1];
+
+        // 블랙리스트 검증
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(BLACKLIST_PREFIX + token))) {
+            System.out.println("blacklist : " + redisTemplate.hasKey(BLACKLIST_PREFIX + token));
+            throw new AuthException(AuthExceptionType.BLACKLIST_TOKEN);
+        }
 
         //토큰 만료 시간 검증
         try {
