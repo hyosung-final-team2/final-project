@@ -36,4 +36,21 @@ public class FindInfoServiceImpl implements FindInfoService {
             throw new AuthException(AuthExceptionType.INVALID_LOGIN_ROLE);
         }
     }
+
+    @Override
+    public void findPassword(String userName, String userEmail, String userLoginId, String role) {
+        if (role.equals("ROLE_CUSTOMER")) {
+            customerRepository.findByCustomerEmail(userEmail)
+                    .filter(customer -> customer.getCustomerName().equals(userName)
+                            && customer.getCustomerLoginId().equals(userLoginId))
+                    .orElseThrow(() -> new CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER));
+        } else if (role.equals("ROLE_MEMBER")) {
+            memberRepository.findByMemberEmail(userEmail)
+                    .filter(member -> member.getMemberName().equals(userName)
+                            && member.getMemberLoginId().equals(userLoginId))
+                    .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+        } else {
+            throw new AuthException(AuthExceptionType.INVALID_LOGIN_ROLE);
+        }
+    }
 }
