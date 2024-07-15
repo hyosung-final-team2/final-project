@@ -23,14 +23,17 @@ module.exports = {
         'badge-orange': '#FD7A30',
         'badge-yellow': '#FDE047',
         'badge-orange-yellow': '#F59E0B',
-        'custom-button-purple': '#D4CDE7',
-        'custom-font-purple': '#290386',
-        'custom-input-gray': '#F5F5F5',
-        'custom-font-gray': '#8B949F',
         'custom-badge-roadaddr': '#DFECFF',
         'custom-badge-roadaddr-text': '#366EA7',
         'custom-badge-jibun': '#E6E6E6',
         'custom-badge-jibun-text': '#54585B',
+
+        // [bg] - button
+        'custom-button-purple': '#D4CDE7',
+        'custom-font-purple': '#290386',
+        'custom-input-gray': '#F5F5F5',
+        'custom-font-gray': '#8B949F',
+        'custom-input-lightgray': '#F9FAFC',
 
         // [custom color] - alert
         'custom-alert-check': '#928AFF',
@@ -56,6 +59,9 @@ module.exports = {
 
         '46/100': '46%',
         '6/100': '8%',
+      },
+      margin: {
+        'reverse-margin': '-4rem',
       },
     },
   },

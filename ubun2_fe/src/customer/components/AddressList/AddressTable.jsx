@@ -14,7 +14,7 @@ import { getAddresses } from '../../api/Address/AddressTable/addressTable.js';
 
 import useAddressStore from '../../store/Address/useAddressStore.js';
 import DynamicTableBody from '../common/Table/DynamicTableBody.jsx';
-import AddressRegistrationModal from './AddressARegistrationModal.jsx';
+import AddressRegistrationModal from './AddressRegistrationModal.jsx';
 
 const AddressTable = () => {
   const [openMemberAddressModal, setOpenMemberAddressModal] = useState(false);
@@ -66,7 +66,7 @@ const AddressTable = () => {
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      <AddressTableFeature setOpenModal={setOpenAddressRegistration}/>
+      <AddressTableFeature setOpenModal={setOpenAddressRegistration} />
       <div className='px-4'>
         <Table hoverable>
           <TableHead tableColumns={tableColumn.address.list} allChecked={selectedAddresses.length === addressList.length} setAllChecked={handleAllChecked} />
@@ -82,7 +82,13 @@ const AddressTable = () => {
           />
         </Table>
         <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
-        <MemberAddressModal isOpen={openMemberAddressModal} setOpenModal={setOpenMemberAddressModal} addressId={addressId} setAddressId={setAddressId} currentPage={currentPage} />
+        <MemberAddressModal
+          isOpen={openMemberAddressModal}
+          setOpenModal={setOpenMemberAddressModal}
+          addressId={addressId}
+          setAddressId={setAddressId}
+          currentPage={currentPage}
+        />
         <AddressRegistrationModal isOpen={openAddressRegistration} setOpenModal={setOpenAddressRegistration} />
       </div>
     </div>
