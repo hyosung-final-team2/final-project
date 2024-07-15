@@ -43,6 +43,7 @@
   max-width: 480px;
   margin: 0 auto;
   height: 100dvh;
+  overflow-y: scroll;
 }
 
 .main_bg_sidebar {
