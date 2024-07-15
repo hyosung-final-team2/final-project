@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 function Layout() {
   const location = useLocation();
   const pathList = location.pathname.split('/');
-  const noNavPage = ['wegwe', 'a', 'cart'];
+  const noNavPage = ['wegwe', 'a', 'cart', 'addresses', 'payments'];
 
   const showFootNav = !pathList.some(path => noNavPage.includes(path));
 
