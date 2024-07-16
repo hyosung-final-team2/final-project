@@ -167,7 +167,7 @@ const ForgotLoginId = () => {
                                   clickPossibleWithoutData={false}
                                   buttonFunc={buttonFuncSendEmail}
                                   regex={emailRegex}/>
-                <p onClick={() => forgotPasswordFunc()} className='mt-2 text-gray-400 underline text-end'>비밀번호를 잊어버렸어요</p>
+                {!isSendEmail ? <p onClick={() => forgotPasswordFunc()} className='mt-2 text-gray-400 underline text-end'>비밀번호를 잊어버렸어요</p> : null}
                 {isSendEmail && (
                     <InputTextWithBtn
                         defaultValue={loginIdObj.emailAuthentication}
