@@ -42,11 +42,17 @@ module.exports = {
       },
       animation: {
         'move-sideways': 'moveSideways 1s infinite alternate',
+        shake: 'shake 0.5s ease-in-out',
       },
       keyframes: {
         moveSideways: {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(5px)' },
+        },
+        shake: {
+          '0%, 100%': { transform: 'translateX(0)' },
+          '10%, 30%, 50%, 70%, 90%': { transform: 'translateX(-2px)' },
+          '20%, 40%, 60%, 80%': { transform: 'translateX(2px)' },
         },
       },
       width: {

@@ -11,7 +11,7 @@ import Product from '../pages/internal/Product';
 import ChooseAddress from '../pages/internal/ChooseAddress';
 import RegisterAddress from '../pages/internal/RegisterAddress';
 import AddressSearchMobilePopUp from '../components/Address/AddressSearchMobilePopUp';
-import ChoosePayment from '../pages/internal/ChoosePayment';
+// import ChoosePayment from '../pages/internal/ChoosePayment';
 
 function PageContent({ hasFootNav }) {
   const { memberId } = useMemberStore(state => ({ memberId: state.memberId }));
@@ -29,7 +29,7 @@ function PageContent({ hasFootNav }) {
           <Route path='store/:customerId' element={<Store />} />
           <Route path='store/:customerId/product/:productId' element={<Product />} />
           <Route path='addresses/address-search' element={<AddressSearchMobilePopUp />} />
-          <Route path='payments' element={<ChoosePayment />} />
+          {/*<Route path='payments' element={<ChoosePayment />} />*/}
         </Routes>
       </main>
     </div>

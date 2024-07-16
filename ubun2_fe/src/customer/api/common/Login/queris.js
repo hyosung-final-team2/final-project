@@ -9,6 +9,8 @@ export const useLogin = (loginObj,role) => {
         password: loginObj.password,
     }
 
+    console.log(loginData);
+
     return useMutation({
         mutationFn: () => login(loginData),
         onSuccess: (response) => {
