@@ -1,4 +1,6 @@
 import {useEffect, useState} from 'react';
+import CheckIcon from '@heroicons/react/24/outline/CheckCircleIcon'
+import XIcon from '@heroicons/react/24/outline/XCircleIcon'
 
 const InputTextWithBtn = ({
   labelTitle,
@@ -47,41 +49,42 @@ const InputTextWithBtn = ({
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
-
-
   // isValid를 포함한 isButtonDisabled 조건
   const isButtonDisabled = !clickPossibleWithoutData && (!value || !isValid);
   const buttonClasses = `btn ${!isButtonDisabled ? 'bg-main text-white btn-primary' : 'bg-gray-300 text-gray-600 cursor-not-allowed'} w-1/4`;
 
   return (
-    <div className='flex w-full items-center'>
-      <div className={`form-control w-full ${containerStyle}`}>
-        <label className='label'>
-          <span className={'label-text text-base-content ' + labelStyle}>{labelTitle}</span>
-        </label>
-        <div className='flex'>
-          <div className="w-full relative">
-            <input
-              type={type || 'text'}
-              value={value}
-              placeholder={placeholder || ''}
-              onChange={e => updateInputValue(e.target.value)}
-              className='input input-bordered w-full'
-            />
-            {showTimer && isAuthSuccess === null && <div className='absolute top-2 right-3 mt-2 text-sm text-red-500'>{formatTime(timeLeft)}</div>}
-            {showTimer && isAuthSuccess !== null && (
-                <div className={`absolute top-2 right-3 mt-2 text-sm ${isAuthSuccess ? 'text-green-500' : 'text-red-500'}`}>
-                  {isAuthSuccess ? '인증완료' : '인증실패'}
-                </div>
-            )}
+        <div className='flex w-full items-center'>
+          <div className={`form-control w-full ${containerStyle}`}>
+            <label className='label'>
+              <span className={'label-text text-base-content ' + labelStyle}>{labelTitle}</span>
+            </label>
+            <div className='flex'>
+              <div className="w-full relative">
+                <input
+                    type={type || 'text'}
+                    value={value}
+                    placeholder={placeholder || ''}
+                    onChange={e => updateInputValue(e.target.value)}
+                    className='input input-bordered w-full'
+                />
+                {showTimer && isAuthSuccess === null &&
+                    <div className='absolute top-2 right-3 mt-2 text-sm text-red-500'>{formatTime(timeLeft)}</div>}
+                {showTimer && isAuthSuccess !== null && (
+                    <div className={`absolute top-1 right-3 mt-2 text-sm`}>
+                      {isAuthSuccess ? <CheckIcon className='text-badge-green h-7 w-7'/> :
+                          <XIcon className='text-badge-red h-7 w-7'/>}
+                    </div>
+                )}
+              </div>
+              <div className='w-1/20'></div>
+              <button className={buttonClasses} disabled={isButtonDisabled || isAuthSuccess}
+                      onClick={() => buttonFunc()}>
+                {buttonText}
+              </button>
+            </div>
           </div>
-          <div className='w-1/20'></div>
-          <button className={buttonClasses} disabled={isButtonDisabled} onClick={() => buttonFunc()}>
-            {buttonText}
-          </button>
         </div>
-      </div>
-    </div>
   );
 };
 
