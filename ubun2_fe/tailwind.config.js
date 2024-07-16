@@ -39,6 +39,26 @@ module.exports = {
         'custom-alert-check': '#928AFF',
         'custom-alert-bg-purple': '#C8C4FF',
         'custom-alert-bg-gray': '#F9FAFC',
+
+        // custom card color
+        'custom-card-kb-from': '#72695F',
+        'custom-card-kb-to': '#38332e',
+        'custom-card-bc-from': '#F22F50',
+        'custom-card-bc-to': '#a52137',
+        'custom-card-hana-from': '#00907F',
+        'custom-card-hana-to': '#00564b',
+        'custom-card-lotte-from': '#DC0412',
+        'custom-card-lotte-to': '#840209',
+        'custom-card-hyundai-from': '#474747',
+        'custom-card-hyundai-to': '#000000',
+        'custom-card-woori-from': '#007FC5',
+        'custom-card-woori-to': '#004063',
+        'custom-card-samsung-from': '#0068F7',
+        'custom-card-samsung-to': '#0052bf',
+        'custom-card-shinhan-from': '#0044F7',
+        'custom-card-shinhan-to': '#002a96',
+        'custom-card-nonghyup-from': '#1EAE57',
+        'custom-card-nonghyup-to': '#15773b',
       },
       animation: {
         'move-sideways': 'moveSideways 1s infinite alternate',
@@ -65,6 +85,9 @@ module.exports = {
 
         '46/100': '46%',
         '6/100': '8%',
+      },
+      transitionProperty: {
+        transform: 'transform',
       },
     },
   },
