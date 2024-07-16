@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAuthEmail, useSendEmail} from "../../../customer/api/Register/queris.js";
 import {authNumRegex, emailRegex, loginIdRegex} from "../../../customer/components/common/Regex/registerRegex.js";
-import {runInContext as loginId} from "lodash";
 import { useFindPassword} from "../../api/FindInfo/queris.js";
 import InputText from "../../../customer/components/common/Input/InputText.jsx";
 import InputTextWithBtn from "../../../customer/components/common/Input/InputTextWithBtn.jsx";
@@ -78,7 +77,7 @@ const ForgotPassword = () => {
         findPwMutate({userName:passwordObj.memberName, userLoginId:passwordObj.memberLoginId ,userEmail:passwordObj.memberEmail, role:"ROLE_MEMBER"},{
             onSuccess: (res) => {
                 console.log(res)
-                navigate('/member/reset-password',{ state : { memberName:passwordObj.memberName }})
+                navigate('/member/reset-password',{ state : { memberEmail:passwordObj.memberEmail }})
             }
         })
     };

@@ -45,7 +45,8 @@ const RegisterSecondStep = () => {
             memberPhone.trim() !== '' &&
             loginIdRegex.test(memberLoginId.trim()) &&
             passwordRegex.test(memberPassword.trim()) &&
-            phoneRegex.test(memberPhone.trim())
+            phoneRegex.test(memberPhone.trim()) &&
+            memberPassword === memberPasswordCheck
         ) {
             setIsAllValuePossible(true);
         } else {
@@ -118,7 +119,7 @@ const RegisterSecondStep = () => {
                                containerStyle='mt-4'
                                labelTitle='비밀번호 확인'
                                updateFormValue={updateFormValue}
-                               placeholder='이름을 입력해주세요.'/>
+                               placeholder='비밀번호를 다시 입력해주세요'/>
                     <InputText defaultValue={secondRegisterObj.memberPhone}
                                updateType='memberPhone'
                                containerStyle='mt-4'
