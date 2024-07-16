@@ -14,6 +14,7 @@ import MemberLogin from './member/pages/external/Login.jsx'
 import MemberRegister from './member/pages/external/Register.jsx'
 import MemberForgotPassword from './member/pages/external/ForgotPassword.jsx'
 import MemberForgotLoginId from "./member/pages/external/ForgotLoginId.jsx";
+import MemberResetPassword from './member/pages/external/ResetPassword.jsx'
 import MemberLayout from './member/layouts/Layout.jsx'
 
 const App = () => {
@@ -50,6 +51,7 @@ const App = () => {
               <Route path='login' element={<MemberLogin />} />
               <Route path='forgot-password' element={<MemberForgotPassword />} />
               <Route path='forgot-loginid' element={<MemberForgotLoginId />} />
+              <Route path={'reset-password'} element={<MemberResetPassword />} />
               <Route path='register' element={<MemberRegister />} />
               <Route path='app/*' element={<MemberLayout />} />
               <Route path='*' element={<Navigate to={token ? '/member/app/welcome' : '/member/login'} replace />} />

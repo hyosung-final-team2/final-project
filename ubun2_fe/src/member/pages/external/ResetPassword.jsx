@@ -1,22 +1,25 @@
+import {useLocation, useNavigate} from "react-router-dom";
 import InputText from "../../../customer/components/common/Input/InputText.jsx";
-import {loginIdRegex, passwordRegex, phoneRegex} from "../../../customer/components/common/Regex/registerRegex.js";
+import {
+    passwordRegex
+} from "../../../customer/components/common/Regex/registerRegex.js";
 import {useEffect, useState} from "react";
-import SlideUpModal from "../common/SlideUpModal.jsx";
-import {useMemberSignup} from "../../api/Register/queris.js";
-import {useNavigate} from "react-router-dom";
+import {useResetPassword} from "../../api/FindInfo/queris.js";
+import SlideUpModal from "../../components/common/SlideUpModal.jsx";
 
-const RegisterSecondStep = () => {
-    const SECOND_REGISTER_OBJ = {
-        memberLoginId: '',
+const ResetPassword = () => {
+    const location = useLocation();
+    const { memberEmail } = location.state || {};
+
+    const RESET_PASSWORD_OBJ = {
         memberPassword: '',
         memberPasswordCheck:'',
-        memberPhone: '',
     };
 
     const navigate = useNavigate();
     const [isAllValuePossible, setIsAllValuePossible] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const [secondRegisterObj, setRegisterObj] = useState(SECOND_REGISTER_OBJ);
+    const [resetPasswordObj, setRegisterObj] = useState(RESET_PASSWORD_OBJ);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -36,36 +39,30 @@ const RegisterSecondStep = () => {
     }, []);
 
     useEffect(() => {
-        const { memberLoginId, memberPassword,memberPasswordCheck ,memberPhone } = secondRegisterObj;
+        const {  memberPassword,memberPasswordCheck  } = resetPasswordObj;
 
         if (
-            memberLoginId.trim() !== '' &&
             memberPassword.trim() !== '' &&
             memberPasswordCheck.trim() !== '' &&
-            memberPhone.trim() !== '' &&
-            loginIdRegex.test(memberLoginId.trim()) &&
             passwordRegex.test(memberPassword.trim()) &&
-            phoneRegex.test(memberPhone.trim()) &&
             memberPassword === memberPasswordCheck
+
         ) {
             setIsAllValuePossible(true);
         } else {
             setIsAllValuePossible(false);
         }
-    }, [secondRegisterObj]);
+    }, [resetPasswordObj]);
 
-    const {mutate: memberSignupMutate} = useMemberSignup(secondRegisterObj.memberLoginId,secondRegisterObj.memberPassword,secondRegisterObj.memberPhone);
+    const {mutate: resetPasswordMutate} = useResetPassword();
 
     const submitForm = () => {
         setErrorMessage('');
-
-        if (secondRegisterObj.memberLoginId.trim() === '') return setErrorMessage('이름을 입력해주세요');
-        if (secondRegisterObj.memberPassword.trim() === '') return setErrorMessage('이메일을 입력해주세요');
-        if (secondRegisterObj.memberPasswordCheck.trim() === '') return setErrorMessage('이메일을 입력해주세요');
-        if (secondRegisterObj.memberPhone.trim() === '') return setErrorMessage('인증번호를 입력해주세요');
+        if (resetPasswordObj.memberPassword.trim() === '') return setErrorMessage('이메일을 입력해주세요');
+        if (resetPasswordObj.memberPasswordCheck.trim() === '') return setErrorMessage('이메일을 입력해주세요');
 
         else {
-            memberSignupMutate({}, {
+            resetPasswordMutate({userEmail:memberEmail, newPassword:resetPasswordObj.memberPassword, role:"ROLE_MEMBER"}, {
                 onSuccess: () => setIsModalOpen(true)
             })
         }
@@ -87,7 +84,7 @@ const RegisterSecondStep = () => {
 
     const updateFormValue = ({ updateType, value }) => {
         setErrorMessage('');
-        setRegisterObj({ ...secondRegisterObj, [updateType]: value });
+        setRegisterObj({ ...resetPasswordObj, [updateType]: value });
     };
 
     const buttonFunc = () => {
@@ -95,38 +92,26 @@ const RegisterSecondStep = () => {
         navigate("/member/login")
     }
 
+
     return (
         <>
             <div className='relative max-w-[480px] mx-auto min-h-screen p-6 pb-20'>
                 <div className="mb-6">
-                    <h1 className="text-indigo-900 text-2xl font-bold mb-6">인증을 진행해주세요.</h1>
-                    <InputText defaultValue={secondRegisterObj.memberLoginId}
-                               updateType='memberLoginId'
-                               containerStyle='mt-4'
-                               labelTitle='아이디'
-                               updateFormValue={updateFormValue}
-                               placeholder='6자리 이상의 아이디를 입력해주세요.'/>
-                    <InputText defaultValue={secondRegisterObj.memberPassword}
+                    <h1 className="text-indigo-900 text-2xl font-bold mb-6">비밀번호 찾기</h1>
+                    <InputText defaultValue={resetPasswordObj.memberPassword}
                                updateType='memberPassword'
                                type="password"
                                containerStyle='mt-4'
                                labelTitle='비밀번호'
                                updateFormValue={updateFormValue}
                                placeholder='알파벳, 숫자, 특수문자를 포함한 8자리 이상'/>
-                    <InputText defaultValue={secondRegisterObj.memberPasswordCheck}
+                    <InputText defaultValue={resetPasswordObj.memberPasswordCheck}
                                type="password"
                                updateType='memberPasswordCheck'
                                containerStyle='mt-4'
                                labelTitle='비밀번호 확인'
                                updateFormValue={updateFormValue}
                                placeholder='비밀번호를 다시 입력해주세요'/>
-                    <InputText defaultValue={secondRegisterObj.memberPhone}
-                               updateType='memberPhone'
-                               containerStyle='mt-4'
-                               labelTitle='전화번호'
-                               updateFormValue={updateFormValue}
-                               placeholder='전화번호를 입력해주세요.'/>
-
                 </div>
 
                 <div className={buttonContainerClass}>
@@ -134,7 +119,7 @@ const RegisterSecondStep = () => {
                 </div>
             </div>
 
-            {/* 회원 가입 완료 모달*/}
+            {/* 재설정 완료 모달*/}
             <SlideUpModal isOpen={isModalOpen} setIsModalOpen={setIsModalOpen} buttonText="확인" buttonStyle={modalButtonStyle} buttonFunc={buttonFunc}>
                 <div className='flex flex-col items-center gap-2'>
                     <svg width='100px' height='100px' viewBox='0 0 24 24' fill='none'
@@ -156,11 +141,12 @@ const RegisterSecondStep = () => {
                             {' '}
                         </g>
                     </svg>
-                    <h1 className='text-2xl text-bold'>회원가입 완료</h1>
-                    <p className='text-lg text-gray-500'>로그인 이후 서비스를 이용할 수 있어요</p>
+                    <h1 className='text-2xl text-bold'>비밀번호 재설정 완료</h1>
+                    <p className='text-lg text-gray-500'>성공적으로 재설정되었습니다.</p>
                 </div>
             </SlideUpModal>
         </>
     )
 }
-export default RegisterSecondStep
+
+export default ResetPassword

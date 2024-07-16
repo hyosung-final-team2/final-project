@@ -14,6 +14,8 @@ import AddressSearchMobilePopUp from '../components/Address/AddressSearchMobileP
 import ChoosePayment from '../pages/internal/ChoosePayment';
 import EditPayment from '../pages/internal/EditPayment';
 import MyPaymentsList from '../pages/internal/MyPaymentsList';
+import Order from '../pages/internal/Order';
+
 
 function PageContent({ hasFootNav }) {
   const { memberId } = useMemberStore(state => ({ memberId: state.memberId }));
@@ -34,6 +36,7 @@ function PageContent({ hasFootNav }) {
           <Route path='payments' element={<ChoosePayment />} />
           <Route path='payments/edit' element={<EditPayment />} />
           <Route path='mypage/payment-list' element={<MyPaymentsList />} />
+          <Route path='order/:orderId' element={<Order />} />
         </Routes>
       </main>
     </div>
