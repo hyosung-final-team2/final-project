@@ -13,6 +13,7 @@ import AddressSearchPopUp from './customer/components/common/AddressSearch/Addre
 import MemberLogin from './member/pages/external/Login.jsx'
 import MemberRegister from './member/pages/external/Register.jsx'
 import MemberForgotPassword from './member/pages/external/ForgotPassword.jsx'
+import MemberForgotLoginId from "./member/pages/external/ForgotLoginId.jsx";
 import MemberLayout from './member/layouts/Layout.jsx'
 
 const App = () => {
@@ -48,6 +49,7 @@ const App = () => {
             <Routes>
               <Route path='login' element={<MemberLogin />} />
               <Route path='forgot-password' element={<MemberForgotPassword />} />
+              <Route path='forgot-loginid' element={<MemberForgotLoginId />} />
               <Route path='register' element={<MemberRegister />} />
               <Route path='app/*' element={<MemberLayout />} />
               <Route path='*' element={<Navigate to={token ? '/member/app/welcome' : '/member/login'} replace />} />

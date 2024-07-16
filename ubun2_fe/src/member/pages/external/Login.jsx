@@ -43,8 +43,8 @@ const Login = () => {
     navigate("/member/register")
   }
 
-  const fotgotPasswordFunc = () => {
-    navigate("/member/forgot-password")
+  const fotgotInfoFunc = () => {
+    navigate("/member/forgot-loginid")
   }
 
   const buttonStyle="bg-main text-white mt-4";
@@ -69,7 +69,7 @@ const Login = () => {
 
       <CustomButton buttonStyle={buttonStyle} buttonText="로그인" buttonFunc={submitForm}/>
       <CustomButton buttonStyle={secondButtonStyle} buttonText="회원가입" buttonFunc={signupButtonFunc}/>
-      <p onClick={() => fotgotPasswordFunc()} className='mt-2 text-gray-400 underline text-end'>계정 정보를 잊어버렸어요</p>
+      <p onClick={() => fotgotInfoFunc()} className='mt-2 text-gray-400 underline text-end'>계정 정보를 잊어버렸어요</p>
 
     </div>
   );
