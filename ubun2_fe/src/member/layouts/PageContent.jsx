@@ -29,7 +29,8 @@ function PageContent({ hasFootNav }) {
           <Route path='store/:customerId' element={<Store />} />
           <Route path='store/:customerId/product/:productId' element={<Product />} />
           <Route path='addresses/address-search' element={<AddressSearchMobilePopUp />} />
-          {/* <Route path='payments' element={<ChoosePayment />} /> */}
+          {/*<Route path='payments' element={<ChoosePayment />} />*/}
+
         </Routes>
       </main>
     </div>

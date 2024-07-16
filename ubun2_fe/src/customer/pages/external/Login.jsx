@@ -27,13 +27,12 @@ const Login = () => {
     if (loginObj.loginId.trim() === '') return setErrorMessage('Email Id is required! (use any value)');
     if (loginObj.password.trim() === '') return setErrorMessage('Password is required! (use any value)');
     else {
-      setLoading(true);
-      loginMutate();
-      setLoading(false);
-
-      if (!isError) {
-        navigate('/customer/app/dashboard');
-      }
+      loginMutate({},{
+        onSuccess: () => {
+          navigate('/customer/app/dashboard');
+        },
+        onError: () => console.log("로그인 실패")
+      });
     }
   };
 

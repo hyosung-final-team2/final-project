@@ -1,4 +1,4 @@
-function ForgotPassowrd() {
+const ForgotPassword = () => {
   return (
     <div className='mobile_container'>
       <h1>MemberLogin</h1>
@@ -6,4 +6,4 @@ function ForgotPassowrd() {
   );
 }
 
-export default ForgotPassowrd;
+export default ForgotPassword;
