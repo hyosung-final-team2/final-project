@@ -17,9 +17,9 @@ function PageContent({ hasFootNav }) {
   const { memberId } = useMemberStore(state => ({ memberId: state.memberId }));
 
   return (
-    <div className='flex flex-col flex-1'>
+    <div className='flex flex-col flex-1 overflow-auto'>
       <MemHeader />
-      <main className={`flex-1 overflow-y-auto ${hasFootNav ? 'mb-[10dvh]' : ''} bg-base-200`}>
+      <main className={` flex-1 overflow-y-auto ${hasFootNav ? 'mb-[10dvh]' : ''} bg-base-200`}>
         <Routes>
           <Route path='mypage' element={<MyPage />} />
           <Route path='home' element={<StoreList />} />
@@ -30,6 +30,7 @@ function PageContent({ hasFootNav }) {
           <Route path='store/:customerId/product/:productId' element={<Product />} />
           <Route path='addresses/address-search' element={<AddressSearchMobilePopUp />} />
           {/*<Route path='payments' element={<ChoosePayment />} />*/}
+
         </Routes>
       </main>
     </div>
@@ -37,5 +38,3 @@ function PageContent({ hasFootNav }) {
 }
 
 export default PageContent;
-
-//
