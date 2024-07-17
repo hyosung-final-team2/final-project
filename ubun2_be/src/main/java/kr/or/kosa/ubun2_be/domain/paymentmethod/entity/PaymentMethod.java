@@ -53,5 +53,17 @@ public class PaymentMethod extends BaseTimeEntity {
         this.member = member;
     }
 
+    public PaymentMethod(Member member, String paymentMethodNickname) {
+        this.member = member;
+        this.paymentMethodNickname = paymentMethodNickname;
+    }
+
+    public PaymentMethod(String paymentMethodNickname){
+        this.paymentMethodNickname = paymentMethodNickname;
+    }
+
+    public void update(String paymentMethodNickname) {
+        this.paymentMethodNickname = paymentMethodNickname;
+    }
 }
 
