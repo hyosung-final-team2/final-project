@@ -3,6 +3,7 @@ package kr.or.kosa.ubun2_be.domain.member.service.impl;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
+import kr.or.kosa.ubun2_be.domain.member.dto.AnnouncementResponse;
 import kr.or.kosa.ubun2_be.domain.member.dto.CustomerResponse;
 import kr.or.kosa.ubun2_be.domain.member.dto.MemberSignUpRequest;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -64,5 +66,20 @@ public class MemberServiceImpl implements MemberService {
             return true;
         }
         throw new CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER);
+    }
+
+    @Override
+    public AnnouncementResponse getAnnouncement(Long customerId, Long memberId) {
+        if (isExistMemberCustomer(memberId, customerId)) {
+            Optional<String> announcement = customerRepository.findAnnouncementByCustomerId(customerId);
+            if (announcement.isPresent()) {
+                return AnnouncementResponse.builder()
+                                           .announcement(announcement.get())
+                                           .build();
+            }
+        }
+        return AnnouncementResponse.builder()
+                .announcement("등록된 공지사항이 없습니다.")
+                .build();
     }
 }
