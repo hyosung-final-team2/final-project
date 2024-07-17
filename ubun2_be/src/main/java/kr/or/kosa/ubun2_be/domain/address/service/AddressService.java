@@ -4,6 +4,7 @@ import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberInfoResponse;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
+import kr.or.kosa.ubun2_be.domain.member.dto.MyAddressResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -26,8 +27,6 @@ public interface AddressService {
 
     public void updateMemberAddress(Long addressId, AddressRequest addressRequest, Long memberId);
 
-    public AddressMemberInfoResponse getMemberInfoByAddressId(AddressMemberDetailRequest addressMemberDetailRequest, Long customerId);
-    
     Address findByAddressIdAndMemberId(Long addressId, Long memberId);
 
     public void deleteMemberAddress(Long addressId, Long memberId);

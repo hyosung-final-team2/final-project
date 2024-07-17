@@ -10,7 +10,4 @@ public interface SubscriptionOrderService {
 
     void validateAllCustomerProducts(List<SubscriptionOrderRequest> requests);
 
-    void processApprovedSubscriptionOrders();
-
-    void processDelaySubscriptionOrders();
 }

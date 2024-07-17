@@ -15,6 +15,7 @@ import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
 import kr.or.kosa.ubun2_be.domain.order.repository.SubscriptionOrderProductRepository;
 import kr.or.kosa.ubun2_be.domain.order.repository.SubscriptionOrderRepository;
+import kr.or.kosa.ubun2_be.domain.order.service.SubscriptionOrderService;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodException;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodExceptionType;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class SubscriptionOrderServiceImpl {
+public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
     private final SubscriptionOrderRepository subscriptionOrderRepository;
     private final SubscriptionOrderProductRepository subscriptionOrderProductRepository;
     private final ProductService productService;
@@ -49,6 +50,7 @@ public class SubscriptionOrderServiceImpl {
     private final AddressService addressService;
     private final CardCompanyService cardCompanyService;
 
+    @Override
     @Transactional
     public void createSubscriptionOrders(Long memberId, List<SubscriptionOrderRequest> subscriptionOrderRequests) {
 
@@ -76,7 +78,7 @@ public class SubscriptionOrderServiceImpl {
         }
     }
 
-    private void validateAllCustomerProducts(List<SubscriptionOrderRequest> requests) {
+    public void validateAllCustomerProducts(List<SubscriptionOrderRequest> requests) {
         for (SubscriptionOrderRequest request : requests) {
             Long customerId = request.getCustomerId();
             for (SubscriptionOrderProductRequest productRequest : request.getSubscriptionOrderProducts()) {
