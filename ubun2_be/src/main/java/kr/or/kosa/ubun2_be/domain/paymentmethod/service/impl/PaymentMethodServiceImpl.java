@@ -3,7 +3,6 @@ package kr.or.kosa.ubun2_be.domain.paymentmethod.service.impl;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
-import kr.or.kosa.ubun2_be.domain.member.repository.MemberCustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentResponse;
@@ -33,7 +32,6 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     private final PaymentMethodRepository paymentMethodRepository;
     private final MemberRepository memberRepository;
-    private final MemberCustomerRepository memberCustomerRepository;
 
     @Override
     public Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(Pageable pageable, Long customerId) {
@@ -43,13 +41,13 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     @Override
     public Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(Pageable pageable, Long customerId) {
-        return paymentMethodRepository.findAllAccountPaymentMethodsByMemberId(pageable,customerId)
+        return paymentMethodRepository.findAllAccountPaymentMethodsByMemberId(pageable, customerId)
                 .map(paymentMethod -> new AccountPaymentResponse((AccountPayment) paymentMethod));
     }
 
     @Override
     public PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(PaymentMethodDetailRequest request, Long customerId) {
-        PaymentMethod paymentMethod = paymentMethodRepository.findPaymentMethodbyPaymentMethodIdAndCustomerId(request.getPaymentMethodId(),customerId)
+        PaymentMethod paymentMethod = paymentMethodRepository.findPaymentMethodbyPaymentMethodIdAndCustomerId(request.getPaymentMethodId(), customerId)
                 .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
 
         Member member = paymentMethod.getMember();
@@ -60,7 +58,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
         PaymentMethodDetailResponse response = PaymentMethodDetailResponse.of(member, paymentMethods);
 
-        if(response == null){
+        if (response == null) {
             throw new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD);
         }
 
@@ -69,7 +67,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     @Override
     public void addPaymentMethod(PaymentMethodRequest paymentMethodRequest, Long customerId) {
-        validateMyMember(customerId,paymentMethodRequest.getMemberId());
+        validateMyMember(customerId, paymentMethodRequest.getMemberId());
 
         Member member = memberRepository.findById(paymentMethodRequest.getMemberId()).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
 
@@ -112,7 +110,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     @Transactional
     @Override
     public void updatePaymentMethod(Long paymentMethodId, PaymentMethodRequest request, Long customerId) {
-        validateMyMember(customerId,request.getMemberId());
+        validateMyMember(customerId, request.getMemberId());
 
         Optional<PaymentMethod> paymentMethodOpt = paymentMethodRepository.findById(paymentMethodId);
 
@@ -132,8 +130,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             } else {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
             }
-        }
-        else{
+        } else {
             throw new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD);
         }
 
@@ -143,6 +140,16 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     public void deletePaymentMethod(Long paymentMethodId, Long customerId) {
         PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
         paymentMethodRepository.delete(paymentMethod);
+    }
+
+    @Override
+    public PaymentMethod findById(Long paymentMethodId) {
+        return paymentMethodRepository.findById(paymentMethodId)
+                .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+    }
+
+    public boolean existsByPaymentMethodIdAndMemberMemberId(Long paymentMethodId, Long memberId) {
+        return paymentMethodRepository.existsByPaymentMethodIdAndMemberMemberId(paymentMethodId, memberId);
     }
 
     private boolean isValidCardNumber(String cardNumber) {

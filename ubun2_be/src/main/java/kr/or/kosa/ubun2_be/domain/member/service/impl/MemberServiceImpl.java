@@ -65,4 +65,9 @@ public class MemberServiceImpl implements MemberService {
         }
         throw new CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER);
     }
+
+    @Override
+    public Member findById(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+    }
 }

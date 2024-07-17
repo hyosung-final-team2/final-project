@@ -5,6 +5,7 @@ import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentRespo
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodRequest;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,4 +21,6 @@ public interface PaymentMethodService {
     void updatePaymentMethod(Long paymentMethodId, PaymentMethodRequest paymentMethodRequest, Long customerId);
 
     void deletePaymentMethod(Long paymentMethodId, Long customerId);
+
+    PaymentMethod findById(Long paymentMethodId);
 }
