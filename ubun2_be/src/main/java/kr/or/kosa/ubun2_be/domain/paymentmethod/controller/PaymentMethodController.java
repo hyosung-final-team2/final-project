@@ -3,7 +3,6 @@ package kr.or.kosa.ubun2_be.domain.paymentmethod.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentResponse;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.service.PaymentMethodService;
@@ -50,13 +49,6 @@ public class PaymentMethodController {
     public ResponseDto<?> addPaymentMethod(@RequestBody PaymentMethodRequest paymentMethodRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
         paymentMethodService.addPaymentMethod(paymentMethodRequest, userDetails.getUserId());
         return ResponseDto.ok(null, "결제 수단이 성공적으로 등록되었습니다.");
-    }
-
-    @Operation(summary = "회원의 결제수단 수정")
-    @PutMapping(value = "/{payment_method_id}")
-    public ResponseDto<?> updatePayment(@PathVariable("payment_method_id") Long paymentMethodId, @RequestBody PaymentMethodRequest paymentMethodRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        paymentMethodService.updatePaymentMethod(paymentMethodId, paymentMethodRequest, userDetails.getUserId());
-        return ResponseDto.ok(null, "결제수단이 성공적으로 수정되었습니다.");
     }
 
     @Operation(summary = "회원의 결제수단 삭제")
