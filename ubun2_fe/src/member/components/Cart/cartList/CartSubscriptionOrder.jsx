@@ -15,13 +15,13 @@ const CartSubscriptionOrder = ({ regularOrderProducts, selectedItems, onSelectPr
           <span>주기 선택하기</span>
         </div>
       </div>
-      <div className='flex flex-col gap-5'>
+      <div className='flex flex-col gap-5 pt-2'>
         {regularOrderProducts.map(product => (
           <ProductItemEditable
             key={product.productId}
             {...product}
-            isSelected={selectedItems[product.productId]}
-            onSelect={checked => onSelectProduct(product.productId, checked)}
+            isSelected={selectedItems.some(item => item.productId === product.productId)}
+            onSelect={checked => onSelectProduct(product, checked, 'regularOrderProducts')}
             onQuantityChange={newQuantity => onQuantityChange(product.productId, newQuantity)}
             onDelete={() => onDelete(product.productId)}
           />

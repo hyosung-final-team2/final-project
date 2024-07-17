@@ -11,7 +11,6 @@ import kr.or.kosa.ubun2_be.domain.member.dto.MyAddressResponse;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
-import kr.or.kosa.ubun2_be.domain.member.repository.MemberCustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -31,7 +30,7 @@ public class AddressServiceImpl implements AddressService {
     private final MemberRepository memberRepository;
 
     @Override
-    public Page<AddressResponse> getAllAddresses(Pageable pageable,Long customerId) {
+    public Page<AddressResponse> getAllAddresses(Pageable pageable, Long customerId) {
         return addressRepository.findAllAddressesWithMember(pageable, customerId).map(AddressResponse::new);
     }
 
@@ -57,8 +56,8 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public void addAddress(AddressRequest addressRequest,Long customerId) {
-        validateMyMember(customerId,addressRequest.getMemberId());
+    public void addAddress(AddressRequest addressRequest, Long customerId) {
+        validateMyMember(customerId, addressRequest.getMemberId());
 
         Member member = memberRepository.findById(addressRequest.getMemberId())
                 .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
@@ -77,8 +76,8 @@ public class AddressServiceImpl implements AddressService {
 
     @Transactional
     @Override
-    public void updateAddress(Long addressId, AddressRequest addressRequest,Long customerId) {
-        validateMyMember(customerId,addressRequest.getMemberId());
+    public void updateAddress(Long addressId, AddressRequest addressRequest, Long customerId) {
+        validateMyMember(customerId, addressRequest.getMemberId());
 
         Address address = addressRepository.findById(addressId).orElse(null);
         address.updateAddress(addressRequest.getAddress());
@@ -86,7 +85,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Transactional
     @Override
-    public void deleteAddress(Long addressId,Long customerId) {
+    public void deleteAddress(Long addressId, Long customerId) {
         Address address = addressRepository.findAddressByIdAndCustomerId(addressId, customerId)
                 .orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
 
@@ -141,6 +140,11 @@ public class AddressServiceImpl implements AddressService {
         addressRepository.delete(address);
     }
 
+
+    @Override
+    public Address findByAddressIdAndMemberId(Long addressId, Long memberId) {
+        return addressRepository.findByAddressIdAndMemberMemberId(addressId, memberId).orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
+    }
 
     private void validateMyMember(Long customerId, Long memberId) {
         if (!addressRepository.checkIsMyMember(customerId, memberId)) {

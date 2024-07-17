@@ -3,12 +3,11 @@ import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
 const OrderDeliveryInfo = ({ selectedAddress, selectedDelivery, handleAddressModal, handleDeliveryModal }) => {
   return (
     <div className='flex flex-col gap-5 p-6 bg-white'>
-      <div className='flex items-center gap-3 mb-4 font-bold'>
-        <div onClick={handleAddressModal} className='flex p-2 border-none rounded-md text-main bg-main bg-opacity-10'>
-          <input type='input' value={selectedAddress.addressNickname} className='bg-transparent cursor-pointer bg-opacity-10 w-fit' readOnly />
+      <div className='flex items-center w-full gap-3 mb-4 font-bold'>
+        <div onClick={handleAddressModal} className='inline-flex p-2 border-none rounded-md text-main bg-main bg-opacity-5'>
+          <input type='input' value={selectedAddress.addressNickname} className='min-w-0 bg-transparent cursor-pointer' readOnly />
           <ChevronDownIcon className='w-5' />
         </div>
-
         <p>으로 받기</p>
       </div>
 

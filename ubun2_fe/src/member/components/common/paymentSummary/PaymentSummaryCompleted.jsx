@@ -1,24 +1,20 @@
-const PaymentSummaryCompleted = () => {
+const PaymentSummaryCompleted = ({ productAmount, discount, totalAmount, paymentType, paymentInfo }) => {
   return (
-    <div className='mt-4'>
-      <div className='flex justify-between mb-2'>
-        <span>총 상품금액</span>
-        <span>{subtotal}원</span>
-      </div>
-      <div className='flex justify-between mb-2'>
-        <span>총 할인</span>
-        <span>{shipping}원</span>
-      </div>
-      <div className='flex justify-between mb-2'>
-        <span>결제수단</span>
-        <div>
-          <span>{payment}원</span>
-          <span>{paymentInfo}</span>
+    <div className='px-4 py-8 bg-white'>
+      <h2 className='text-2xl font-semibold'>결제 정보</h2>
+      <div className='flex flex-col gap-5 mt-4 font-semibold'>
+        <div className='flex justify-between'>
+          <span>할인 금액</span>
+          <span>{discount.toLocaleString()}원</span>
         </div>
-      </div>
-      <div className='flex justify-between font-bold'>
-        <span>결제금액</span>
-        <span>{total}원</span>
+        <div className='flex justify-between text-main'>
+          <span>총 결제 금액</span>
+          <span>{totalAmount.toLocaleString()}원</span>
+        </div>
+        <div className='flex justify-between'>
+          <span>{paymentInfo.paymentName}</span>
+          <span>{paymentInfo.paymentContent}</span>
+        </div>
       </div>
     </div>
   );

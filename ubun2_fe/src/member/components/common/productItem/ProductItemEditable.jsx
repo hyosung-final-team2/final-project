@@ -3,6 +3,7 @@ import { Checkbox } from 'flowbite-react';
 import QuantityButton from '../button/QuantityButton';
 
 const ProductItemEditable = ({
+  productId,
   productImagePath,
   productDescription,
   productName,

@@ -16,4 +16,5 @@ public class PaymentMethodRequest {
     private String cardNumber;
     private String accountNumber;
     private String bankName;
+
 }
