@@ -6,7 +6,7 @@ import useModalStore from '../store/modalStore';
 function Layout() {
   const location = useLocation();
   const pathList = location.pathname.split('/');
-  const noNavPage = ['wegwe', 'a', 'cart', 'addresses', 'payments', 'order'];
+  const noNavPage = ['wegwe', 'a', 'cart', 'addresses', 'payments', 'order', 'password'];
   const { modalState } = useModalStore();
 
   const showFootNav = !pathList.some(path => noNavPage.includes(path));

@@ -89,6 +89,19 @@ module.exports = {
       transitionProperty: {
         transform: 'transform',
       },
+      inset: {
+        '6/100': '6%',
+        '6/10': '60%',
+      },
+      gap: {
+        '1dvh': '1dvh',
+        '2dvh': '2dvh',
+        '3dvh': '3dvh',
+        '4dvh': '4dvh',
+        '5dvh': '5dvh',
+        '12dvw': '12dvw',
+        '7dvh': '7dvh',
+      },
     },
   },
   plugins: [require('@tailwindcss/typography'), require('daisyui'), require('flowbite/plugin'), flowbite.plugin()],

@@ -33,7 +33,7 @@ const ChooseAddress = ({ title, memberName, memberAddress, memberPhone }) => {
       </div>
 
       {/* button */}
-      <div className='px-8 absolute bottom-10 w-full'>
+      <div className='sticky px-8 bottom-0 pb-4 w-full'>
         <BottomButton buttonStyle='bg-main text-white' buttonText='구매하기'></BottomButton>
       </div>
     </div>

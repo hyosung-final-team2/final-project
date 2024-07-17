@@ -66,6 +66,7 @@ const RegisterAddress = ({ isRegister = true }) => {
               labelStyle={labelStyle}
               value={addressData[info.key]}
               onChange={e => handleInputChange(info.key, e.target.value)}
+              handleAddressSearch={handleAddressSearch}
             />
           </div>
         ))}

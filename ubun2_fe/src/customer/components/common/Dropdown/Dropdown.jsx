@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import paymentMethodStore from '../../../store/PaymentMethod/paymentMethodStore';
+import paymentMethodStore from '../../../../customer/store/PaymentMethod/paymentMethodStore';
 import { initDropdowns } from 'flowbite';
 const Dropdown = ({ label, items, onChange }) => {
   const setPaymentMethodType = paymentMethodStore(state => state.setPaymentMethodType);
