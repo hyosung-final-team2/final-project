@@ -1,4 +1,13 @@
-const ProductItemReadOnly = ({ productImagePath, productDescription, productName, productPrice, productDiscount, quantity, productImageOriginalName }) => {
+const ProductItemReadOnly = ({
+  productImagePath,
+  productDescription,
+  productName,
+  productPrice,
+  productDiscount,
+  quantity,
+  productImageOriginalName,
+  isComplete = false,
+}) => {
   const discountRate = productDiscount / 100;
   const discountedUnitPrice = productPrice * (1 - discountRate);
   const ProductAmount = discountedUnitPrice * quantity;
@@ -19,9 +28,10 @@ const ProductItemReadOnly = ({ productImagePath, productDescription, productName
               <p>{`${quantity} 개`}</p>
             </div>
             <div className='flex items-end gap-3'>
-              <p className='mt-2 font-bold'>{`${roundedProductAmount.toLocaleString()} 원`}</p>
+              <p className='font-bold'>{`${roundedProductAmount.toLocaleString()} 원`}</p>
               {productDiscount > 0 ? <span className='text-red-500'>{`${productDiscount}% 할인`}</span> : ''}
             </div>
+            {isComplete && <p className='text-sm text-blue-600'>결제완료</p>}
           </div>
         </div>
       </div>

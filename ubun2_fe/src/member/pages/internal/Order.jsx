@@ -4,23 +4,27 @@ import PaymentSummaryPre from '../../components/common/paymentSummary/PaymentSum
 import SlideUpModal from '../../components/common/SlideUpModal';
 import OrderDeliveryInfo from '../../components/Order/Order/OrderDeliveryInfo';
 import OrderStore from '../../components/Order/Order/OrderStore';
-import { ADDRESS_DUMMY_DATA, deliveryContent, ORDER_DUMMY_DATA } from '../../components/Order/orderDummyData';
+import { ADDRESS_DUMMY_DATA, deliveryContent } from '../../components/Order/orderDummyData';
 import AddressModalContent from '../../components/Order/OrderModal/AddressModalContent';
 import DeliveryModalContent from '../../components/Order/OrderModal/DeliveryModalContent';
 import useModalStore from '../../store/modalStore';
+import useOrderItemsStore from '../../store/order/orderItemStore';
 
 const Order = () => {
-  const [orderItems, setOrderItems] = useState(ORDER_DUMMY_DATA);
+  const { cartData, selectedItems, handleSelectProduct, handleDeleteProduct, updateProductQuantity, calculateTotals, handleSelectAllStore } =
+    useOrderItemsStore();
   const [deliveryItems, setDeliveryItems] = useState(deliveryContent);
   const [addressItems, setAddressItems] = useState(ADDRESS_DUMMY_DATA);
   const [selectedDelivery, setSelectedDelivery] = useState(deliveryItems[0]);
   const [selectedAddress, setSelectedAddress] = useState(addressItems[0]);
   const [activeModal, setActiveModal] = useState(null);
 
+  const totals = calculateTotals();
+
   const { modalState, setModalState } = useModalStore();
 
   const handleOrder = () => {
-    console.log('주문 데이터:', orderItems);
+    console.log('주문 데이터:', selectedItems);
   };
 
   const handleDeliverySelection = delivery => {
@@ -61,11 +65,11 @@ const Order = () => {
           handleDeliveryModal={() => handleModalOpen('delivery')}
         />
 
-        {orderItems.map(store => (
+        {selectedItems.itemContent.map(store => (
           <OrderStore key={store.customerId} store={store} />
         ))}
 
-        <PaymentSummaryPre productAmount={9990} discount={990} totalAmount={9000} isOrder={true} />
+        <PaymentSummaryPre productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} isOrder={true} />
       </div>
       <div className='sticky bottom-0 left-0 right-0 p-4 bg-white'>
         <BottomButton buttonText='결제하기' buttonStyle='bg-main text-white' buttonFunc={handleOrder} />
