@@ -4,7 +4,8 @@ import kr.or.kosa.ubun2_be.global.exception.base.CustomExceptionType;
 import org.springframework.http.HttpStatus;
 
 public enum AddressExceptionType implements CustomExceptionType {
-    NOT_EXIST_ADDRESS(-801, HttpStatus.BAD_REQUEST, "존재하지 않는 주소입니다.");
+    NOT_EXIST_ADDRESS(-801, HttpStatus.BAD_REQUEST, "존재하지 않는 주소입니다."),
+    ADDRESS_NOT_MATCH(-802, HttpStatus.BAD_REQUEST, "해당 주소는 회원님의 주소가 아닙니다.");
 
     private int errorCode;
     private HttpStatus httpStatus;

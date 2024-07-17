@@ -4,14 +4,12 @@ import useStoreStore from '../../store/storeStore';
 
 function StoreListItem({ customerId, storeName, storeDesc, storeImg }) {
   const navigate = useNavigate();
-  const { currentStoreName, setCurrentStoreName } = useStoreStore(state => ({
-    currentStoreName: state.currentStoreName,
-    setCurrentStoreName: state.setCurrentStoreName,
-  }));
+  const { setCurrentStoreName, setCustomerId } = useStoreStore();
 
   const handleClick = () => {
+    setCustomerId(customerId);
     setCurrentStoreName(storeName);
-    navigate(`/member/app/store/${customerId}`);
+    navigate(`/member/app/store`, {state: {customerId:customerId}});
   };
 
   return (

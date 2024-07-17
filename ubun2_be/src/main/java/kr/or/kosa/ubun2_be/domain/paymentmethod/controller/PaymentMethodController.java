@@ -41,8 +41,7 @@ public class PaymentMethodController {
     @Operation(summary = "결제수단 아이디로 회원 상세 조회")
     @GetMapping("/{payment_method_id}")
     public ResponseDto<?> getPaymentMethodDetailByMemberId(@PathVariable("payment_method_id") Long paymentMethodId, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        PaymentMethodDetailRequest paymentMethodDetailRequest = PaymentMethodDetailRequest.builder().paymentMethodId(paymentMethodId).build();
-        PaymentMethodDetailResponse response = paymentMethodService.getPaymentMethodDetailByMemberId(paymentMethodDetailRequest, userDetails.getUserId());
+        PaymentMethodDetailResponse response = paymentMethodService.getPaymentMethodDetailByMemberId(paymentMethodId, userDetails.getUserId());
         return ResponseDto.ok(response, "결제수단 상세를 성공적으로 조회했습니다.");
     }
 

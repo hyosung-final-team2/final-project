@@ -6,6 +6,8 @@ import kr.or.kosa.ubun2_be.domain.address.exception.AddressException;
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressExceptionType;
 import kr.or.kosa.ubun2_be.domain.address.repository.AddressRepository;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
+import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
+import kr.or.kosa.ubun2_be.domain.member.dto.MyAddressResponse;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -32,9 +35,11 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public AddressMemberInfoResponse getMemberInfoByAddressId(AddressMemberDetailRequest addressMemberDetailRequest, Long customerId) {
+    public AddressMemberInfoResponse getMemberInfoByAddressId(Long addressId, Long customerId) {
+        AddressMemberDetailRequest addressMemberDetailRequest = AddressMemberDetailRequest.builder()
+                .addressId(addressId).build();
         Address address = addressRepository.findAddressByIdAndCustomerId(addressMemberDetailRequest.getAddressId(), customerId)
-                .orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
+                .orElseThrow(()->new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
 
         Member member = address.getMember();
 
@@ -60,7 +65,7 @@ public class AddressServiceImpl implements AddressService {
         Address address = Address.builder()
                 .member(member)
                 .address(addressRequest.getAddress())
-                .addressNickname("") //nullable?
+                .addressNickname(addressRequest.getAddressNickname()) //nullable?
                 .recipientName(addressRequest.getRecipientName() != null ? addressRequest.getRecipientName() : member.getMemberName())
                 .recipientPhone(addressRequest.getRecipientPhone() != null ? addressRequest.getRecipientPhone() : member.getMemberPhone())
                 .defaultStatus(member.getAddresses().isEmpty()) // 첫 번째 주소면 기본 주소로 설정
@@ -88,6 +93,55 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public List<MyAddressResponse> getAddressesByMemberId(Long memberId) {
+        List<Address> addresses = addressRepository.findByMemberMemberId(memberId);
+
+        return addresses.stream()
+                .map(MyAddressResponse::new)
+                .toList();
+    }
+
+    @Override
+    public void addMemberAddress(AddressRequest addressRequest, Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+
+        Address address = Address.builder()
+                .member(member)
+                .address(addressRequest.getAddress())
+                .addressNickname(addressRequest.getAddressNickname())
+                .recipientName(addressRequest.getRecipientName())
+                .recipientPhone(addressRequest.getRecipientPhone())
+                .defaultStatus(member.getAddresses().isEmpty())
+                .build();
+
+        addressRepository.save(address);
+    }
+
+    @Transactional
+    @Override
+    public void updateMemberAddress(Long addressId, AddressRequest addressRequest, Long memberId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
+
+        validateMyAddress(memberId, address);
+
+        address.updateAddress(addressRequest.getAddress());
+    }
+
+    @Transactional
+    @Override
+    public void deleteMemberAddress(Long addressId, Long memberId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
+
+        validateMyAddress(memberId, address);
+
+        addressRepository.delete(address);
+    }
+
+
+    @Override
     public Address findByAddressIdAndMemberId(Long addressId, Long memberId) {
         return addressRepository.findByAddressIdAndMemberMemberId(addressId, memberId).orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
     }
@@ -95,6 +149,12 @@ public class AddressServiceImpl implements AddressService {
     private void validateMyMember(Long customerId, Long memberId) {
         if (!addressRepository.checkIsMyMember(customerId, memberId)) {
             throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
+        }
+    }
+
+    private void validateMyAddress(Long memberId, Address address) {
+        if (!Objects.equals(address.getMember().getMemberId(), memberId)) {
+            throw new AddressException(AddressExceptionType.ADDRESS_NOT_MATCH);
         }
     }
 }

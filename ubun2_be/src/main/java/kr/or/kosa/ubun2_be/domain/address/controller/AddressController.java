@@ -36,9 +36,7 @@ public class AddressController {
     @Operation(summary = "주소아이디로 회원 정보 조회")
     @GetMapping("/{address_id}")
     public ResponseDto<?> getMemberAddressInfo(@PathVariable("address_id") Long addressId, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        AddressMemberDetailRequest addressMemberDetailRequest = AddressMemberDetailRequest.builder()
-                .addressId(addressId).build();
-        AddressMemberInfoResponse response = addressService.getMemberInfoByAddressId(addressMemberDetailRequest,userDetails.getUserId());
+        AddressMemberInfoResponse response = addressService.getMemberInfoByAddressId(addressId,userDetails.getUserId());
         return ResponseDto.ok(response, "주소 상세를 성공적으로 조회했습니다.");
     }
 

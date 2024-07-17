@@ -2,6 +2,8 @@ package kr.or.kosa.ubun2_be.global.auth.service.impl;
 
 import kr.or.kosa.ubun2_be.global.auth.dto.EmailAuthenticationRequest;
 import kr.or.kosa.ubun2_be.global.auth.dto.EmailRequest;
+import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
+import kr.or.kosa.ubun2_be.global.auth.exception.AuthExceptionType;
 import kr.or.kosa.ubun2_be.global.auth.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -62,7 +64,8 @@ public class EmailServiceImpl implements EmailService {
     @Transactional
     @Override
     public boolean validateAuthenticationNumber(EmailAuthenticationRequest emailAuthenticationRequest) {
-        Optional<String> authenticationNumber = getAuthenticationNumber(emailAuthenticationRequest.getEmail());
+        String authenticationNumber = getAuthenticationNumber(emailAuthenticationRequest.getEmail())
+                                      .orElseThrow(()->new AuthException(AuthExceptionType.NO_EXIST_AUTH_NUMBER));
         if(authenticationNumber.equals(emailAuthenticationRequest.getAuthenticationNumber())) {
             deleteAuthenticationNumber(emailAuthenticationRequest.getEmail());
             return true;
