@@ -30,8 +30,8 @@ function PageContent({ hasFootNav }) {
           <Route path='cart' element={<Cart />} />
           <Route path='addresses' element={<ChooseAddress />} />
           <Route path='addresses/register' element={<RegisterAddress />} />
-          <Route path='store/:customerId' element={<Store />} />
-          <Route path='store/:customerId/product/:productId' element={<Product />} />
+          <Route path='store' element={<Store />} />
+          <Route path='store/product/:productId' element={<Product />} />
           <Route path='addresses/address-search' element={<AddressSearchMobilePopUp />} />
           <Route path='payments' element={<ChoosePayment />} />
           <Route path='payments/edit' element={<EditPayment />} />

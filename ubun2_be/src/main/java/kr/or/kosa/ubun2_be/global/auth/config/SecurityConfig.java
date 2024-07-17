@@ -87,6 +87,7 @@ public class SecurityConfig {
                                          "auth/send", "auth", "members/signup", "/find/id",
                                          "find/password","reset/password").permitAll()
                         .requestMatchers("/customers/**").hasRole("CUSTOMER")
+                        .requestMatchers("/members/**").hasRole("MEMBER")
                         .anyRequest().authenticated());
 
         //JWTFilter 등록
