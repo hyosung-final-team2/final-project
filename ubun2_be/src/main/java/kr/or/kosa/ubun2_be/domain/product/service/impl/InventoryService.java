@@ -2,8 +2,9 @@ package kr.or.kosa.ubun2_be.domain.product.service.impl;
 
 import jakarta.transaction.Transactional;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
+import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductException;
+import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductExceptionType;
 import kr.or.kosa.ubun2_be.domain.product.repository.ProductRepository;
-import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
@@ -22,7 +23,6 @@ public class InventoryService {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final ProductRepository productRepository;
-    private final ProductService productService;
     private static final String INVENTORY_KEY_PREFIX = "inventory:";
 
     @Transactional
@@ -41,7 +41,8 @@ public class InventoryService {
         Integer redisQuantity = (Integer) redisTemplate.opsForValue().get(key);
 
         if (redisQuantity == null) {
-            Product product = productService.getProductById(productId);
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(()->new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
             redisQuantity = product.getStockQuantity();
             redisTemplate.opsForValue().set(key, redisQuantity);
         }
@@ -69,7 +70,8 @@ public class InventoryService {
         });
 
         if (Boolean.TRUE.equals(success)) {
-            Product product = productService.getProductById(productId);
+            Product product =  productRepository.findById(productId)
+                    .orElseThrow(()->new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
             product.updateStockQuantity(product.getStockQuantity() - quantity);
             productRepository.save(product); // 저장 호출 추가
             return true;
@@ -86,7 +88,8 @@ public class InventoryService {
             Integer redisQuantity = (Integer) redisTemplate.opsForValue().get(key);
 
             if (redisQuantity == null) continue;
-            Product product = productService.getProductById(productId);
+            Product product =  productRepository.findById(productId)
+                    .orElseThrow(()->new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
             product.updateStockQuantity(redisQuantity);
             productRepository.save(product); //명시적 호출
         }
