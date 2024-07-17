@@ -3,14 +3,23 @@ import { persist } from 'zustand/middleware';
 
 const useStoreStore = create(
   persist(
-    set => ({
+    (set,get) => ({
       customerId: null,
       setCustomerId: state => set({ customerId: state }),
       currentStoreName: null,
       setCurrentStoreName: state => set({ currentStoreName: state }),
 
-      scrollPosition: 0,
-      setScrollPosition: (position) => set({ scrollPosition: position }),
+      isFirstTime : [],
+      setIsFirstTime: (customerId) =>
+        set((state) => ({
+            isFirstTime: [...state.isFirstTime, customerId],
+        })),
+
+      scrollPositions: {},
+      setScrollPosition: (id, position) => set({
+        scrollPositions: { [id]: position } // Only keep the current customerId's position
+      }),
+      getScrollPosition: (id) => (get().scrollPositions[id] || 0),
     }),
     {
       name: 'store-storage',
