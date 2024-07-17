@@ -17,7 +17,7 @@ const OrderComplete = () => {
   };
 
   const buttonFunc = () => {
-    navigate('/home');
+    navigate('/member/app/home');
   };
 
   return (
