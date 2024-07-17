@@ -67,7 +67,7 @@ function MemHeader() {
 
           {/* Light and dark theme selection toogle **/}
           <label className='swap '>
-            <input type='checkbox' />
+            <input type='checkbox' style={{visibility:"hidden"}}/>
             <SunIcon
               data-set-theme='light'
               data-act-class='ACTIVECLASS'
