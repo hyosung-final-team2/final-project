@@ -46,6 +46,7 @@ public class CustomExceptionHandler implements ErrorController {
                 .errorCode(productException.getExceptionType().getErrorCode())
                 .errorMessage(productException.getExceptionType().getMessage())
                 .httpStatus(productException.getExceptionType().getHttpStatus())
+                .data(productException.getData())
                 .build();
 
         return new ResponseEntity(error, productException.getExceptionType().getHttpStatus());
