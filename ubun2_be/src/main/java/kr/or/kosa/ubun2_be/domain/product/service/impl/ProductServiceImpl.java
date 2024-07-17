@@ -33,6 +33,7 @@ public class ProductServiceImpl implements ProductService {
     private final CategoryService categoryService;
     private final ImageService imageService;
     private final MemberService memberService;
+    private final InventoryService inventoryService;
 
     @Override
     public Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable,boolean isMember) {
@@ -56,6 +57,7 @@ public class ProductServiceImpl implements ProductService {
         Category category = categoryService.findCategoryByCategoryName(productRequest.getCategoryName());
         Customer customer = customerService.findById(customerId);
         Product saveProduct = productRepository.save(productRequest.toEntity(customer, category));
+        inventoryService.saveStock(saveProduct.getProductId(), saveProduct.getStockQuantity());
         if (image==null ||image.isEmpty() || Objects.isNull(image.getOriginalFilename())) return;
         String url = imageService.uploadImage(image);
         saveProduct.saveImage(image.getOriginalFilename(), url);
@@ -82,6 +84,13 @@ public class ProductServiceImpl implements ProductService {
         }
         findProduct.updateProduct(productRequest); //변경감지로 save 필요없음
 
+        // 게시 -> redis.save / 미게시 ->redis.delete
+        if(findProduct.isProductStatus()){
+            inventoryService.saveStock(productRequest.getProductId(), findProduct.getStockQuantity());
+        }else{
+            inventoryService.removeStock(productRequest.getProductId());
+        }
+
         if (existingImageUrl != null) {
             imageService.deleteImage(existingImageUrl);
         }
@@ -93,9 +102,11 @@ public class ProductServiceImpl implements ProductService {
     public void removeProduct(Long customerId, Long productId) {
         Product findProduct = productRepository.findByCustomerCustomerIdAndProductId(customerId, productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
-        productRepository.delete(findProduct);
+        inventoryService.removeStock(findProduct.getProductId());
         if(findProduct.getProductImagePath()==null) return;
         imageService.deleteImage(findProduct.getProductImagePath());
+        productRepository.delete(findProduct);
+
     }
 
     @Override
@@ -118,6 +129,11 @@ public class ProductServiceImpl implements ProductService {
     public ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId,Long memberId) {
         memberService.isExistMemberCustomer(memberId, customerId);
         return getProductByCustomerIdAndProductId(customerId, productId,true);
+    }
+
+    @Override
+    public Product getProductById(Long productId) {
+        return productRepository.findById(productId).orElseThrow(()->new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
     }
 
 }

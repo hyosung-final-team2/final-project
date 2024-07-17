@@ -3,7 +3,6 @@ package kr.or.kosa.ubun2_be.domain.paymentmethod.service.impl;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
-import kr.or.kosa.ubun2_be.domain.member.repository.MemberCustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.*;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentResponse;
@@ -34,7 +33,6 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     private final PaymentMethodRepository paymentMethodRepository;
     private final MemberRepository memberRepository;
-    private final MemberCustomerRepository memberCustomerRepository;
 
     @Override
     public Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(Pageable pageable, Long customerId) {
@@ -159,7 +157,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             if (registerPaymentMethodRequest.getCardNumber() == null || registerPaymentMethodRequest.getCardCompanyName() == null) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
             }
-            //카드번�� 16자리 숫자 정규식 검증
+            //카드번호 16자리 숫자 정규식 검증
             if (!isValidCardNumber(registerPaymentMethodRequest.getCardNumber())) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_NUMBER);
             }
@@ -175,7 +173,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             if (registerPaymentMethodRequest.getAccountNumber() == null || registerPaymentMethodRequest.getBankName() == null) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_INFO);
             }
-            //계좌번호 11~14자리 ���규식 검증
+            //계좌번호 11~14자리 규식 검증
             if (!isValidAccountNumber(registerPaymentMethodRequest.getAccountNumber())) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_NUMBER);
             }
@@ -210,6 +208,16 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
         validateMyPaymentMethod(paymentMethod, memberId);
         paymentMethodRepository.delete(paymentMethod);
+    }
+
+    @Override
+    public PaymentMethod findById(Long paymentMethodId) {
+        return paymentMethodRepository.findById(paymentMethodId)
+                .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+    }
+
+    public boolean existsByPaymentMethodIdAndMemberMemberId(Long paymentMethodId, Long memberId) {
+        return paymentMethodRepository.existsByPaymentMethodIdAndMemberMemberId(paymentMethodId, memberId);
     }
 
     private boolean isValidCardNumber(String cardNumber) {

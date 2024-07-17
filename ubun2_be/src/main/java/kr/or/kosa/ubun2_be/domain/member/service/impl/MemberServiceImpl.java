@@ -82,4 +82,9 @@ public class MemberServiceImpl implements MemberService {
                 .announcement("등록된 공지사항이 없습니다.")
                 .build();
     }
+
+    @Override
+    public Member findById(Long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+    }
 }

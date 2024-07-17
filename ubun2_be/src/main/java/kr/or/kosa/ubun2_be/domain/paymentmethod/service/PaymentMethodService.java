@@ -7,7 +7,10 @@ import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.MyCardPaymentRes
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.RegisterPaymentMethodRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodRequest;
+
+import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.UpdatePaymentMethodRequest;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -39,4 +42,7 @@ public interface PaymentMethodService {
     void updatePaymentMethod(Long paymentMethodId, UpdatePaymentMethodRequest updatePaymentMethodRequest, Long memberId);
 
     void deleteMyPaymentMethod(Long paymentMethodId, Long memberId);
+
+    PaymentMethod findById(Long paymentMethodId);
 }
+
