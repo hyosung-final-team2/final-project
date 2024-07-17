@@ -1,14 +1,14 @@
 package kr.or.kosa.ubun2_be.domain.financial.institution.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Entity
+@Table(name = "card_company")
 public class CardCompany {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long card_id;

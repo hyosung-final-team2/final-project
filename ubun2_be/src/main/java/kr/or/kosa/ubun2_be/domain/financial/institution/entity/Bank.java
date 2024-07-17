@@ -1,7 +1,9 @@
 package kr.or.kosa.ubun2_be.domain.financial.institution.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity
 @Table(name = "bank")
 public class Bank {
@@ -22,9 +24,13 @@ public class Bank {
     private String accountPassword;
 
     @Column(nullable = false)
-    private String balance;
+    private long balance;
 
     @Column(nullable = false)
     private boolean accountStatus;
+
+    public void changeBalance(long newBalance) {
+        this.balance = newBalance;
+    }
 
 }
