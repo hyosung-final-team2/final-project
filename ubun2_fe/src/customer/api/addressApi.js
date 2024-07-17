@@ -1,5 +1,5 @@
 import axios from 'axios';
-const apikey = import.meta.env.ADDRESS_SEARCH_API_KEY;
+const apikey = import.meta.env.VITE_ADDRESS_SEARCH_API_KEY;
 
 const fetchAddressData = (keyword, confmKey = apikey) => {
   const url = 'https://business.juso.go.kr/addrlink/addrLinkApiJsonp.do';

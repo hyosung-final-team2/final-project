@@ -1,4 +1,4 @@
-const InfoItem = ({ label, value, inputStyle, labelStyle, placeholder, disabled = false, onChange, setIsModalOpen }) => (
+const InfoItem = ({ label, value, inputStyle, labelStyle, placeholder, disabled = false, onChange, setIsModalOpen, handleAddressSearch }) => (
   <div className='mx-6'>
     <div className='mb-1'>
       <label htmlFor={label} className={`${labelStyle}`}>
@@ -11,7 +11,9 @@ const InfoItem = ({ label, value, inputStyle, labelStyle, placeholder, disabled 
       placeholder={placeholder}
       disabled={disabled}
       onChange={onChange}
-      onFocus={() => setIsModalOpen(true)}
+      onFocus={() => {
+        setIsModalOpen ? setIsModalOpen(true) : handleAddressSearch;
+      }}
     ></input>
   </div>
 );

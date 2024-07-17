@@ -50,7 +50,21 @@ const MyPaymentsList = () => {
             ))}
           </>
         )}
-        {activeTab === 'bankAccount' && <p className='text-center text-gray-500 py-4'></p>}
+        {activeTab === 'bankAccount' && (
+          <>
+            {creditCards.map((card, index) => (
+              <MyPageCardItem
+                key={index}
+                card={card}
+                icon={getCardIcon(card?.name)}
+                selected={true}
+                setIsModalOpen={setIsModalOpen}
+                setIsEdit={setIsEdit}
+                setSelectedItem={setSelectedItem}
+              />
+            ))}
+          </>
+        )}
       </div>
 
       <button className='mt-4 mx-6 py-4 bg-gray-200 text-gray-800 font-semibold rounded-2xl'>

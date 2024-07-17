@@ -21,24 +21,27 @@ const PaymentPage = ({ shopName, amount, paymentMethod, bankName, accountNumber,
   return (
     <div className='flex flex-col h-full bg-gray-100'>
       {/* Main Content */}
-      <main className='flex-grow flex flex-col items-center px-7 pt-10'>
-        <h2 className='text-xl text-gray-500 mb-2'>{shopName}효성쇼핑</h2>
-        <p className='text-4xl font-bold mb-12'>{amount}49,800원</p>
+      <main className='flex-grow flex flex-col items-center px-7 pt-12'>
+        <h2 className='text-[3.8dvw] text-gray-500 mb-1 font-bold'>{shopName}효성쇼핑</h2>
+        <p className='text-[7dvw] font-bold mb-12'>{amount}49,800원</p>
 
         {/* Payment Method */}
         <div className='w-full bg-white rounded-3xl shadow-sm p-8 pt-6 mb-8 '>
-          <p className='text-md text-gray-500 mb-2'>결제수단</p>
-          <div className='flex items-center justify-between'>
+          <p className='text-[3dvw] text-gray-500 mb-2'>결제수단</p>
+          <div className='flex flex-nowrap items-center justify-between'>
             <div className='flex items-center'>
               <KBIcon className='w-10 h-10 flex items-center justify-center mr-3' />
               <div>
-                <p className='font-semibold text-xl truncate'>KB Star*t통장-저축예금{paymentMethod}</p>
-                <p className='text-md text-gray-500'>
+                <p className='font-semibold text-[4dvw] truncate'>KB Star*t통장-저축예금{paymentMethod}</p>
+                <p className='text-[3dvw] text-gray-500'>
                   KB국민은행 27140204047919 {bankName} {accountNumber}
                 </p>
               </div>
             </div>
-            <button className='px-4 mx-3 py-2 bg-gray-100 rounded-lg text-sm text-gray-500' onClick={() => setIsModalOpen(true)}>
+            <button
+              className='px-4 mx-3 py-2 bg-gray-100 rounded-lg text-[3dvw] text-gray-500 flex-shrink-0 whitespace-nowrap'
+              onClick={() => setIsModalOpen(true)}
+            >
               변경
             </button>
           </div>
@@ -76,8 +79,8 @@ const PaymentPage = ({ shopName, amount, paymentMethod, bankName, accountNumber,
             <div className='text-2xl font-bold px-10 pb-8'>결제 비밀번호를 설정해주세요</div>
             <div className='flex px-8'>
               <svg className='w-5 h-5 mr-2 fill-gray-500 ' fill='#000000' viewBox='0 0 32 32' version='1.1' xmlns='http://www.w3.org/2000/svg'>
-                <g id='SVGRepo_bgCarrier' stroke-width='0'></g>
-                <g id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'></g>
+                <g id='SVGRepo_bgCarrier' strokeWidth='0'></g>
+                <g id='SVGRepo_tracerCarrier' strokeLinecap='round' strokeLinejoin='round'></g>
                 <g id='SVGRepo_iconCarrier'>
                   <path d='M15 21.063v-15.063c0-0.563 0.438-1 1-1s1 0.438 1 1v15.063h-2zM15 23.031h2v1.875h-2v-1.875zM0 16c0-8.844 7.156-16 16-16s16 7.156 16 16-7.156 16-16 16-16-7.156-16-16zM30.031 16c0-7.719-6.313-14-14.031-14s-14 6.281-14 14 6.281 14 14 14 14.031-6.281 14.031-14z'></path>{' '}
                 </g>
