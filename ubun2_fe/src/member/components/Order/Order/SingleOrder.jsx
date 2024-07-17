@@ -4,7 +4,7 @@ import ProductItemReadOnly from '../../common/productItem/ProductItemReadOnly';
 const SingleOrder = ({ singleOrderProducts }) => {
   return (
     <div className='flex flex-col w-full gap-3 bg-white'>
-      <div className='flex items-center px-4 pb-2 border-b'>
+      <div className='flex items-center pb-2 border-b'>
         <Single className='w-5 mr-2' />
         <h2 className='text-lg font-semibold'>단건배송</h2>
       </div>
