@@ -11,4 +11,5 @@ public class AddressRequest {
     private String address;
     private String recipientName;
     private String recipientPhone;
+    private String addressNickname;
 }
