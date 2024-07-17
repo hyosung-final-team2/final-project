@@ -4,12 +4,12 @@ import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.*;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentResponse;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.MyAccountPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentResponse;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberPaymentMethodsResponse;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailRequest;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailResponse;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodRequest;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.MyCardPaymentResponse;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.RegisterPaymentMethodRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.AccountPayment;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -48,7 +49,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     @Override
     public PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(Long paymentMethodId, Long customerId) {
         PaymentMethodDetailRequest request = PaymentMethodDetailRequest.builder().paymentMethodId(paymentMethodId).build();
-        PaymentMethod paymentMethod = paymentMethodRepository.findPaymentMethodbyPaymentMethodIdAndCustomerId(request.getPaymentMethodId(),customerId)
+        PaymentMethod paymentMethod = paymentMethodRepository.findPaymentMethodbyPaymentMethodIdAndCustomerId(request.getPaymentMethodId(), customerId)
                 .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
 
         Member member = paymentMethod.getMember();
@@ -108,38 +109,104 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         }
     }
 
-    @Transactional
-    @Override
-    public void updatePaymentMethod(Long paymentMethodId, PaymentMethodRequest request, Long customerId) {
-        validateMyMember(customerId, request.getMemberId());
-
-        Optional<PaymentMethod> paymentMethodOpt = paymentMethodRepository.findById(paymentMethodId);
-
-        if (paymentMethodOpt.isPresent()) {
-            PaymentMethod paymentMethod = paymentMethodOpt.get();
-
-            if (paymentMethod instanceof CardPayment cardPayment) {
-                if (!isValidCardNumber(request.getCardNumber())) {
-                    throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_NUMBER);
-                }
-                cardPayment.update(request.getCardCompanyName(), request.getCardNumber());
-            } else if (paymentMethod instanceof AccountPayment accountPayment) {
-                if (!isValidAccountNumber(request.getAccountNumber())) {
-                    throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_NUMBER);
-                }
-                accountPayment.update(request.getBankName(), request.getAccountNumber());
-            } else {
-                throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
-            }
-        } else {
-            throw new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD);
-        }
-
-    }
-
     @Override
     public void deletePaymentMethod(Long paymentMethodId, Long customerId) {
         PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+        paymentMethodRepository.delete(paymentMethod);
+    }
+
+    //    회원의 결제수단 기능
+    @Override
+    public List<MyCardPaymentResponse> getMyCardPaymentMethods(Long memberId) {
+        List<PaymentMethod> results = paymentMethodRepository.findByMemberMemberId(memberId);
+        return results.stream()
+                .filter(pm -> pm instanceof CardPayment)
+                .map(pm -> new MyCardPaymentResponse((CardPayment) pm))
+                .toList();
+    }
+
+    @Override
+    public List<MyAccountPaymentResponse> getMyAccountPaymentMethods(Long memberId) {
+        List<PaymentMethod> results = paymentMethodRepository.findByMemberMemberId(memberId);
+        return results.stream()
+                .filter(pm -> pm instanceof AccountPayment)
+                .map(pm -> new MyAccountPaymentResponse((AccountPayment) pm))
+                .toList();
+    }
+
+    @Override
+    public MyAccountPaymentResponse getMyAccountPaymentMethod(Long paymentMethodId, Long memberId) {
+        PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+        validateMyPaymentMethod(paymentMethod, memberId);
+        return paymentMethod instanceof AccountPayment accountPayment ? new MyAccountPaymentResponse(accountPayment) : null;
+    }
+
+    @Override
+    public MyCardPaymentResponse getMyCardPaymentMethod(Long paymentMethodId, Long memberId) {
+        PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+        validateMyPaymentMethod(paymentMethod, memberId);
+        return paymentMethod instanceof CardPayment cardPayment ? new MyCardPaymentResponse(cardPayment) : null;
+    }
+
+    @Override
+    public void registerPaymentMethod(RegisterPaymentMethodRequest registerPaymentMethodRequest, Long memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+
+        if ("CARD".equals(registerPaymentMethodRequest.getPaymentType())) {
+            //결제수단 카드일때 검증
+            if (registerPaymentMethodRequest.getCardNumber() == null || registerPaymentMethodRequest.getCardCompanyName() == null) {
+                throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
+            }
+            //카드번호 16자리 숫자 정규식 검증
+            if (!isValidCardNumber(registerPaymentMethodRequest.getCardNumber())) {
+                throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_NUMBER);
+            }
+            CardPayment cardPayment = CardPayment.builder()
+                    .member(member)
+                    .cardNumber(registerPaymentMethodRequest.getCardNumber())
+                    .cardCompanyName(registerPaymentMethodRequest.getCardCompanyName())
+                    .paymentMethodNickname(registerPaymentMethodRequest.getPaymentMethodNickname())
+                    .build();
+            paymentMethodRepository.save(cardPayment);
+        } else if ("ACCOUNT".equals(registerPaymentMethodRequest.getPaymentType())) {
+            //결제수단 계좌일때 검증
+            if (registerPaymentMethodRequest.getAccountNumber() == null || registerPaymentMethodRequest.getBankName() == null) {
+                throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_INFO);
+            }
+            //계좌번호 11~14자리 규식 검증
+            if (!isValidAccountNumber(registerPaymentMethodRequest.getAccountNumber())) {
+                throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_NUMBER);
+            }
+            AccountPayment accountPayment = AccountPayment.builder()
+                    .member(member)
+                    .accountNumber(registerPaymentMethodRequest.getAccountNumber())
+                    .bankName(registerPaymentMethodRequest.getBankName())
+                    .paymentMethodNickname(registerPaymentMethodRequest.getPaymentMethodNickname())
+                    .build();
+            paymentMethodRepository.save(accountPayment);
+
+        } else {
+            throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
+        }
+    }
+
+    @Override
+    public void updatePaymentMethod(Long paymentMethodId, UpdatePaymentMethodRequest updatePaymentMethodRequest, Long memberId) {
+        Optional<PaymentMethod> paymentMethodOpt = paymentMethodRepository.findById(paymentMethodId);
+        if (paymentMethodOpt.isPresent()) {
+            PaymentMethod paymentMethod = paymentMethodOpt.get();
+            validateMyPaymentMethod(paymentMethod, memberId);
+            paymentMethod.update(updatePaymentMethodRequest.getPaymentMethodNickname());
+            paymentMethodRepository.save(paymentMethod);
+        } else {
+            throw new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD);
+        }
+    }
+
+    @Override
+    public void deleteMyPaymentMethod(Long paymentMethodId, Long memberId) {
+        PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+        validateMyPaymentMethod(paymentMethod, memberId);
         paymentMethodRepository.delete(paymentMethod);
     }
 
@@ -168,6 +235,12 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     private void validateMyMember(Long customerId, Long memberId) {
         if (!paymentMethodRepository.checkIsMyMember(customerId, memberId)) {
             throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
+        }
+    }
+
+    private void validateMyPaymentMethod(PaymentMethod paymentMethod, Long memberId){
+        if (!Objects.equals(paymentMethod.getMember().getMemberId(), memberId)) {
+            throw new PaymentMethodException(PaymentMethodExceptionType.PAYMENT_NOT_MATCH);
         }
     }
 }
