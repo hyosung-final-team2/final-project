@@ -18,6 +18,7 @@
     "capitalize-the-first-letter": "^1.0.8",
     "chart.js": "^4.0.1",
     "dayjs": "^1.11.7",
+    "firebase": "^10.12.3",
     "flowbite": "^2.4.1",
     "flowbite-react": "^0.10.1",
     "framer-motion": "^11.3.2",
@@ -49,6 +50,7 @@
     "eslint-plugin-react-refresh": "^0.4.7",
     "postcss": "^8.4.19",
     "tailwindcss": "^3.3.6",
-    "vite": "^5.3.1"
+    "vite": "^5.3.1",
+    "vite-plugin-pwa": "^0.20.0"
   }
 }
