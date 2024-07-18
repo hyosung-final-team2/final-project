@@ -8,13 +8,12 @@ import { useNavigate } from 'react-router-dom';
 const AddressSearchMobilePopUp = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const { selectedAddress, setSelectedAddress } = useAddressStore();
+  const { setSelectedAddress, setAddressData } = useAddressStore();
   const navigate = useNavigate();
 
   const debouncedFetchAddress = useCallback(
-    //여러번 반복 실행될 경우, 정해진 지연시간동안 마지막에 딱 1번만 호출.
     debounce(async term => {
-      if (term.length < 2) return; // 최소 2글자 이상일 때만 검색
+      if (term.length < 2) return;
       try {
         const data = await fetchAddressData(term);
         if (data && data.results && data.results.juso) {
@@ -38,8 +37,13 @@ const AddressSearchMobilePopUp = () => {
 
   const postData = result => {
     setSelectedAddress(result);
+    setAddressData(prevData => ({
+      ...prevData,
+      address: result.roadAddr,
+    }));
     navigate(-1);
   };
+
   return (
     <div className='p-7 pt-9 bg-white h-full border-x'>
       <h5 className='text-3xl font-bold tracking-tight text-gray-900 dark:text-white mb-3'>주소 검색</h5>
