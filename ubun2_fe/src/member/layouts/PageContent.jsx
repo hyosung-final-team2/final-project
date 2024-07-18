@@ -26,7 +26,7 @@ function PageContent({ hasFootNav }) {
   return (
     <div className='flex flex-col flex-1 overflow-auto'>
       <MemHeader />
-      <main className={` flex-1 overflow-y-auto ${hasFootNav ? 'mb-[10dvh]' : ''} bg-base-200`}>
+      <main className={` flex-1 overflow-y-auto ${hasFootNav ? 'mb-[10dvh]' : ''} bg-base-100`}>
         <Routes>
           <Route path='mypage' element={<MyPage />} />
           <Route path='home' element={<StoreList />} />
