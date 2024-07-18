@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useLogin} from "../../../customer/api/common/Login/queris.js";
 import CustomButton from "../../components/common/button/CustomButton.jsx";
+import InstallPrompt from "../../components/Installprompt/InstallPrompt.jsx";
 
 const Login = () => {
 
@@ -71,6 +72,7 @@ const Login = () => {
       <CustomButton buttonStyle={secondButtonStyle} buttonText="회원가입" buttonFunc={signupButtonFunc}/>
       <p onClick={() => fotgotInfoFunc()} className='mt-2 text-gray-400 underline text-end'>계정 정보를 잊어버렸어요</p>
 
+      <InstallPrompt/>
     </div>
   );
 }
