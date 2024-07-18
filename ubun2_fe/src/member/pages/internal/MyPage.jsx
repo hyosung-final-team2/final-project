@@ -1,10 +1,10 @@
-import { useNavigate } from 'react-router-dom'; // 1단계
+import { useNavigate } from 'react-router-dom';
 import SingleLineIcon from '../../../assets/images/single-line.svg';
 import SubscriptionLineIcon from '../../../assets/images/subscription-line.svg';
 import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
 
 function MyPage() {
-  const navigate = useNavigate(); // 2단계
+  const navigate = useNavigate();
 
   // 관리 항목 데이터 배열
   const myInfoItems = [
@@ -14,7 +14,6 @@ function MyPage() {
   ];
 
   const handleMyInfoMenu = value => {
-    // 3단계
     navigate(value);
   };
 
