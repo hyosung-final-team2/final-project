@@ -66,6 +66,13 @@ public class Address extends BaseTimeEntity {
         this.address = address;
     }
 
+    public void updateAddress(String address, String addressNickname, String recipientName, String recipientPhone) {
+        this.addressNickname = addressNickname;
+        this.recipientName = recipientName;
+        this.recipientPhone = recipientPhone;
+        this.address = address;
+    }
+
     public void updateAddress(String address) {
         this.address = address;
     }

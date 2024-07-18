@@ -46,6 +46,6 @@ export const useRegisterAddress = () => {
 
 export const useUpdateAddress = () => {
   return useMutation({
-    mutationFn: addressId => updateAddress(addressId, addressData),
+    mutationFn: (addressId, addressData) => updateAddress(addressId, addressData),
   });
 };
