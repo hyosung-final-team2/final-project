@@ -1,5 +1,5 @@
-const PaymentItem = ({ icon, title, subtitle, selected = false, checkedIcon, isEdit }) => (
-  <div className='flex items-center p-4 '>
+const PaymentItem = ({ icon, title, subtitle, selected = false, checkedIcon, isEdit, onClick }) => (
+  <div className='flex items-center p-4 ' onClick={onClick}>
     <div className='mr-5 flex-shrink-0'>{icon}</div>
     <div>
       <div className='flex pb-1'>

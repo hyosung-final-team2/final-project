@@ -83,3 +83,15 @@ export const companies = [
     path: 'nonghyup.png',
   },
 ];
+
+export const getIcon = name => {
+  const cleanName = name?.replace(/(은행|카드)$/, '').trim();
+  const company = companies.find(c => c.name === cleanName);
+  return company ? company.icon : null;
+};
+
+export const getPng = name => {
+  const cleanName = name?.replace(/(은행|카드)$/, '').trim();
+  const company = companies.find(c => c.name === cleanName);
+  return company ? company.path : null;
+};
