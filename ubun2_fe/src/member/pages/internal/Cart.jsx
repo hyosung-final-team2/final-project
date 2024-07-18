@@ -63,7 +63,7 @@ const Cart = () => {
           <PaymentSummaryPre productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} />
         </div>
       </div>
-      <div className='sticky bottom-0 left-0 right-0 flex w-full p-4 px-3 py-4 bg-white'>
+      <div className='sticky bottom-0 left-0 right-0 flex w-full p-4 px-3 py-4' style={{ background: 'linear-gradient(to top, white, white 65%, transparent)' }}>
         <div className='flex items-end justify-between w-5/6 gap-2 py-4 mr-3 text-xl'>
           <span className='text-sm font-semibold'>{`${totals.selectedCount}개 선택`}</span>
           <span className='font-bold text-main'>{`${totals.totalAmount.toLocaleString()}원`}</span>

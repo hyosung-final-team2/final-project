@@ -59,7 +59,7 @@ function Store() {
 
   return (
       <>
-        <div ref={scrollRef} onScroll={handleScroll} style={{ width: '100%', height: '100%', overflow:"auto" }}>
+        <div ref={scrollRef} onScroll={handleScroll} style={{ width: '100%', height: '100%', overflow:"auto", position:"relative" }}>
           <InfiniteScroll hasMore={hasNextPage} loadMore={() => fetchNextPage()} useWindow={false}>
             <div className="flex flex-col">
               <div className="px-4 py-3 pt-8 pb-0 text-xl flex justify-between">
@@ -90,7 +90,6 @@ function Store() {
         <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} buttonText="확인" buttonStyle={modalButtonStyle} buttonFunc={modalButtonFunc}>
           <Announcement/>
         </SlideUpModal>
-
       </>
   );
 }

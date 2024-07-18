@@ -6,6 +6,8 @@ import Clock from '@heroicons/react/24/solid/ClockIcon'
 function ProductItem({ productId, productName, productPrice, productDiscountPercent, productImage, isOdd, orderOption, stockQuantity }) {
   const navigate = useNavigate();
 
+  const discountedPrice = Math.round((productPrice * (1 - productDiscountPercent / 100)) / 10) * 10;
+
   const orderOptionFunc = (orderOption) => {
       if (orderOption === "SINGLE") {
           return (
@@ -61,7 +63,7 @@ function ProductItem({ productId, productName, productPrice, productDiscountPerc
               </div>
               <p>{productName}</p>
               <p className="font-bold"><span
-                  className="text-red-500 mr-0.5">{productDiscountPercent}%</span> {productPrice.toLocaleString()}원</p>
+                  className="text-red-500 mr-0.5">{productDiscountPercent}%</span> {discountedPrice.toLocaleString()}원</p>
               <div>{orderOptionFunc(orderOption)}</div>
           </div>
       </div>
