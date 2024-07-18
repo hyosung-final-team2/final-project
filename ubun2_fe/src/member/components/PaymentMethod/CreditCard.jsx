@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { companies } from './CardList';
 
-const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, ccv, handleClick, owner, cardCompany }) => {
+const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, handleClick, owner, cardCompany }) => {
   const getCardIcon = () => {
     const company = companies.find(c => c.name === cardCompany);
     return company ? company.icon : null;
@@ -58,7 +58,7 @@ const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, ccv, 
             <div className='absolute w-full h-full' style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
               <div className={`bg-gray-900 ${getCardColor()} rounded-xl py-1 text-white shadow-md h-full`}>
                 <div className='w-full h-12 bg-gradient-to-r from-gray-400 to-gray-500 mt-8'></div>
-                <div className='w-7/12 h-10 bg-gray-200 mt-5 ml-5 text-xl text-right text-black pt-2 pr-2'>{ccv || '***'}</div>
+                <div className='w-7/12 h-10 bg-gray-200 mt-5 ml-5 text-xl text-right text-black pt-2 pr-2'>{cvc || '***'}</div>
                 <div className='absolute w-6/12 h-6 right-0 bottom-6'>
                   {cardCompany ? (
                     getCardLogo()
