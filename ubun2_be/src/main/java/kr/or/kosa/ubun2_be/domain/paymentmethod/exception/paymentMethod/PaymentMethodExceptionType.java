@@ -13,6 +13,7 @@ public enum PaymentMethodExceptionType implements CustomExceptionType {
     PAYMENT_NOT_MATCH(-907, HttpStatus.BAD_REQUEST, "해당 결제수단은 회원님의 결제수단이 아닙니다."),
     INSUFFICIENT_ACCOUNT_BALANCE(-908, HttpStatus.BAD_REQUEST, "계좌 잔액이 부족합니다.");
 
+
     private int errorCode;
     private HttpStatus httpStatus;
     private String errorMsg;

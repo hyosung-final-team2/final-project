@@ -157,7 +157,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             if (registerPaymentMethodRequest.getCardNumber() == null || registerPaymentMethodRequest.getCardCompanyName() == null) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
             }
-            //카드번�� 16자리 숫자 정규식 검증
+            //카드번호 16자리 숫자 정규식 검증
             if (!isValidCardNumber(registerPaymentMethodRequest.getCardNumber())) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_NUMBER);
             }
@@ -173,7 +173,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             if (registerPaymentMethodRequest.getAccountNumber() == null || registerPaymentMethodRequest.getBankName() == null) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_INFO);
             }
-            //계좌번호 11~14자리 ���규식 검증
+            //계좌번호 11~14자리 규식 검증
             if (!isValidAccountNumber(registerPaymentMethodRequest.getAccountNumber())) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_NUMBER);
             }
