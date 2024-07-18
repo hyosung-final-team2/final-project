@@ -19,6 +19,7 @@ import InputPassword from '../pages/internal/InputPassword';
 import OrderComplete from '../pages/internal/OrderComplete';
 import MyOrdersList from '../pages/internal/MyOrdersList';
 import MySingleOrderDetail from '../pages/internal/MySingleOrderDetail';
+import MySubscriptionOrderDetail from '../pages/internal/MySubscriptionOrderDetail';
 
 function PageContent({ hasFootNav }) {
   const { memberId } = useMemberStore(state => ({ memberId: state.memberId }));
@@ -44,6 +45,7 @@ function PageContent({ hasFootNav }) {
           <Route path='order-complete/:orderId' element={<OrderComplete />} />
           <Route path='mypage/order-list' element={<MyOrdersList />} />
           <Route path='mypage/single-order/:customerId/:orderId' element={<MySingleOrderDetail />} />
+          <Route path='mypage/subscription-order/:customerId/:orderId' element={<MySubscriptionOrderDetail />} />
         </Routes>
       </main>
     </div>
