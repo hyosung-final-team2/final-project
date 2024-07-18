@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.global.exception;
 
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressException;
+import kr.or.kosa.ubun2_be.domain.cart.exception.CartException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodException;
@@ -118,6 +119,17 @@ public class CustomExceptionHandler implements ErrorController {
                 .build();
 
         return new ResponseEntity(error, orderException.getExceptionType().getHttpStatus());
+    }
+
+    @ExceptionHandler(value = CartException.class)
+    public ResponseEntity handleGlobalException(CartException cartException) {
+        ErrorDto error = ErrorDto.builder()
+                .errorCode(cartException.getExceptionType().getErrorCode())
+                .errorMessage(cartException.getExceptionType().getMessage())
+                .httpStatus(cartException.getExceptionType().getHttpStatus())
+                .build();
+
+        return new ResponseEntity(error, cartException.getExceptionType().getHttpStatus());
     }
 
 }

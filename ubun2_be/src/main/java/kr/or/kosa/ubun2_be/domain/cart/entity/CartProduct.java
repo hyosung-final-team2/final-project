@@ -1,13 +1,16 @@
 package kr.or.kosa.ubun2_be.domain.cart.entity;
 
 import jakarta.persistence.*;
-import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
+import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderOption;
-import lombok.Getter;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "cart_product")
 public class CartProduct extends BaseTimeEntity {
     @Id
