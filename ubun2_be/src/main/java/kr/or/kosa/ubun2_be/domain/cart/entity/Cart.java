@@ -4,12 +4,16 @@ import jakarta.persistence.*;
 import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
-import lombok.Getter;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "cart")
 public class Cart extends BaseTimeEntity {
     @Id
@@ -24,7 +28,6 @@ public class Cart extends BaseTimeEntity {
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-
-    @OneToMany(mappedBy = "cart")
-    private List<CartProduct> cartProducts;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    private List<CartProduct> cartProducts = new ArrayList<>();
 }
