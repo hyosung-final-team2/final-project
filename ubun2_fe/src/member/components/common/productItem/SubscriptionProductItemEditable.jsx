@@ -1,4 +1,4 @@
-import XMarkIcon from '@heroicons/react/24/solid/XMarkIcon';
+import { Checkbox } from 'flowbite-react';
 
 const SubscriptionProductItemEditable = ({
   productId,
@@ -9,7 +9,8 @@ const SubscriptionProductItemEditable = ({
   productDiscount,
   quantity,
   productImageOriginalName,
-  onDelete,
+  isSelected,
+  onSelect,
 }) => {
   const discountRate = productDiscount / 100;
   const discountedUnitPrice = productPrice * (1 - discountRate);
@@ -18,6 +19,7 @@ const SubscriptionProductItemEditable = ({
 
   return (
     <div className='relative flex items-start justify-between px-4 mb-4'>
+      <Checkbox checked={isSelected} onChange={() => onSelect(productId)} className='self-start mr-2' color={'purple'} />
       <img src={productImagePath} alt={productImageOriginalName} className='object-cover w-24 h-24 mr-4 rounded-md' />
       <div className='flex items-start flex-grow'>
         <div>
@@ -37,9 +39,6 @@ const SubscriptionProductItemEditable = ({
           </div>
         </div>
       </div>
-      <button onClick={() => onDelete(productId)} className='text-red-500 hover:text-red-700'>
-        <XMarkIcon className='w-5' />
-      </button>
     </div>
   );
 };

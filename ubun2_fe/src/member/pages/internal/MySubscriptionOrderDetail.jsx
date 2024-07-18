@@ -1,8 +1,7 @@
-import { Select } from 'flowbite-react';
+import { Checkbox, Select } from 'flowbite-react';
 import { useEffect, useMemo, useState } from 'react';
 import { ORDER_LIST_DUMMY_DATA } from '../../components/Order/orderDummyData';
 import OrderStatusBadge from '../../components/common/badge/OrderStatusBadge';
-import OrderStatusTextBadge from '../../components/common/badge/OrderStatusTextBadge';
 import PaymentSummaryCompleted from '../../components/common/paymentSummary/PaymentSummaryCompleted';
 import ProductItemReadOnly from '../../components/common/productItem/ProductItemReadOnly';
 import SubscriptionProductItemEditable from '../../components/common/productItem/SubscriptionProductItemEditable';
@@ -11,6 +10,7 @@ const MySubscriptionOrderDetail = () => {
   const [orderData, setOrderData] = useState(null);
   const [selectedCycle, setSelectedCycle] = useState(1);
   const [isEditing, setIsEditing] = useState(false);
+  const [selectedProducts, setSelectedProducts] = useState([]);
 
   useEffect(() => {
     const targetOrder = ORDER_LIST_DUMMY_DATA.subscriptionOrderList.find(order => order.orderId === 3);
@@ -33,6 +33,10 @@ const MySubscriptionOrderDetail = () => {
     return deliveryDate > today;
   }, [filteredProducts]);
 
+  const isAllSelected = useMemo(() => {
+    return filteredProducts.length > 0 && selectedProducts.length === filteredProducts.length;
+  }, [filteredProducts, selectedProducts]);
+
   if (!orderData) return <div>Loading...</div>;
 
   const paymentInfo = {
@@ -51,20 +55,30 @@ const MySubscriptionOrderDetail = () => {
 
   const handleEdit = () => {
     setIsEditing(true);
-  };
-
-  const handleSave = () => {
-    // TODO: 저장 기능
-    setIsEditing(false);
+    setSelectedProducts([]);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
+    setSelectedProducts([]);
   };
 
-  const handleDelete = productId => {
-    // TODO: 삭제 기능
-    console.log(`Delete product with id: ${productId}`);
+  const handleSelect = productId => {
+    setSelectedProducts(prev => (prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]));
+  };
+
+  const handleSelectAll = () => {
+    if (isAllSelected) {
+      setSelectedProducts([]);
+    } else {
+      setSelectedProducts(filteredProducts.map(product => product.productId));
+    }
+  };
+
+  const handleDelete = () => {
+    // TODO: 선택된 상품 삭제 로직 구현
+    console.log(`삭제될 제품 id: ${selectedProducts.join(', ')}`);
+    setSelectedProducts([]);
   };
 
   return (
@@ -99,33 +113,35 @@ const MySubscriptionOrderDetail = () => {
           <div className='flex items-center justify-between mb-4'>
             <h2 className='text-xl font-bold text-gray-600'>주문 내역</h2>
             {isDeliveryEditable && !isEditing && (
-              <button onClick={handleEdit} className='px-4 py-2 text-white rounded-md bg-main'>
+              <span onClick={handleEdit} className='text-gray-500 underline cursor-pointer'>
                 수정
-              </button>
-            )}
-            {isEditing && (
-              <div>
-                <button onClick={handleSave} className='px-4 py-2 mr-2 rounded-md text-badge-green bg-badge-green bg-opacity-30'>
-                  저장
-                </button>
-                <button onClick={handleCancel} className='px-4 py-2 rounded-md text-badge-red bg-badge-red bg-opacity-30'>
-                  취소
-                </button>
-              </div>
+              </span>
             )}
           </div>
-          {filteredProducts.length > 0 && (
-            <div className='flex items-center gap-3 mb-1 text-gray-600'>
-              <h3 className='text-lg font-bold'>{filteredProducts[0].productName}</h3>
-              <span>{`외 ${filteredProducts.length - 1} 개`}</span>
+          {isEditing && (
+            <div className='flex justify-between p-4'>
+              <div className='flex items-center'>
+                <Checkbox checked={isAllSelected} onChange={handleSelectAll} className='mr-2' color={'purple'} />
+                <span>전체 선택</span>
+              </div>
+              <div className='flex gap-3 text-gray-400 underline'>
+                <span onClick={handleDelete} className={`cursor-pointer ${selectedProducts.length === 0 ? 'opacity-50' : ''}`}>
+                  선택 삭제
+                </span>
+                <span onClick={handleCancel} className='cursor-pointer'>
+                  취소
+                </span>
+              </div>
             </div>
           )}
-          <p className='mb-4 text-sm text-gray-500'>
-            {new Date(orderData.createdAt).toLocaleDateString()} <OrderStatusTextBadge status={orderData.orderStatus} />
-          </p>
           {filteredProducts.map(product =>
             isEditing ? (
-              <SubscriptionProductItemEditable key={product.productId} {...product} onDelete={() => handleDelete(product.productId)} />
+              <SubscriptionProductItemEditable
+                key={product.productId}
+                {...product}
+                isSelected={selectedProducts.includes(product.productId)}
+                onSelect={handleSelect}
+              />
             ) : (
               <ProductItemReadOnly key={product.productId} {...product} />
             )
