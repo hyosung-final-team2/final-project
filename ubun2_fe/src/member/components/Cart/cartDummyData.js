@@ -9,6 +9,7 @@ export const CART_DUMMY_DATA = {
   cardName: '우리카드',
   accountName: '우리은행',
   cardNumber: '1111-2222-3333-4444',
+  accountNumber: '1111-2222-3333-4444',
   createdAt: '2024-07-17',
 
   itemContent: [

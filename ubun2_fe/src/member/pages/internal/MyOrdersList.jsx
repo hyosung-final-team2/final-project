@@ -4,7 +4,6 @@ import UserInfo from '../../components/Order/OrderMypage/UserInfo';
 import { ORDER_LIST_DUMMY_DATA } from '../../components/Order/orderDummyData';
 import BottomButton from '../../components/common/button/BottomButton';
 
-// MyOrdersList Component
 const MyOrdersList = () => {
   const [orderListData, setOrderListData] = useState(ORDER_LIST_DUMMY_DATA);
   orderListData.orderList.map(item => console.log(item));

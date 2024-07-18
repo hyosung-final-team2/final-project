@@ -14,7 +14,7 @@ const ProductItemReadOnly = ({
   const roundedProductAmount = Math.round(ProductAmount);
 
   return (
-    <div className='flex items-start justify-between px-4 mb-4'>
+    <div className='flex items-start justify-between px-4 mb-6'>
       <img src={productImagePath} alt={productImageOriginalName} className='object-cover w-24 h-24 mr-4 rounded-md' />
       <div className='flex items-start flex-grow'>
         <div className='flex-grow'>

@@ -68,6 +68,11 @@ export const ORDER_LIST_DUMMY_DATA = {
       createdAt: '2024-07-17',
       address: null,
       orderStatus: 'PENDING',
+      paymentType: 'CARD',
+      cardName: '우리카드',
+      accountName: '우리은행',
+      cardNumber: '1111-2222-3333-4444',
+      accountNumber: '1111-2222-3333-4444',
       orderProducts: [
         {
           productId: 1,
@@ -83,10 +88,10 @@ export const ORDER_LIST_DUMMY_DATA = {
         },
         {
           productId: 2,
-          productName: '[첫구매딜] 심심한 목장 우유 2L * 2팩 무블럭?',
-          productDescription: '심심한 목장 우유 2L / 1개',
+          productName: '심심한 목장 우유 2L / 1개',
+          productDescription: '[첫구매딜] 심심한 목장 우유 2L * 2팩 무블럭?',
           productImageOriginalName: 'milk.jpg',
-          productImagePath: '/api/placeholder/100/100',
+          productImagePath: 'https://thingool123.godohosting.com/data/goods/20/08/35/1000010705/1000010705_detail_023.jpg',
           productPrice: 19900,
           quantity: 1,
           productDiscount: 10,
@@ -95,10 +100,10 @@ export const ORDER_LIST_DUMMY_DATA = {
         },
         {
           productId: 3,
-          productName: '[첫구매딜] 심심한 계란 1판 * 3팩 무블럭?',
-          productDescription: '심심한 계란 1판 / 3개',
+          productName: '심심한 계란 1판 / 3개',
+          productDescription: '[첫구매딜] 심심한 계란 1판 * 3팩 무블럭?',
           productImageOriginalName: 'egg.jpg',
-          productImagePath: '/api/placeholder/100/100',
+          productImagePath: 'https://thingool123.godohosting.com/data/goods/20/08/35/1000010705/1000010705_detail_023.jpg',
           productPrice: 19900,
           quantity: 1,
           productDiscount: 10,
@@ -113,6 +118,11 @@ export const ORDER_LIST_DUMMY_DATA = {
       createdAt: '2024-07-15',
       address: null,
       orderStatus: 'DENIED',
+      paymentType: 'CARD',
+      cardName: '우리카드',
+      accountName: '우리은행',
+      cardNumber: '1111-2222-3333-4444',
+      accountNumber: '1111-2222-3333-4444',
       orderProducts: [
         {
           productId: 1,
@@ -128,8 +138,8 @@ export const ORDER_LIST_DUMMY_DATA = {
         },
         {
           productId: 2,
-          productName: '[첫구매딜] 심심한 목장 우유 2L * 2팩 무블럭?',
-          productDescription: '심심한 목장 우유 2L / 1개',
+          productName: '심심한 목장 우유 2L / 1개',
+          productDescription: '[첫구매딜] 심심한 목장 우유 2L * 2팩 무블럭?',
           productImageOriginalName: 'milk.jpg',
           productImagePath: 'https://thingool123.godohosting.com/data/goods/20/08/35/1000010705/1000010705_detail_023.jpg',
           productPrice: 19900,
@@ -140,8 +150,8 @@ export const ORDER_LIST_DUMMY_DATA = {
         },
         {
           productId: 3,
-          productName: '[첫구매딜] 심심한 계란 1판 * 3팩 무블럭?',
-          productDescription: '심심한 계란 1판 / 3개',
+          productName: '심심한 계란 1판 / 3개',
+          productDescription: '[첫구매딜] 심심한 계란 1판 * 3팩 무블럭?',
           productImageOriginalName: 'egg.jpg',
           productImagePath: 'https://thingool123.godohosting.com/data/goods/20/08/35/1000010705/1000010705_detail_023.jpg',
           productPrice: 19900,
@@ -161,6 +171,11 @@ export const ORDER_LIST_DUMMY_DATA = {
       createdAt: '2024-07-15',
       address: null,
       orderStatus: 'APPROVE',
+      paymentType: 'CARD',
+      cardName: '우리카드',
+      accountName: '우리은행',
+      cardNumber: '1111-2222-3333-4444',
+      accountNumber: '1111-2222-3333-4444',
       orderProducts: [
         {
           productId: 1,
