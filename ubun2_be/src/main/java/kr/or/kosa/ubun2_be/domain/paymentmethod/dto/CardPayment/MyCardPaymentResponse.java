@@ -11,6 +11,7 @@ public class MyCardPaymentResponse {
     private String cardCompanyName;
     private String cardNumber;
     private String paymentMethodNickname;
+    private boolean defaultStatus;
 
     public MyCardPaymentResponse(CardPayment cardPayment) {
         this.paymentMethodId = cardPayment.getPaymentMethodId();
@@ -18,5 +19,6 @@ public class MyCardPaymentResponse {
         this.cardCompanyName = cardPayment.getCardCompanyName();
         this.cardNumber = cardPayment.getCardNumber();
         this.paymentMethodNickname = cardPayment.getPaymentMethodNickname();
+        this.defaultStatus = cardPayment.isDefaultStatus();
     }
 }
