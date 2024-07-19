@@ -13,7 +13,7 @@ import SelectQuantityModal from "../../components/Product/SelectQuantityModal.js
 function Product() {
     const {productId} = useParams();
 
-    const {data: productData} = useGetProductDetail(productId)
+    const {data: productData} = useGetProductDetail(parseInt(productId))
     const product = productData?.data?.data
     const discountedPrice = Math.round((product?.productPrice * (1 - product?.productDiscount / 100)) / 10) * 10;
 

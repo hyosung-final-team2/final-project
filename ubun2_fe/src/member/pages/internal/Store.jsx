@@ -1,7 +1,7 @@
 import ProductItem from '../../components/Product/ProductItem';
 import {useLocation} from "react-router-dom";
-import {getProducts} from "../../api/Store/store.js";
-import {useInfiniteQuery} from "@tanstack/react-query";
+import {getProductDetail, getProducts} from "../../api/Store/store.js";
+import {useInfiniteQuery, useQueryClient} from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroller";
 import useStoreStore from "../../store/storeStore.js";
 import {useEffect, useRef} from "react";
@@ -22,7 +22,8 @@ function Store() {
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       return allPages.length !== lastPage.data.data.totalPages ? allPages.length + 1 : undefined
-    }
+    },
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -36,6 +37,26 @@ function Store() {
       setScrollPosition(customerId, scrollRef.current.scrollTop);
     }
   };
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (data) {
+      data.pages.forEach((page) => {
+        page.data.data.content.forEach((product) => {
+          const productDetailQueryKey = ['products', { productId: product.productId }];
+          const cachedData = queryClient.getQueryData(productDetailQueryKey);
+
+          if (!cachedData) {
+            queryClient.prefetchQuery({
+              queryKey: productDetailQueryKey,
+              queryFn: () => getProductDetail(customerId, product.productId),
+            });
+          }
+        });
+      });
+    }
+  }, [customerId, data, queryClient]);
 
 
   const modalButtonStyle = "bg-main text-white";
