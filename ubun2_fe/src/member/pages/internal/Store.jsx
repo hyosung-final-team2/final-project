@@ -4,10 +4,13 @@ import {getProductDetail, getProducts} from "../../api/Store/store.js";
 import {useInfiniteQuery, useQueryClient} from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroller";
 import useStoreStore from "../../store/storeStore.js";
-import {useEffect, useRef} from "react";
+import {useEffect, useRef, useState} from "react";
 import SlideUpModal from "../../components/common/SlideUpModal.jsx";
 import Announcement from "../../components/StoreList/Announcement.jsx";
 import useModalStore from "../../store/modalStore.js";
+import ChevronDownIcon from "@heroicons/react/24/outline/ChevronDownIcon.js";
+import {useGetCategory} from "../../api/Store/queris.js";
+import SelectCategoryModal from "../../components/Product/SelectCategoryModal.jsx";
 
 function Store() {
   const location = useLocation();
@@ -72,8 +75,12 @@ function Store() {
 
   const modalButtonFunc = () => {
     setModalState(false)
+    setIsClickedCategory(false)
   }
 
+  const [isClickedCategory, setIsClickedCategory] = useState(false);
+  const [category, setCategory] = useState({categoryName:null, categoryId: null});
+  const { data: categoryList } = useGetCategory(customerId)
 
   if (isLoading) return <h3>로딩중</h3>;
   if (isError) return <h3>잘못된 데이터 입니다.</h3>;
@@ -87,8 +94,14 @@ function Store() {
             }
           }}  useWindow={false}>
             <div className="flex flex-col">
-              <div className="px-4 py-3 pt-8 pb-0 text-xl flex justify-between">
-                <div className="font-bold">전체</div>
+              <div className="px-4 py-3 pt-8 pb-0 text-xl flex justify-between items-center">
+                <div onClick={() => {
+                    setModalState(true)
+                    setIsClickedCategory(true)
+                }} className='inline-flex p-2 border-none rounded-md text-main bg-main bg-opacity-5'>
+                  <input type='input' value={category.categoryName === null ? "전체" : category.categoryName} className='min-w-0 bg-transparent cursor-pointer max-w-[10dvw]' readOnly/>
+                  <ChevronDownIcon className='w-5'/>
+                </div>
                 <div>{data?.pages[0]?.data?.data?.totalElements}개</div>
               </div>
               <div className="w-full h-full flex flex-wrap">
@@ -112,8 +125,8 @@ function Store() {
         </div>
 
       {/* 공지사항 모달 */}
-        <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} buttonText="확인" buttonStyle={modalButtonStyle} buttonFunc={modalButtonFunc}>
-          <Announcement/>
+        <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} buttonText="확인" buttonStyle={modalButtonStyle} buttonFunc={modalButtonFunc} headerText={isClickedCategory ? "카테고리" : null}>
+          {isClickedCategory ? <SelectCategoryModal categoryList={categoryList?.data?.data} setCategory={setCategory} setModalState={setModalState}/> : <Announcement/>}
         </SlideUpModal>
       </>
   );

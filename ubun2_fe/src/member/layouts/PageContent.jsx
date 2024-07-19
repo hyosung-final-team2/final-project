@@ -1,5 +1,4 @@
 import MemHeader from './MemHeader';
-import useCurrentLocationStore from '../store/currentLocationStore';
 import useMemberStore from '../store/memberStore';
 import { Routes, Route } from 'react-router-dom';
 

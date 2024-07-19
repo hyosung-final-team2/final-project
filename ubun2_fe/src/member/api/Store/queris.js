@@ -1,5 +1,5 @@
 import {useQuery, useQueryClient} from "@tanstack/react-query";
-import {getAnnouncement, getProductDetail, getStores} from "./store.js";
+import {getAnnouncement, getCategory, getProductDetail, getStores} from "./store.js";
 import useStoreStore from "../../store/storeStore.js";
 
 export const useGetStores =  () => {
@@ -29,5 +29,12 @@ export const useGetAnnouncement = (customerId) => {
     return useQuery({
         queryKey: ['announcement',{customerId:customerId}],
         queryFn: () => getAnnouncement(customerId)
+    })
+}
+
+export const useGetCategory = (customerId) => {
+    return useQuery({
+        queryKey: ['category', {customerId}],
+        queryFn: () => getCategory(customerId)
     })
 }
