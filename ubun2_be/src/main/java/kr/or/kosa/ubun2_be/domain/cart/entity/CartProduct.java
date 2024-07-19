@@ -32,4 +32,7 @@ public class CartProduct extends BaseTimeEntity {
     @Column(nullable = false)
     private OrderOption orderOption;
 
+    public void updateQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }
