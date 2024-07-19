@@ -108,4 +108,19 @@ public class CartServiceImpl implements CartService {
             cartRepository.save(cart);
         }
     }
+
+    @Transactional
+    @Override
+    public void deleteCartProducts(Long userId, List<CartProductDeleteRequest> cartProductDeleteRequests) {
+        for (CartProductDeleteRequest cartProductDeleteRequest : cartProductDeleteRequests) {
+            Cart cart = cartRepository.findByMemberIdAndCustomerId(userId, cartProductDeleteRequest.getCustomerId())
+                    .orElseThrow(() -> new CartException(CartExceptionType.NO_EXIST_CART));
+
+            for (Long productId : cartProductDeleteRequest.getProductIds()) {
+                CartProduct cartProduct = cartProductRepository.findByCartCartIdAndProductProductId(cart.getCartId(), productId)
+                        .orElseThrow(() -> new CartException(CartExceptionType.NO_EXIST_CART_PRODUCT));
+                cartProductRepository.delete(cartProduct);
+            }
+        }
+    }
 }

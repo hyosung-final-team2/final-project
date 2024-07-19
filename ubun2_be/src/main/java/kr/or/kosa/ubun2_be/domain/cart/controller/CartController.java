@@ -51,4 +51,12 @@ public class CartController {
         return ResponseDto.ok(null, "정상출력 데이터");
     }
 
+    @Operation(summary = "장바구니 제품 삭제")
+    @DeleteMapping("/carts")
+    public ResponseDto<?> deleteCartProducts(@RequestBody List<CartProductDeleteRequest> cartProductDeleteRequests,
+                                             @AuthenticationPrincipal CustomUserDetails customerUserDetails) {
+        cartService.deleteCartProducts(customerUserDetails.getUserId(), cartProductDeleteRequests);
+        return ResponseDto.ok(null, "정상출력 데이터");
+    }
+
 }

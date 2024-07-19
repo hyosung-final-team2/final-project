@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.cart.service;
 
+import kr.or.kosa.ubun2_be.domain.cart.dto.CartProductDeleteRequest;
 import kr.or.kosa.ubun2_be.domain.cart.dto.CartProductUpdateRequest;
 import kr.or.kosa.ubun2_be.domain.cart.dto.CartRequest;
 import kr.or.kosa.ubun2_be.domain.cart.dto.CartResponse;
@@ -16,4 +17,5 @@ public interface CartService {
 
     void updateCartProductQuantities(Long userId, List<CartProductUpdateRequest> cartProductUpdateRequests);
 
+    void deleteCartProducts(Long userId, List<CartProductDeleteRequest> cartProductDeleteRequests);
 }
