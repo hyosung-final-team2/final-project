@@ -1,7 +1,7 @@
 import ProductItem from '../../components/Product/ProductItem';
 import {useLocation} from "react-router-dom";
-import {getProducts} from "../../api/Store/store.js";
-import {useInfiniteQuery} from "@tanstack/react-query";
+import {getProductDetail, getProducts} from "../../api/Store/store.js";
+import {useInfiniteQuery, useQueryClient} from "@tanstack/react-query";
 import InfiniteScroll from "react-infinite-scroller";
 import useStoreStore from "../../store/storeStore.js";
 import {useEffect, useRef} from "react";
@@ -16,13 +16,14 @@ function Store() {
   const { setScrollPosition, getScrollPosition } = useStoreStore();
   const scrollRef = useRef(null);
 
-  const { data, fetchNextPage, hasNextPage, isLoading, isError } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage,isLoading, isError } = useInfiniteQuery({
     queryKey: ['products', customerId],
     queryFn: ({pageParam}) => getProducts(customerId, pageParam, 8),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPages) => {
       return allPages.length !== lastPage.data.data.totalPages ? allPages.length + 1 : undefined
-    }
+    },
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -36,6 +37,26 @@ function Store() {
       setScrollPosition(customerId, scrollRef.current.scrollTop);
     }
   };
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    if (data) {
+      data.pages.forEach((page) => {
+        page.data.data.content.forEach((product) => {
+          const productDetailQueryKey = ['products', { productId: product.productId }];
+          const cachedData = queryClient.getQueryData(productDetailQueryKey);
+
+          if (!cachedData) {
+            queryClient.prefetchQuery({
+              queryKey: productDetailQueryKey,
+              queryFn: () => getProductDetail(customerId, product.productId),
+            });
+          }
+        });
+      });
+    }
+  }, [customerId, data, queryClient]);
 
 
   const modalButtonStyle = "bg-main text-white";
@@ -59,8 +80,12 @@ function Store() {
 
   return (
       <>
-        <div ref={scrollRef} onScroll={handleScroll} style={{ width: '100%', height: '100%', overflow:"auto" }}>
-          <InfiniteScroll hasMore={hasNextPage} loadMore={() => fetchNextPage()} useWindow={false}>
+        <div ref={scrollRef} onScroll={handleScroll} style={{ width: '100%', height: '100%', overflow:"auto", position:"relative" }}>
+          <InfiniteScroll hasMore={hasNextPage && !isFetchingNextPage} loadMore={() => {
+            if (!isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }}  useWindow={false}>
             <div className="flex flex-col">
               <div className="px-4 py-3 pt-8 pb-0 text-xl flex justify-between">
                 <div className="font-bold">전체</div>
@@ -90,7 +115,6 @@ function Store() {
         <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} buttonText="확인" buttonStyle={modalButtonStyle} buttonFunc={modalButtonFunc}>
           <Announcement/>
         </SlideUpModal>
-
       </>
   );
 }
