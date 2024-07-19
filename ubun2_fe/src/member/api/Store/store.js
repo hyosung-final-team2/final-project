@@ -12,3 +12,5 @@ export const getProducts = async (customerId,page,size) => await privateFetch.ge
 export const getProductDetail = async (customerId,productId) => await privateFetch.get(`/members/products/${customerId}/${productId}`,{})
 
 export const getAnnouncement = async (customerId) => await privateFetch.get(`/members/announcement/${customerId}`)
+
+export const getCategory = async (customerId) => await privateFetch.get(`members/store/${customerId}/category`)
