@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getMyAddresses, registerAddress, deleteAddress, updateAddress } from './addresses';
-import toast from 'react-hot-toast';
 
 export const useGetMyAddresses = memberId => {
   return useQuery({

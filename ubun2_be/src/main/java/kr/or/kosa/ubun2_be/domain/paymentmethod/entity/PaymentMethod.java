@@ -32,6 +32,9 @@ public class PaymentMethod extends BaseTimeEntity {
     @Column
     private String paymentMethodNickname;
 
+    @Column(nullable = false)
+    private boolean defaultStatus;
+
     @Column(name = "payment_type", insertable = false, updatable = false)
     private String paymentType;
 

@@ -44,5 +44,7 @@ public interface PaymentMethodService {
     void deleteMyPaymentMethod(Long paymentMethodId, Long memberId);
 
     PaymentMethod findById(Long paymentMethodId);
+
+    boolean hasPaymentPassword(Long memberId);
 }
 

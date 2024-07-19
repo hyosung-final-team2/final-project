@@ -1,19 +1,30 @@
 import React from 'react';
 
-const FloatingLabelInput = ({ id, type, label, pattern, className, setIsModalOpen, selectedItem, isSelectable = false }) => {
-  const handleOnclick = () => {
-    isSelectable ? setIsModalOpen(true) : '';
-  };
+const FloatingLabelInput = ({
+  id,
+  type = 'text',
+  label,
+  className,
+  value = '', // 기본값을 빈 문자열로 설정
+  onChange,
+  onFocus,
+  isSelectable = false,
+  readOnly = false,
+  placeholder = ' ',
+}) => {
   return (
     <div className='relative z-0 px-6 py-2'>
       <input
-        type={type || 'text'}
+        type={type}
         id={id}
-        className={`block py-2.5 px-0 w-full text-md text-gray-900 bg-transparent border-0 border-b-2 border-main appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer ${className}`}
-        placeholder=' '
-        pattern={pattern}
-        onClick={handleOnclick}
-        defaultValue={selectedItem ? `${selectedItem}은행` : ''}
+        className={`block py-2.5 px-0 w-full text-md text-gray-900 bg-transparent border-0 border-b-2 border-main appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer ${className} ${
+          isSelectable ? 'cursor-pointer' : ''
+        }`}
+        placeholder={placeholder}
+        value={value} // undefined 값이 전달되더라도 빈 문자열이 사용됩니다
+        onChange={onChange}
+        onFocus={onFocus}
+        readOnly={readOnly || isSelectable}
       />
       <label
         htmlFor={id}
