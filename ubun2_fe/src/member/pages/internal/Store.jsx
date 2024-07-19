@@ -16,7 +16,7 @@ function Store() {
   const { setScrollPosition, getScrollPosition } = useStoreStore();
   const scrollRef = useRef(null);
 
-  const { data, fetchNextPage, hasNextPage, isLoading, isError } = useInfiniteQuery({
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage,isLoading, isError } = useInfiniteQuery({
     queryKey: ['products', customerId],
     queryFn: ({pageParam}) => getProducts(customerId, pageParam, 8),
     initialPageParam: 0,
@@ -81,7 +81,11 @@ function Store() {
   return (
       <>
         <div ref={scrollRef} onScroll={handleScroll} style={{ width: '100%', height: '100%', overflow:"auto", position:"relative" }}>
-          <InfiniteScroll hasMore={hasNextPage} loadMore={() => fetchNextPage()} useWindow={false}>
+          <InfiniteScroll hasMore={hasNextPage && !isFetchingNextPage} loadMore={() => {
+            if (!isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }}  useWindow={false}>
             <div className="flex flex-col">
               <div className="px-4 py-3 pt-8 pb-0 text-xl flex justify-between">
                 <div className="font-bold">전체</div>
