@@ -4,6 +4,7 @@ import CreditCard from './CreditCard';
 import { companies } from './CardList';
 import CardItem from '../PaymentMethod/CardItem';
 import SlideUpModal from '../common/SlideUpModal';
+import useModalStore from '../../store/modalStore';
 
 const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -14,7 +15,8 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
     // cardPassword: '',
     // expirationDate: '',
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { modalState, setModalState } = useModalStore();
 
   const updateFormData = useCallback((key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -30,12 +32,17 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
 
   const handleCardCompanyNameSelect = item => {
     updateFormData('cardCompanyName', item);
-    setIsModalOpen(false);
   };
 
   return (
     <div className='bg-white px-4'>
-      <CreditCard {...formData} isFlipped={isFlipped} handleClick={() => flipCard(!isFlipped)} owner='memberName' />
+      <CreditCard
+        {...formData}
+        isFlipped={isFlipped}
+        handleClick={() => flipCard(!isFlipped)}
+        owner={formData.paymentMethodNickname}
+        cardCompany={formData.cardCompanyName}
+      />
       <form className='space-y-4'>
         <InfoItem
           label='카드 별명'
@@ -52,7 +59,7 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
           labelStyle={labelStyle}
           value={formData.cardCompanyName ? `${formData.cardCompanyName}카드` : ''}
           placeholder='카드사를 선택해주세요'
-          onFocus={() => setIsModalOpen(true)}
+          onFocus={() => setModalState(true)}
           isSelectable={true}
         />
         <InfoItem
@@ -97,7 +104,7 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
           </div>
         </div>
       </form>
-      <SlideUpModal isOpen={isModalOpen} setIsModalOpen={setIsModalOpen} headerText='카드사를 선택하세요' isButton={false}>
+      <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='카드사를 선택하세요' isButton={false}>
         <div className='bg-white px-4 pb-2 rounded-lg max-w-3xl w-full'>
           <div className='grid grid-cols-3 gap-3'>
             {companies.map((item, index) => (
@@ -106,7 +113,7 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
                 logo={item.icon}
                 name={item.name}
                 setSelectedItem={() => handleCardCompanyNameSelect(item.name)}
-                setIsModalOpen={setIsModalOpen}
+                setIsModalOpen={setModalState}
                 path={item.path}
               />
             ))}

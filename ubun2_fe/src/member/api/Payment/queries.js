@@ -55,7 +55,7 @@ export const useUpdatePayment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ paymentId, data }) => updatePayment(paymentId, data),
+    mutationFn: ({ paymentMethodId, data }) => updatePayment(paymentMethodId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
     },
@@ -66,7 +66,7 @@ export const useDeletePayment = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: paymentId => deletePayment(paymentId),
+    mutationFn: paymentMethodId => deletePayment(paymentMethodId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
     },
