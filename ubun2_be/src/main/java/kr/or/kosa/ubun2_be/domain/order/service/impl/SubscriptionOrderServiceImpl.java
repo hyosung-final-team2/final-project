@@ -9,6 +9,8 @@ import kr.or.kosa.ubun2_be.domain.financial.institution.service.BankService;
 import kr.or.kosa.ubun2_be.domain.financial.institution.service.CardCompanyService;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.service.MemberService;
+import kr.or.kosa.ubun2_be.domain.order.dto.RemoveSubscriptionOrderProductRequest;
+import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderDetailResponse;
 import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderProductRequest;
 import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderRequest;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
@@ -309,5 +311,44 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
         for (SubscriptionOrder order : delayOrders) {
             processSubscriptionOrder(order);
         }
+    }
+
+    @Override
+    public SubscriptionOrderDetailResponse getSubscriptionOrderByMemberIdAndOrderId(Long memberId, Long customerId, Long orderId) {
+        memberService.isExistMemberCustomer(memberId, customerId);
+
+        SubscriptionOrder findSubscriptionOrder = subscriptionOrderRepository.findBySubscriptionOrderIdAndMemberMemberId(orderId, memberId)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
+
+        int latestCycleNumber = findSubscriptionOrder.getMaxCycleNumber();
+
+        return new SubscriptionOrderDetailResponse(findSubscriptionOrder, latestCycleNumber);
+    }
+
+    @Override
+    @Transactional
+    public void removeSubscriptionOrderProducts(Long memberId, RemoveSubscriptionOrderProductRequest request) {
+        // 회원과 고객이 존재하는지 확인
+        memberService.isExistMemberCustomer(memberId, request.getCustomerId());
+
+        // 회원의 최신 정기 주문을 가져옴
+        List<SubscriptionOrder> orders = subscriptionOrderRepository.findLatestByMemberId(memberId);
+        if (orders.isEmpty()) {
+            throw new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT);
+        }
+        SubscriptionOrder latestOrder = orders.get(0);
+
+        // 요청에 있는 제품 ID를 반복하여 상태를 REJECTED로 변경
+        for (Long productId : request.getSubscriptionOrderProductIds()) {
+            SubscriptionOrderProduct productToRemove = latestOrder.getSubscriptionOrderProducts().stream()
+                    .filter(product -> product.getSubscriptionOrderProductId().equals(productId))
+                    .findFirst()
+                    .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
+
+            productToRemove.changeSubscriptionOrderProductStatus(OrderProductStatus.REJECTED);
+        }
+
+        // 업데이트된 정기 주문을 저장
+        subscriptionOrderRepository.save(latestOrder);
     }
 }

@@ -17,4 +17,12 @@ public interface OrderService {
 
     void updateOrderStatus(Long customerId, List<OrderApproveRequest> orderApproveRequests);
     void updateSubscriptionOrderStatus(Long customerId, List<SubscriptionApproveRequest> subscriptionApproveRequests);
+
+    void createSingleOrder(Long memberId, SubscriptionOrderRequest orderRequest);
+
+    List<UnifiedOrderResponse> getAllOrdersByMemberId(Long memberId);
+
+    OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long customerId, Long orderId);
+
+    void cancelOrder(Long memberId, CancelOrderRequest cancelOrderRequest);
 }

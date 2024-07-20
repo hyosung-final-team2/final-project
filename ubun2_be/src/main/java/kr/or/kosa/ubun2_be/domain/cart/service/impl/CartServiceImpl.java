@@ -123,4 +123,10 @@ public class CartServiceImpl implements CartService {
             }
         }
     }
+
+    @Override
+    public Cart findByMemberId(Long memberId) {
+        return cartRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new CartException(CartExceptionType.NO_EXIST_CART));
+    }
 }

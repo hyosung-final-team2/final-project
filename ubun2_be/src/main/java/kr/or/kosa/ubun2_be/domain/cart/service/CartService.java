@@ -4,6 +4,7 @@ import kr.or.kosa.ubun2_be.domain.cart.dto.CartProductDeleteRequest;
 import kr.or.kosa.ubun2_be.domain.cart.dto.CartProductUpdateRequest;
 import kr.or.kosa.ubun2_be.domain.cart.dto.CartRequest;
 import kr.or.kosa.ubun2_be.domain.cart.dto.CartResponse;
+import kr.or.kosa.ubun2_be.domain.cart.entity.Cart;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,4 +19,6 @@ public interface CartService {
     void updateCartProductQuantities(Long userId, List<CartProductUpdateRequest> cartProductUpdateRequests);
 
     void deleteCartProducts(Long userId, List<CartProductDeleteRequest> cartProductDeleteRequests);
+
+    Cart findByMemberId(Long memberId);
 }

@@ -94,4 +94,31 @@ public class InventoryService {
             productRepository.save(product); //명시적 호출
         }
     }
+
+    public void increaseStock(Long productId, int quantity) {
+        String key = INVENTORY_KEY_PREFIX + productId;
+        Boolean success = redisTemplate.execute(new SessionCallback<Boolean>() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public Boolean execute(RedisOperations operations) throws DataAccessException {
+                operations.watch(key);
+                Integer currentQuantity = (Integer) operations.opsForValue().get(key);
+
+                if (currentQuantity != null) {
+                    operations.multi();
+                    operations.opsForValue().set(key, currentQuantity + quantity);
+                    return !operations.exec().isEmpty();
+                }
+                operations.unwatch();
+                return false;
+            }
+        });
+
+        if (Boolean.TRUE.equals(success)) {
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
+            product.updateStockQuantity(product.getStockQuantity() + quantity);
+            productRepository.save(product);
+        }
+    }
 }
