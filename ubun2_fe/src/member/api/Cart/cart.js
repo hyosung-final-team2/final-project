@@ -6,3 +6,13 @@ export const getCart = async () => {
   const res = await privateFetch.get(`/members/carts`);
   return res;
 };
+
+export const deleteCart = async requestData => {
+  console.log('Delete request payload :', requestData);
+  const res = await privateFetch({
+    method: 'delete',
+    url: '/members/carts',
+    data: requestData,
+  });
+  return res;
+};

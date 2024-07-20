@@ -74,6 +74,49 @@ const Cart = () => {
     console.log('선택된 items들:', selectedOrderData); // TODO: API 호출
   };
 
+  const handleDeleteProduct = async (customerId, cartProductId) => {
+    const store = cartData.find(s => s.customerId === customerId);
+    if (!store) return;
+
+    const product = store.cartProducts.find(p => p.cartProductId === cartProductId);
+    if (!product) return;
+
+    const deleteData = [
+      {
+        cartId: product.cartId,
+        customerId: store.customerId,
+        cartProducts: [{ productId: product.productId }],
+      },
+    ];
+
+    try {
+      await deleteCartMutation.mutateAsync(deleteData);
+      removeProducts([product.productId]);
+      removeStoreIfEmpty(customerId); // 제품 삭제 후 store 비어있으면 제거
+    } catch (error) {
+      console.error('Failed to delete product:', error);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    const deleteData = selectedItems.map(store => ({
+      customerId: store.customerId,
+      cartId: store.cartProducts[0].cartId,
+      cartProducts: store.cartProducts.map(product => ({ productId: product.productId })),
+    }));
+
+    if (deleteData.length === 0) return;
+
+    try {
+      await deleteCartMutation.mutateAsync(deleteData);
+      const deletedProductIds = selectedItems.flatMap(store => store.cartProducts.map(product => product.productId));
+      removeProducts(deletedProductIds);
+      deleteData.forEach(store => removeStoreIfEmpty(store.customerId)); // 각 store 비어있는지 확인하고 제거
+    } catch (error) {
+      console.error('Failed to delete products:', error);
+    }
+  };
+
   const totals = calculateTotals();
 
   return (

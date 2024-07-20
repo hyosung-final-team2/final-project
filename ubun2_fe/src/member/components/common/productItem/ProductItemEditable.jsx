@@ -4,6 +4,7 @@ import QuantityButton from '../button/QuantityButton';
 
 const ProductItemEditable = ({
   productId,
+  cartProductId,
   productImagePath,
   productDescription,
   productName,
@@ -37,11 +38,11 @@ const ProductItemEditable = ({
             </div>
           </div>
           <div className='flex items-center justify-between mt-2'>
-            <QuantityButton initialQuantity={quantity} onQuantityChange={onQuantityChange} />
+            <QuantityButton initialQuantity={quantity} onQuantityChange={newQuantity => onQuantityChange(cartProductId, newQuantity)} />
             <p className='text-lg font-bold'>{`${roundedProductAmount.toLocaleString()} 원`}</p>
           </div>
         </div>
-        <XMarkIcon className='w-5 ml-2 cursor-pointer' onClick={onDelete} />
+        <XMarkIcon className='w-5 ml-2 cursor-pointer' onClick={() => onDelete(cartProductId)} />
       </div>
     </div>
   );

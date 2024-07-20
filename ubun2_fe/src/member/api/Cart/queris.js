@@ -38,3 +38,17 @@ export const useGetCarts = () => {
     staleTime: 1000 * 60 * 5,
   });
 };
+
+export const useDeleteCart = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteCart,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['carts'] });
+      toast.success('장바구니 물품 삭제 완료');
+    },
+    onError: error => {
+      toast.error(`장바구니 물품 삭제 실패 : ${error.message}`);
+    },
+  });
+};
