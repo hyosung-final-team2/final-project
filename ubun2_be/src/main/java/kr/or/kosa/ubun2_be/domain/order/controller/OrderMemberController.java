@@ -67,5 +67,13 @@ public class OrderMemberController {
         return ResponseDto.ok(null, "정상출력 데이터.");
     }
 
+    @Operation(summary = "정기 주문에서 특정 상품 제거")
+    @PostMapping("/orders/subscription/remove")
+    public ResponseDto<?> removeSubscriptionOrderProduct(@RequestBody RemoveSubscriptionOrderProductRequest request,
+                                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        subscriptionOrderService.removeSubscriptionOrderProducts(customUserDetails.getUserId(), request);
+        return ResponseDto.ok(null, "정상출력 데이터");
+    }
+
 
 }

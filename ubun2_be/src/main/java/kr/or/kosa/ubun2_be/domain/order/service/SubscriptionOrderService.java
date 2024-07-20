@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.order.service;//package kr.or.kosa.ubun2_be.domain.order.service.impl;
 
+import kr.or.kosa.ubun2_be.domain.order.dto.RemoveSubscriptionOrderProductRequest;
 import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderDetailResponse;
 import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderRequest;
 
@@ -13,4 +14,5 @@ public interface SubscriptionOrderService {
 
     SubscriptionOrderDetailResponse getSubscriptionOrderByMemberIdAndOrderId(Long memberId, Long customerId, Long orderId);
 
+    void removeSubscriptionOrderProducts(Long memberId, RemoveSubscriptionOrderProductRequest request);
 }
