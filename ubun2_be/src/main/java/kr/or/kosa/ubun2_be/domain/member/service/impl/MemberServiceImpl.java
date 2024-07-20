@@ -5,6 +5,7 @@ import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.dto.AnnouncementResponse;
 import kr.or.kosa.ubun2_be.domain.member.dto.CustomerResponse;
+import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
 import kr.or.kosa.ubun2_be.domain.member.dto.MemberSignUpRequest;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
@@ -86,5 +87,12 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+    }
+
+    @Override
+    @Transactional
+    public void updateFcmToken(Long memberId, FcmTokenRequest fcmTokenRequest) {
+        Member member = findById(memberId);
+        member.updateMemberFcmToken(fcmTokenRequest.getFcmToken());
     }
 }
