@@ -34,4 +34,11 @@ public class OrderMemberController {
         return ResponseDto.ok(null, "정상출력 데이터");
     }
 
+    @Operation(summary = "현재 로그인한 회원의 전체 주문 목록 조회")
+    @GetMapping("/orders")
+    public ResponseDto<List<UnifiedOrderResponse>> getAllOrders(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        List<UnifiedOrderResponse> allOrders = orderService.getAllOrdersByMemberId(customUserDetails.getUserId());
+        return ResponseDto.ok(allOrders, "정상출력 데이터");
+    }
+
 }

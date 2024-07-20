@@ -306,4 +306,15 @@ public class OrderServiceImpl implements OrderService {
         return savedOrder;
     }
 
+    @Override
+    public List<UnifiedOrderResponse> getAllOrdersByMemberId(Long memberId) {
+        List<UnifiedOrderResponse> orderResponses  = orderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
+        List<UnifiedOrderResponse> subscriptionOrderResponses = subscriptionOrderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
+
+        List<UnifiedOrderResponse> combinedList = new ArrayList<>();
+        combinedList.addAll(orderResponses);
+        combinedList.addAll(subscriptionOrderResponses);
+
+        return combinedList;
+    }
 }

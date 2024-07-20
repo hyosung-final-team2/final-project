@@ -14,4 +14,7 @@ public interface SubscriptionOrderRepository extends JpaRepository<SubscriptionO
     List<SubscriptionOrder> findByNextOrderDateAndOrderStatus(@Param("date") LocalDateTime date, @Param("status") OrderStatus status);
 
     List<SubscriptionOrder> findByOrderStatusOrderByNextOrderDateAsc(OrderStatus status);
+
+    List<SubscriptionOrder> findByMemberId(Long memberId);
+
 }

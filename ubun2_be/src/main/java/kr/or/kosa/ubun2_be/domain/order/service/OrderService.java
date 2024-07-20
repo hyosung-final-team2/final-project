@@ -20,4 +20,6 @@ public interface OrderService {
 
     void createSingleOrder(Long memberId, SubscriptionOrderRequest orderRequest);
 
+    List<UnifiedOrderResponse> getAllOrdersByMemberId(Long memberId);
+
 }
