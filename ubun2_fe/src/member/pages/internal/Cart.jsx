@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useDeleteCart, useGetCarts } from '../../api/Cart/queris';
 import { cycleContent } from '../../components/Cart/cartDummyData';
 import CartStore from '../../components/Cart/cartList/CartStore';
 import BottomButton from '../../components/common/button/BottomButton';
@@ -11,9 +13,42 @@ const Cart = () => {
   const [selectedStore, setSelectedStore] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState(null);
   const { modalState, setModalState } = useModalStore();
+  const location = useLocation();
 
-  const { cartData, selectedItems, handleSelectProduct, handleDeleteProduct, updateProductQuantity, calculateTotals, handleSelectAllStore } =
-    useOrderItemsStore();
+  const {
+    cartData,
+    selectedItems,
+    handleSelectProduct,
+    updateProductQuantity,
+    calculateTotals,
+    handleSelectAllStore,
+    setCartData,
+    clearCart,
+    removeProducts,
+    removeStoreIfEmpty,
+  } = useOrderItemsStore();
+
+  const { data: fetchedCartData, isLoading, isError, refetch } = useGetCarts();
+  const deleteCartMutation = useDeleteCart();
+
+  // 페이지 경로가 변경될 때마다 refetch
+  useEffect(() => {
+    refetch();
+  }, [location, refetch]);
+
+  useEffect(() => {
+    if (fetchedCartData?.data?.data?.content) {
+      const filteredData = fetchedCartData.data.data.content.filter(store => store.cartProducts.length > 0);
+      setCartData(filteredData);
+    }
+  }, [fetchedCartData, setCartData]);
+
+  useEffect(() => {
+    console.log('업데이트 cartData:', cartData);
+  }, [cartData]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error fetching cart data</div>;
 
   const handleSubscriptionPeriodSelect = storeId => {
     setSelectedStore(storeId);
@@ -27,17 +62,14 @@ const Cart = () => {
   };
 
   const handleOrder = () => {
-    const selectedOrderData = selectedItems.itemContent
+    const selectedOrderData = selectedItems
       .map(store => ({
         customerId: store.customerId,
-        singleOrderProducts: store.singleOrderProducts.map(product => ({
-          ...product,
-        })),
-        regularOrderProducts: store.regularOrderProducts.map(product => ({
+        cartProducts: store.cartProducts.map(product => ({
           ...product,
         })),
       }))
-      .filter(store => store.singleOrderProducts.length > 0 || store.regularOrderProducts.length > 0);
+      .filter(store => store.cartProducts.length > 0);
 
     console.log('선택된 items들:', selectedOrderData); // TODO: API 호출
   };
@@ -46,30 +78,45 @@ const Cart = () => {
 
   return (
     <div className='h-full'>
+      <button onClick={clearCart}>임시 로그아웃</button>
+      <button onClick={handleDeleteSelected}>선택 상품 삭제</button>
       <div className='flex flex-col flex-1 w-full'>
         <div className='flex-1'>
-          {cartData.itemContent.map(store => (
-            <CartStore
-              key={store.customerId}
-              store={store}
-              selectedItems={selectedItems.itemContent.find(s => s.customerId === store.customerId)}
-              onSelectProduct={handleSelectProduct}
-              onQuantityChange={updateProductQuantity}
-              onDelete={handleDeleteProduct}
-              onSubscriptionPeriodSelect={handleSubscriptionPeriodSelect}
-              onSelectAllStore={handleSelectAllStore}
-            />
-          ))}
-          <PaymentSummaryPre productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} />
+          {cartData && cartData.length === 0 ? (
+            <div className='flex items-center justify-center h-full'>
+              <span className='text-xl font-semibold'>장바구니가 비었어요!</span>
+            </div>
+          ) : (
+            cartData?.map(store => (
+              <CartStore
+                key={store.customerId}
+                store={store}
+                selectedItems={selectedItems.find(s => s.customerId === store.customerId)}
+                onSelectProduct={handleSelectProduct}
+                onQuantityChange={updateProductQuantity}
+                onDeleteProduct={handleDeleteProduct}
+                onSubscriptionPeriodSelect={handleSubscriptionPeriodSelect}
+                onSelectAllStore={handleSelectAllStore}
+              />
+            ))
+          )}
+          {cartData && cartData.length > 0 && (
+            <PaymentSummaryPre productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} />
+          )}
         </div>
       </div>
-      <div className='sticky bottom-0 left-0 right-0 flex w-full p-4 px-3 py-4' style={{ background: 'linear-gradient(to top, white, white 65%, transparent)' }}>
-        <div className='flex items-end justify-between w-5/6 gap-2 py-4 mr-3 text-xl'>
-          <span className='text-sm font-semibold'>{`${totals.selectedCount}개 선택`}</span>
-          <span className='font-bold text-main'>{`${totals.totalAmount.toLocaleString()}원`}</span>
+      {cartData && cartData.length > 0 && (
+        <div
+          className='sticky bottom-0 left-0 right-0 flex w-full p-4 px-3 py-4'
+          style={{ background: 'linear-gradient(to top, white, white 65%, transparent)' }}
+        >
+          <div className='flex items-end justify-between w-5/6 gap-2 py-4 mr-3 text-xl'>
+            <span className='text-sm font-semibold'>{`${totals.selectedCount}개 선택`}</span>
+            <span className='font-bold text-main'>{`${totals.totalAmount.toLocaleString()}원`}</span>
+          </div>
+          <BottomButton buttonText='구매하기' buttonStyle='bg-main text-white' buttonFunc={handleOrder} />
         </div>
-        <BottomButton buttonText='구매하기' buttonStyle='bg-main text-white' buttonFunc={handleOrder} />
-      </div>
+      )}
 
       <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='배송 주기 선택' isButton={false}>
         <div className='flex flex-col items-start space-y-4'>
