@@ -22,4 +22,6 @@ public interface OrderService {
 
     List<UnifiedOrderResponse> getAllOrdersByMemberId(Long memberId);
 
+    OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long customerId, Long orderId);
+
 }

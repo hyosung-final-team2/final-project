@@ -317,4 +317,15 @@ public class OrderServiceImpl implements OrderService {
 
         return combinedList;
     }
+
+    @Override
+    public OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long customerId, Long orderId) {
+        memberService.isExistMemberCustomer(memberId, customerId);
+
+        Order findOrder = orderRepository.findByOrderIdAndMemberMemberId(orderId, memberId)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
+
+        return new OrderDetailResponse(findOrder);
+    }
+
 }
