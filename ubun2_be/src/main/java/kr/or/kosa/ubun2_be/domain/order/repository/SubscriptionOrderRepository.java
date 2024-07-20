@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface SubscriptionOrderRepository extends JpaRepository<SubscriptionOrder, Long>, SubscriptionOrderRepositoryCustom {
     @Query("SELECT so FROM SubscriptionOrder so WHERE DATE(so.nextOrderDate) = DATE(:date) AND so.orderStatus = :status")
@@ -17,4 +18,5 @@ public interface SubscriptionOrderRepository extends JpaRepository<SubscriptionO
 
     List<SubscriptionOrder> findByMemberId(Long memberId);
 
+    Optional<SubscriptionOrder> findBySubscriptionOrderIdAndMemberMemberId(Long orderId, Long memberId);
 }

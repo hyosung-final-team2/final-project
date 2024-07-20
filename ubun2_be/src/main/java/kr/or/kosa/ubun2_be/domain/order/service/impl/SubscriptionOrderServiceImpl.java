@@ -9,6 +9,8 @@ import kr.or.kosa.ubun2_be.domain.financial.institution.service.BankService;
 import kr.or.kosa.ubun2_be.domain.financial.institution.service.CardCompanyService;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.service.MemberService;
+import kr.or.kosa.ubun2_be.domain.order.dto.RemoveSubscriptionOrderProductRequest;
+import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderDetailResponse;
 import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderProductRequest;
 import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderRequest;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
@@ -310,4 +312,17 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             processSubscriptionOrder(order);
         }
     }
+
+    @Override
+    public SubscriptionOrderDetailResponse getSubscriptionOrderByMemberIdAndOrderId(Long memberId, Long customerId, Long orderId) {
+        memberService.isExistMemberCustomer(memberId, customerId);
+
+        SubscriptionOrder findSubscriptionOrder = subscriptionOrderRepository.findBySubscriptionOrderIdAndMemberMemberId(orderId, memberId)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
+
+        int latestCycleNumber = findSubscriptionOrder.getMaxCycleNumber();
+
+        return new SubscriptionOrderDetailResponse(findSubscriptionOrder, latestCycleNumber);
+    }
+
 }
