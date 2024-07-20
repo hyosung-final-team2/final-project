@@ -328,4 +328,22 @@ public class OrderServiceImpl implements OrderService {
         return new OrderDetailResponse(findOrder);
     }
 
+    @Override
+    @Transactional
+    public void cancelOrder(Long memberId, CancelOrderRequest cancelOrderRequest) {
+        memberService.isExistMemberCustomer(memberId, cancelOrderRequest.getCustomerId());
+
+        Order order = orderRepository.findByOrderIdAndMemberMemberIdAndOrderStatus(cancelOrderRequest.getOrderId(), memberId, OrderStatus.PENDING)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
+
+        order.changeOrderStatus(OrderStatus.DENIED);
+        restoreInventory(order.getOrderProducts());
+        orderRepository.save(order);
+    }
+
+    private void restoreInventory(List<OrderProduct> orderProducts) {
+        for (OrderProduct orderProduct : orderProducts) {
+            inventoryService.increaseStock(orderProduct.getProduct().getProductId(), orderProduct.getQuantity());
+        }
+    }
 }

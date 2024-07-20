@@ -24,4 +24,5 @@ public interface OrderService {
 
     OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long customerId, Long orderId);
 
+    void cancelOrder(Long memberId, CancelOrderRequest cancelOrderRequest);
 }

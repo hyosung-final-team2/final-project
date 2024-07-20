@@ -59,5 +59,13 @@ public class OrderMemberController {
         return ResponseDto.ok(subscriptionOrderDetailResponse, "정상출력 데이터");
     }
 
+    @Operation(summary = "현재 로그인한 회원의 단건 주문 취소")
+    @PostMapping("/orders/cancel")
+    public ResponseDto<?> cancelOrder(@RequestBody CancelOrderRequest cancelOrderRequest,
+                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        orderService.cancelOrder(customUserDetails.getUserId(), cancelOrderRequest);
+        return ResponseDto.ok(null, "정상출력 데이터.");
+    }
+
 
 }
