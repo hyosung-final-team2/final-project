@@ -9,9 +9,11 @@ import SlideUpModal from "../../components/common/SlideUpModal.jsx";
 import useModalStore from "../../store/modalStore.js";
 import SelectOrderTypeModal from "../../components/Product/SelectOrderTypeModal.jsx";
 import SelectQuantityModal from "../../components/Product/SelectQuantityModal.jsx";
+import {useCreateCart} from "../../api/Cart/queris.js";
 
 function Product() {
-    const {productId} = useParams();
+    const {productId} = useParams()
+
 
     const {data: productData} = useGetProductDetail(parseInt(productId))
     const product = productData?.data?.data
@@ -66,7 +68,7 @@ function Product() {
         setModalState(true)
     }
 
-    console.log(`productId : ${product?.productId}, orderType : ${orderType}, productQuantity : ${productQuantity}` )
+    console.log(`productId : ${product?.productId}, orderType : ${orderType === null ? product?.orderOption : orderType}, productQuantity : ${productQuantity}` )
 
     const handleModalClose = () => {
         setIsSelectOrderType(false);
@@ -75,8 +77,16 @@ function Product() {
         setModalState(false)
     }
 
-    const clickCartBtn = () => {
+    console.log(product)
+    console.log(product?.orderOption)
+
+    const {mutate } = useCreateCart({productId:parseInt(productId),quantity:productQuantity, orderOption:orderType === null ? product?.orderOption : orderType  })
+
+
+    const clickCartBtn = async () => {
         // TODO: cart 넣는 API 호출, 카트에 추가됐다는 토스트 , orderType이 null 이면 product?.orderOption 넣으면 댐
+        console.log("cart Btn")
+        await mutate()
         setModalState(false)
     }
 
