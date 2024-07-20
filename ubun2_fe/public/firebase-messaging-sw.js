@@ -24,10 +24,11 @@ firebase.initializeApp(firebaseConfig);
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-    const notificationTitle = payload.title;
+    console.log(payload)
+    const notificationTitle = payload.data.title;
     const notificationOptions = {
-        body: payload.body,
-        icon: payload.icon
+        body: payload.data.content,
+        icon:  '/logo-192-192.png'
     };
     self.registration.showNotification(notificationTitle, notificationOptions);
 });

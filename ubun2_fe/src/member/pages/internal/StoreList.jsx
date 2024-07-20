@@ -4,7 +4,6 @@ import {useGetStores} from "../../api/Store/queris.js";
 function StoreList() {
 
   const { data: storeList } = useGetStores()
-  console.log(storeList)
 
   return (
       <div style={{

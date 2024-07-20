@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 const useFCMTokenStore = create(
     persist(
         set => ({
-            FCMToken: 1,
+            FCMToken: null,
             setFCMToken: state => set({ FCMToken: state }),
         }),
         {
