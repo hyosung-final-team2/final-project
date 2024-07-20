@@ -17,4 +17,7 @@ public interface OrderService {
 
     void updateOrderStatus(Long customerId, List<OrderApproveRequest> orderApproveRequests);
     void updateSubscriptionOrderStatus(Long customerId, List<SubscriptionApproveRequest> subscriptionApproveRequests);
+
+    void createSingleOrder(Long memberId, SubscriptionOrderRequest orderRequest);
+
 }

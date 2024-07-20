@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,6 +24,8 @@ public class UnifiedOrderResponse {
     private String paymentType;
     private int totalOrderPrice;
     private boolean isSubscription;
+    private List<OrderProductResponse> orderProducts;
+    private List<SubscriptionOrderProductResponse> subscriptionOrderProducts;
 
     public UnifiedOrderResponse(Order order) {
         this.orderId = order.getOrderId();
@@ -29,6 +34,9 @@ public class UnifiedOrderResponse {
         this.memberName = order.getMember().getMemberName();
         this.totalOrderPrice = calculateTotalOrderPrice(order);
         this.isSubscription = false;
+        this.orderProducts = order.getOrderProducts().stream()
+                .map(OrderProductResponse::new)
+                .collect(Collectors.toList());
         setPaymentType(order.getPaymentMethod());
     }
 
@@ -39,6 +47,9 @@ public class UnifiedOrderResponse {
         this.memberName = subscriptionOrder.getMember().getMemberName();
         this.totalOrderPrice = calculateTotalSubscriptionOrderPrice(subscriptionOrder);
         this.isSubscription = true;
+        this.subscriptionOrderProducts = subscriptionOrder.getSubscriptionOrderProducts().stream()
+                .map(SubscriptionOrderProductResponse::new)
+                .collect(Collectors.toList());
         setPaymentType(subscriptionOrder.getPaymentMethod());
     }
 
