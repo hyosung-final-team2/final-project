@@ -3,6 +3,7 @@ import { companies } from './CardList';
 import { useState, useCallback, useEffect } from 'react';
 import SlideUpModal from '../common/SlideUpModal';
 import CardItem from './CardItem';
+import Account from './Account';
 
 const BankAccountForm = ({ inputStyle, labelStyle, onFormChange }) => {
   const [isModalOpen, setIsModalOpen] = useState('');
@@ -11,8 +12,6 @@ const BankAccountForm = ({ inputStyle, labelStyle, onFormChange }) => {
     accountNumber: '',
     paymentMethodNickname: '',
     bank: null,
-    // accountPassword: '',
-    // expirationDate: '',
   });
 
   const updateFormData = useCallback((key, value) => {
@@ -31,41 +30,44 @@ const BankAccountForm = ({ inputStyle, labelStyle, onFormChange }) => {
   };
 
   return (
-    <div className='space-y-6 mt-5 px-4'>
-      <div className='mx-6 mb-10'>
+    <div className='space-y-6 px-4'>
+      <Account {...formData} />
+      {/* <div className='mx-6 mb-10'>
         <h2 className='text-2xl font-bold mb-2'>결제할 계좌를 알려주세요.</h2>
         <p className='text-gray-600 text-xl'>한 번 등록해두면 다음부터는 계좌 정보를 다시 입력할 필요 없어요.</p>
-      </div>
-      <FloatingLabelInput
-        id='bank-selection'
-        label='은행 선택'
-        className='cursor-pointer'
-        value={formData.bankName ? `${formData.bankName}은행` : ''}
-        onFocus={() => setIsModalOpen(true)}
-        isSelectable={true}
-        readOnly
-      />
-      <FloatingLabelInput
-        id='paymentMethodNickname'
-        label='계좌 별칭'
-        className='text-main'
-        value={formData.paymentMethodNickname}
-        onChange={handleInputChange('paymentMethodNickname')}
-      />
-      <FloatingLabelInput
-        id='accountNumber'
-        label='은행 계좌번호'
-        className='text-main'
-        value={formData.accountNumber}
-        onChange={handleInputChange('accountNumber')}
-      />
-      <FloatingLabelInput
-        id='accountPassword'
-        label='계좌 비밀번호'
-        className='text-main'
-        value={formData.accountPassword}
-        onChange={handleInputChange('accountPassword')}
-      />
+      </div> */}
+      <form className='space-y-6'>
+        <FloatingLabelInput
+          id='bank-selection'
+          label='은행 선택'
+          className='cursor-pointer'
+          value={formData.bankName ? `${formData.bankName}은행` : ''}
+          onFocus={() => setIsModalOpen(true)}
+          isSelectable={true}
+          readOnly
+        />
+        <FloatingLabelInput
+          id='paymentMethodNickname'
+          label='계좌 별칭'
+          className='text-main'
+          value={formData.paymentMethodNickname}
+          onChange={handleInputChange('paymentMethodNickname')}
+        />
+        <FloatingLabelInput
+          id='accountNumber'
+          label='은행 계좌번호'
+          className='text-main'
+          value={formData.accountNumber}
+          onChange={handleInputChange('accountNumber')}
+        />
+        <FloatingLabelInput
+          id='accountPassword'
+          label='계좌 비밀번호'
+          className='text-main'
+          value={formData.accountPassword}
+          onChange={handleInputChange('accountPassword')}
+        />
+      </form>
       <SlideUpModal isOpen={isModalOpen} setIsModalOpen={setIsModalOpen} headerText='은행을 선택하세요' isButton={false}>
         <div className='bg-white px-4 pb-2 rounded-lg max-w-3xl w-full'>
           <div className='grid grid-cols-3 gap-3'>

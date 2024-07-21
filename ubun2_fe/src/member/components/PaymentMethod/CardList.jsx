@@ -95,3 +95,21 @@ export const getPng = name => {
   const company = companies.find(c => c.name === cleanName);
   return company ? company.path : null;
 };
+
+export const getCardColor = name => {
+  const cleanName = name?.replace(/(은행|카드)$/, '').trim();
+  const company = companies.find(c => c.name === cleanName);
+  return company ? company.color : null;
+};
+
+export const getCardLogo = name => {
+  const cleanName = name?.replace(/(은행|카드)$/, '').trim();
+  const company = companies.find(c => c.name === cleanName);
+  return company ? company.logo : null;
+};
+
+export const getBankLogo = name => {
+  const cleanName = name?.replace(/(은행|카드)$/, '').trim();
+  const company = companies.find(c => c.name === cleanName);
+  return company ? company.path : null;
+};

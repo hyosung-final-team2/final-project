@@ -1,6 +1,8 @@
 import { Table } from 'flowbite-react';
 import { useDeletePaymentMethod } from '../../../api/PaymentMethod/Modal/queris';
 import paymentMethodStore from '../../../store/PaymentMethod/paymentMethodStore';
+import { maskCardNumber } from '../../../utils/cardFormat';
+
 const MemberPaymentTableRow = ({ paymentMethodId, paymentType, cardCompanyName, bankName, cardNumber, accountNumber, currentPage }) => {
   const isAccount = paymentType === 'ACCOUNT';
   const { isUpdate } = paymentMethodStore();
@@ -16,7 +18,7 @@ const MemberPaymentTableRow = ({ paymentMethodId, paymentType, cardCompanyName, 
         <Table.Cell>{paymentMethodId}</Table.Cell>
         <Table.Cell>{isAccount ? '계좌' : '카드'}</Table.Cell>
         <Table.Cell>{isAccount ? bankName : cardCompanyName}</Table.Cell>
-        <Table.Cell>{isAccount ? accountNumber : cardNumber}</Table.Cell>
+        <Table.Cell>{isAccount ? accountNumber : maskCardNumber(cardNumber)}</Table.Cell>
         {isUpdate && (
           <>
             <svg

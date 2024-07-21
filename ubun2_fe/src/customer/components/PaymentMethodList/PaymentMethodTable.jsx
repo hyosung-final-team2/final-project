@@ -24,6 +24,7 @@ const PaymentMethodTable = () => {
   const [paymentMethodId, setPaymentMethodId] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [clickedPayment, setClickedPayment] = useState(null);
   const { data: cards } = useGetCardPayments(currentPage);
   const { data: accounts } = useGetAccountPayments(currentPage);
 
@@ -65,10 +66,11 @@ const PaymentMethodTable = () => {
     setCheckedMembers(prev => (prev.includes(id) ? prev.filter(id => id !== id) : [...prev, id]));
   };
 
-  const handleRowClick = async (paymentMethodId, memberId) => {
+  const handleRowClick = async (paymentMethodId, memberId, payment) => {
     await setPaymentMethodId(paymentMethodId);
     await refetch();
     await setOpenModal(true);
+    setClickedPayment(payment);
     setSelectedMemberId(memberId);
   };
 
@@ -98,7 +100,13 @@ const PaymentMethodTable = () => {
           }
         </Table>
         <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
-        <MemberPaymentMethodModal isOpen={openModal} setOpenModal={setOpenModal} paymentMethodId={paymentMethodId} setPaymentMethodId={setPaymentMethodId} />
+        <MemberPaymentMethodModal
+          isOpen={openModal}
+          setOpenModal={setOpenModal}
+          paymentMethodId={paymentMethodId}
+          setPaymentMethodId={setPaymentMethodId}
+          clickedPayment={clickedPayment}
+        />
       </div>
     </div>
   );

@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { getCardColor, getCardLogo, getIcon } from './CardList';
+import { getIcon, getCardColor, getCardLogo } from '../../../member/components/PaymentMethod/CardList';
+import { formatCardNumberWithSpace } from '../../utils/cardFormat';
 
-const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, handleClick, owner, cardCompany }) => {
+const PaymentMethodCard = ({ isFlipped, cardNumber, cvc, handleClick, memberName, cardCompany }) => {
+  const formattedCardNumber = cardNumber ? formatCardNumberWithSpace(cardNumber) : '****-****-****-****';
+
+  const embossedTextStyle = {
+    fontFamily: '"Courier New", monospace',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    color: '#fff',
+    textTransform: 'uppercase',
+    letterSpacing: '1px',
+    textShadow: '-1px -1px 1px #555, 2px 2px 1px #888',
+  };
+
   return (
-    <div className='flex items-center justify-center'>
+    <div className='flex flex-1 pt-4'>
       <div className='bg-white px-8 w-full max-w-md'>
-        <div className='relative h-56 w-full mb-8' onClick={handleClick}>
+        <div className='relative h-56 w-full mb-8 cursor-pointer' onClick={handleClick}>
           <motion.div
             className='relative w-full h-full'
             initial={false}
@@ -19,24 +32,16 @@ const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, 
               <div className={`bg-gray-900 ${getCardColor(cardCompany)} rounded-xl p-6 text-white shadow-md h-full flex flex-col justify-between`}>
                 <div className='flex justify-between items-start'>
                   {cardCompany ? (
-                    <div className='w-12 h-8'>{getIcon(cardCompany)}</div>
+                    <div className='flex'>
+                      <div className='w-12 h-8'>{getIcon(cardCompany)}</div>
+                      <div className='pt-1 pl-2 text-xl'>{cardCompany}</div>
+                    </div>
                   ) : (
                     <div className='w-12 h-8 bg-gradient-to-br from-gray-200 to-gray-100 rounded-md'></div>
                   )}
-
-                  {cardNickname}
                 </div>
-                <div className='text-2xl mb-4'>{cardNumber || '****-****-****-****'}</div>
-                <div className='flex justify-between'>
-                  <div>
-                    <div className='text-xs uppercase'>카드 별명</div>
-                    <div>{owner || ''}</div>
-                  </div>
-                  <div>
-                    <div className='text-xs uppercase'>유효기간</div>
-                    <div>{expirationDate || '**/**'}</div>
-                  </div>
-                </div>
+                <div style={embossedTextStyle}>{`${memberName}님`}</div>
+                <div style={embossedTextStyle}>{formattedCardNumber || '****-****-****-****'}</div>
               </div>
             </div>
             {/* Back of the card */}
@@ -63,4 +68,4 @@ const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, 
   );
 };
 
-export default CreditCard;
+export default PaymentMethodCard;
