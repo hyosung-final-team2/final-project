@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useGetMyAddresses } from '../../api/Address/queries';
 import { useCreateOrder } from '../../api/Order/queris';
@@ -61,11 +60,14 @@ const Order = () => {
   const handleOrder = async () => {
     if (isOrderButtonDisabled) {
       if (!selectedAddress) {
-        toast.error('배송지를 선택해주세요.');
+        // TODO: 뱃지로 대체
+        console.log('배송지를 선택해주세요.');
       } else if (selectedItems.length === 0) {
-        toast.error('주문할 상품이 없습니다.');
+        // TODO: 뱃지로 대체
+        console.log('주문할 상품이 없습니다.');
       } else {
-        toast.error('모든 정기 주문 상품의 배송 주기를 선택해주세요.');
+        // TODO: 뱃지로 대체
+        console.log('모든 정기 주문 상품의 배송 주기를 선택해주세요.');
       }
       return;
     }
@@ -88,11 +90,12 @@ const Order = () => {
       console.log('주문 데이터:', orderData);
       await createOrderMutation.mutateAsync(orderData);
       clearCart(); // 주문 완료 후 장바구니 비우기
-      toast.success('주문이 완료되었습니다. 내역을 확인해보세요.');
+      // TODO: 뱃지로 대체
+      console.log('주문이 완료되었습니다.');
       navigate('/order-complete', { replace: true }); // 뒤로가기 방지
     } catch (error) {
-      console.error('주문 생성 실패:', error);
-      toast.error('결제에 실패했습니다. 다시 시도해주세요.');
+      // TODO: 뱃지로 대체
+      console.log('주문에 실패했습니다:', error);
     }
   };
 
