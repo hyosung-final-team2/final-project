@@ -10,6 +10,7 @@ public class MemberSignUpRequest {
     private String memberName;
     private String memberEmail;
     private String memberPhone;
+    private String fcmToken;
 
     public Member toEntity(){
         return Member.builder().memberEmail(memberEmail)
@@ -17,6 +18,7 @@ public class MemberSignUpRequest {
                 .memberPassword(memberPassword)
                 .memberName(memberName)
                 .memberPhone(memberPhone)
+                .fcmToken(fcmToken)
                 .build();
     }
 }

@@ -1,10 +1,12 @@
 package kr.or.kosa.ubun2_be.domain.member.service.impl;
 
+import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.dto.AnnouncementResponse;
 import kr.or.kosa.ubun2_be.domain.member.dto.CustomerResponse;
+import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
 import kr.or.kosa.ubun2_be.domain.member.dto.MemberSignUpRequest;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
@@ -33,6 +35,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberCustomerRepository memberCustomerRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
+    private final AlarmService alarmService;
 
     @Override
     @Transactional
@@ -45,6 +48,7 @@ public class MemberServiceImpl implements MemberService {
                 .memberEmail(memberSignUpRequest.getMemberEmail())
                 .memberPhone(memberSignUpRequest.getMemberPhone())
                 .memberPassword(passwordEncoder.encode(memberSignUpRequest.getMemberPassword()))
+                .fcmToken(memberSignUpRequest.getFcmToken())
                 .userRole(UserRole.ROLE_MEMBER).build());
 
         List<PendingMember> findPendingMembers = pendingMemberRepository.findByPendingMemberEmail(memberSignUpRequest.getMemberEmail());
@@ -53,9 +57,11 @@ public class MemberServiceImpl implements MemberService {
         }
         for (PendingMember findPendingMember : findPendingMembers) {
             memberCustomerRepository.save(MemberCustomer.createMemberCustomer(savedMember,findPendingMember.getCustomer()));
+            alarmService.subscribeCustomer(memberSignUpRequest.getFcmToken(), findPendingMember.getCustomer().getId());
             pendingMemberRepository.delete(findPendingMember);
         }
     }
+
     @Override
     public List<CustomerResponse> getCustomers(Long memberId) {
         return customerRepository.findCustomersByMemberId(memberId).stream().map(CustomerResponse::new).toList();
@@ -86,5 +92,29 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member findById(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+    }
+
+    @Override
+    @Transactional
+    public void updateFcmToken(Long memberId, FcmTokenRequest fcmTokenRequest) {
+        Member member = findById(memberId);
+        if (member.getFcmToken().equals(fcmTokenRequest.getFcmToken())) {
+            return;
+        }
+
+        List<MemberCustomer> memberCustomers = memberCustomerRepository.findByMemberIdFetchJoinCustomers(memberId);
+
+        // 1. 원래 FcmToken으로 구독된거 다 끊어주고
+        for (MemberCustomer memberCustomer : memberCustomers) {
+            alarmService.unsubscribeCustomer(member.getFcmToken(), memberCustomer.getCustomer().getCustomerId());
+        }
+        // 2. FCM 토큰 업데이트 해주고
+        member.updateMemberFcmToken(fcmTokenRequest.getFcmToken());
+
+        // 3. 바뀐 토큰으로 다시 구독
+        for (MemberCustomer memberCustomer : memberCustomers) {
+            alarmService.subscribeCustomer(fcmTokenRequest.getFcmToken(), memberCustomer.getCustomer().getCustomerId());
+        }
+
     }
 }

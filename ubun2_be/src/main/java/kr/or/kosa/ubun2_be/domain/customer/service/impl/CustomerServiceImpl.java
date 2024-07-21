@@ -8,6 +8,7 @@ import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressException;
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressExceptionType;
 import kr.or.kosa.ubun2_be.domain.address.repository.AddressRepository;
+import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.*;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
@@ -61,6 +62,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final AccountPaymentRepository accountPaymentRepository;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
+    private final AlarmService alarmService;
 
     @Override
     public Customer findById(Long customerId) {
@@ -94,6 +96,8 @@ public class CustomerServiceImpl implements CustomerService {
         if (memberOptional.isPresent()) {
             // 1. 있으면 => 이미 서비스에 가입되어있는 회원이기에 바로 다대다 테이블에 등록
             memberCustomerRepository.save(MemberCustomer.createMemberCustomer(memberOptional.get(),customer));
+            // TODO: 구독 로직
+            alarmService.subscribeCustomer(memberOptional.get().getFcmToken(), customerId);
         } else {
             // 2. 없으면 => 가입 대기중인 pendingMemberTable에 등록
             pendingMemberRepository.save(PendingMember.createPendingMember(registerMemberRequest,customer));
@@ -150,7 +154,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (isPending) {
             deletePendingMember(memberId);
         } else {
-            deleteRegularMember(memberId);
+            deleteRegularMember(memberId,customerId);
         }
     }
 
@@ -260,10 +264,10 @@ public class CustomerServiceImpl implements CustomerService {
         pendingMemberRepository.deleteById(memberId);
     }
 
-    private void deleteRegularMember(Long memberId) {
-        if (!memberRepository.existsById(memberId)) {
-            throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
-        }
+    private void deleteRegularMember(Long memberId, Long customerId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
         memberRepository.deleteById(memberId);
+        alarmService.unsubscribeCustomer(member.getFcmToken(), customerId);
     }
 }
