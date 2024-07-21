@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.member.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
+import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -18,4 +19,7 @@ public interface MemberCustomerRepository extends JpaRepository<MemberCustomer,L
 
     @Query("SELECT mc FROM MemberCustomer mc JOIN FETCH mc.customer WHERE mc.member.memberId = :memberId")
     List<MemberCustomer> findByMemberIdFetchJoinCustomers(Long memberId);
+
+    @Query("SELECT mc.member FROM MemberCustomer mc WHERE mc.customer.customerId = :customerId")
+    List<Member> findMembersByCustomerId(@Param("customerId") Long customerId);
 }

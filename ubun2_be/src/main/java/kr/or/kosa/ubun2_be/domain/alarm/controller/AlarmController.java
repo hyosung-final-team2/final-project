@@ -4,13 +4,13 @@ package kr.or.kosa.ubun2_be.domain.alarm.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.GroupAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.PersonalAlarmSendRequest;
+import kr.or.kosa.ubun2_be.domain.alarm.entity.Alarm;
 import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/alarm")
@@ -31,5 +31,19 @@ public class AlarmController {
     public ResponseDto<?> pushMessageGroup(@RequestBody GroupAlarmSendRequest request) {
         alarmService.sendMessageToGroup(request);
         return ResponseDto.ok(null,"토픽 알람 전송 성공");
+    }
+
+    @Operation(summary = "고객별 알림 조회")
+    @GetMapping("/{memberId}")
+    public ResponseDto<List<Alarm>> getPushMessages(@PathVariable Long memberId) {
+        List<Alarm> alarms = alarmService.getPushMessages(memberId);
+        return ResponseDto.ok(alarms, "메시지 조회 성공");
+    }
+
+    @Operation(summary = "알림 읽음 처리")
+    @DeleteMapping("/{memberId}/{alarmId}")
+    public ResponseDto<?> markAlarmAsRead(@PathVariable Long memberId, @PathVariable String alarmId) {
+        alarmService.markAsRead(memberId, alarmId);
+        return ResponseDto.ok(null, "알림 읽음 처리 완료");
     }
 }
