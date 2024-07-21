@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createCart, deleteCart, getCart } from './cart.js';
+import { createCart, deleteCart, getCart, updateCartQuantity } from './cart.js';
 import useMemberStore from '../../store/memberStore.js';
 import useStoreStore from '../../store/storeStore.js';
 import toast from 'react-hot-toast';
@@ -49,6 +49,20 @@ export const useDeleteCart = () => {
     },
     onError: error => {
       toast.error(`장바구니 물품 삭제 실패 : ${error.message}`);
+    },
+  });
+};
+
+export const useUpdateCart = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateCartQuantity,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['carts'] });
+      toast.success('장바구니 물품 수량 변경 완료');
+    },
+    onError: error => {
+      toast.error(`장바구니 물품 수량 변경 실패 : ${error.message}`);
     },
   });
 };

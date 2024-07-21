@@ -16,3 +16,13 @@ export const deleteCart = async requestData => {
   });
   return res;
 };
+
+export const updateCartQuantity = async requestData => {
+  console.log('Update request payload :', requestData);
+  const res = await privateFetch({
+    method: 'put',
+    url: '/members/carts',
+    data: requestData,
+  });
+  return res;
+};
