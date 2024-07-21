@@ -1,14 +1,19 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
+// zustand 스토어를 생성합니다. 이 스토어는 장바구니 데이터를 관리하는 데 사용됩니다.
 const useOrderItemsStore = create(
   persist(
     (set, get) => ({
-      cartData: null,
-      selectedItems: [],
+      // 초기 상태 정의
+      cartData: [], // 장바구니 데이터
+      selectedItems: [], // 선택된 아이템들
+      updatedQuantities: {}, // 수량 변경 추적용 상태관리
 
+      // 장바구니 데이터를 설정하는 함수
       setCartData: newCartData => set({ cartData: newCartData }),
 
+      // 스토어의 모든 제품이 선택되었는지 확인하는 함수
       isStoreAllSelected: customerId => {
         const { selectedItems, cartData } = get();
         const selectedStore = selectedItems.find(s => s.customerId === customerId);
@@ -16,17 +21,21 @@ const useOrderItemsStore = create(
 
         if (!selectedStore || !cartStore) return false;
 
+        // cartStore의 모든 제품이 selectedStore에 있는지 확인
         return cartStore.cartProducts.every(product => selectedStore.cartProducts.some(p => p.cartProductId === product.cartProductId));
       },
 
+      // 특정 제품이 선택되었는지 확인하는 함수
       isProductSelected: (customerId, cartProductId) => {
         const { selectedItems } = get();
         const selectedStore = selectedItems.find(s => s.customerId === customerId);
         if (!selectedStore) return false;
 
+        // selectedStore의 제품 목록에 cartProductId가 포함되어 있는지 확인
         return selectedStore.cartProducts.some(p => p.cartProductId === cartProductId);
       },
 
+      // 스토어의 모든 제품을 선택하거나 선택 해제하는 함수
       handleSelectAllStore: (customerId, checked) => {
         set(state => {
           const store = state.cartData.find(s => s.customerId === customerId);
@@ -57,6 +66,7 @@ const useOrderItemsStore = create(
         });
       },
 
+      // 특정 제품을 선택하거나 선택 해제하는 함수
       handleSelectProduct: (customerId, product, checked) => {
         set(state => {
           const newSelectedItems = [...state.selectedItems];
@@ -92,84 +102,118 @@ const useOrderItemsStore = create(
         });
       },
 
+      // 제품의 수량을 업데이트하는 함수
       updateProductQuantity: (customerId, cartProductId, newQuantity) => {
-        set(state => ({
-          cartData: state.cartData.map(store =>
-            store.customerId === customerId
-              ? {
-                  ...store,
-                  cartProducts: store.cartProducts.map(product => (product.cartProductId === cartProductId ? { ...product, quantity: newQuantity } : product)),
-                }
-              : store
-          ),
-          selectedItems: state.selectedItems.map(store =>
-            store.customerId === customerId
-              ? {
-                  ...store,
-                  cartProducts: store.cartProducts.map(product => (product.cartProductId === cartProductId ? { ...product, quantity: newQuantity } : product)),
-                }
-              : store
-          ),
-        }));
+        set(state => {
+          // cartData 업데이트
+          const newCartData = state.cartData.map(store => {
+            if (store.customerId === customerId) {
+              return {
+                ...store,
+                cartProducts: store.cartProducts.map(product => (product.cartProductId === cartProductId ? { ...product, quantity: newQuantity } : product)),
+              };
+            }
+            return store;
+          });
+
+          // selectedItems 업데이트
+          const newSelectedItems = state.selectedItems.map(store => {
+            if (store.customerId === customerId) {
+              return {
+                ...store,
+                cartProducts: store.cartProducts.map(product => (product.cartProductId === cartProductId ? { ...product, quantity: newQuantity } : product)),
+              };
+            }
+            return store;
+          });
+
+          const updatedQuantities = {
+            ...state.updatedQuantities,
+            [`${customerId}-${cartProductId}`]: newQuantity,
+          };
+
+          return {
+            cartData: newCartData,
+            selectedItems: newSelectedItems,
+            updatedQuantities,
+          };
+        });
       },
 
+      // 특정 제품을 제거하는 함수
       removeProducts: productIds => {
-        set(state => ({
-          cartData: state.cartData
+        set(state => {
+          const newCartData = state.cartData.map(store => ({
+            ...store,
+            cartProducts: store.cartProducts.filter(product => !productIds.includes(product.productId)),
+          }));
+
+          const newSelectedItems = state.selectedItems
             .map(store => ({
               ...store,
               cartProducts: store.cartProducts.filter(product => !productIds.includes(product.productId)),
             }))
-            .filter(store => store.cartProducts.length > 0),
-          selectedItems: state.selectedItems
-            .map(store => ({
-              ...store,
-              cartProducts: store.cartProducts.filter(product => !productIds.includes(product.productId)),
-            }))
-            .filter(store => store.cartProducts.length > 0),
-        }));
+            .filter(store => store.cartProducts.length > 0);
+
+          return {
+            cartData: newCartData,
+            selectedItems: newSelectedItems,
+          };
+        });
       },
 
-      clearCart: () => {
-        set({ cartData: null, selectedItems: [] });
-        localStorage.removeItem('cart-storage');
-      },
-
+      // 스토어가 비어있으면 제거하는 함수
       removeStoreIfEmpty: customerId => {
-        set(state => ({
-          cartData: state.cartData.filter(store => store.customerId !== customerId || store.cartProducts.length > 0),
-          selectedItems: state.selectedItems.filter(store => store.customerId !== customerId || store.cartProducts.length > 0),
-        }));
+        set(state => {
+          const newCartData = state.cartData.filter(store => store.customerId !== customerId || store.cartProducts.length > 0);
+          const newSelectedItems = state.selectedItems.filter(store => store.customerId !== customerId || store.cartProducts.length > 0);
+          return {
+            cartData: newCartData,
+            selectedItems: newSelectedItems,
+          };
+        });
       },
 
+      // 장바구니를 비우는 함수
+      clearCart: () => set({ cartData: [], selectedItems: [], updatedQuantities: {} }),
+
+      // 총합을 계산하는 함수
       calculateTotals: () => {
         const { selectedItems } = get();
         let productAmount = 0;
         let discount = 0;
-        let totalAmount = 0;
         let selectedCount = 0;
 
         selectedItems.forEach(store => {
           store.cartProducts.forEach(product => {
-            selectedCount++;
             productAmount += product.productPrice * product.quantity;
             discount += product.productDiscount * product.quantity;
-            totalAmount += (product.productPrice - product.productDiscount) * product.quantity;
+            selectedCount += product.quantity;
           });
         });
 
-        return {
-          productAmount,
-          discount,
-          totalAmount: Math.round(totalAmount),
-          selectedCount,
-        };
+        const totalAmount = productAmount - discount;
+
+        return { productAmount, discount, totalAmount, selectedCount };
+      },
+
+      // 업데이트된 장바구니 데이터를 반환하는 함수
+      getUpdatedCartData: () => {
+        const { cartData, updatedQuantities } = get();
+        const updatedCartData = cartData.map(store => ({
+          customerId: store.customerId,
+          cartId: store.cartProducts[0].cartId,
+          cartProducts: store.cartProducts.map(product => ({
+            productId: product.productId,
+            quantity: updatedQuantities[`${store.customerId}-${product.cartProductId}`] || product.quantity,
+          })),
+        }));
+        return updatedCartData;
       },
     }),
     {
-      name: 'cart-storage',
-      storage: createJSONStorage(() => localStorage),
-      partialize: state => ({ selectedItems: state.selectedItems }),
+      name: 'order-items-storage',
+      storage: createJSONStorage(() => localStorage), // localStorage를 사용
     }
   )
 );

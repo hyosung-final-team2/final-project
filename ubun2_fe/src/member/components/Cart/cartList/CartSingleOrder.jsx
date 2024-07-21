@@ -20,7 +20,7 @@ const CartSingleOrder = ({ singleOrderProducts, selectedItems, onSelectProduct, 
             {...product}
             isSelected={selectedItems.some(item => item.cartProductId === product.cartProductId)}
             onSelect={checked => onSelectProduct(product, checked)}
-            onQuantityChange={newQuantity => onQuantityChange(product.cartProductId, newQuantity)}
+            onQuantityChange={onQuantityChange}
             onDelete={() => onDelete(product.cartProductId)}
           />
         ))}

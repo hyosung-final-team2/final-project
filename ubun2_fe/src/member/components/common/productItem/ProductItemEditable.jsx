@@ -38,7 +38,7 @@ const ProductItemEditable = ({
             </div>
           </div>
           <div className='flex items-center justify-between mt-2'>
-            <QuantityButton initialQuantity={quantity} onQuantityChange={newQuantity => onQuantityChange(cartProductId, newQuantity)} />
+            <QuantityButton initialQuantity={quantity} onQuantityChange={onQuantityChange} cartProductId={cartProductId} />
             <p className='text-lg font-bold'>{`${roundedProductAmount.toLocaleString()} 원`}</p>
           </div>
         </div>
