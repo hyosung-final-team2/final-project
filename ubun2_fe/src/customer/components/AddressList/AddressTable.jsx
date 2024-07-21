@@ -21,6 +21,7 @@ const AddressTable = () => {
   const [openAddressRegistration, setOpenAddressRegistration] = useState(false);
   const [selectedAddresses, setSelectedAddresses] = useState([]); // 체크된 멤버 ID
   const [addressId, setAddressId] = useState(null);
+  const [clickedAddress, setClickedAddress] = useState(null);
   const { setSelectedMemberId } = useAddressStore();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,10 +58,11 @@ const AddressTable = () => {
     setSelectedAddresses(prev => (prev.includes(id) ? prev.filter(id => id !== id) : [...prev, id]));
   };
 
-  const handleRowClick = async (addressId, memberId) => {
+  const handleRowClick = async (addressId, memberId, clickedAddress) => {
     await setAddressId(addressId);
     await refetch();
     await setOpenMemberAddressModal(true);
+    await setClickedAddress(clickedAddress);
     setSelectedMemberId(memberId);
   };
 
@@ -86,6 +88,7 @@ const AddressTable = () => {
           isOpen={openMemberAddressModal}
           setOpenModal={setOpenMemberAddressModal}
           addressId={addressId}
+          address={clickedAddress}
           setAddressId={setAddressId}
           currentPage={currentPage}
         />
