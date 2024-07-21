@@ -33,11 +33,17 @@ public class AlarmController {
         return ResponseDto.ok(null,"토픽 알람 전송 성공");
     }
 
-
     @Operation(summary = "고객별 알림 조회")
     @GetMapping("/{memberId}")
     public ResponseDto<List<Alarm>> getPushMessages(@PathVariable Long memberId) {
         List<Alarm> alarms = alarmService.getPushMessages(memberId);
         return ResponseDto.ok(alarms, "메시지 조회 성공");
+    }
+
+    @Operation(summary = "알림 읽음 처리")
+    @DeleteMapping("/{memberId}/{alarmId}")
+    public ResponseDto<?> markAlarmAsRead(@PathVariable Long memberId, @PathVariable String alarmId) {
+        alarmService.markAsRead(memberId, alarmId);
+        return ResponseDto.ok(null, "알림 읽음 처리 완료");
     }
 }

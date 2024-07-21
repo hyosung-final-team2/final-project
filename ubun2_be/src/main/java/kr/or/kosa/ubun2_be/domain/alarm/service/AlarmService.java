@@ -16,4 +16,6 @@ public interface AlarmService {
     void sendMessageToGroup(GroupAlarmSendRequest request);
 
     List<Alarm> getPushMessages(Long memberId);
+
+    void markAsRead(Long memberId, String alarmId);
 }

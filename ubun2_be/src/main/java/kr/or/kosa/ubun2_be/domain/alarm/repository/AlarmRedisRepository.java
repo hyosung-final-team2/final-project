@@ -26,4 +26,19 @@ public class AlarmRedisRepository {
         return redisTemplate.opsForList().range(key, 0, -1);
     }
 
+    public void removeAlarmById(String memberId, String alarmId) {
+        String key = ALARM_PREFIX + memberId;
+        List<Object> alarms = redisTemplate.opsForList().range(key, 0, -1);
+        if (alarms != null) {
+            for (Object obj : alarms) {
+                if (obj instanceof Alarm alarm) {
+                    if (alarm.getId().equals(alarmId)) {
+                        redisTemplate.opsForList().remove(key, 1, alarm);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
 }

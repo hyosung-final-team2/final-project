@@ -86,6 +86,11 @@ public class AlarmServiceImpl implements AlarmService{
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void markAsRead(Long memberId, String alarmId) {
+        alarmRedisRepository.removeAlarmById(String.valueOf(memberId), alarmId);
+    }
+
     private Message makePersonalMessage(PersonalAlarmSendRequest request, String token) {
         return Message.builder()
                 .putData("title", request.getTitle())
