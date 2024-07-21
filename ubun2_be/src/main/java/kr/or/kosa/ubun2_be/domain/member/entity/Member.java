@@ -48,7 +48,7 @@ public class Member extends BaseTimeEntity implements UserType {
     private UserRole userRole;
 
     @Column
-    private String FcmToken;
+    private String fcmToken;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Address> addresses;
@@ -102,7 +102,7 @@ public class Member extends BaseTimeEntity implements UserType {
     }
 
     public void updateMemberFcmToken(String fcmToken) {
-        this.FcmToken = fcmToken;
+        this.fcmToken = fcmToken;
     }
 
 }

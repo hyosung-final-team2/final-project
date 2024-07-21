@@ -85,7 +85,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/customers/login", "/customers/signup", "/token/refresh",
                                          "auth/send", "auth", "members/signup", "/find/id",
-                                         "find/password","reset/password","alarm/personal").permitAll()
+                                         "find/password","reset/password","alarm/personal", "alarm/group").permitAll()
                         .requestMatchers("/customers/**").hasRole("CUSTOMER")
                         .requestMatchers("/members/**").hasRole("MEMBER")
                         .anyRequest().authenticated());
