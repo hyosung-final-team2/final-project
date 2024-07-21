@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-// zustand 스토어를 생성합니다. 이 스토어는 장바구니 데이터를 관리하는 데 사용됩니다.
 const useOrderItemsStore = create(
   persist(
     (set, get) => ({

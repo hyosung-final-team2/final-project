@@ -148,7 +148,7 @@ const Order = () => {
       </div>
       <div className='sticky bottom-0 left-0 right-0 p-4 bg-white'>
         <BottomButton
-          buttonText='결제하기'
+          buttonText='구매하기'
           buttonStyle={`${isOrderButtonDisabled ? 'bg-gray-400' : 'bg-main'} text-white`}
           buttonFunc={handleOrder}
           disabled={isOrderButtonDisabled}
