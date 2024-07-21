@@ -45,10 +45,12 @@ export const useDeleteCart = () => {
     mutationFn: deleteCart,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['carts'] });
-      toast.success('장바구니 물품 삭제 완료');
+      // TODO : 뱃지로 대체
+      console.log('장바구니 물품 삭제 완료');
     },
     onError: error => {
-      toast.error(`장바구니 물품 삭제 실패 : ${error.message}`);
+      // TODO : 뱃지로 대체
+      console.log('장바구니 물품 삭제 실패 : ', error);
     },
   });
 };
@@ -59,10 +61,12 @@ export const useUpdateCart = () => {
     mutationFn: updateCartQuantity,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['carts'] });
-      toast.success('장바구니 물품 수량 변경 완료');
+      // TODO : 뱃지로 대체
+      console.log('장바구니 물품 수량 변경 완료');
     },
     onError: error => {
-      toast.error(`장바구니 물품 수량 변경 실패 : ${error.message}`);
+      // TODO : 뱃지로 대체
+      console.log('장바구니 물품 수량 변경 실패 : ', error);
     },
   });
 };

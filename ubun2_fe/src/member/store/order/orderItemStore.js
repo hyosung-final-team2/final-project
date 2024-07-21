@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
-// zustand 스토어를 생성합니다. 이 스토어는 장바구니 데이터를 관리하는 데 사용됩니다.
 const useOrderItemsStore = create(
   persist(
     (set, get) => ({
@@ -209,6 +208,27 @@ const useOrderItemsStore = create(
           })),
         }));
         return updatedCartData;
+      },
+
+      // 구독 주기를 설정하는 함수 추가
+      setSubscriptionPeriod: (customerId, intervalDays) => {
+        set(state => {
+          const newSelectedItems = state.selectedItems.map(store => {
+            if (store.customerId === customerId) {
+              return {
+                ...store,
+                intervalDays: intervalDays,
+                cartProducts: store.cartProducts.map(product => ({
+                  ...product,
+                  intervalDays: intervalDays,
+                })),
+              };
+            }
+            return store;
+          });
+
+          return { selectedItems: newSelectedItems };
+        });
       },
     }),
     {
