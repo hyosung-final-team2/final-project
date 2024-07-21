@@ -1,27 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { companies } from './CardList';
+import { getCardColor, getCardLogo, getIcon } from './CardList';
 
 const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, handleClick, owner, cardCompany }) => {
-  const getCardIcon = () => {
-    const company = companies.find(c => c.name === cardCompany);
-    return company ? company.icon : null;
-  };
-
-  const getCardColor = () => {
-    const company = companies.find(c => c.name === cardCompany);
-    return company ? company.color : null;
-  };
-
-  const getCardLogo = () => {
-    const company = companies.find(c => c.name === cardCompany);
-    return company ? company.logo : null;
-  };
-
   return (
     <div className='flex items-center justify-center'>
       <div className='bg-white px-8 w-full max-w-md'>
-        <div className='relative h-56 w-full mb-8 cursor-pointer' onClick={handleClick}>
+        <div className='relative h-56 w-full mb-8' onClick={handleClick}>
           <motion.div
             className='relative w-full h-full'
             initial={false}
@@ -31,10 +16,10 @@ const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, 
           >
             {/* Front of the card */}
             <div className='absolute w-full h-full' style={{ backfaceVisibility: 'hidden' }}>
-              <div className={`bg-gray-900 ${getCardColor()} rounded-xl p-6 text-white shadow-md h-full flex flex-col justify-between`}>
+              <div className={`bg-gray-900 ${getCardColor(cardCompany)} rounded-xl p-6 text-white shadow-md h-full flex flex-col justify-between`}>
                 <div className='flex justify-between items-start'>
                   {cardCompany ? (
-                    <div className='w-12 h-8'>{getCardIcon()}</div>
+                    <div className='w-12 h-8'>{getIcon(cardCompany)}</div>
                   ) : (
                     <div className='w-12 h-8 bg-gradient-to-br from-gray-200 to-gray-100 rounded-md'></div>
                   )}
@@ -56,12 +41,12 @@ const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, 
             </div>
             {/* Back of the card */}
             <div className='absolute w-full h-full' style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
-              <div className={`bg-gray-900 ${getCardColor()} rounded-xl py-1 text-white shadow-md h-full`}>
+              <div className={`bg-gray-900 ${getCardColor(cardCompany)} rounded-xl py-1 text-white shadow-md h-full`}>
                 <div className='w-full h-12 bg-gradient-to-r from-gray-400 to-gray-500 mt-8'></div>
                 <div className='w-7/12 h-10 bg-gray-200 mt-5 ml-5 text-xl text-right text-black pt-2 pr-2'>{cvc || '***'}</div>
                 <div className='absolute w-6/12 h-6 right-0 bottom-6'>
                   {cardCompany ? (
-                    getCardLogo()
+                    getCardLogo(cardCompany)
                   ) : (
                     <div>
                       <div className='absolute w-10 h-10 bg-gradient-to-br from-gray-100 to-gray-400 rounded-full bottom-5 right-5'></div>
