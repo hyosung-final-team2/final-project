@@ -5,7 +5,7 @@ const AddressTableRow = ({ id, memberId, addressId, memberName, memberEmail, add
 
   return (
     <>
-      <Table.Row className='bg-white cursor-pointer' onClick={() => setOpenModal(addressId, memberId)}>
+      <Table.Row className='bg-white cursor-pointer' onClick={() => setOpenModal(addressId, memberId, address)}>
         <Table.Cell>
           <Checkbox checked={isChecked} onChange={() => handleRowChecked(id)} onClick={e => e.stopPropagation()} />
         </Table.Cell>
