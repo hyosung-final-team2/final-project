@@ -1,53 +1,109 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { useGetMyAddresses } from '../../api/Address/queries';
+import { useCreateOrder } from '../../api/Order/queris';
 import BottomButton from '../../components/common/button/BottomButton';
 import PaymentSummaryPre from '../../components/common/paymentSummary/PaymentSummaryPre';
 import SlideUpModal from '../../components/common/SlideUpModal';
 import OrderDeliveryInfo from '../../components/Order/Order/OrderDeliveryInfo';
 import OrderStore from '../../components/Order/Order/OrderStore';
-import { ADDRESS_DUMMY_DATA, deliveryContent } from '../../components/Order/orderDummyData';
+import { deliveryContent } from '../../components/Order/orderDummyData';
 import AddressModalContent from '../../components/Order/OrderModal/AddressModalContent';
 import DeliveryModalContent from '../../components/Order/OrderModal/DeliveryModalContent';
+import useMemberStore from '../../store/memberStore';
 import useModalStore from '../../store/modalStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
 
 const Order = () => {
   const navigate = useNavigate();
-  const { selectedItems, calculateTotals } = useOrderItemsStore();
+  const { selectedItems, calculateTotals, clearCart } = useOrderItemsStore();
   const [deliveryItems] = useState(deliveryContent);
-  const [addressItems] = useState(ADDRESS_DUMMY_DATA);
   const [selectedDelivery, setSelectedDelivery] = useState(deliveryItems[0]);
-  const [selectedAddress, setSelectedAddress] = useState(addressItems[0]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
   const [activeModal, setActiveModal] = useState(null);
+  const [isOrderButtonDisabled, setIsOrderButtonDisabled] = useState(false);
+  const [unsetSubscriptions, setUnsetSubscriptions] = useState([]);
 
   const totals = calculateTotals();
 
   const { modalState, setModalState } = useModalStore();
 
+  const createOrderMutation = useCreateOrder();
+  const { memberId } = useMemberStore(state => ({ memberId: state.memberId }));
+  const { data: addresses, isLoading: isLoadingAddresses, isError: isErrorAddresses, error: addressesError } = useGetMyAddresses(memberId);
+
+  const addressList = addresses?.data?.data || [];
+
+  // 주문 데이터가 비어있으면 장바구니 페이지로 리다이렉트
+  useEffect(() => {
+    if (selectedItems.length === 0) {
+      navigate('/cart');
+    }
+  }, [selectedItems, navigate]);
+
+  // 주소 목록이 로드되면 첫 번째 주소를 기본 선택
+  useEffect(() => {
+    if (addressList.length > 0) {
+      setSelectedAddress(addressList[0]);
+    }
+  }, [addressList]);
+
+  // 주문 버튼 활성화 상태 및 미설정 구독 상품 확인
+  useEffect(() => {
+    const unsetSubs = selectedItems.filter(store =>
+      store.cartProducts.some(product => product.orderOption === 'SUBSCRIPTION' && (!store.intervalDays || store.intervalDays === 0))
+    );
+    setUnsetSubscriptions(unsetSubs);
+    setIsOrderButtonDisabled(unsetSubs.length > 0 || !selectedAddress || selectedItems.length === 0);
+  }, [selectedItems, selectedAddress]);
+
   const handleOrder = async () => {
-    console.log('주문 데이터:', selectedItems);
+    if (isOrderButtonDisabled) {
+      if (!selectedAddress) {
+        toast.error('배송지를 선택해주세요.');
+      } else if (selectedItems.length === 0) {
+        toast.error('주문할 상품이 없습니다.');
+      } else {
+        toast.error('모든 정기 주문 상품의 배송 주기를 선택해주세요.');
+      }
+      return;
+    }
+
+    const orderData = selectedItems.map(store => ({
+      customerId: store.customerId,
+      paymentMethodId: 22, // 임시로 고정값 사용
+      paymentType: 'CARD', // 임시로 고정값 사용
+      addressId: selectedAddress.addressId,
+      intervalDays: store.intervalDays || 0,
+      subscriptionOrderProducts: store.cartProducts.map(product => ({
+        price: product.productPrice,
+        quantity: product.quantity,
+        productId: product.productId,
+        discount: product.productDiscount,
+      })),
+    }));
+
     try {
-      // TODO: API 호출을 통해 주문을 생성하고 orderId를 받아오는 로직
-      // const response = await createOrder(selectedItems, selectedAddress, selectedDelivery);
-      // const orderId = response.orderId;
-      const orderId = 1; // 임시 orderId, 실제 구현 시 위의 주석 처리된 코드로 대체
-      navigate(`/order-complete/${orderId}`);
+      console.log('주문 데이터:', orderData);
+      await createOrderMutation.mutateAsync(orderData);
+      clearCart(); // 주문 완료 후 장바구니 비우기
+      toast.success('주문이 완료되었습니다. 내역을 확인해보세요.');
+      navigate('/order-complete', { replace: true }); // 뒤로가기 방지
     } catch (error) {
       console.error('주문 생성 실패:', error);
-      // TODO: 에러 처리 로직 (예: 사용자에게 에러 메시지 표시)
+      toast.error('결제에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
   const handleDeliverySelection = delivery => {
     setSelectedDelivery(delivery);
     setModalState(false);
-    console.log(`배송 선택 옵션이 변경되었습니다:`, delivery);
   };
 
   const handleAddressSelection = address => {
     setSelectedAddress(address);
     setModalState(false);
-    console.log(`주소지가 변경되었습니다:`, address);
   };
 
   const handleModalOpen = type => {
@@ -58,13 +114,21 @@ const Order = () => {
   const renderModalContent = () => {
     switch (activeModal) {
       case 'address':
-        return <AddressModalContent addressContent={addressItems} handleAddressSelection={handleAddressSelection} />;
+        return <AddressModalContent addressContent={addressList} handleAddressSelection={handleAddressSelection} />;
       case 'delivery':
         return <DeliveryModalContent deliveryContent={deliveryItems} handleDeliverySelection={handleDeliverySelection} />;
       default:
         return null;
     }
   };
+
+  if (isLoadingAddresses) {
+    return <div>주소 정보를 불러오는 중...</div>;
+  }
+
+  if (isErrorAddresses) {
+    return <div>주소 정보를 불러오는데 실패했습니다: {addressesError.message}</div>;
+  }
 
   return (
     <div className='flex flex-col h-full'>
@@ -83,9 +147,13 @@ const Order = () => {
         <PaymentSummaryPre productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} isOrder={true} />
       </div>
       <div className='sticky bottom-0 left-0 right-0 p-4 bg-white'>
-        <BottomButton buttonText='결제하기' buttonStyle='bg-main text-white' buttonFunc={handleOrder} />
+        <BottomButton
+          buttonText='결제하기'
+          buttonStyle={`${isOrderButtonDisabled ? 'bg-gray-400' : 'bg-main'} text-white`}
+          buttonFunc={handleOrder}
+          disabled={isOrderButtonDisabled}
+        />
       </div>
-
       <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText={activeModal === 'address' ? '주소 선택' : '배송 주기 선택'} isButton={false}>
         {renderModalContent()}
       </SlideUpModal>
