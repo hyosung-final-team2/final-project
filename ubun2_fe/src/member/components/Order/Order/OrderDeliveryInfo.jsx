@@ -1,11 +1,23 @@
 import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
+import { useNavigate } from 'react-router-dom';
 
 const OrderDeliveryInfo = ({ selectedAddress, selectedDelivery, handleAddressModal, handleDeliveryModal }) => {
+  const navigate = useNavigate();
+
+  const handleEditAddress = () => {
+    navigate('/member/app/addresses');
+  };
+
   return (
     <div className='flex flex-col gap-5 p-6 bg-white'>
       <div className='flex items-center w-full gap-3 mb-4 font-bold'>
         <div onClick={handleAddressModal} className='inline-flex p-2 border-none rounded-md text-main bg-main bg-opacity-5'>
-          <input type='input' value={selectedAddress?.addressNickname || '주소를 선택해주세요'} className='min-w-0 bg-transparent cursor-pointer' readOnly />
+          <input
+            type='input'
+            value={selectedAddress?.addressNickname || '주소를 선택해주세요'}
+            className='min-w-0 bg-transparent cursor-pointer max-w-[10dvw]'
+            readOnly
+          />
           <ChevronDownIcon className='w-5' />
         </div>
         <p>으로 받기</p>
@@ -20,7 +32,7 @@ const OrderDeliveryInfo = ({ selectedAddress, selectedDelivery, handleAddressMod
           </div>
 
           <div>
-            <button color='dark' className='w-full px-4 py-2 text-white rounded-md bg-main'>
+            <button color='dark' className='w-full px-4 py-2 text-white rounded-md bg-main' onClick={handleEditAddress}>
               <span className='text-sm'>수정</span>
             </button>
           </div>
