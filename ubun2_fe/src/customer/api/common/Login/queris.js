@@ -34,16 +34,4 @@ export const useLogin = (loginObj,role) => {
         }
     });
 
-    // return useMutation({
-    //     mutationFn: () => login(loginData),
-    //     onSuccess: (response) => {
-    //         const accessToken = response.headers['authorization'];
-    //         if (accessToken) {
-    //             localStorage.setItem('accessToken', accessToken);
-    //         }
-    //     },
-    //     onError: (error) => {
-    //         console.error("로그인 실패", error);
-    //     }
-    // });
 };
