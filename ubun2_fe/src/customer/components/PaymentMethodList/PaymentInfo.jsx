@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Select from '../common/Select/Select';
 import { useRegisterPayment } from '../../api/PaymentMethod/Modal/queris';
 import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
+import { formatCardNumber } from '../../utils/cardFormat';
 
 const PaymentInfo = ({}) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md ';
@@ -23,10 +24,10 @@ const PaymentInfo = ({}) => {
   ];
 
   const bankOptions = [
-    { value: 'US', label: '국민은행' },
-    { value: 'CA', label: '신한은행' },
-    { value: 'FR', label: '우리은행' },
-    { value: 'DE', label: '토스뱅크' },
+    { value: '국민은행', label: '국민은행' },
+    { value: '신한은행', label: '신한은행' },
+    { value: '우리은행', label: '우리은행' },
+    { value: '토스뱅크', label: '토스뱅크' },
   ];
 
   const handleOnClick = () => {
@@ -65,6 +66,11 @@ const PaymentInfo = ({}) => {
     setCardNumber('');
   };
 
+  const handleCardNumberChange = e => {
+    const formatted = formatCardNumber(e.target.value);
+    setCardNumber(formatted);
+  };
+
   return (
     <>
       <div className='p-3'>
@@ -96,7 +102,7 @@ const PaymentInfo = ({}) => {
               <input
                 className='w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-700'
                 placeholder='카드 번호를 입력해주세요'
-                onChange={e => setCardNumber(e.target.value)}
+                onChange={handleCardNumberChange}
               />
               <label className='absolute text-xs text-gray-500 left-3 -top-2 bg-white px-1'>카드 번호</label>
             </div>
