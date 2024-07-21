@@ -9,10 +9,12 @@ import java.util.stream.Collectors;
 @Getter
 public class CartResponse {
     private Long customerId;
+    private String businessName;
     private List<CartProductResponse> cartProducts;
 
     public CartResponse(Cart cart) {
         this.customerId = cart.getCustomer().getId();
+        this.businessName = cart.getCustomer().getBusinessName();
         this.cartProducts = cart.getCartProducts().stream()
                 .map(CartProductResponse::new)
                 .collect(Collectors.toList());

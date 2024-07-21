@@ -1,61 +1,59 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { CART_DUMMY_DATA } from '../../components/Cart/cartDummyData';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
+// zustand 스토어를 생성합니다. 이 스토어는 장바구니 데이터를 관리하는 데 사용됩니다.
 const useOrderItemsStore = create(
   persist(
     (set, get) => ({
-      cartData: CART_DUMMY_DATA,
-      selectedItems: {
-        ...CART_DUMMY_DATA,
-        itemContent: [],
-      },
+      // 초기 상태 정의
+      cartData: [], // 장바구니 데이터
+      selectedItems: [], // 선택된 아이템들
+      updatedQuantities: {}, // 수량 변경 추적용 상태관리
 
+      // 장바구니 데이터를 설정하는 함수
       setCartData: newCartData => set({ cartData: newCartData }),
 
-      isStoreAllSelected: storeId => {
+      // 스토어의 모든 제품이 선택되었는지 확인하는 함수
+      isStoreAllSelected: customerId => {
         const { selectedItems, cartData } = get();
-        const selectedStore = selectedItems.itemContent.find(s => s.customerId === storeId);
-        const cartStore = cartData.itemContent.find(s => s.customerId === storeId);
+        const selectedStore = selectedItems.find(s => s.customerId === customerId);
+        const cartStore = cartData.find(s => s.customerId === customerId);
 
         if (!selectedStore || !cartStore) return false;
 
-        const isSingleSelected = cartStore.singleOrderProducts.every(product => selectedStore.singleOrderProducts.some(p => p.productId === product.productId));
-        const isRegularSelected = cartStore.regularOrderProducts.every(product =>
-          selectedStore.regularOrderProducts.some(p => p.productId === product.productId)
-        );
-
-        return isSingleSelected && isRegularSelected;
+        // cartStore의 모든 제품이 selectedStore에 있는지 확인
+        return cartStore.cartProducts.every(product => selectedStore.cartProducts.some(p => p.cartProductId === product.cartProductId));
       },
 
-      isProductSelected: (storeId, productId, orderType) => {
+      // 특정 제품이 선택되었는지 확인하는 함수
+      isProductSelected: (customerId, cartProductId) => {
         const { selectedItems } = get();
-        const selectedStore = selectedItems.itemContent.find(s => s.customerId === storeId);
+        const selectedStore = selectedItems.find(s => s.customerId === customerId);
         if (!selectedStore) return false;
 
-        return selectedStore[orderType].some(p => p.productId === productId);
+        // selectedStore의 제품 목록에 cartProductId가 포함되어 있는지 확인
+        return selectedStore.cartProducts.some(p => p.cartProductId === cartProductId);
       },
 
-      handleSelectAllStore: (storeId, checked) => {
+      // 스토어의 모든 제품을 선택하거나 선택 해제하는 함수
+      handleSelectAllStore: (customerId, checked) => {
         set(state => {
-          const store = state.cartData.itemContent.find(s => s.customerId === storeId);
+          const store = state.cartData.find(s => s.customerId === customerId);
           if (!store) return state;
 
-          const newSelectedItems = [...state.selectedItems.itemContent];
-          const storeIndex = newSelectedItems.findIndex(s => s.customerId === storeId);
+          const newSelectedItems = [...state.selectedItems];
+          const storeIndex = newSelectedItems.findIndex(s => s.customerId === customerId);
 
           if (checked) {
             if (storeIndex === -1) {
               newSelectedItems.push({
                 ...store,
-                singleOrderProducts: [...store.singleOrderProducts],
-                regularOrderProducts: [...store.regularOrderProducts],
+                cartProducts: [...store.cartProducts],
               });
             } else {
               newSelectedItems[storeIndex] = {
                 ...store,
-                singleOrderProducts: [...store.singleOrderProducts],
-                regularOrderProducts: [...store.regularOrderProducts],
+                cartProducts: [...store.cartProducts],
               };
             }
           } else {
@@ -64,175 +62,158 @@ const useOrderItemsStore = create(
             }
           }
 
-          return { selectedItems: { ...state.selectedItems, itemContent: newSelectedItems } };
+          return { selectedItems: newSelectedItems };
         });
       },
 
-      handleSelectProduct: (storeId, product, orderType, checked) => {
+      // 특정 제품을 선택하거나 선택 해제하는 함수
+      handleSelectProduct: (customerId, product, checked) => {
         set(state => {
-          const newSelectedItems = [...state.selectedItems.itemContent];
-          const storeIndex = newSelectedItems.findIndex(store => store.customerId === storeId);
+          const newSelectedItems = [...state.selectedItems];
+          const storeIndex = newSelectedItems.findIndex(store => store.customerId === customerId);
 
           if (checked) {
             if (storeIndex === -1) {
-              const store = state.cartData.itemContent.find(store => store.customerId === storeId);
+              const store = state.cartData.find(store => store.customerId === customerId);
               const newStore = {
                 ...store,
-                singleOrderProducts: orderType === 'singleOrderProducts' ? [product] : [],
-                regularOrderProducts: orderType === 'regularOrderProducts' ? [product] : [],
+                cartProducts: [product],
               };
               newSelectedItems.push(newStore);
             } else {
               newSelectedItems[storeIndex] = {
                 ...newSelectedItems[storeIndex],
-                [orderType]: [...newSelectedItems[storeIndex][orderType], product],
+                cartProducts: [...newSelectedItems[storeIndex].cartProducts, product],
               };
             }
           } else {
             if (storeIndex !== -1) {
               newSelectedItems[storeIndex] = {
                 ...newSelectedItems[storeIndex],
-                [orderType]: newSelectedItems[storeIndex][orderType].filter(p => p.productId !== product.productId),
+                cartProducts: newSelectedItems[storeIndex].cartProducts.filter(p => p.cartProductId !== product.cartProductId),
               };
-              if (newSelectedItems[storeIndex].singleOrderProducts.length === 0 && newSelectedItems[storeIndex].regularOrderProducts.length === 0) {
+              if (newSelectedItems[storeIndex].cartProducts.length === 0) {
                 newSelectedItems.splice(storeIndex, 1);
               }
             }
           }
 
-          return { selectedItems: { ...state.selectedItems, itemContent: newSelectedItems } };
+          return { selectedItems: newSelectedItems };
         });
       },
 
-      // 상품 삭제 함수
-      handleDeleteProduct: (storeId, productId, orderType) => {
+      // 제품의 수량을 업데이트하는 함수
+      updateProductQuantity: (customerId, cartProductId, newQuantity) => {
         set(state => {
-          // cartData에서 상품 삭제
-          const newCartData = {
-            ...state.cartData,
-            itemContent: state.cartData.itemContent.map(store => {
-              if (store.customerId === storeId) {
-                return {
-                  ...store,
-                  [orderType]: store[orderType].filter(product => product.productId !== productId),
-                };
-              }
-              return store;
-            }),
-          };
-
-          // selectedItems에서도 상품 삭제
-          const newSelectedItems = state.selectedItems.itemContent
-            .map(store => {
-              if (store.customerId === storeId) {
-                return {
-                  ...store,
-                  [orderType]: store[orderType].filter(product => product.productId !== productId),
-                };
-              }
-              return store;
-            })
-            .filter(store => store.singleOrderProducts.length > 0 || store.regularOrderProducts.length > 0);
-
-          return { cartData: newCartData, selectedItems: { ...state.selectedItems, itemContent: newSelectedItems } };
-        });
-      },
-
-      // 상품 수량 업데이트 함수
-      updateProductQuantity: (storeId, productId, orderType, newQuantity) => {
-        set(state => {
-          // cartData의 상품 수량 업데이트
-          const newCartData = {
-            ...state.cartData,
-            itemContent: state.cartData.itemContent.map(store => {
-              if (store.customerId === storeId) {
-                return {
-                  ...store,
-                  [orderType]: store[orderType].map(product => (product.productId === productId ? { ...product, quantity: newQuantity } : product)),
-                };
-              }
-              return store;
-            }),
-          };
-
-          // selectedItems의 상품 수량 업데이트
-          const newSelectedItems = state.selectedItems.itemContent.map(store => {
-            if (store.customerId === storeId) {
+          // cartData 업데이트
+          const newCartData = state.cartData.map(store => {
+            if (store.customerId === customerId) {
               return {
                 ...store,
-                [orderType]: store[orderType].map(product => (product.productId === productId ? { ...product, quantity: newQuantity } : product)),
+                cartProducts: store.cartProducts.map(product => (product.cartProductId === cartProductId ? { ...product, quantity: newQuantity } : product)),
               };
             }
             return store;
           });
 
-          return { cartData: newCartData, selectedItems: { ...state.selectedItems, itemContent: newSelectedItems } };
-        });
-      },
+          // selectedItems 업데이트
+          const newSelectedItems = state.selectedItems.map(store => {
+            if (store.customerId === customerId) {
+              return {
+                ...store,
+                cartProducts: store.cartProducts.map(product => (product.cartProductId === cartProductId ? { ...product, quantity: newQuantity } : product)),
+              };
+            }
+            return store;
+          });
 
-      // 주소 정보 업데이트 함수
-      updateAddress: newAddress => {
-        set(state => ({
-          cartData: { ...state.cartData, ...newAddress },
-          selectedItems: { ...state.selectedItems, ...newAddress },
-        }));
-      },
+          const updatedQuantities = {
+            ...state.updatedQuantities,
+            [`${customerId}-${cartProductId}`]: newQuantity,
+          };
 
-      // 결제 정보 업데이트 함수
-      updatePaymentInfo: newPaymentInfo => {
-        set(state => ({
-          cartData: { ...state.cartData, ...newPaymentInfo },
-          selectedItems: { ...state.selectedItems, ...newPaymentInfo },
-        }));
-      },
-
-      // 선택된 상품 초기화 함수 (이미 선택된 항목이 있으면 초기화하지 않음)
-      initializeSelectedItems: () => {
-        set(state => {
-          if (state.selectedItems.itemContent.length > 0) {
-            return state;
-          }
           return {
-            selectedItems: {
-              ...CART_DUMMY_DATA,
-              itemContent: [],
-            },
+            cartData: newCartData,
+            selectedItems: newSelectedItems,
+            updatedQuantities,
           };
         });
       },
 
-      // 총액 계산 함수
+      // 특정 제품을 제거하는 함수
+      removeProducts: productIds => {
+        set(state => {
+          const newCartData = state.cartData.map(store => ({
+            ...store,
+            cartProducts: store.cartProducts.filter(product => !productIds.includes(product.productId)),
+          }));
+
+          const newSelectedItems = state.selectedItems
+            .map(store => ({
+              ...store,
+              cartProducts: store.cartProducts.filter(product => !productIds.includes(product.productId)),
+            }))
+            .filter(store => store.cartProducts.length > 0);
+
+          return {
+            cartData: newCartData,
+            selectedItems: newSelectedItems,
+          };
+        });
+      },
+
+      // 스토어가 비어있으면 제거하는 함수
+      removeStoreIfEmpty: customerId => {
+        set(state => {
+          const newCartData = state.cartData.filter(store => store.customerId !== customerId || store.cartProducts.length > 0);
+          const newSelectedItems = state.selectedItems.filter(store => store.customerId !== customerId || store.cartProducts.length > 0);
+          return {
+            cartData: newCartData,
+            selectedItems: newSelectedItems,
+          };
+        });
+      },
+
+      // 장바구니를 비우는 함수
+      clearCart: () => set({ cartData: [], selectedItems: [], updatedQuantities: {} }),
+
+      // 총합을 계산하는 함수
       calculateTotals: () => {
         const { selectedItems } = get();
         let productAmount = 0;
         let discount = 0;
-        let totalAmount = 0;
         let selectedCount = 0;
 
-        selectedItems.itemContent.forEach(store => {
-          ['singleOrderProducts', 'regularOrderProducts'].forEach(orderType => {
-            store[orderType].forEach(product => {
-              selectedCount++;
-              const discountRate = product.productDiscount / 100;
-              const discountedPrice = product.productPrice * (1 - discountRate);
-              productAmount += product.productPrice * product.quantity;
-              discount += (product.productPrice - discountedPrice) * product.quantity;
-              totalAmount += discountedPrice * product.quantity;
-            });
+        selectedItems.forEach(store => {
+          store.cartProducts.forEach(product => {
+            productAmount += product.productPrice * product.quantity;
+            discount += product.productDiscount * product.quantity;
+            selectedCount += product.quantity;
           });
         });
 
-        return {
-          productAmount,
-          discount,
-          totalAmount: Math.round(totalAmount),
-          selectedCount,
-        };
+        const totalAmount = productAmount - discount;
+
+        return { productAmount, discount, totalAmount, selectedCount };
+      },
+
+      // 업데이트된 장바구니 데이터를 반환하는 함수
+      getUpdatedCartData: () => {
+        const { cartData, updatedQuantities } = get();
+        const updatedCartData = cartData.map(store => ({
+          customerId: store.customerId,
+          cartId: store.cartProducts[0].cartId,
+          cartProducts: store.cartProducts.map(product => ({
+            productId: product.productId,
+            quantity: updatedQuantities[`${store.customerId}-${product.cartProductId}`] || product.quantity,
+          })),
+        }));
+        return updatedCartData;
       },
     }),
     {
-      name: 'cart-storage',
-      partialize: state => ({ selectedItems: state.selectedItems, cartData: state.cartData }),
+      name: 'order-items-storage',
+      storage: createJSONStorage(() => localStorage), // localStorage를 사용
     }
   )
 );

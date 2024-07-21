@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BottomButton from '../../components/common/button/BottomButton';
 import PaymentSummaryPre from '../../components/common/paymentSummary/PaymentSummaryPre';
 import SlideUpModal from '../../components/common/SlideUpModal';
@@ -11,10 +12,10 @@ import useModalStore from '../../store/modalStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
 
 const Order = () => {
-  const { cartData, selectedItems, handleSelectProduct, handleDeleteProduct, updateProductQuantity, calculateTotals, handleSelectAllStore } =
-    useOrderItemsStore();
-  const [deliveryItems, setDeliveryItems] = useState(deliveryContent);
-  const [addressItems, setAddressItems] = useState(ADDRESS_DUMMY_DATA);
+  const navigate = useNavigate();
+  const { selectedItems, calculateTotals } = useOrderItemsStore();
+  const [deliveryItems] = useState(deliveryContent);
+  const [addressItems] = useState(ADDRESS_DUMMY_DATA);
   const [selectedDelivery, setSelectedDelivery] = useState(deliveryItems[0]);
   const [selectedAddress, setSelectedAddress] = useState(addressItems[0]);
   const [activeModal, setActiveModal] = useState(null);
@@ -23,8 +24,18 @@ const Order = () => {
 
   const { modalState, setModalState } = useModalStore();
 
-  const handleOrder = () => {
+  const handleOrder = async () => {
     console.log('주문 데이터:', selectedItems);
+    try {
+      // TODO: API 호출을 통해 주문을 생성하고 orderId를 받아오는 로직
+      // const response = await createOrder(selectedItems, selectedAddress, selectedDelivery);
+      // const orderId = response.orderId;
+      const orderId = 1; // 임시 orderId, 실제 구현 시 위의 주석 처리된 코드로 대체
+      navigate(`/order-complete/${orderId}`);
+    } catch (error) {
+      console.error('주문 생성 실패:', error);
+      // TODO: 에러 처리 로직 (예: 사용자에게 에러 메시지 표시)
+    }
   };
 
   const handleDeliverySelection = delivery => {
@@ -65,7 +76,7 @@ const Order = () => {
           handleDeliveryModal={() => handleModalOpen('delivery')}
         />
 
-        {selectedItems.itemContent.map(store => (
+        {selectedItems.map(store => (
           <OrderStore key={store.customerId} store={store} />
         ))}
 

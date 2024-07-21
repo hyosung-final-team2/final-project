@@ -1,22 +1,26 @@
 import MinusIcon from '@heroicons/react/24/outline/MinusIcon';
 import PlusIcon from '@heroicons/react/24/outline/PlusIcon';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const QuantityButton = ({ initialQuantity = 1, onQuantityChange }) => {
+const QuantityButton = ({ initialQuantity = 1, onQuantityChange, cartProductId }) => {
   const [quantity, setQuantity] = useState(initialQuantity);
+
+  useEffect(() => {
+    setQuantity(initialQuantity);
+  }, [initialQuantity]);
 
   const decreaseQuantity = () => {
     if (quantity > 1) {
       const newQuantity = quantity - 1;
       setQuantity(newQuantity);
-      onQuantityChange && onQuantityChange(newQuantity);
+      onQuantityChange(cartProductId, newQuantity);
     }
   };
 
   const increaseQuantity = () => {
     const newQuantity = quantity + 1;
     setQuantity(newQuantity);
-    onQuantityChange && onQuantityChange(newQuantity);
+    onQuantityChange(cartProductId, newQuantity);
   };
 
   return (

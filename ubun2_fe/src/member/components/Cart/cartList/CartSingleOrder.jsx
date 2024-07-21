@@ -2,6 +2,10 @@ import Single from '../../../../assets/images/single.svg';
 import ProductItemEditable from '../../common/productItem/ProductItemEditable';
 
 const CartSingleOrder = ({ singleOrderProducts, selectedItems, onSelectProduct, onQuantityChange, onDelete }) => {
+  const filteredProducts = singleOrderProducts.filter(product => product.orderOption === 'SINGLE');
+
+  if (filteredProducts.length === 0) return null;
+
   return (
     <div className='flex flex-col w-full gap-3 bg-white'>
       <div className='flex items-center px-4'>
@@ -10,14 +14,14 @@ const CartSingleOrder = ({ singleOrderProducts, selectedItems, onSelectProduct, 
       </div>
       <div className='w-full border-b'></div>
       <div className='flex flex-col gap-5 pt-2'>
-        {singleOrderProducts.map(product => (
+        {filteredProducts.map(product => (
           <ProductItemEditable
-            key={product.productId}
+            key={product.cartProductId}
             {...product}
-            isSelected={selectedItems.some(item => item.productId === product.productId)}
-            onSelect={checked => onSelectProduct(product, checked, 'singleOrderProducts')}
-            onQuantityChange={newQuantity => onQuantityChange(product.productId, newQuantity)}
-            onDelete={() => onDelete(product.productId)}
+            isSelected={selectedItems.some(item => item.cartProductId === product.cartProductId)}
+            onSelect={checked => onSelectProduct(product, checked)}
+            onQuantityChange={onQuantityChange}
+            onDelete={() => onDelete(product.cartProductId)}
           />
         ))}
       </div>

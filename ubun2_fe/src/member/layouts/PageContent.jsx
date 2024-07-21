@@ -40,7 +40,7 @@ function PageContent({ hasFootNav }) {
           <Route path='payments/edit' element={<EditPayment />} />
           <Route path='mypage/payment-list' element={<MyPaymentsList />} />
           <Route path='password' element={<InputPassword />} />
-          <Route path='order/:orderId' element={<Order />} />
+          <Route path='order' element={<Order />} />
           <Route path='order-complete/:orderId' element={<OrderComplete />} />
           <Route path='mypage/order-list' element={<MyOrdersList />} />
           <Route path='mypage/single-order/:customerId/:orderId' element={<MySingleOrderDetail />} />
