@@ -5,7 +5,7 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 
 const privateFetch = axios.create({
     baseURL: BASE_URL,
-    timeout: 1000,
+    timeout: 3000,
 });
 
 privateFetch.interceptors.request.use(
