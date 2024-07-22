@@ -15,4 +15,6 @@ public interface PendingMemberRepository extends JpaRepository<PendingMember,Lon
             "WHERE pm.customer.customerId = :customerId " +
             "AND pm.pendingMemberId = :pendingMemberId")
     boolean existsByCustomerIdAndPendingMemberId(@Param("customerId") Long customerId, @Param("pendingMemberId") Long pendingMemberId);
+
+    long countByCustomerCustomerId(Long customerId);
 }
