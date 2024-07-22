@@ -1,7 +1,9 @@
+import ProductTable from '../../components/ProductList/ProductTable/ProductTable';
+
 const ProductList = () => {
   return (
     <>
-      <h1>상품 리스트</h1>
+      <ProductTable/>
     </>
   );
 };

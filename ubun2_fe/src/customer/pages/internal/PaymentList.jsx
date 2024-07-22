@@ -1,9 +1,11 @@
-const PaymentList = () => {
+import PaymentMethodTable from '../../components/PaymentMethodList/PaymentMethodTable';
+import { payments } from '../../components/PaymentMethodList/PaymentMethodListData';
+function PaymentList() {
   return (
     <>
-      <h1>결제수단 리스트</h1>
+      <PaymentMethodTable payments={payments} />
     </>
   );
-};
+}
 
 export default PaymentList;

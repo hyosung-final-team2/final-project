@@ -1,7 +1,9 @@
+import MemberTable from '../../components/MemberList/MemberTable/MemberTable';
+
 const MemberList = () => {
   return (
     <>
-      <h1>MemberList</h1>
+      <MemberTable />
     </>
   );
 };

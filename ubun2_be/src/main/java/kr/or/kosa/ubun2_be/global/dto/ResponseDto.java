@@ -21,7 +21,7 @@ public class ResponseDto<T> {
         this.message = msg;
     }
 
-    public ResponseDto<T> ok(T data, String msg) {
+    public static <T> ResponseDto<T> ok(T data, String msg) {
         return new ResponseDto<>(200, true, data, msg);
     }
 }

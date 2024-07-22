@@ -6,12 +6,16 @@ import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
-import lombok.Getter;
+import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Builder
+@AllArgsConstructor
 @Table(name = "subscription_order")
 public class SubscriptionOrder extends BaseTimeEntity {
 
@@ -38,14 +42,35 @@ public class SubscriptionOrder extends BaseTimeEntity {
     @Column(nullable = false)
     private int intervalDays;
 
-//    @Column(nullable = false)
-//    private int totalCycles;
-//
-//    @Column(nullable = false)
-//    private int remainingCycles;
+    @Column
+    private LocalDateTime nextOrderDate; //다음 결제일
 
     @OneToMany(mappedBy = "subscriptionOrder", cascade = CascadeType.ALL)
     private List<SubscriptionOrderProduct> subscriptionOrderProducts;
 
+    public void addSubscriptionOrderProducts(List<SubscriptionOrderProduct> subscriptionOrderProducts) {
+        this.subscriptionOrderProducts.addAll(subscriptionOrderProducts);
+    }
+
+    public void createSubscriptionOrderProducts(List<SubscriptionOrderProduct> subscriptionOrderProducts) {
+        this.subscriptionOrderProducts = subscriptionOrderProducts;
+    }
+
+    // OrderStatus 변경 메서드
+    public void changeOrderStatus(OrderStatus newOrderStatus) {
+        this.orderStatus = newOrderStatus;
+    }
+
+    //nextOrderDate 변경
+    public void changeNextOrderDate() {
+        this.nextOrderDate = this.nextOrderDate.plusDays(this.intervalDays);
+    }
+
+    public int getMaxCycleNumber() {
+        return this.subscriptionOrderProducts.stream()
+                .mapToInt(SubscriptionOrderProduct::getCycleNumber)
+                .max()
+                .orElse(0);
+    }
 
 }

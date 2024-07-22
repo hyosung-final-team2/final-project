@@ -7,11 +7,14 @@ import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 @Getter
 @Table(name = "order")
 public class Order extends BaseTimeEntity {
@@ -42,9 +45,12 @@ public class Order extends BaseTimeEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderProduct> orderProducts;
 
+    // OrderStatus 변경 메서드
+    public void changeOrderStatus(OrderStatus newStatus) {
+        this.orderStatus = newStatus;
+    }
 
-
-
-
-
+    public void createOrderProducts(List<OrderProduct> orderProducts) {
+        this.orderProducts = orderProducts;
+    }
 }

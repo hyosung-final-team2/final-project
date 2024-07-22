@@ -1,13 +1,16 @@
 package kr.or.kosa.ubun2_be.domain.order.entity;
 
 import jakarta.persistence.*;
-import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
+import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderProductStatus;
-import lombok.Getter;
+import lombok.*;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Builder
+@AllArgsConstructor
 @Table(name = "subscription_order_product")
 public class SubscriptionOrderProduct extends BaseTimeEntity {
     @Id
@@ -35,5 +38,11 @@ public class SubscriptionOrderProduct extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private OrderProductStatus orderProductStatus;
 
+    @Column
+    private int discount;
+
+    public void changeSubscriptionOrderProductStatus(OrderProductStatus newStatus) {
+        this.orderProductStatus = newStatus;
+    }
 }
 

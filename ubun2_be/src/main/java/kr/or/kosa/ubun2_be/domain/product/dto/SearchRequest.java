@@ -1,0 +1,9 @@
+package kr.or.kosa.ubun2_be.domain.product.dto;
+
+import lombok.Getter;
+
+@Getter
+public class SearchRequest {
+    private String searchCategory;
+    private String searchKeyword;
+}
