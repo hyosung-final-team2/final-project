@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import BottomButton from './button/BottomButton';
 
-const SlideUpModal = ({ isOpen, setIsModalOpen, children, headerText, buttonText, isButton = true, buttonStyle, buttonFunc }) => {
+const SlideUpModal = ({ isOpen, setIsModalOpen, children, headerText, buttonText, isButton = true, buttonStyle, buttonFunc, isInstallPrompt=false }) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -25,7 +25,8 @@ const SlideUpModal = ({ isOpen, setIsModalOpen, children, headerText, buttonText
           >
             {/* header */}
             <div className='flex justify-center mb-4'>
-              <div className='w-2/12 h-2 bg-gray-200 rounded-3xl' onClick={() => setIsModalOpen(false)}></div>
+              <div className='w-2/12 h-2 bg-gray-200 rounded-3xl' onClick={() => setIsModalOpen()}></div>
+              {/*<div className='w-2/12 h-2 bg-gray-200 rounded-3xl' onClick={() => setIsModalOpen(false)}></div>*/}
             </div>
             <div className='flex items-center justify-between p-2 px-4 mb-4'>
               <h2 className='text-xl font-semibold'>{headerText}</h2>
@@ -36,6 +37,7 @@ const SlideUpModal = ({ isOpen, setIsModalOpen, children, headerText, buttonText
 
             {/* bottom */}
             {isButton && <BottomButton buttonStyle={buttonStyle} buttonText={buttonText} buttonFunc={buttonFunc} setIsModalOpen={setIsModalOpen} />}
+            {isInstallPrompt && <p className="my-3 text-gray-400 underline text-center">오늘은 그냥 볼게요</p>}
           </motion.div>
         </>
       )}

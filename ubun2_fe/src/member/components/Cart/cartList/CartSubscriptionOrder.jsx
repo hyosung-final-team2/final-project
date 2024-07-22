@@ -3,6 +3,10 @@ import Subscription from '../../../../assets/images/subscription.svg';
 import ProductItemEditable from '../../common/productItem/ProductItemEditable';
 
 const CartSubscriptionOrder = ({ regularOrderProducts, selectedItems, onSelectProduct, onQuantityChange, onDelete, onSubscriptionPeriodSelect }) => {
+  const filteredProducts = regularOrderProducts.filter(product => product.orderOption === 'SUBSCRIPTION');
+
+  if (filteredProducts.length === 0) return null;
+
   return (
     <div className='flex flex-col w-full gap-3 bg-white'>
       <div className='flex justify-between px-4 pb-2 border-b'>
@@ -16,14 +20,14 @@ const CartSubscriptionOrder = ({ regularOrderProducts, selectedItems, onSelectPr
         </div>
       </div>
       <div className='flex flex-col gap-5 pt-2'>
-        {regularOrderProducts.map(product => (
+        {filteredProducts.map(product => (
           <ProductItemEditable
-            key={product.productId}
+            key={product.cartProductId}
             {...product}
-            isSelected={selectedItems.some(item => item.productId === product.productId)}
-            onSelect={checked => onSelectProduct(product, checked, 'regularOrderProducts')}
-            onQuantityChange={newQuantity => onQuantityChange(product.productId, newQuantity)}
-            onDelete={() => onDelete(product.productId)}
+            isSelected={selectedItems.some(item => item.cartProductId === product.cartProductId)}
+            onSelect={checked => onSelectProduct(product, checked)}
+            onQuantityChange={onQuantityChange}
+            onDelete={() => onDelete(product.cartProductId)}
           />
         ))}
       </div>

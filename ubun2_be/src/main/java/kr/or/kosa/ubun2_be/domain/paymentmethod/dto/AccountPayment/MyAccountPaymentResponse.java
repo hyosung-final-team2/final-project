@@ -10,6 +10,7 @@ public class MyAccountPaymentResponse {
     private String bankName;
     private String accountNumber;
     private String paymentMethodNickname;
+    private boolean defaultStatus;
 
     public MyAccountPaymentResponse(AccountPayment accountPayment) {
         this.paymentMethodId = accountPayment.getPaymentMethodId();
@@ -17,5 +18,6 @@ public class MyAccountPaymentResponse {
         this.bankName = accountPayment.getBankName();
         this.accountNumber = accountPayment.getAccountNumber();
         this.paymentMethodNickname = accountPayment.getPaymentMethodNickname();
+        this.defaultStatus = accountPayment.isDefaultStatus();
     }
 }

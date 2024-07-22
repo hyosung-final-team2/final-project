@@ -1,40 +1,95 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import BottomButton from '../../components/common/button/BottomButton';
 import SlideUpModal from '../../components/common/SlideUpModal';
-import KBIcon from '../../../assets/images/KB.svg';
 import PaymentItem from '../../components/PaymentMethod/PaymentItem';
 import CardIcon from '../../../assets/images/card.svg';
 import ArrowIcon from '../../../assets/images/arrow.svg';
+import CheckIcon from '../../../assets/images/check.svg';
+import { useGetCards, useGetAccounts, useCheckIfPasswordExists } from '../../api/Payment/queries';
+import { getPng } from '../../components/PaymentMethod/CardList';
+import { useNavigate } from 'react-router-dom';
 
-const PaymentPage = ({ shopName, amount, paymentMethod, bankName, accountNumber, onChangePaymentMethod }) => {
+const ChoosePayment = ({ shopName, amount }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isPasswordSet, setIsPasswordSet] = useState(false);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(null);
+  const { data: cards } = useGetCards();
+  const { data: accounts } = useGetAccounts();
+  const { data: passwordExists } = useCheckIfPasswordExists();
+  const navigate = useNavigate();
+
+  const cardList = cards?.data?.data || [];
+  const accountList = accounts?.data?.data || [];
+  const isPasswordSet = passwordExists?.data?.data || false;
+
   const buttonStyle = 'bg-main text-white';
 
-  const payments = [
-    { paymentMethodName: 'KB star 통장-저축예금', paymentMethodNumber: '27140204047919', companyName: 'KB국민은행' },
-    { paymentMethodName: 'KB 나라사랑 우대 통장', paymentMethodNumber: '27140204047919', companyName: 'KB국민은행' },
-    { paymentMethodName: '토스증권 계좌', paymentMethodNumber: '27140204047919', companyName: 'KB국민은행' },
-    { paymentMethodName: '국민카드', paymentMethodNumber: '402*', companyName: '' },
-    { paymentMethodName: '국민카드', paymentMethodNumber: '205*', companyName: '' },
-  ];
+  const paymentMethods = useMemo(() => {
+    const methods = [
+      ...accountList.map(account => ({
+        ...account,
+        icon: <img className='h-10 w-10' src={`/src/assets/images/png/${getPng(account.bankName)}`} alt='' />,
+        title: account.paymentMethodNickname,
+        subtitle: `${account.bankName} ${account.accountNumber}`,
+        defaultStatus: account.defaultStatus,
+        type: 'ACCOUNT',
+      })),
+      ...cardList.map(card => ({
+        ...card,
+        icon: <img className='h-10 w-10' src={`/src/assets/images/png/${getPng(card.cardCompanyName)}`} alt='' />,
+        title: card.paymentMethodNickname,
+        subtitle: `${card.cardCompanyName} ${card.cardNumber}`,
+        defaultStatus: card.defaultStatus,
+        type: 'CARD',
+      })),
+    ];
+
+    const defaultMethod = methods.find(method => method.defaultStatus);
+    const otherMethods = methods.filter(method => !method.defaultStatus);
+
+    return { defaultMethod, otherMethods, allMethods: methods };
+  }, [accountList, cardList]);
+
+  const selectedPaymentMethod = useMemo(() => {
+    return paymentMethods.allMethods.find(method => method.paymentMethodId === selectedPaymentMethodId) || paymentMethods.defaultMethod || null;
+  }, [paymentMethods, selectedPaymentMethodId]);
+
+  useEffect(() => {
+    if (paymentMethods.defaultMethod && !selectedPaymentMethodId) {
+      setSelectedPaymentMethodId(paymentMethods.defaultMethod.paymentMethodId);
+    }
+  }, []); // 빈 의존성 배열을 사용하여 컴포넌트 마운트 시에만 실행
+
+  const handlePaymentMethodSelect = useCallback(method => {
+    setSelectedPaymentMethodId(method.paymentMethodId);
+    setIsModalOpen(false);
+  }, []);
+
+  const handleAddPaymentMethod = useCallback(() => {
+    navigate('/member/app/payments/edit');
+    setIsModalOpen(false);
+  }, [navigate]);
+
   return (
     <div className='flex flex-col h-full bg-gray-100'>
       {/* Main Content */}
       <main className='flex-grow flex flex-col items-center px-7 pt-12'>
-        <h2 className='text-[3.8dvw] text-gray-500 mb-1 font-bold'>{shopName}효성쇼핑</h2>
-        <p className='text-[7dvw] font-bold mb-12'>{amount}49,800원</p>
+        <h2 className='text-[3.8dvw] text-gray-500 mb-1 font-bold'>{shopName}</h2>
+        <p className='text-[7dvw] font-bold mb-12'>{amount}원</p>
 
         {/* Payment Method */}
         <div className='w-full bg-white rounded-3xl shadow-sm p-8 pt-6 mb-8 '>
           <p className='text-[3dvw] text-gray-500 mb-2'>결제수단</p>
           <div className='flex flex-nowrap items-center justify-between'>
             <div className='flex items-center'>
-              <KBIcon className='w-10 h-10 flex items-center justify-center mr-3' />
-              <div>
-                <p className='font-semibold text-[4dvw] truncate'>KB Star*t통장-저축예금{paymentMethod}</p>
+              {selectedPaymentMethod ? selectedPaymentMethod.icon : <div className='w-10 h-10 bg-gray-200 rounded-full'></div>}
+              <div className='ml-3'>
+                <p className='font-semibold text-[4dvw] truncate'>{selectedPaymentMethod ? selectedPaymentMethod.title : '결제 수단을 선택해주세요'}</p>
                 <p className='text-[3dvw] text-gray-500'>
-                  KB국민은행 27140204047919 {bankName} {accountNumber}
+                  {selectedPaymentMethod
+                    ? selectedPaymentMethod.type === 'ACCOUNT'
+                      ? `${selectedPaymentMethod.bankName} ${selectedPaymentMethod.accountNumber}`
+                      : `${selectedPaymentMethod.cardCompanyName} ${selectedPaymentMethod.cardNumber}`
+                    : '결제 수단이 없습니다'}
                 </p>
               </div>
             </div>
@@ -58,22 +113,33 @@ const PaymentPage = ({ shopName, amount, paymentMethod, bankName, accountNumber,
       <SlideUpModal
         isOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        headerText={`${isPasswordSet ? '결제수단 선택' : ''}`}
+        headerText={`${isPasswordSet ? '결제수단 선택' : '결제 비밀번호 설정'}`}
         isButton={!isPasswordSet}
         buttonStyle={buttonStyle}
         buttonText='설정하기'
       >
         {isPasswordSet ? (
-          payments.map((item, index) => {
-            return (
+          <>
+            {paymentMethods.allMethods.map(method => (
               <PaymentItem
-                key={index}
-                icon={<KBIcon className='w-12 h-12' />}
-                title={item.paymentMethodName}
-                subtitle={`${item.companyName} ${item.paymentMethodNumber}`}
+                key={method.paymentMethodId}
+                icon={method.icon}
+                title={method.title}
+                subtitle={method.subtitle}
+                selected={selectedPaymentMethod?.paymentMethodId === method.paymentMethodId}
+                checkedIcon={<CheckIcon className='w-8 h-8' />}
+                onClick={() => handlePaymentMethodSelect(method)}
               />
-            );
-          })
+            ))}
+            <div className='bg-gray-100 -mx-4 min-h-5 my-3'></div>
+            <PaymentItem
+              icon={<CardIcon className='w-12 h-12' />}
+              title='결제수단 추가하기'
+              selected={true}
+              checkedIcon={<ArrowIcon className='w-8 h-8' />}
+              onClick={handleAddPaymentMethod}
+            />
+          </>
         ) : (
           <div>
             <div className='text-2xl font-bold px-10 pb-8'>결제 비밀번호를 설정해주세요</div>
@@ -89,17 +155,9 @@ const PaymentPage = ({ shopName, amount, paymentMethod, bankName, accountNumber,
             </div>
           </div>
         )}
-        {isPasswordSet ? (
-          <>
-            <div className='bg-gray-100 -mx-4 min-h-5 my-3'></div>
-            <PaymentItem icon={<CardIcon className='w-12 h-12' />} title='결제수단 추가하기' selected={true} checkedIcon={<ArrowIcon className='w-8 h-8' />} />
-          </>
-        ) : (
-          ''
-        )}
       </SlideUpModal>
     </div>
   );
 };
 
-export default PaymentPage;
+export default ChoosePayment;

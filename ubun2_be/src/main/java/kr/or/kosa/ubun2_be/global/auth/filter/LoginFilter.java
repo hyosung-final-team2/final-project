@@ -78,6 +78,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         response.addCookie(refreshTokenService.createRefreshTokenCookie("refreshToken", refreshToken));
         response.setStatus(HttpStatus.OK.value());
+
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("{\"memberId\": " + userId + "}");
     }
 
     //로그인 실패시 실행하는 메소드

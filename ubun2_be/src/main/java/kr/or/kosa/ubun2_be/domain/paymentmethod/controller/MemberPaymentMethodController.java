@@ -19,6 +19,13 @@ import java.util.List;
 public class MemberPaymentMethodController {
     private final PaymentMethodService paymentMethodService;
 
+    @Operation(summary = "회원의 결제비밀번호 존재 여부 확인")
+    @GetMapping("/password")
+    public ResponseDto<?> checkPaymentPassword(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        boolean hasPaymentPassword = paymentMethodService.hasPaymentPassword(customUserDetails.getUserId());
+        return ResponseDto.ok(hasPaymentPassword, "결제비밀번호 존재 여부를 성공적으로 확인했습니다.");
+    }
+
     @Operation(summary = "전체 카드 목록 조회")
     @GetMapping("/cards")
     public ResponseDto<?> getAllCardPaymentMethods(@AuthenticationPrincipal CustomUserDetails customUserDetails) {

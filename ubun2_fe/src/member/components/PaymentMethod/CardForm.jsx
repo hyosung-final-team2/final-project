@@ -1,99 +1,122 @@
+import React, { useState, useEffect, useCallback } from 'react';
 import InfoItem from '../common/input/InfoInput';
 import CreditCard from './CreditCard';
-import { useState } from 'react';
 import { companies } from './CardList';
 import CardItem from '../PaymentMethod/CardItem';
 import SlideUpModal from '../common/SlideUpModal';
+import useModalStore from '../../store/modalStore';
 
-const CreditCardForm = ({ inputStyle, labelStyle }) => {
+const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
   const [isFlipped, setIsFlipped] = useState(false);
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardNickname, setCardNickname] = useState('');
-  const [expirationDate, setExpirationDate] = useState('');
-  const [ccv, setCcv] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState('');
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [formData, setFormData] = useState({
+    cardNumber: '',
+    paymentMethodNickname: '',
+    cardCompanyName: null,
+    // cardPassword: '',
+    // expirationDate: '',
+  });
 
-  const flipCard = flip => {
-    setIsFlipped(flip);
-  };
+  const { modalState, setModalState } = useModalStore();
 
-  const handleCardNum = e => {
-    setCardNumber(e.target.value);
-  };
-  const handleCardNickname = e => {
-    setCardNickname(e.target.value);
-  };
-  const handleExpirationDate = e => {
-    setExpirationDate(e.target.value);
-  };
-  const handleCvc = e => {
-    setCcv(e.target.value);
-  };
+  const updateFormData = useCallback((key, value) => {
+    setFormData(prev => ({ ...prev, [key]: value }));
+  }, []);
 
-  const handleOnClick = () => {
-    flipCard(!isFlipped);
+  useEffect(() => {
+    onFormChange(formData);
+  }, [formData, onFormChange]);
+
+  const flipCard = flip => setIsFlipped(flip);
+
+  const handleInputChange = key => e => updateFormData(key, e.target.value);
+
+  const handleCardCompanyNameSelect = item => {
+    updateFormData('cardCompanyName', item);
   };
 
-  const handleModalOpen = () => {};
   return (
     <div className='bg-white px-4'>
-      {/* Credit Card Display */}
-      {/* <div className='bg-gray-900 text-white rounded-lg p-4 mb-6'>... (신용카드 디스플레이 부분은 그대로 유지) ...</div> */}
       <CreditCard
-        cardNumber={cardNumber}
-        cardNickname={cardNickname}
-        ccv={ccv}
-        expirationDate={expirationDate}
+        {...formData}
         isFlipped={isFlipped}
-        handleClick={handleOnClick}
-        owner='memberName'
-        cardCompany={selectedItem}
+        handleClick={() => flipCard(!isFlipped)}
+        owner={formData.paymentMethodNickname}
+        cardCompany={formData.cardCompanyName}
       />
-      {/* Form */}
       <form className='space-y-4'>
         <InfoItem
           label='카드 별명'
           placeholder='카드 별명을 입력해주세요.'
           inputStyle={inputStyle}
           labelStyle={labelStyle}
-          onChange={handleCardNickname}
+          onChange={handleInputChange('paymentMethodNickname')}
           onFocus={() => flipCard(false)}
+          value={formData.paymentMethodNickname}
         />
-        <InfoItem label='카드사' inputStyle={inputStyle} labelStyle={labelStyle} setIsModalOpen={setIsModalOpen} placeholder='카드사를 선택해주세요' />
         <InfoItem
-          label='카드 번호'
-          value='**** - **** - **** - 1234'
+          label='카드사'
           inputStyle={inputStyle}
           labelStyle={labelStyle}
-          onChange={handleCardNum}
-          onFocus={() => flipCard(false)}
+          value={formData.cardCompanyName ? `${formData.cardCompanyName}카드` : ''}
+          placeholder='카드사를 선택해주세요'
+          onFocus={() => setModalState(true)}
+          isSelectable={true}
         />
-        <InfoItem label='카드 비밀번호' placeholder='카드 비밀번호' inputStyle={inputStyle} labelStyle={labelStyle} />
+        <InfoItem
+          label='카드 번호'
+          placeholder='**** - **** - **** - ****'
+          inputStyle={inputStyle}
+          labelStyle={labelStyle}
+          onChange={handleInputChange('cardNumber')}
+          onFocus={() => flipCard(false)}
+          value={formData.cardNumber}
+        />
+        <InfoItem
+          label='카드 비밀번호'
+          placeholder='카드 비밀번호'
+          inputStyle={inputStyle}
+          labelStyle={labelStyle}
+          onChange={handleInputChange('cardPassword')}
+          value={formData.cardPassword}
+        />
         <div className='flex'>
           <div className='flex-1 -mr-4'>
-            <InfoItem label='CVC' placeholder='123' inputStyle={inputStyle} labelStyle={labelStyle} onChange={handleCvc} onFocus={() => flipCard(true)} />
+            <InfoItem
+              label='CVC'
+              placeholder='123'
+              inputStyle={inputStyle}
+              labelStyle={labelStyle}
+              onChange={handleInputChange('cvc')}
+              onFocus={() => flipCard(true)}
+              value={formData.cvc}
+            />
           </div>
           <div className='flex-1 -ml-4'>
             <InfoItem
               label='카드 유효기간'
-              placeholder='03/27'
+              placeholder='MM/YY'
               inputStyle={inputStyle}
               labelStyle={labelStyle}
-              onChange={handleExpirationDate}
+              onChange={handleInputChange('expirationDate')}
               onFocus={() => flipCard(false)}
+              value={formData.expirationDate}
             />
           </div>
         </div>
       </form>
-      <SlideUpModal isOpen={isModalOpen} setIsModalOpen={setIsModalOpen} headerText='카드사를 선택하세요' isButton={false}>
+      <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='카드사를 선택하세요' isButton={false}>
         <div className='bg-white px-4 pb-2 rounded-lg max-w-3xl w-full'>
           <div className='grid grid-cols-3 gap-3'>
-            {companies.map((item, index) => {
-              return (
-                <CardItem key={index} logo={item.icon} name={item.name} setSelectedItem={setSelectedItem} setIsModalOpen={setIsModalOpen} path={item.path} />
-              );
-            })}
+            {companies.map((item, index) => (
+              <CardItem
+                key={index}
+                logo={item.icon}
+                name={item.name}
+                setSelectedItem={() => handleCardCompanyNameSelect(item.name)}
+                setIsModalOpen={setModalState}
+                path={item.path}
+              />
+            ))}
           </div>
         </div>
       </SlideUpModal>

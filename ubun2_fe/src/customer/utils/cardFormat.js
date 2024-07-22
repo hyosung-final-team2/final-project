@@ -9,6 +9,12 @@ export const formatCardNumber = cardNumber => {
   return formatted;
 };
 
+export const formatCardNumberWithSpace = cardNumber => {
+  const cleaned = cardNumber.replace(/\D/g, '');
+  const formatted = cleaned.replace(/(\d{4})(?=\d)/g, '$1 ');
+  return formatted;
+};
+
 /**
  * 카드번호를 마스킹하는 함수
  * @param {string} cardNumber

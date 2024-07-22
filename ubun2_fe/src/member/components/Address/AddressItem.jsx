@@ -1,14 +1,18 @@
 import React from 'react';
 
-const AddressItem = ({ memberName, memberAddress, memberPhone }) => {
+const AddressItem = ({ recipientName, memberAddress, recipientPhone, addressNickname, defaultStatus, handleEdit }) => {
   return (
-    <div className='bg-white'>
-      <p className='text-sm mb-2'>{memberName}</p>
+    <div className='bg-white mb-4'>
+      <div className='flex mb-2'>
+        {/* 배송지 이름 */}
+        <h3 className='text-black py-1 mr-2 text-xl font-bold'>{addressNickname}</h3>
+        {/* 배송지 상태 */}
+        {defaultStatus ? <div className='bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-xs self-center font-bold'>현재 배송지</div> : null}
+      </div>
+      <p className='text-sm '>{recipientName}</p>
       <p className='text-lg text-gray-500'>{memberAddress}</p>
-      {/* roadAddrPart2를 받아야할지도 */}
-      <p className='text-lg mb-1 text-gray-500'>(풍년동, 풍년아파트) 302동 101호</p>
-      <p className='text-md mb-2 text-gray-500'>{memberPhone}</p>
-      <a href='#' className='text-blue-600 text-sm'>
+      <p className='text-md text-gray-500'>{recipientPhone}</p>
+      <a href='#' className='text-blue-600 text-sm' onClick={handleEdit}>
         수정하기
       </a>
     </div>

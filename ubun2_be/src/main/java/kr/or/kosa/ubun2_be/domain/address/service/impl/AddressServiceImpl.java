@@ -126,7 +126,7 @@ public class AddressServiceImpl implements AddressService {
 
         validateMyAddress(memberId, address);
 
-        address.updateAddress(addressRequest.getAddress());
+        address.updateAddress(addressRequest.getAddress(), addressRequest.getAddressNickname(), addressRequest.getRecipientName(), addressRequest.getRecipientPhone());
     }
 
     @Transactional

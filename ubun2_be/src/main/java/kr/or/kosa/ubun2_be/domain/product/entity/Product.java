@@ -74,7 +74,7 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product")
     private List<SubscriptionOrderProduct> subscriptionOrderProducts;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<CartProduct> cartProducts;
 
     public void updateProduct(ProductRequest productRequest) {

@@ -49,4 +49,8 @@ public class Order extends BaseTimeEntity {
     public void changeOrderStatus(OrderStatus newStatus) {
         this.orderStatus = newStatus;
     }
+
+    public void createOrderProducts(List<OrderProduct> orderProducts) {
+        this.orderProducts = orderProducts;
+    }
 }

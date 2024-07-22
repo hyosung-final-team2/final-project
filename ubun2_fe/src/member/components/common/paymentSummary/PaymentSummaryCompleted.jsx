@@ -1,6 +1,6 @@
-const PaymentSummaryCompleted = ({ productAmount, discount, totalAmount, paymentType, paymentInfo }) => {
+const PaymentSummaryCompleted = ({ productAmount, discount, totalAmount, paymentType, paymentInfo, style }) => {
   return (
-    <div className='px-4 py-8 bg-white'>
+    <div className={`px-4 py-8 bg-white ${style}`}>
       <h2 className='text-2xl font-semibold'>결제 정보</h2>
       <div className='flex flex-col gap-5 mt-4 font-semibold'>
         <div className='flex justify-between'>

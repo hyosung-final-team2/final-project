@@ -1,20 +1,20 @@
-import { useNavigate } from 'react-router-dom'; // 1단계
+import { useNavigate } from 'react-router-dom';
 import SingleLineIcon from '../../../assets/images/single-line.svg';
 import SubscriptionLineIcon from '../../../assets/images/subscription-line.svg';
 import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
 
 function MyPage() {
-  const navigate = useNavigate(); // 2단계
+  const navigate = useNavigate();
 
   // 관리 항목 데이터 배열
   const myInfoItems = [
     { id: 1, name: '내 정보 관리', icon: ChevronRightIcon, value: '/member/app/mypage/myinfo' },
-    { id: 2, name: '결제수단 관리', icon: ChevronRightIcon, value: '/member/app/mypage/payment' },
-    { id: 3, name: '배송지 관리', icon: ChevronRightIcon, value: '/member/app/mypage/delivery' },
+    { id: 2, name: '결제수단 관리', icon: ChevronRightIcon, value: '/member/app/mypage/payment-list' },
+    { id: 3, name: '배송지 관리', icon: ChevronRightIcon, value: '/member/app/addresses' },
+    { id: 4, name: '주문 관리', icon: ChevronRightIcon, value: '/member/app/mypage/order-list' },
   ];
 
   const handleMyInfoMenu = value => {
-    // 3단계
     navigate(value);
   };
 
@@ -57,8 +57,6 @@ function MyPage() {
           <ul className='flex flex-col gap-2'>
             {myInfoItems.map(item => (
               <li key={item.id} className='flex items-center justify-between py-2 last:border-b-0' onClick={() => handleMyInfoMenu(item.value)}>
-                {' '}
-                {/* 4단계 */}
                 <span>{item.name}</span>
                 <item.icon className='w-4 h-4 text-gray-500' />
               </li>
@@ -69,4 +67,5 @@ function MyPage() {
     </div>
   );
 }
+
 export default MyPage;
