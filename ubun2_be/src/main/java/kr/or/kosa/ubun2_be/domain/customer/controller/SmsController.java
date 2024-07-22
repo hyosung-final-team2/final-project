@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/customers")
+@RequestMapping("/api/customers")
 public class SmsController {
 
     private final SmsService smsService;

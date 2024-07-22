@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/members/payments")
+@RequestMapping("/api/members/payments")
 public class MemberPaymentMethodController {
     private final PaymentMethodService paymentMethodService;
 

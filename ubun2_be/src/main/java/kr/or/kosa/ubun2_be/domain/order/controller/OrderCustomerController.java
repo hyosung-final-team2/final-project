@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/customers/orders")
+@RequestMapping("/api/customers/orders")
 public class OrderCustomerController {
     private final OrderService orderService;
     private static final String SORT_DEFAULT = "createdAt";
