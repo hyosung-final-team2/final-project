@@ -1,17 +1,16 @@
 import { themeChange } from 'theme-change';
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 
 import BellIcon from '@heroicons/react/24/outline/BellIcon';
 import MoonIcon from '@heroicons/react/24/outline/MoonIcon';
 import SunIcon from '@heroicons/react/24/outline/SunIcon';
 import BackButton from '@heroicons/react/24/outline/ChevronLeftIcon';
 
-import { NavLink, Routes, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import useStoreStore from '../store/storeStore';
 
-function MemHeader() {
-  //   const { noOfNotifications, pageTitle } = useSelector(state => state.header);
+function MemHeader({setIsAlarmOpen}) {
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme'));
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,10 +31,6 @@ function MemHeader() {
     }
   }, []);
 
-  // Opening right sidebar for notification
-  //   const openNotification = () => {
-  //     dispatch(openRightDrawer({ header: 'Notifications', bodyType: RIGHT_DRAWER_TYPES.NOTIFICATION }));
-  //   };
 
   return (
     <>
@@ -54,16 +49,7 @@ function MemHeader() {
         ) : null}
 
         <div className='flex-none'>
-          {/* Multiple theme selection, uncomment this if you want to enable multiple themes selection, 
-                also includes corporate and retro themes in tailwind.config file */}
 
-          {/* <select className="select select-sm mr-4" data-choose-theme>
-                    <option disabled selected>Theme</option>
-                    <option value="light">Default</option>
-                    <option value="dark">Dark</option>
-                    <option value="corporate">Corporate</option>
-                    <option value="retro">Retro</option>
-                </select> */}
 
           {/* Light and dark theme selection toogle **/}
           <label className='swap '>
@@ -81,10 +67,9 @@ function MemHeader() {
           </label>
 
           {/* Notification icon */}
-          <button className='btn btn-ghost ml-4  btn-circle' onClick={() => openNotification()}>
+          <button className='btn btn-ghost ml-4  btn-circle' onClick={() => setIsAlarmOpen(true)}>
             <div className='indicator'>
               <BellIcon className='h-6 w-6' />
-              {/* {noOfNotifications > 0 ? <span className='indicator-item badge badge-secondary badge-sm'>{noOfNotifications}</span> : null} */}
             </div>
           </button>
         </div>

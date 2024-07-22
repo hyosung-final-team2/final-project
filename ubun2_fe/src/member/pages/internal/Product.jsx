@@ -77,9 +77,6 @@ function Product() {
         setModalState(false)
     }
 
-    console.log(product)
-    console.log(product?.orderOption)
-
     const {mutate } = useCreateCart({productId:parseInt(productId),quantity:productQuantity, orderOption:orderType === null ? product?.orderOption : orderType  })
 
 

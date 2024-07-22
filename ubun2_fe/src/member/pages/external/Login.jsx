@@ -5,6 +5,7 @@ import { useLogin } from '../../../customer/api/common/Login/queris.js';
 import CustomButton from '../../components/common/button/CustomButton.jsx';
 import InstallPrompt from '../../components/Installprompt/InstallPrompt.jsx';
 import useOrderItemsStore from '../../store/order/orderItemStore.js';
+import useMemberStore from "../../store/memberStore.js";
 
 const Login = () => {
   const INITIAL_LOGIN_OBJ = {
@@ -17,6 +18,7 @@ const Login = () => {
   const role = useLocation().pathname === '/customer/login' ? 'ROLE_CUSTOMER' : 'ROLE_MEMBER';
   const navigate = useNavigate();
   const { clearCart } = useOrderItemsStore();
+  const {setMemberId} = useMemberStore()
 
   const updateFormValue = ({ updateType, value }) => {
     setErrorMessage('');
