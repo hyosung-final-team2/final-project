@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgr from 'vite-plugin-svgr';
-import {VitePWA} from "vite-plugin-pwa";
+import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   plugins: [
@@ -16,22 +16,18 @@ export default defineConfig({
       registerType: "autoUpdate",
       devOptions: {
         enabled: true,
-        // type: 'module',
       },
-      mode: 'development',
-      injectManifest: {
+      workbox: {
         globPatterns: ['**/*'],
       },
-      strategies: 'injectManifest',
-      srcDir: 'public',
-      filename: 'firebase-messaging-sw.js',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'OrderSwift',
-        short_name: 'OrderSwift',
+        name: 'clickNbuy',
+        short_name: 'clickNbuy',
         theme_color: '#290386',
         display: 'standalone',
         background_color: '#928AFF',
-        start_url:'/member',
+        start_url: '/member',
         icons: [
           {
             src: 'logo-192-192.png',
