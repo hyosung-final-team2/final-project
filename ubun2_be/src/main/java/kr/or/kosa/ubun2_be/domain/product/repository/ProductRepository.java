@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
     Optional<Product> findByCustomerCustomerIdAndProductId(Long customerId, Long productId);
-
     boolean existsByProductName(String productName);
+
+    long countByCustomerCustomerId(Long customerId);
+    long countByCustomerCustomerIdAndProductStatus(Long customerId, boolean productStatus);
 }

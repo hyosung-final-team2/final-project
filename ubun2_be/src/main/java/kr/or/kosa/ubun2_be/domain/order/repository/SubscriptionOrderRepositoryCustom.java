@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.order.repository;
 
+import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 
@@ -19,6 +20,10 @@ public interface SubscriptionOrderRepositoryCustom {
     Optional<Integer> findLatestCycleNumberByCustomerIdAndOrderId(Long customerId, Long orderId);
 
     List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+
+    List<Object[]> findTopSellingProductsByCustomerId(Long customerId, LocalDateTime startDate, LocalDateTime endDate);
+
+    List<Address> findAddressesByDateRange(Long customerId,LocalDateTime startDate, LocalDateTime endDate);
 
     }
 

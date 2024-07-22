@@ -22,4 +22,6 @@ public interface MemberCustomerRepository extends JpaRepository<MemberCustomer,L
 
     @Query("SELECT mc.member FROM MemberCustomer mc WHERE mc.customer.customerId = :customerId")
     List<Member> findMembersByCustomerId(@Param("customerId") Long customerId);
+
+    long countByCustomerCustomerId(Long customerId);
 }
