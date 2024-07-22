@@ -7,6 +7,7 @@ import kr.or.kosa.ubun2_be.domain.customer.dto.request.RegisterMemberRequest;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.SignupRequest;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
+import kr.or.kosa.ubun2_be.domain.customer.dto.response.StoreInfoResponse;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
@@ -78,6 +79,13 @@ public class CustomerController {
                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Page<MemberListResponse> memberResponseList = customerService.getMembers(customUserDetails.getUserId(), searchRequest, pageable);
         return ResponseDto.ok(memberResponseList, "정상출력 데이터");
+    }
+
+    @Operation(summary = "고객 스토어 이름")
+    @GetMapping("/storename")
+    public ResponseDto<?> getStoreName(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        StoreInfoResponse storeInfo = customerService.getStoreInfo(customUserDetails.getUserId());
+        return ResponseDto.ok(storeInfo,"정상출력 데이터");
     }
 
 }
