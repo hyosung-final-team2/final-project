@@ -36,6 +36,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
 
+    public LoginFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper, JwtUtil jwtUtil, RefreshTokenService refreshTokenService, String loginUrl) {
+        this.authenticationManager = authenticationManager;
+        this.objectMapper = objectMapper;
+        this.jwtUtil = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
+        setFilterProcessesUrl(loginUrl);  // 로그인 URL 설정
+    }
+
+
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 

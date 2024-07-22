@@ -1,7 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.address.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberDetailRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberInfoResponse;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/customers/addresses")
+@RequestMapping("/api/customers/addresses")
 public class AddressController {
     private final AddressService addressService;
     private static final int PAGE_SIZE = 9;

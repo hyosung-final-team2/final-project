@@ -8,16 +8,19 @@ import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class EmailController {
     private final EmailService emailService;
 
     @Operation(summary = "인증번호 발송")
     @PostMapping("/auth/send")
     public ResponseDto<?> sendEmail(@RequestBody EmailRequest emailRequest) {
+        System.out.println("email controller");
         emailService.sendEmail(emailRequest);
         return ResponseDto.ok(null, "정상출력 데이터");
     }

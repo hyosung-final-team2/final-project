@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @Configuration
@@ -46,7 +47,8 @@ public class SecurityConfig {
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                       // configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://clicknbuy.co.kr"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -59,10 +61,11 @@ public class SecurityConfig {
                     }
                 }));
 
+
         // 로그아웃
         http
                 .logout(logout -> logout
-                .logoutUrl("/logout")
+                .logoutUrl("/api/logout")
                 .deleteCookies("refreshToken")
                 .addLogoutHandler(logoutService)
                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
@@ -83,11 +86,11 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/customers/login", "/customers/signup", "/token/refresh",
-                                         "auth/send", "auth", "members/signup", "/find/id",
-                                         "find/password","reset/password").permitAll()
-                        .requestMatchers("/customers/**").hasRole("CUSTOMER")
-                        .requestMatchers("/members/**").hasRole("MEMBER")
+                        .requestMatchers("/api/customers/login", "/api/customers/signup", "/api/token/refresh",
+                                         "/api/auth/send", "/api/auth", "/api/members/signup", "/api/find/id",
+                                         "/api/find/password","/api/reset/password").permitAll()
+                        .requestMatchers("/api/customers/**").hasRole("CUSTOMER")
+                        .requestMatchers("/api/members/**").hasRole("MEMBER")
                         .anyRequest().authenticated());
 
         //JWTFilter 등록
@@ -96,7 +99,7 @@ public class SecurityConfig {
 
         // 로그인 필터 등록
         http
-                .addFilterAt(new LoginFilter(authenticationManager, objectMapper, jwtUtil, refreshTokenService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager, objectMapper, jwtUtil, refreshTokenService,"/api/login"), UsernamePasswordAuthenticationFilter.class);
 
         //세션 설정
         http

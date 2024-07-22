@@ -1,7 +1,9 @@
 package kr.or.kosa.ubun2_be.domain.order.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.JPQLQuery;
+import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
@@ -10,12 +12,14 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static kr.or.kosa.ubun2_be.domain.customer.entity.QCustomer.customer;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMember.member;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCustomer;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QOrder.order;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QOrderProduct.orderProduct;
+import static kr.or.kosa.ubun2_be.domain.product.entity.QProduct.product;
 import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QAccountPayment.accountPayment;
 import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QCardPayment.cardPayment;
 import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QPaymentMethod.paymentMethod;
@@ -109,5 +113,39 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                                 .and(order.orderStatus.eq(OrderStatus.APPROVED))))
                 .fetch();
 
+    }
+
+    @Override
+    public List<Object[]> findTopSellingProductsByCustomerId(Long customerId, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Tuple> tuples = from(orderProduct)
+                .select(product.productId, product.productName, orderProduct.quantity.sum())
+                .join(orderProduct.order, order)
+                .join(orderProduct.product, product)
+                .join(order.member.memberCustomers, memberCustomer)
+                .where(memberCustomer.customer.customerId.eq(customerId)
+                        .and(order.createdAt.between(startDate, endDate))
+                        .and(order.orderStatus.eq(OrderStatus.APPROVED)))
+                .groupBy(product.productId, product.productName)
+                .orderBy(orderProduct.quantity.sum().desc())
+                .fetch();
+
+        return tuples.stream()
+                .map(tuple -> new Object[]{
+                        tuple.get(product.productId),
+                        tuple.get(product.productName),
+                        tuple.get(orderProduct.quantity.sum())
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Address> findAddressesByDateRange(Long customerId, LocalDateTime startDate, LocalDateTime endDate) {
+        return from(order)
+                .join(order.member.memberCustomers, memberCustomer)
+                .where(memberCustomer.customer.customerId.eq(customerId)
+                        .and(order.createdAt.between(startDate, endDate))
+                        .and(order.orderStatus.eq(OrderStatus.APPROVED)))
+                .select(order.address)
+                .fetch();
     }
 }

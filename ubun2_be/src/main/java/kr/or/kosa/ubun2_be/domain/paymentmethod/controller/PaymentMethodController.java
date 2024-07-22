@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/customers/payments")
+@RequestMapping("/api/customers/payments")
 public class PaymentMethodController {
     private final PaymentMethodService paymentMethodService;
     private static final int PAGE_SIZE = 9;
