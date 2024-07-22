@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/dashboard")
+@RequestMapping("/customers/dashboard")
 public class DashboardController {
     private final DashboardService dashboardService;
     private static final String SORT_DEFAULT = "createdAt";
