@@ -101,7 +101,7 @@ const App = () => {
               <Route path={'reset-password'} element={<MemberResetPassword />} />
               <Route path='register' element={<MemberRegister />} />
               <Route path='app/*' element={<MemberLayout />} />
-              <Route path='*' element={<Navigate to={token ? '/member/app/welcome' : '/member/login'} replace />} />
+              <Route path='*' element={<Navigate to={token ? '/member/app/home' : '/member/login'} replace />} />
             </Routes>
           }
         />
