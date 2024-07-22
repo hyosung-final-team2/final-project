@@ -235,6 +235,7 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
 
         } catch (Exception e) {
             subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
+            // TODO: 연기 단건 알림 보내는 부분
         }
         subscriptionOrderRepository.save(subscriptionOrder);//        명시적 save
 
