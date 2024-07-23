@@ -109,24 +109,18 @@ public class AlarmServiceImpl implements AlarmService{
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER));
 
-        Long firstProductId = request.getSubscriptionOrderProducts().get(0).getProductId();
-        Product firstProduct = productRepository.findByCustomerCustomerIdAndProductId(customer.getCustomerId(),firstProductId)
-                .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
-
+        Product firstProduct = getFirstProduct(request, customer);
         String firstProductName = firstProduct.getProductName();
         int productListSize = request.getSubscriptionOrderProducts().size();
 
-        String title = request.getIntervalDays() == 0 ? "단건주문" : "정기주문";
-
-        String content = productListSize == 1 ?
-                firstProductName + "이 주문되었습니다." :
-                firstProductName + " 외 " + (productListSize - 1) + "개가 주문되었습니다.";
+        String title = getOrderTitle(request.getIntervalDays());
+        String content = getOrderContent(firstProductName, productListSize);
 
         Message message = makeOrderMessage(title, content, customer.getFcmToken());
         String messageId = sendMessage(message);
 
         Alarm alarm = Alarm.createAlarm(title, content);
-        customerAlarmRedisRepository.saveAlarm(String.valueOf(customer.getCustomerId()),alarm);
+        customerAlarmRedisRepository.saveAlarm(String.valueOf(customer.getCustomerId()), alarm);
     }
 
     @Override
@@ -172,6 +166,23 @@ public class AlarmServiceImpl implements AlarmService{
             throw new RuntimeException("알림 전송 실패: " + e.getMessagingErrorCode() + " - " + e.getMessage());
 
         }
+    }
+
+
+    private Product getFirstProduct(SubscriptionOrderRequest request, Customer customer) {
+        Long firstProductId = request.getSubscriptionOrderProducts().get(0).getProductId();
+        return productRepository.findByCustomerCustomerIdAndProductId(customer.getCustomerId(), firstProductId)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
+    }
+
+    private String getOrderTitle(int intervalDays) {
+        return intervalDays == 0 ? "단건주문" : "정기주문";
+    }
+
+    private String getOrderContent(String firstProductName, int productListSize) {
+        return productListSize == 1 ?
+                firstProductName + "이 주문되었습니다." :
+                firstProductName + " 외 " + (productListSize - 1) + "개가 주문되었습니다.";
     }
 
 }
