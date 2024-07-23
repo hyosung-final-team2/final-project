@@ -1,50 +1,125 @@
-import { useEffect, useState } from 'react';
-import { ORDER_LIST_DUMMY_DATA } from '../../components/Order/orderDummyData';
+import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircleIcon';
+import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
+import { useParams } from 'react-router-dom';
+import { useGetOrderDetail, useUpdateCancelOrder } from '../../api/Order/queris';
 import OrderStatusBadge from '../../components/common/badge/OrderStatusBadge';
 import OrderStatusTextBadge from '../../components/common/badge/OrderStatusTextBadge';
 import PaymentSummaryCompleted from '../../components/common/paymentSummary/PaymentSummaryCompleted';
 import ProductItemReadOnly from '../../components/common/productItem/ProductItemReadOnly';
+import SlideUpModal from '../../components/common/SlideUpModal';
+import useModalStore from '../../store/modalStore';
 
 const MySingleOrderDetail = () => {
-  const [orderData, setOrderData] = useState(null);
+  const { customerId, orderId } = useParams();
+  const { data: orderResponse, isLoading, isError } = useGetOrderDetail(customerId, orderId);
+  const updateCancelOrderMutation = useUpdateCancelOrder();
+  const { modalState, setModalState } = useModalStore();
 
-  useEffect(() => {
-    // orderId가 1인 주문 데이터 찾는다는 가정
-    const targetOrder = ORDER_LIST_DUMMY_DATA.orderList.find(order => order.orderId === 1);
-    setOrderData(targetOrder);
-  }, []);
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error occurred while fetching order details.</div>;
 
-  if (!orderData) return <div>Loading...</div>;
+  const orderData = orderResponse.data.data;
 
   const paymentInfo = {
-    paymentName: orderData.paymentType === 'CARD' ? orderData.cardName : orderData.accountName,
+    paymentName: orderData.paymentType === 'CARD' ? orderData.cardCompanyName : orderData.bankName,
     paymentContent: orderData.paymentType === 'CARD' ? orderData.cardNumber : orderData.accountNumber,
   };
 
-  const totalOrderPrice = orderData.orderProducts.reduce((sum, product) => sum + product.totalPrice, 0);
+  const formatDate = dateString => {
+    return new Date(dateString).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
+  };
+
+  const openCancelModal = () => {
+    setModalState(true);
+  };
+
+  const closeCancelModal = () => {
+    setModalState(false);
+  };
+
+  const handelCandel = async () => {
+    try {
+      await updateCancelOrderMutation.mutateAsync({
+        customerId: Number(customerId),
+        orderId: Number(orderId),
+      });
+      console.log('주문이 성공적으로 취소되었습니다.');
+    } catch (error) {
+      console.error('주문 취소 중 오류 발생:', error);
+      console.log('주문 취소에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
 
   return (
-    <div className='bg-gray-100 '>
-      <div className='flex flex-col gap-3 p-4'>
+    <div className='h-full bg-gray-100'>
+      <div className='flex flex-col p-4'>
         <div className='flex items-center justify-between py-4 text-main'>
-          <h1 className='text-2xl font-bold'>주문번호 {orderData.orderId}</h1>
+          <h1 className='text-2xl font-bold'>주문번호 {orderId}</h1>
           <OrderStatusBadge status='SINGLE' />
         </div>
         <div className='px-4 py-8 mb-4 bg-white rounded-3xl'>
           <h2 className='mb-4 text-xl font-bold text-gray-600'>주문 내역</h2>
           <div className='flex items-center gap-3 mb-1 text-gray-600'>
             <h3 className='text-lg font-bold'>{orderData.orderProducts[0].productName}</h3>
-            <span>{`외 ${orderData.orderProducts.length} 개`}</span>
+            <span>{orderData.orderProducts.length - 1 > 0 ? `외 ${orderData.orderProducts.length - 1} 개` : ''}</span>
           </div>
           <p className='mb-4 text-sm text-gray-500'>
-            {new Date(orderData.createdAt).toLocaleDateString()} <OrderStatusTextBadge status={orderData.orderStatus} />
+            {formatDate(orderData.createdAt)} <OrderStatusTextBadge status={orderData.orderStatus} />
           </p>
           {orderData.orderProducts.map(product => (
-            <ProductItemReadOnly key={product.productId} {...product} />
+            <ProductItemReadOnly
+              key={product.productId}
+              productImagePath={product.productImagePath}
+              productDescription={product.productDescription}
+              productName={product.productName}
+              productPrice={product.price}
+              productDiscount={product.discount}
+              quantity={product.quantity}
+              productImageOriginalName={product.productImageOriginalName}
+            />
           ))}
+
+          <div className='w-full bg-white border-t'>
+            {orderData.orderStatus === 'PENDING' && (
+              <div className='flex justify-between px-4 py-6' onClick={openCancelModal}>
+                <span className='text-base font-bold text-red-700'>결제 취소하기</span>
+                <ChevronRightIcon className='w-5' />
+              </div>
+            )}
+            <div>
+              <div className='flex justify-between p-4'>
+                <span className='flex flex-col gap-3 text-base font-bold'>
+                  판매자에게 문의하기
+                  <div className='flex gap-3 text-gray-500 bg-white'>
+                    <InformationCircleIcon className='w-5' />
+                    <p className='text-sm text-gray-500'>주문승인 이후에는 결제를 취소할 수 없어요.</p>
+                  </div>
+                </span>
+                <ChevronRightIcon className='w-5' />
+              </div>
+            </div>
+          </div>
         </div>
-        <PaymentSummaryCompleted productAmount={totalOrderPrice} discount={0} totalAmount={totalOrderPrice} paymentInfo={paymentInfo} style={'rounded-3xl'} />
+        <PaymentSummaryCompleted
+          productAmount={orderData.orderAmount}
+          discount={orderData.discountAmount}
+          totalAmount={orderData.paymentAmount}
+          paymentInfo={paymentInfo}
+          style={'rounded-3xl'}
+        />
       </div>
+      {orderData.orderStatus === 'PENDING' && (
+        <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='주문을 취소하시겠습니까?' isButton={false}>
+          <div className='flex gap-5'>
+            <button className='w-full mt-5 font-bold text-white bg-black h-14 rounded-2xl' onClick={closeCancelModal}>
+              안할래요
+            </button>
+            <button className='w-full mt-5 font-bold text-white bg-red-700 h-14 rounded-2xl' onClick={handelCandel}>
+              취소할래요
+            </button>
+          </div>
+        </SlideUpModal>
+      )}
     </div>
   );
 };
