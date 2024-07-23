@@ -34,7 +34,7 @@ public class UnifiedOrderResponse {
                 .totalOrderPrice(calculateTotalOrderPrice(order))
                 .isSubscription(false)
                 .orderProducts(order.getOrderProducts().stream()
-                        .map(OrderProductResponse::of) // 정적 팩토리 메소드 사용
+                        .map(OrderProductResponse::of)
                         .collect(Collectors.toList()))
                 .paymentType(getPaymentType(order.getPaymentMethod()))
                 .build();
@@ -49,7 +49,7 @@ public class UnifiedOrderResponse {
                 .totalOrderPrice(calculateTotalSubscriptionOrderPrice(subscriptionOrder))
                 .isSubscription(true)
                 .subscriptionOrderProducts(subscriptionOrder.getSubscriptionOrderProducts().stream()
-                        .map(SubscriptionOrderProductResponse::of) // 정적 팩토리 메소드 사용
+                        .map(SubscriptionOrderProductResponse::of)
                         .collect(Collectors.toList()))
                 .paymentType(getPaymentType(subscriptionOrder.getPaymentMethod()))
                 .build();
