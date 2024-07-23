@@ -141,19 +141,15 @@ const Cart = () => {
 
   return (
     <div className='h-full'>
-      {cartData && cartData.length !== 0 && (
-        <div className='flex items-center justify-between p-4 font-bold'>
-          <span className='text-2xl text-main'>{'장바구니'}</span>
-          <span onClick={handleDeleteSelected} className='underline cursor-pointer text-main'>
-            선택 상품 삭제
-          </span>
-        </div>
-      )}
-      {selectedItems.length > 0 && (
-        <div>
-          <div className='w-full h-3 bg-gray-100'></div>
-        </div>
-      )}
+      <div className='flex items-center justify-between p-4 font-bold'>
+        <span className='text-2xl text-main'>{'장바구니'}</span>
+        <span onClick={handleDeleteSelected} className='underline cursor-pointer text-main'>
+          선택 상품 삭제
+        </span>
+      </div>
+      <div>
+        <div className='w-full h-3 bg-gray-100'></div>
+      </div>
       <div className='flex flex-col flex-1 w-full'>
         <div className='flex-1'>
           {cartData && cartData.length === 0 ? (
@@ -178,46 +174,42 @@ const Cart = () => {
             ))
           )}
 
-          {selectedItems.length > 0 && (
-            <div>
-              <div className='w-full h-3 bg-gray-100'></div>
-              <PaymentSummaryPre productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} />
-            </div>
-          )}
-        </div>
-      </div>
-      {selectedItems.length > 0 && (
-        <div
-          className='sticky bottom-0 left-0 right-0 flex flex-col w-full p-4 px-3 py-4'
-          style={{ background: 'linear-gradient(to top, white, white 65%, transparent)' }}
-        >
-          {unsetSubscriptions.length > 0 && (
-            <div className='mb-2 text-red-500'>
-              <span>다음 상점의 정기 주문 상품 배송 주기를 선택해주세요</span>
-              <ul>
-                {unsetSubscriptions.map(store => (
-                  <li key={store.customerId} className='flex gap-3 my-2'>
-                    <ShoppingBagIcon className='w-5 h-5' />
-                    {`${store.businessName}`}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <div className='flex items-end justify-between w-full'>
-            <div className='flex items-end justify-between w-5/6 gap-2 py-4 mr-3 text-xl'>
-              <span className='text-sm font-semibold'>{`${totals.selectedCount}개 선택`}</span>
-              <span className='font-bold text-main'>{`${totals.totalAmount.toLocaleString()}원`}</span>
-            </div>
-            <BottomButton
-              buttonText='구매하기'
-              buttonStyle={`${isOrderButtonDisabled ? 'bg-gray-400' : 'bg-main'} text-white`}
-              buttonFunc={handleOrder}
-              disabled={isOrderButtonDisabled}
-            />
+          <div>
+            <div className='w-full h-3 bg-gray-100'></div>
+            <PaymentSummaryPre productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} />
           </div>
         </div>
-      )}
+      </div>
+      <div
+        className='sticky bottom-0 left-0 right-0 flex flex-col w-full p-4 px-3 py-4'
+        style={{ background: 'linear-gradient(to top, white, white 65%, transparent)' }}
+      >
+        {unsetSubscriptions.length > 0 && (
+          <div className='mb-2 text-red-500'>
+            <span>다음 상점의 정기 주문 상품 배송 주기를 선택해주세요</span>
+            <ul>
+              {unsetSubscriptions.map(store => (
+                <li key={store.customerId} className='flex gap-3 my-2'>
+                  <ShoppingBagIcon className='w-5 h-5' />
+                  {`${store.businessName}`}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div className='flex items-end justify-between w-full'>
+          <div className='flex items-end justify-between w-5/6 gap-2 py-4 mr-3 text-xl'>
+            <span className='text-sm font-semibold'>{`${totals.selectedCount}개 선택`}</span>
+            <span className='font-bold text-main'>{`${totals.totalAmount.toLocaleString()}원`}</span>
+          </div>
+          <BottomButton
+            buttonText='구매하기'
+            buttonStyle={`${isOrderButtonDisabled ? 'bg-gray-400' : 'bg-main'} text-white`}
+            buttonFunc={handleOrder}
+            disabled={isOrderButtonDisabled}
+          />
+        </div>
+      </div>
 
       <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='배송 주기 선택' isButton={false}>
         <div className='flex flex-col items-start space-y-4'>
