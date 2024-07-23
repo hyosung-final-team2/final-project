@@ -4,6 +4,7 @@ import { persist } from 'zustand/middleware';
 const useOrderDataStore = create(
   persist(
     set => ({
+      // 초기 상태
       orderData: [],
       selectedAddressId: null,
       selectedPaymentMethodId: null,
@@ -16,9 +17,16 @@ const useOrderDataStore = create(
             ...updatedData,
           })),
         })),
+      // 선택된 주소 ID 설정
       setSelectedAddressId: addressId => set({ selectedAddressId: addressId }),
+
+      // 선택된 결제 방법 ID 설정
       setSelectedPaymentMethodId: paymentMethodId => set({ selectedPaymentMethodId: paymentMethodId }),
+
+      // 선택된 결제 방법 유형 설정
       setSelectedPaymentMethodType: paymentMethodType => set({ selectedPaymentMethodType: paymentMethodType }),
+
+      // 주문 데이터 초기화
       resetOrderData: () =>
         set({
           orderData: [],
@@ -28,6 +36,7 @@ const useOrderDataStore = create(
         }),
     }),
     {
+      // 영속성 설정
       name: 'order-data-storage',
       getStorage: () => localStorage,
     }

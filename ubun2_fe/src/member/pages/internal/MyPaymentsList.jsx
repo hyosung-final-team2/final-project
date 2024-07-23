@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import MyPagePaymentItem from '../../components/PaymentMethod/MyPagePaymentItem';
 import PaymentItem from '../../components/PaymentMethod/PaymentItem';
 import SlideUpModal from '../../components/common/SlideUpModal';

@@ -8,21 +8,25 @@ import PaymentSummaryCompleted from '../../components/common/paymentSummary/Paym
 import ProductItemReadOnly from '../../components/common/productItem/ProductItemReadOnly';
 import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
+import DoubleBottomButton from '../../components/common/button/DoubleBottomButton';
+import { formatCardNumber } from '../../../customer/utils/cardFormat';
+import { formatAccountNumber } from '../../../customer/utils/accountFormat';
 
 const MySingleOrderDetail = () => {
   const { customerId, orderId } = useParams();
   const { data: orderResponse, isLoading, isError } = useGetOrderDetail(customerId, orderId);
   const updateCancelOrderMutation = useUpdateCancelOrder();
   const { modalState, setModalState } = useModalStore();
+  const modalButtonStyle = 'bg-main text-white';
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error occurred while fetching order details.</div>;
 
-  const orderData = orderResponse.data.data;
+  const orderData = orderResponse?.data?.data;
 
   const paymentInfo = {
     paymentName: orderData.paymentType === 'CARD' ? orderData.cardCompanyName : orderData.bankName,
-    paymentContent: orderData.paymentType === 'CARD' ? orderData.cardNumber : orderData.accountNumber,
+    paymentContent: orderData.paymentType === 'CARD' ? formatCardNumber(orderData.cardNumber) : formatAccountNumber(orderData.accountNumber),
   };
 
   const formatDate = dateString => {
@@ -110,14 +114,13 @@ const MySingleOrderDetail = () => {
       </div>
       {orderData.orderStatus === 'PENDING' && (
         <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='주문을 취소하시겠습니까?' isButton={false}>
-          <div className='flex gap-5'>
-            <button className='w-full mt-5 font-bold text-white bg-black h-14 rounded-2xl' onClick={closeCancelModal}>
-              안할래요
-            </button>
-            <button className='w-full mt-5 font-bold text-white bg-red-700 h-14 rounded-2xl' onClick={handelCandel}>
-              취소할래요
-            </button>
-          </div>
+          <DoubleBottomButton
+            buttonStyle={modalButtonStyle}
+            firstButtonText='취소'
+            secondButtonText='삭제'
+            firstButtonFunc={closeCancelModal}
+            secondButtonFunc={handelCandel}
+          />
         </SlideUpModal>
       )}
     </div>

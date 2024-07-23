@@ -13,6 +13,7 @@ import OrderCompleteStore from '../../components/OrderComplete/OrderCompleteStor
 import useModalStore from '../../store/modalStore';
 import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
+import { replace } from 'lodash';
 
 const OrderComplete = () => {
   const { selectedItems, calculateTotals, clearCart } = useOrderItemsStore();
@@ -51,7 +52,7 @@ const OrderComplete = () => {
       // 주문 완료 후 데이터 초기화
       resetOrderData();
       clearCart();
-      navigate('/member/app/home');
+      navigate('/member/app/home', { replace: true });
     } catch (error) {
       console.log('주문에 실패했습니다:', error);
     }
