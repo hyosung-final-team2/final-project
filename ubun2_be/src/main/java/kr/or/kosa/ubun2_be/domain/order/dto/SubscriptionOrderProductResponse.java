@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class SubscriptionOrderProductResponse {
     private Long subscriptionOrderProductId;
     private int quantity;
