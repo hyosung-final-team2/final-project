@@ -9,6 +9,7 @@ import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.StoreInfoResponse;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
+import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
@@ -86,6 +87,14 @@ public class CustomerController {
     public ResponseDto<?> getStoreName(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         StoreInfoResponse storeInfo = customerService.getStoreInfo(customUserDetails.getUserId());
         return ResponseDto.ok(storeInfo,"정상출력 데이터");
+    }
+
+    @Operation(summary = "고객의 기기등록 FcmToken 전송 받기")
+    @PutMapping("/fcmtoken")
+    public ResponseDto<?> updateFcmToken(@RequestBody FcmTokenRequest fcmTokenRequest,
+                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        customerService.updateCustomerFcmToken(customUserDetails.getUserId(),fcmTokenRequest);
+        return ResponseDto.ok(null,"fcm 토큰 등록/업데이트 완료");
     }
 
 }

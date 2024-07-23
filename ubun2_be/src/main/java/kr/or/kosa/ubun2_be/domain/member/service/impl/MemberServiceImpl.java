@@ -96,7 +96,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void updateFcmToken(Long memberId, FcmTokenRequest fcmTokenRequest) {
+    public void updateMemberFcmToken(Long memberId, FcmTokenRequest fcmTokenRequest) {
         Member member = findById(memberId);
         if (member.getFcmToken().equals(fcmTokenRequest.getFcmToken())) {
             return;
