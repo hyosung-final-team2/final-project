@@ -14,7 +14,7 @@ public class MailConfig {
     @Value("${spring.mail.host}")
     private String mailServerHost;
     @Value("${spring.mail.port}")
-    private String mailServerPort;
+    private int mailServerPort;
     @Value("${spring.mail.username}")
     private String mailServerUsername;
     @Value("${spring.mail.password}")
@@ -25,7 +25,7 @@ public class MailConfig {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
         mailSender.setHost(mailServerHost);
-        mailSender.setPassword(mailServerPort);
+        mailSender.setPort(mailServerPort);
         mailSender.setUsername(mailServerUsername);
         mailSender.setPassword(mailServerPassword);
 
