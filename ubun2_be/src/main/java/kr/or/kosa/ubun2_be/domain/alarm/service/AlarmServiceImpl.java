@@ -6,12 +6,22 @@ import com.google.firebase.messaging.Message;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.GroupAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.PersonalAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.entity.Alarm;
-import kr.or.kosa.ubun2_be.domain.alarm.repository.AlarmRedisRepository;
+import kr.or.kosa.ubun2_be.domain.alarm.repository.CustomerAlarmRedisRepository;
+import kr.or.kosa.ubun2_be.domain.alarm.repository.MemberAlarmRedisRepository;
+import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
+import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
+import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
+import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberCustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
+import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderRequest;
+import kr.or.kosa.ubun2_be.domain.product.entity.Product;
+import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductException;
+import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductExceptionType;
+import kr.or.kosa.ubun2_be.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -26,8 +36,11 @@ public class AlarmServiceImpl implements AlarmService{
 
     private final MemberRepository memberRepository;
     private final FirebaseMessaging firebaseMessaging;
-    private final AlarmRedisRepository alarmRedisRepository;
+    private final MemberAlarmRedisRepository memberAlarmRedisRepository;
+    private final CustomerAlarmRedisRepository customerAlarmRedisRepository;
     private final MemberCustomerRepository memberCustomerRepository;
+    private final CustomerRepository customerRepository;
+    private final ProductRepository productRepository;
 
     @Override
     public String sendMessageToPersonal(PersonalAlarmSendRequest request) {
@@ -38,7 +51,7 @@ public class AlarmServiceImpl implements AlarmService{
         String messageId = sendMessage(message);
 
         Alarm alarm = Alarm.createAlarm(request.getTitle(), request.getContent());
-        alarmRedisRepository.saveAlarm(String.valueOf(member.getMemberId()), alarm);
+        memberAlarmRedisRepository.saveAlarm(String.valueOf(member.getMemberId()), alarm);
         return messageId;
     }
 
@@ -73,13 +86,13 @@ public class AlarmServiceImpl implements AlarmService{
         List<Member> members = memberCustomerRepository.findMembersByCustomerId(request.getCustomerId());
 
         for (Member member : members) {
-            alarmRedisRepository.saveAlarm(String.valueOf(member.getMemberId()), alarm);
+            memberAlarmRedisRepository.saveAlarm(String.valueOf(member.getMemberId()), alarm);
         }
     }
 
     @Override
-    public List<Alarm> getPushMessages(Long memberId) {
-        List<Object> objects = alarmRedisRepository.findAlarmsByMemberId(String.valueOf(memberId));
+    public List<Alarm> getMemberPushMessages(Long memberId) {
+        List<Object> objects = memberAlarmRedisRepository.findAlarmsByMemberId(String.valueOf(memberId));
         return objects.stream()
                 .filter(obj -> obj instanceof Alarm)
                 .map(obj -> (Alarm) obj)
@@ -88,7 +101,49 @@ public class AlarmServiceImpl implements AlarmService{
 
     @Override
     public void markAsRead(Long memberId, String alarmId) {
-        alarmRedisRepository.removeAlarmById(String.valueOf(memberId), alarmId);
+        memberAlarmRedisRepository.removeAlarmById(String.valueOf(memberId), alarmId);
+    }
+
+    @Override
+    public void sendMessageToCustomer(SubscriptionOrderRequest request) {
+        Customer customer = customerRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER));
+
+        Long firstProductId = request.getSubscriptionOrderProducts().get(0).getProductId();
+        Product firstProduct = productRepository.findByCustomerCustomerIdAndProductId(customer.getCustomerId(),firstProductId)
+                .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
+
+        String firstProductName = firstProduct.getProductName();
+        int productListSize = request.getSubscriptionOrderProducts().size();
+
+        String title = request.getIntervalDays() == 0 ? "단건주문" : "정기주문";
+
+        String content = productListSize == 1 ?
+                firstProductName + "이 주문되었습니다." :
+                firstProductName + " 외 " + (productListSize - 1) + "개가 주문되었습니다.";
+
+        Message message = makeOrderMessage(title, content, customer.getFcmToken());
+        String messageId = sendMessage(message);
+
+        Alarm alarm = Alarm.createAlarm(title, content);
+        customerAlarmRedisRepository.saveAlarm(String.valueOf(customer.getCustomerId()),alarm);
+    }
+
+    @Override
+    public List<Alarm> getCustomerPushMessages(Long customerId) {
+        List<Object> objects = customerAlarmRedisRepository.findAlarmsByCustomerId(String.valueOf(customerId));
+        return objects.stream()
+                .filter(obj -> obj instanceof Alarm)
+                .map(obj -> (Alarm) obj)
+                .collect(Collectors.toList());
+    }
+
+    private Message makeOrderMessage(String title, String content, String token) {
+        return Message.builder()
+                .putData("title", title)
+                .putData("content", content)
+                .setToken(token)
+                .build();
     }
 
     private Message makePersonalMessage(PersonalAlarmSendRequest request, String token) {

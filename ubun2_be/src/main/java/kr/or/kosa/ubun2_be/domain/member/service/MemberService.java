@@ -18,5 +18,5 @@ public interface MemberService {
     AnnouncementResponse getAnnouncement(Long customerId, Long memberId);
     Member findById(Long memberId);
 
-    void updateFcmToken(Long memberId, FcmTokenRequest fcmTokenRequest);
+    void updateMemberFcmToken(Long memberId, FcmTokenRequest fcmTokenRequest);
 }

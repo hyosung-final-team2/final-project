@@ -1,7 +1,7 @@
 import {getStoreName, login} from "./login.js";
 import {useMutation} from "@tanstack/react-query";
 import useFCMTokenStore from "../../../../FCMTokenStore.js";
-import {updateFcmToken} from "../../../../member/api/FcmToken/fcmToken.js";
+import {updateCustomerFcmToken, updateMemberFcmToken} from "../../../../member/api/FcmToken/fcmToken.js";
 import useMemberStore from "../../../../member/store/memberStore.js";
 import useCustomerStore from "../../../store/customerStore.js";
 
@@ -27,13 +27,19 @@ export const useLogin = (loginObj,role) => {
             }
             if (role === "ROLE_MEMBER") {
                 try {
-                    await updateFcmToken(FCMToken);
+                    await updateMemberFcmToken(FCMToken);
                     setMemberId(response.data.memberId)
                     console.log("FCM 토큰 업데이트 성공");
                 } catch (error) {
                     console.error("FCM 토큰 업데이트 실패", error);
                 }
             } else {
+                try {
+                    await updateCustomerFcmToken(FCMToken)
+                    console.log("FCM 토큰 업데이트 성공");
+                } catch (error) {
+                    console.error("FCM 토큰 업데이트 실패", error);
+                }
                 await getStoreName(response.data.memberId).then( async (res) => {
                     await setBusinessName(res.data.data.businessName)
                 })

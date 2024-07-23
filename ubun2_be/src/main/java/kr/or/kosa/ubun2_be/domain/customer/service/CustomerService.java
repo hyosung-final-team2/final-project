@@ -7,6 +7,7 @@ import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.StoreInfoResponse;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
+import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,4 +30,6 @@ public interface CustomerService {
     Page<MemberListResponse> getMembers(Long customerId, SearchRequest searchRequest, Pageable pageable);
 
     StoreInfoResponse getStoreInfo(Long customerId);
+
+    void updateCustomerFcmToken(Long customerId, FcmTokenRequest fcmTokenRequest);
 }

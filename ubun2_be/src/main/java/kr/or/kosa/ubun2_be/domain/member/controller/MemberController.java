@@ -46,7 +46,7 @@ public class MemberController {
     @PutMapping("/fcmtoken")
     public ResponseDto<?> updateFcmToken(@RequestBody FcmTokenRequest fcmTokenRequest,
                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        memberService.updateFcmToken(customUserDetails.getUserId(),fcmTokenRequest);
+        memberService.updateMemberFcmToken(customUserDetails.getUserId(),fcmTokenRequest);
         return ResponseDto.ok(null,"fcm 토큰 등록/업데이트 완료");
     }
 }

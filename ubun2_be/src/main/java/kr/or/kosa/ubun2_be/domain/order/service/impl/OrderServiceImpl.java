@@ -2,6 +2,7 @@ package kr.or.kosa.ubun2_be.domain.order.service.impl;
 
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
+import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.cart.entity.Cart;
 import kr.or.kosa.ubun2_be.domain.cart.repository.CartProductRepository;
 import kr.or.kosa.ubun2_be.domain.cart.service.CartService;
@@ -60,6 +61,7 @@ public class OrderServiceImpl implements OrderService {
     private final AddressService addressService;
     private final OrderProductRepository orderProductRepository;
     private final CartService cartService;
+    private final AlarmService alarmService;
 
     @Override
     @Transactional(readOnly = true)
@@ -192,6 +194,9 @@ public class OrderServiceImpl implements OrderService {
 
         // 7. 장바구니 상품 삭제
         deleteCartProducts(memberId, orderRequest.getSubscriptionOrderProducts());
+
+        // 7. 고객에게 push notification (단건주문)
+        alarmService.sendMessageToCustomer(orderRequest);
     }
 
     private void validateCustomerProduct(SubscriptionOrderRequest orderRequest) {
