@@ -97,7 +97,8 @@ function Product() {
         <div className="w-full flex flex-col">
             {/* 이미지 */}
             <div style={{width: "100%", aspectRatio: "1/1", position: "relative"}} className="bg-second">
-                <img src=''/>
+                <img src={product?.productImagePath}/>
+
             </div>
             {/* 상품 정보*/}
             <div className="p-6">

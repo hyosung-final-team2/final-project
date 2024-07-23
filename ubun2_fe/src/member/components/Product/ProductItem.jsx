@@ -8,6 +8,8 @@ function ProductItem({ productId, productName, productPrice, productDiscountPerc
 
   const discountedPrice = Math.round((productPrice * (1 - productDiscountPercent / 100)) / 10) * 10;
 
+
+  console.log(productImage)
   const orderOptionFunc = (orderOption) => {
       if (orderOption === "SINGLE") {
           return (
@@ -51,7 +53,7 @@ function ProductItem({ productId, productName, productPrice, productDiscountPerc
     return (
         <div style={{width: "50%"}} onClick={() => navigate(`product/${productId}`)}>
           <div className={`p-3 w-full h-full flex flex-col gap-0.5 ${!isOdd ? "pl-2 pr-4" : "pl-4 pr-2"}`}>
-              <div style={{width: "100%", aspectRatio: "1/1", position: "relative"}} className="bg-second rounded-xl">
+              <div style={{width: "100%", aspectRatio: "1/1", position: "relative"}} className=" rounded-xl">
                   <img src={productImage} className="w-full h-full object-cover rounded-xl"/>
                   <div className="absolute top-1 left-1">
                       {stockQuantity <= 10 ?
