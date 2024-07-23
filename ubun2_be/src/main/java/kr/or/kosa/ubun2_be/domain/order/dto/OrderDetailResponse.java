@@ -3,7 +3,6 @@ package kr.or.kosa.ubun2_be.domain.order.dto;
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.AccountPayment;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,7 +40,6 @@ public class OrderDetailResponse {
         this.createdAt = order.getCreatedAt().toString();
         this.addressNickname = order.getAddress().getAddressNickname();
         this.address = order.getAddress().getAddress();
-        setPaymentDetails(order.getPaymentMethod());
         calculateOrderAmounts(order);
         this.orderProducts = order.getOrderProducts().stream()
                 .map(OrderDetailProductResponse::new)
@@ -49,17 +47,20 @@ public class OrderDetailResponse {
         this.orderStatus = order.getOrderStatus();
     }
 
-    private void setPaymentDetails(PaymentMethod paymentMethod) {
-        if (paymentMethod instanceof AccountPayment) {
-            this.paymentType = "ACCOUNT";
-            this.accountNumber = ((AccountPayment) paymentMethod).getAccountNumber();
-            this.bankName = ((AccountPayment) paymentMethod).getBankName();
-        } else if (paymentMethod instanceof CardPayment) {
-            this.paymentType = "CARD";
-            this.cardCompanyName = ((CardPayment) paymentMethod).getCardCompanyName();
-            this.cardNumber = ((CardPayment) paymentMethod).getCardNumber();
-        }
-        this.paymentMethodNickname = paymentMethod.getPaymentMethodNickname();
+    public OrderDetailResponse(Order order, CardPayment cardPayment) {
+        this(order);
+        this.paymentType = "CARD";
+        this.cardCompanyName = cardPayment.getCardCompanyName();
+        this.cardNumber = cardPayment.getCardNumber();
+        this.paymentMethodNickname = cardPayment.getPaymentMethodNickname();
+    }
+
+    public OrderDetailResponse(Order order, AccountPayment accountPayment) {
+        this(order);
+        this.paymentType = "ACCOUNT";
+        this.accountNumber = accountPayment.getAccountNumber();
+        this.bankName = accountPayment.getBankName();
+        this.paymentMethodNickname = accountPayment.getPaymentMethodNickname();
     }
 
     private void calculateOrderAmounts(Order order) {

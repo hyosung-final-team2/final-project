@@ -21,9 +21,13 @@ import kr.or.kosa.ubun2_be.domain.order.repository.OrderProductRepository;
 import kr.or.kosa.ubun2_be.domain.order.repository.OrderRepository;
 import kr.or.kosa.ubun2_be.domain.order.repository.SubscriptionOrderRepository;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.AccountPayment;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodException;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodExceptionType;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.AccountPaymentRepository;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.CardPaymentRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.service.PaymentMethodService;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderProductStatus;
@@ -60,6 +64,8 @@ public class OrderServiceImpl implements OrderService {
     private final AddressService addressService;
     private final OrderProductRepository orderProductRepository;
     private final CartService cartService;
+    private final CardPaymentRepository cardPaymentRepository;
+    private final AccountPaymentRepository accountPaymentRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -213,7 +219,7 @@ public class OrderServiceImpl implements OrderService {
         String paymentType = paymentMethod.getPaymentType();
 
 
-        if(!orderRequest.getPaymentType().equals(paymentType) || !Objects.equals(paymentMethod.getMember().getMemberName(), memberName)) {
+        if (!orderRequest.getPaymentType().equals(paymentType) || !Objects.equals(paymentMethod.getMember().getMemberName(), memberName)) {
             throw new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD);
         }
         long totalCost = calculateTotalCost(orderRequest);
@@ -245,7 +251,7 @@ public class OrderServiceImpl implements OrderService {
         long currentBalance = account.getBalance();
         long newBalance = currentBalance - totalPrice;
 
-        if(newBalance < 0) {
+        if (newBalance < 0) {
             throw new PaymentMethodException(PaymentMethodExceptionType.INSUFFICIENT_ACCOUNT_BALANCE);
         }
         account.changeBalance(newBalance);
@@ -257,7 +263,7 @@ public class OrderServiceImpl implements OrderService {
                     orderProduct.getProduct().getProductId(),
                     orderProduct.getQuantity()
             );
-            if(!decreased) {
+            if (!decreased) {
                 throw new ProductException(ProductExceptionType.INVENTORY_UPDATE_FAILED);
             }
         }
@@ -308,7 +314,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<UnifiedOrderResponse> getAllOrdersByMemberId(Long memberId) {
-        List<UnifiedOrderResponse> orderResponses  = orderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
+        List<UnifiedOrderResponse> orderResponses = orderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
         List<UnifiedOrderResponse> subscriptionOrderResponses = subscriptionOrderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
 
         List<UnifiedOrderResponse> combinedList = new ArrayList<>();
@@ -325,7 +331,27 @@ public class OrderServiceImpl implements OrderService {
         Order findOrder = orderRepository.findByOrderIdAndMemberMemberId(orderId, memberId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
-        return new OrderDetailResponse(findOrder);
+        PaymentMethod paymentMethod = findOrder.getPaymentMethod();
+        if (paymentMethod == null) {
+            return new OrderDetailResponse(findOrder);
+        }
+
+        Long paymentMethodId = paymentMethod.getPaymentMethodId();
+        String paymentMethodType = paymentMethod.getPaymentType();
+
+        switch (paymentMethodType) {
+            case "CARD" -> {
+                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new OrderDetailResponse(findOrder, cardPayment);
+            }
+            case "ACCOUNT" -> {
+                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new OrderDetailResponse(findOrder, accountPayment);
+            }
+            default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
+        }
     }
 
     @Override
