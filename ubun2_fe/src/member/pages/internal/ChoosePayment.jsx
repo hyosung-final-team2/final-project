@@ -1,21 +1,24 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ArrowIcon from '../../../assets/images/arrow.svg';
+import CardIcon from '../../../assets/images/card.svg';
+import CheckIcon from '../../../assets/images/check.svg';
+import { useCheckIfPasswordExists, useGetAccounts, useGetCards } from '../../api/Payment/queries';
 import BottomButton from '../../components/common/button/BottomButton';
 import SlideUpModal from '../../components/common/SlideUpModal';
-import PaymentItem from '../../components/PaymentMethod/PaymentItem';
-import CardIcon from '../../../assets/images/card.svg';
-import ArrowIcon from '../../../assets/images/arrow.svg';
-import CheckIcon from '../../../assets/images/check.svg';
-import { useGetCards, useGetAccounts, useCheckIfPasswordExists } from '../../api/Payment/queries';
 import { getPng } from '../../components/PaymentMethod/CardList';
-import { useNavigate } from 'react-router-dom';
+import PaymentItem from '../../components/PaymentMethod/PaymentItem';
+import useOrderDataStore from '../../store/order/orderDataStore';
+import useOrderItemsStore from '../../store/order/orderItemStore';
 
-const ChoosePayment = ({ shopName, amount }) => {
+const ChoosePayment = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState(null);
   const { data: cards } = useGetCards();
   const { data: accounts } = useGetAccounts();
   const { data: passwordExists } = useCheckIfPasswordExists();
   const navigate = useNavigate();
+
+  const { orderData, selectedPaymentMethodId, setSelectedPaymentMethodId, selectedAddressId, setSelectedPaymentMethodType, setOrderData } = useOrderDataStore();
 
   const cardList = cards?.data?.data || [];
   const accountList = accounts?.data?.data || [];
@@ -27,7 +30,7 @@ const ChoosePayment = ({ shopName, amount }) => {
     const methods = [
       ...accountList.map(account => ({
         ...account,
-        icon: <img className='h-10 w-10' src={`/src/assets/images/png/${getPng(account.bankName)}`} alt='' />,
+        icon: <img className='w-10 h-10' src={`/src/assets/images/png/${getPng(account.bankName)}`} alt='' />,
         title: account.paymentMethodNickname,
         subtitle: `${account.bankName} ${account.accountNumber}`,
         defaultStatus: account.defaultStatus,
@@ -35,7 +38,7 @@ const ChoosePayment = ({ shopName, amount }) => {
       })),
       ...cardList.map(card => ({
         ...card,
-        icon: <img className='h-10 w-10' src={`/src/assets/images/png/${getPng(card.cardCompanyName)}`} alt='' />,
+        icon: <img className='w-10 h-10' src={`/src/assets/images/png/${getPng(card.cardCompanyName)}`} alt='' />,
         title: card.paymentMethodNickname,
         subtitle: `${card.cardCompanyName} ${card.cardNumber}`,
         defaultStatus: card.defaultStatus,
@@ -56,30 +59,61 @@ const ChoosePayment = ({ shopName, amount }) => {
   useEffect(() => {
     if (paymentMethods.defaultMethod && !selectedPaymentMethodId) {
       setSelectedPaymentMethodId(paymentMethods.defaultMethod.paymentMethodId);
+      setSelectedPaymentMethodType(paymentMethods.defaultMethod.type);
     }
-  }, []); // 빈 의존성 배열을 사용하여 컴포넌트 마운트 시에만 실행
-
-  const handlePaymentMethodSelect = useCallback(method => {
-    setSelectedPaymentMethodId(method.paymentMethodId);
-    setIsModalOpen(false);
   }, []);
+
+  const handlePaymentMethodSelect = useCallback(
+    method => {
+      setSelectedPaymentMethodId(method.paymentMethodId);
+      setSelectedPaymentMethodType(method.type);
+      setIsModalOpen(false);
+    },
+    [setSelectedPaymentMethodId, setSelectedPaymentMethodType]
+  );
+
+  const { calculateTotals } = useOrderItemsStore();
 
   const handleAddPaymentMethod = useCallback(() => {
     navigate('/member/app/payments/edit');
     setIsModalOpen(false);
   }, [navigate]);
 
+  // 결제 금액 추가
+  const [totals, setTotals] = useState({ productAmount: 0, discount: 0, totalAmount: 0, selectedCount: 0 });
+
+  useEffect(() => {
+    setTotals(calculateTotals());
+  }, [calculateTotals]);
+
+  const handleOrder = useCallback(() => {
+    if (!selectedPaymentMethodId) {
+      console.log('결제 수단을 선택해주세요.');
+      return;
+    }
+
+    // 선택된 결제 수단 정보를 저장
+    const updatedOrderData = orderData.map(item => ({
+      ...item,
+      paymentMethodId: selectedPaymentMethodId,
+      paymentType: selectedPaymentMethod?.type,
+    }));
+
+    setOrderData(updatedOrderData);
+
+    // 비밀번호 입력 페이지로 이동
+    navigate('/member/app/password');
+  }, [selectedPaymentMethodId, selectedPaymentMethod, orderData, setOrderData, navigate]);
+
   return (
     <div className='flex flex-col h-full bg-gray-100'>
-      {/* Main Content */}
-      <main className='flex-grow flex flex-col items-center px-7 pt-12'>
-        <h2 className='text-[3.8dvw] text-gray-500 mb-1 font-bold'>{shopName}</h2>
-        <p className='text-[7dvw] font-bold mb-12'>{amount}원</p>
+      <main className='flex flex-col items-center flex-grow pt-12 px-7'>
+        <h2 className='text-[3.8dvw] text-gray-500 mb-1 font-bold'>결제 수단 선택</h2>
+        <p className='text-[7dvw] font-bold mb-12'>{`${totals.totalAmount.toLocaleString()}`}원</p>
 
-        {/* Payment Method */}
-        <div className='w-full bg-white rounded-3xl shadow-sm p-8 pt-6 mb-8 '>
+        <div className='w-full p-8 pt-6 mb-8 bg-white shadow-sm rounded-3xl '>
           <p className='text-[3dvw] text-gray-500 mb-2'>결제수단</p>
-          <div className='flex flex-nowrap items-center justify-between'>
+          <div className='flex items-center justify-between flex-nowrap'>
             <div className='flex items-center'>
               {selectedPaymentMethod ? selectedPaymentMethod.icon : <div className='w-10 h-10 bg-gray-200 rounded-full'></div>}
               <div className='ml-3'>
@@ -105,8 +139,8 @@ const ChoosePayment = ({ shopName, amount }) => {
 
       {/* Footer */}
       <footer className='p-6'>
-        <BottomButton buttonText='구매하기' buttonStyle={buttonStyle} />
-        <p className='text-center text-sm text-gray-500 mt-4'>결제 정보 확인 및 정보 제공 동의</p>
+        <BottomButton buttonText='구매하기' buttonStyle={buttonStyle} buttonFunc={handleOrder} disabled={!selectedPaymentMethodId} />
+        <p className='mt-4 text-sm text-center text-gray-500'>결제 정보 확인 및 정보 제공 동의</p>
       </footer>
 
       {/* modal */}
@@ -131,7 +165,7 @@ const ChoosePayment = ({ shopName, amount }) => {
                 onClick={() => handlePaymentMethodSelect(method)}
               />
             ))}
-            <div className='bg-gray-100 -mx-4 min-h-5 my-3'></div>
+            <div className='my-3 -mx-4 bg-gray-100 min-h-5'></div>
             <PaymentItem
               icon={<CardIcon className='w-12 h-12' />}
               title='결제수단 추가하기'
@@ -142,7 +176,7 @@ const ChoosePayment = ({ shopName, amount }) => {
           </>
         ) : (
           <div>
-            <div className='text-2xl font-bold px-10 pb-8'>결제 비밀번호를 설정해주세요</div>
+            <div className='px-10 pb-8 text-2xl font-bold'>결제 비밀번호를 설정해주세요</div>
             <div className='flex px-8'>
               <svg className='w-5 h-5 mr-2 fill-gray-500 ' fill='#000000' viewBox='0 0 32 32' version='1.1' xmlns='http://www.w3.org/2000/svg'>
                 <g id='SVGRepo_bgCarrier' strokeWidth='0'></g>
