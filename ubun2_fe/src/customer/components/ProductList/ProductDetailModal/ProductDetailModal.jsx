@@ -10,6 +10,7 @@ import {
   useDeleteProduct,
   useModifyProduct,
 } from "../../../api/Product/ProductList/ProductList/queris.js";
+import {useSendGroupAlarmProductDelete} from "../../../api/notification/queris.js";
 
 const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail, currentPage}) => {
   const {data: productDetail} = useGetProductDetail(selectedProductDetail?.productId)
@@ -65,6 +66,8 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
   const { mutate: productDeleteMutate } = useDeleteProduct(productData.productId, currentPage)
   const { mutate: productModifyMutate } = useModifyProduct(productData,imageFile,currentPage)
 
+  const { mutate: deleteProductGroupAlarmMutate } = useSendGroupAlarmProductDelete(productData?.productName)
+
   const handleInputChange = (e) => {
     //console.log( typeof e.target.value)
     setProductData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -117,6 +120,7 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
                     <Button
                         className="w-28 bg-red-100 text-red-700" onClick={() => {
                         productDeleteMutate()
+                        deleteProductGroupAlarmMutate()
                         setOpenModal(false)
                     }}
                     >

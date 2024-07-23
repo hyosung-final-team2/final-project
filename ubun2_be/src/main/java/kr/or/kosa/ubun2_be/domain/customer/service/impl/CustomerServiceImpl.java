@@ -12,6 +12,7 @@ import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.*;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
+import kr.or.kosa.ubun2_be.domain.customer.dto.response.StoreInfoResponse;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
@@ -172,6 +173,14 @@ public class CustomerServiceImpl implements CustomerService {
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
         List<MemberListResponse> paginatedList = combinedList.subList(start, end);
         return new PageImpl<>(paginatedList, pageable, combinedList.size());
+    }
+
+    @Override
+    public StoreInfoResponse getStoreInfo(Long customerId) {
+        Customer customer = findById(customerId);
+        return StoreInfoResponse.builder()
+                .businessName(customer.getBusinessName())
+                .build();
     }
 
     public boolean validateRegisterRequest(RegisterMemberRequest registerMemberRequest) {

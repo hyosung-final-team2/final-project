@@ -9,6 +9,8 @@ import BackButton from '@heroicons/react/24/outline/ChevronLeftIcon';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import useStoreStore from '../store/storeStore';
+import { onMessage} from "firebase/messaging";
+import {messaging} from "../../../initFirebase.js";
 
 function MemHeader({setIsAlarmOpen}) {
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme'));
@@ -32,14 +34,30 @@ function MemHeader({setIsAlarmOpen}) {
   }, []);
 
 
+  const [isNewAlarm,setIsNewAlarm] = useState(false);
+
+  useEffect(() => {
+    const onMessageFCM = async () => {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') return;
+
+      onMessage(messaging, payload => {
+        console.log('Message received. ', payload);
+        console.log(payload.data?.title);
+        console.log(payload.data?.content);
+        setIsNewAlarm(true)
+      });
+    };
+
+    onMessageFCM();
+  }, []);
+
+
   return (
     <>
       <div className='navbar sticky top-0 bg-base-100  z-10 shadow-md '>
         <div className='flex-1'>
           <BackButton className='h-7 inline-block w-7' onClick={() => navigate(-1)} />
-
-          {/* <h1 className='text-2xl font-semibold ml-2'>효성스토어</h1> */}
-          {/* <h1 className='text-2xl font-semibold ml-2'>{pageTitle}</h1> */}
         </div>
 
         {isStore ? (
@@ -67,9 +85,13 @@ function MemHeader({setIsAlarmOpen}) {
           </label>
 
           {/* Notification icon */}
-          <button className='btn btn-ghost ml-4  btn-circle' onClick={() => setIsAlarmOpen(true)}>
-            <div className='indicator'>
-              <BellIcon className='h-6 w-6' />
+          <button className='btn btn-ghost ml-4  btn-circle' onClick={() => {
+            setIsNewAlarm(false)
+            setIsAlarmOpen(true)}
+          }>
+            <div className='indicator relative'>
+              <BellIcon className='h-6 w-6'/>
+              {isNewAlarm && <span className="absolute -top-0 left-3 flex w-2.5 h-2.5 me-3 bg-purple-500 rounded-full"></span>}
             </div>
           </button>
         </div>
