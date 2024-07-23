@@ -5,17 +5,15 @@ const SubscriptionProductItemEditable = ({
   productImagePath,
   productDescription,
   productName,
-  productPrice,
-  productDiscount,
+  price,
+  discount,
   quantity,
   productImageOriginalName,
   isSelected,
   onSelect,
 }) => {
-  const discountRate = productDiscount / 100;
-  const discountedUnitPrice = productPrice * (1 - discountRate);
-  const ProductAmount = discountedUnitPrice * quantity;
-  const roundedProductAmount = Math.round(ProductAmount);
+  const discountedPrice = Math.round((price * (1 - discount / 100)) / 10) * 10;
+  const totalPrice = discountedPrice * quantity;
 
   return (
     <div className='relative flex items-start justify-between px-4 mb-4'>
@@ -28,14 +26,14 @@ const SubscriptionProductItemEditable = ({
             <div className='flex gap-1 text-sm text-gray-500'>
               <p>{productName}</p>
               <span>/</span>
-              <p>{`${productPrice.toLocaleString()} 원`}</p>
+              <p>{`${price.toLocaleString()} 원`}</p>
               <span>/</span>
               <p>{`${quantity} 개`}</p>
             </div>
           </div>
           <div className='flex items-start justify-between mt-2'>
-            <p className='text-lg font-bold'>{`${roundedProductAmount.toLocaleString()} 원`}</p>
-            {productDiscount > 0 && <span className='text-sm text-red-500'>{`${productDiscount}% 할인`}</span>}
+            <p className='text-lg font-bold'>{`${totalPrice.toLocaleString()} 원`}</p>
+            {discount > 0 && <span className='text-sm text-red-500'>{`${discount}% 할인`}</span>}
           </div>
         </div>
       </div>

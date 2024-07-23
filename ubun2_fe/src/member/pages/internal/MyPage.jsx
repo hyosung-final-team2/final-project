@@ -8,21 +8,27 @@ function MyPage() {
 
   // 관리 항목 데이터 배열
   const myInfoItems = [
-    { id: 1, name: '내 정보 관리', icon: ChevronRightIcon, value: '/member/app/mypage/myinfo' },
+    { id: 1, name: '주문 관리', icon: ChevronRightIcon, value: '/member/app/mypage/order-list' },
     { id: 2, name: '결제수단 관리', icon: ChevronRightIcon, value: '/member/app/mypage/payment-list' },
     { id: 3, name: '배송지 관리', icon: ChevronRightIcon, value: '/member/app/addresses' },
-    { id: 4, name: '주문 관리', icon: ChevronRightIcon, value: '/member/app/mypage/order-list' },
+    { id: 4, name: '로그아웃', icon: ChevronRightIcon, value: '/logout' },
   ];
 
   const handleMyInfoMenu = value => {
+    if (value === '/logout') {
+      console.log('TODO: 로그아웃 처리');
+      localStorage.clear();
+      navigate('/member/login');
+      return;
+    }
     navigate(value);
   };
 
   return (
-    <div className='flex flex-col gap-10 px-4 py-8'>
+    <div className='flex flex-col h-full gap-10 px-4 py-8 bg-gray-100'>
       {/* User Info Card */}
       <div className='p-6 mb-4 bg-white rounded-3xl'>
-        <h5 className='mb-4 text-xl font-bold tracking-tight text-gray-900 dark:text-white'>홍길동 님</h5>
+        <h5 className='mb-4 text-xl font-bold tracking-tight text-gray-900 dark:text-white'>`ㅁㅁㅁ 님`</h5>
         <div className='flex justify-between w-full px-2'>
           <div className='flex items-center gap-3'>
             <div className='p-3 bg-gray-200 rounded-2xl'>

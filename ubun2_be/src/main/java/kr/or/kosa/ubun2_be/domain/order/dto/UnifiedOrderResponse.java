@@ -2,8 +2,6 @@ package kr.or.kosa.ubun2_be.domain.order.dto;
 
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.AccountPayment;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,9 +33,9 @@ public class UnifiedOrderResponse {
         this.totalOrderPrice = calculateTotalOrderPrice(order);
         this.isSubscription = false;
         this.orderProducts = order.getOrderProducts().stream()
-                .map(OrderProductResponse::new)
+                .map(OrderProductResponse::of)
                 .collect(Collectors.toList());
-        setPaymentType(order.getPaymentMethod());
+        this.paymentType = order.getPaymentMethod().getPaymentType();
     }
 
     public UnifiedOrderResponse(SubscriptionOrder subscriptionOrder) {
@@ -48,28 +46,20 @@ public class UnifiedOrderResponse {
         this.totalOrderPrice = calculateTotalSubscriptionOrderPrice(subscriptionOrder);
         this.isSubscription = true;
         this.subscriptionOrderProducts = subscriptionOrder.getSubscriptionOrderProducts().stream()
-                .map(SubscriptionOrderProductResponse::new)
+                .map(SubscriptionOrderProductResponse::of)
                 .collect(Collectors.toList());
-        setPaymentType(subscriptionOrder.getPaymentMethod());
+        this.paymentType = subscriptionOrder.getPaymentMethod().getPaymentType();
     }
 
     private int calculateTotalOrderPrice(Order order) {
         return order.getOrderProducts().stream()
-                .mapToInt(op -> new OrderProductResponse(op).getTotalPrice())
+                .mapToInt(op -> OrderProductResponse.of(op).getTotalPrice())
                 .sum();
     }
 
     private int calculateTotalSubscriptionOrderPrice(SubscriptionOrder subscriptionOrder) {
         return subscriptionOrder.getSubscriptionOrderProducts().stream()
-                .mapToInt(op -> new SubscriptionOrderProductResponse(op).getTotalPrice())
+                .mapToInt(op -> SubscriptionOrderProductResponse.of(op).getTotalPrice())
                 .sum();
-    }
-
-    private void setPaymentType(Object paymentMethod) {
-        if (paymentMethod instanceof AccountPayment) {
-            this.paymentType = "ACCOUNT";
-        } else if (paymentMethod instanceof CardPayment) {
-            this.paymentType = "CARD";
-        }
     }
 }

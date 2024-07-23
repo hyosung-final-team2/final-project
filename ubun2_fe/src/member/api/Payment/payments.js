@@ -14,11 +14,11 @@ export const checkIfPasswordExists = async () => {
 };
 
 export const getCard = async cardId => {
-  return await privateFetch.get(`/members/payments/cards/${paymentId}`);
+  return await privateFetch.get(`/members/payments/cards/${cardId}`);
 };
 
 export const getAccount = async accountId => {
-  return await privateFetch.get(`/members/payments/accounts/${paymentId}`);
+  return await privateFetch.get(`/members/payments/accounts/${accountId}`);
 };
 
 export const registerPayment = async data => {
