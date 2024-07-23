@@ -5,13 +5,14 @@ import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.member.dto.MyAddressResponse;
+import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface AddressService {
-    public Page<AddressResponse> getAllAddresses(Pageable pageable, Long customerId);
+    public Page<AddressResponse> getAllAddresses(Pageable pageable, SearchRequest searchRequest, Long customerId);
 
     public AddressMemberInfoResponse getMemberInfoByAddressId(Long addressId, Long customerId);
 

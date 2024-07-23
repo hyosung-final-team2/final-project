@@ -1,9 +1,10 @@
 package kr.or.kosa.ubun2_be.domain.address.repository.impl;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
-import kr.or.kosa.ubun2_be.domain.address.entity.QAddress;
 import kr.or.kosa.ubun2_be.domain.address.repository.AddressRepositoryCustom;
+import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,13 +27,11 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
         super(Address.class);
     }
     @Override
-    public Page<Address> findAllAddressesWithMember(Pageable pageable, Long customerId) {
-        QAddress address = new QAddress("address");
-
-        QueryResults<Address> results = from(address)
-                .join(address.member, member)
+    public Page<Address> findAllAddressesWithMember(Pageable pageable, SearchRequest searchRequest,Long customerId) {
+        QueryResults<Address> results = from(address1)
+                .join(address1.member, member)
                 .join(member.memberCustomers, memberCustomer)
-                .where(memberCustomer.customer.customerId.eq(customerId))
+                .where(memberCustomer.customer.customerId.eq(customerId),addressSearch(searchRequest))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetchResults();
@@ -41,6 +40,18 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
         long total = results.getTotal();
 
         return new PageImpl<>(content, pageable, total);
+    }
+    private BooleanBuilder addressSearch(SearchRequest searchRequest) {
+        if (searchRequest == null || searchRequest.getSearchCategory() == null  || searchRequest.getSearchKeyword() == null) {
+            return null;
+        }
+        return switch (searchRequest.getSearchCategory()) {
+            case "memberName" ->
+                    new BooleanBuilder().and(member.memberName.containsIgnoreCase(searchRequest.getSearchKeyword()));
+            case "address" ->
+                    new BooleanBuilder().and(address1.address.containsIgnoreCase(searchRequest.getSearchKeyword()));
+            default -> new BooleanBuilder();
+        };
     }
 
     @Override
