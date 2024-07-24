@@ -238,13 +238,15 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             decreaseInventory(previousCycleProducts);
             List<SubscriptionOrderProduct> nextProducts = createNextCycleProducts(subscriptionOrder, previousCycleProducts);
             updateOrderWithNewProducts(subscriptionOrder, nextProducts);
-            // TODO: 정기주문 회차 생성 (회원)
-            alarmService.sendSubCycleMessage(subscriptionOrder);
+            // 정기주문 회차 생성 (회원)
+            alarmService.sendSubCycleMessage(subscriptionOrder, null);
         } catch (ProductException e) {
-            // TODO: 연기 알림 보내는 부분 (회원) - 사유 : 재고부족
+            // 연기 알림 보내는 부분 (회원) - 사유 : 재고부족
+            alarmService.sendSubCycleMessage(subscriptionOrder, "재고부족");
             subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
         } catch (Exception e) {
-            // TODO: 연기 알림 보내는 부분(회원) - 사유 : 결제실패
+            // 연기 알림 보내는 부분(회원) - 사유 : 결제실패
+            alarmService.sendSubCycleMessage(subscriptionOrder, "결제실패");
             subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
         }
         subscriptionOrderRepository.save(subscriptionOrder);//        명시적 save
@@ -255,7 +257,8 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
         for (SubscriptionOrderProduct product : products) {
             int availableStock = inventoryService.getStock(product.getProduct().getProductId());
             if (availableStock < product.getQuantity()) {
-                // TODO: 재고부족한 상품이름 (고객)
+                // 재고부족한 상품이름 (고객)
+                alarmService.sendNoStock(product,orderId);
                 throw new ProductException(ProductExceptionType.INSUFFICIENT_STOCK);
             }
         }
