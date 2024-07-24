@@ -23,4 +23,6 @@ public interface AlarmService {
     void sendMessageToCustomer(SubscriptionOrderRequest request);
 
     List<Alarm> getCustomerPushMessages(Long customerId);
+
+    void markCustomerAlarmAsRead(Long customerId, String alarmId);
 }
