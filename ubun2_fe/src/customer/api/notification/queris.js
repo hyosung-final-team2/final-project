@@ -10,6 +10,7 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import {getAlarmList, readCustomerAlarm, sendGroupAlarm, sendPersonalAlarm} from "./notification.js";
 import useCustomerStore from "../../store/customerStore.js";
+import useNotificationStore from "../../store/Notification/notificationStore.js";
 
 export const useSendPersonalAlarm = (targetMemberId, orderId, orderType, isApproved) => {
     const {businessName} = useCustomerStore()
@@ -64,9 +65,11 @@ export const useSendPersonalAlarmMember = (memberName) => {
 }
 
 export const useGetAlarmList = (customerId) => {
+    const {isRightBarOpen} = useNotificationStore()
     return useQuery({
         queryKey: ["notification", {customerId}],
-        queryFn: () => getAlarmList(customerId)
+        queryFn: () => getAlarmList(customerId),
+        enabled: isRightBarOpen
     })
 }
 
