@@ -7,7 +7,6 @@ const NotificationList = () => {
 
     const {data} = useGetAlarmList(customerId)
     const alarms = data?.data?.data
-    console.log(alarms)
 
     return <>
         <div className="mt-4">

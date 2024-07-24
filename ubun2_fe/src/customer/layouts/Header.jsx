@@ -6,6 +6,13 @@ import SunIcon from '@heroicons/react/24/outline/SunIcon';
 import BellIcon from '@heroicons/react/24/outline/BellIcon';
 import BreadCrumb from '../components/common/BreadCrumb/BreadCrumb';
 import useNotificationStore from "../store/Notification/notificationStore.js";
+import {onMessage} from "firebase/messaging";
+import {messaging} from "../../../initFirebase.js";
+import {toast} from "react-hot-toast";
+import {
+  delayCustomerToastStyle,
+  successCustomerToastStyle,
+} from "../../member/api/toastStyle.js";
 
 const Header = () => {
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme'));
@@ -21,6 +28,45 @@ const Header = () => {
       }
     }
   }, []);
+
+  const [isNewAlarm,setIsNewAlarm] = useState(false);
+
+  useEffect(() => {
+    const onMessageFCM = async () => {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') return;
+
+      onMessage(messaging, payload => {
+        console.log('Message received. ', payload);
+        console.log(payload.data?.title);
+        console.log(payload.data?.content);
+        if (payload.data?.title === "단건주문" || payload.data?.title === "정기주문" ) {
+          toast.success(
+              <div>
+                <strong>{payload.data.title}</strong><br />
+                {payload.data?.content}
+              </div>,
+              successCustomerToastStyle,
+              {duration:5000}
+          )
+        } else {
+          // 재고 부족
+          toast.error(
+              <div>
+                <strong>{payload.data.title}</strong><br />
+                {payload.data?.content}
+              </div>,
+              delayCustomerToastStyle,
+              {duration:5000}
+          )
+        }
+        setIsNewAlarm(true)
+      });
+    };
+
+    onMessageFCM();
+  }, []);
+
 
   function logoutUser() {
     localStorage.clear();
@@ -53,11 +99,13 @@ const Header = () => {
             />
           </label>
 
-          <button className='btn btn-ghost ml-4  btn-circle' onClick={() => setIsRightBarOpen(true)}>
-            <div className='indicator'>
+          <button className='btn btn-ghost ml-4  btn-circle' onClick={() => {
+            setIsRightBarOpen(true)
+            setIsNewAlarm(false)
+          }}>
+            <div className='indicator relative'>
               <BellIcon className='h-6 w-6'/>
-              {/*{noOfNotifications > 0 ?*/}
-              {/*    <span className='indicator-item badge badge-secondary badge-sm'>{noOfNotifications}</span> : null}*/}
+              {isNewAlarm && <span className='absolute -right-3 flex w-3 h-3 me-3 bg-purple-500 rounded-full'></span>}
             </div>
           </button>
 
