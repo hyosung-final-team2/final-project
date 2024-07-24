@@ -103,8 +103,9 @@ public class ProductServiceImpl implements ProductService {
         Product findProduct = productRepository.findByCustomerCustomerIdAndProductId(customerId, productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
         inventoryService.removeStock(findProduct.getProductId());
-        if(findProduct.getProductImagePath()==null) return;
-        imageService.deleteImage(findProduct.getProductImagePath());
+        if(findProduct.getProductImagePath()!=null) {
+            imageService.deleteImage(findProduct.getProductImagePath());
+        }
         productRepository.delete(findProduct);
 
     }
