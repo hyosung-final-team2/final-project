@@ -35,7 +35,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
     @Override
     public Page<Product> findProducts(Long customerId, SearchRequest searchRequest, Pageable pageable, boolean isMember) {
         QueryResults<Product> results = from(product)
-                .where(product.customer.customerId.eq(customerId), productSearch(searchRequest), productStatusForMember(isMember),product.productId.between(1,2))
+                .where(product.customer.customerId.eq(customerId), productSearch(searchRequest), productStatusForMember(isMember))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(productSort(pageable).stream().toArray(OrderSpecifier[]::new))
