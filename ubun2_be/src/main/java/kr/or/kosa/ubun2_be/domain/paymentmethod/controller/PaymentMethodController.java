@@ -6,6 +6,7 @@ import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentRespo
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.service.PaymentMethodService;
+import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +26,15 @@ public class PaymentMethodController {
 
     @Operation(summary = "카드결제수단을 전체 조회.")
     @GetMapping("/cards")
-    public ResponseDto<?> getCardPaymentMethods(@PageableDefault(size = PAGE_SIZE, sort = "paymentMethodId", direction = Sort.Direction.DESC) Pageable pageable, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Page<CardPaymentResponse> paymentMethods = paymentMethodService.getAllCardPaymentMethodsForMember(pageable, userDetails.getUserId());
+    public ResponseDto<?> getCardPaymentMethods(@PageableDefault(size = PAGE_SIZE, sort = "paymentMethodId", direction = Sort.Direction.DESC) Pageable pageable, SearchRequest searchRequest ,@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Page<CardPaymentResponse> paymentMethods = paymentMethodService.getAllCardPaymentMethodsForMember(pageable, searchRequest,userDetails.getUserId());
         return ResponseDto.ok(paymentMethods, "카드 목록을 성공적으로 조회했습니다.");
     }
 
     @Operation(summary = "계좌결제수단을 전체 조회.")
     @GetMapping("/accounts")
-    public ResponseDto<?> getAccountPaymentMethods( @PageableDefault(size = PAGE_SIZE, sort = "paymentMethodId", direction = Sort.Direction.DESC) Pageable pageable, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Page<AccountPaymentResponse> paymentMethods = paymentMethodService.getAllAccountPaymentMethodsForMember(pageable, userDetails.getUserId());
+    public ResponseDto<?> getAccountPaymentMethods(@PageableDefault(size = PAGE_SIZE, sort = "paymentMethodId", direction = Sort.Direction.DESC) Pageable pageable, SearchRequest searchRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Page<AccountPaymentResponse> paymentMethods = paymentMethodService.getAllAccountPaymentMethodsForMember(pageable, searchRequest,userDetails.getUserId());
         return ResponseDto.ok(paymentMethods, "계좌 목록을 성공적으로 조회했습니다.");
     }
 
