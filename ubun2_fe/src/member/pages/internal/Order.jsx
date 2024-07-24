@@ -12,16 +12,16 @@ import useMemberStore from '../../store/memberStore';
 import useModalStore from '../../store/modalStore';
 import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
+import toast from 'react-hot-toast';
+import { errorToastStyle } from '../../api/toastStyle';
 
 const Order = () => {
   const navigate = useNavigate();
-  const { selectedItems, calculateTotals, clearCart } = useOrderItemsStore();
+  const { selectedItems, totals } = useOrderItemsStore();
   const [deliveryItems] = useState(deliveryContent);
   const [selectedDelivery, setSelectedDelivery] = useState(deliveryItems[0]);
   const [isOrderButtonDisabled, setIsOrderButtonDisabled] = useState(true);
   const [unsetSubscriptions, setUnsetSubscriptions] = useState([]);
-
-  const totals = calculateTotals();
 
   const { modalState, setModalState } = useModalStore();
   const { setOrderData, updateOrderData, selectedAddressId } = useOrderDataStore();
@@ -72,14 +72,15 @@ const Order = () => {
   const handleProceedToPayment = () => {
     if (isOrderButtonDisabled) {
       if (!selectedAddressId) {
-        console.log('배송지를 선택해주세요.');
+        toast.error('배송지를 선택해주세요.', errorToastStyle);
       } else if (selectedItems.length === 0) {
-        console.log('주문할 상품이 없습니다.');
+        toast.error('주문할 상품이 없습니다.', errorToastStyle);
       } else {
-        console.log('모든 정기 주문 상품의 배송 주기를 선택해주세요.');
+        toast.error('모든 정기 주문 상품의 배송 주기를 선택해주세요.', errorToastStyle);
       }
       return;
     }
+    console.log(selectedAddressId);
     navigate('/member/app/payments');
   };
 
@@ -104,7 +105,6 @@ const Order = () => {
     <div className='flex flex-col h-full'>
       <div className='flex-1'>
         <OrderDeliveryInfo
-          selectedAddressId={selectedAddressId}
           selectedDelivery={selectedDelivery}
           handleDeliveryModal={() => handleModalOpen()}
           setIsOrderButtonDisabled={setIsOrderButtonDisabled}

@@ -17,6 +17,8 @@ public interface OrderRepositoryCustom {
 
     List<Order> findOrdersByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
 
+    List<Order> findAllOrdersByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+
     List<Object[]> findTopSellingProductsByCustomerId(Long customerId, LocalDateTime startDate, LocalDateTime endDate);
 
     List<Address> findAddressesByDateRange(Long customerId, LocalDateTime startDate, LocalDateTime endDate);

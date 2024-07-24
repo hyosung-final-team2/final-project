@@ -1,9 +1,5 @@
 package kr.or.kosa.ubun2_be.domain.dashboard.dto;
 
-import kr.or.kosa.ubun2_be.domain.order.dto.OrderProductResponse;
-import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderProductResponse;
-import kr.or.kosa.ubun2_be.domain.order.entity.Order;
-import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

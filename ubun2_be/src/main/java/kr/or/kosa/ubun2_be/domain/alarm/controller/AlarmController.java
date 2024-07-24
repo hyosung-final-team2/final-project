@@ -40,7 +40,7 @@ public class AlarmController {
         return ResponseDto.ok(alarms, "메시지 조회 성공");
     }
 
-    @Operation(summary = "알림 읽음 처리")
+    @Operation(summary = "회원 알림 읽음 처리")
     @DeleteMapping("/members/alarm/{memberId}/{alarmId}")
     public ResponseDto<?> markAlarmAsRead(@PathVariable Long memberId, @PathVariable String alarmId) {
         alarmService.markAsRead(memberId, alarmId);
@@ -53,4 +53,12 @@ public class AlarmController {
         List<Alarm> alarms = alarmService.getCustomerPushMessages(customerId);
         return ResponseDto.ok(alarms, "메시지 조회 성공");
     }
+
+    @Operation(summary = "고객 알림 읽음 처리")
+    @DeleteMapping("/customers/alarm/{customerId}/{alarmId}")
+    public ResponseDto<?> markCustomerAlarmAsRead(@PathVariable Long customerId, @PathVariable String alarmId) {
+        alarmService.markCustomerAlarmAsRead(customerId, alarmId);
+        return ResponseDto.ok(null, "고객 알림 읽음 처리 완료");
+    }
+
 }

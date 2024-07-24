@@ -9,8 +9,10 @@ import BackButton from '@heroicons/react/24/outline/ChevronLeftIcon';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import useStoreStore from '../store/storeStore';
-import { onMessage} from "firebase/messaging";
+import { onMessage } from "firebase/messaging";
 import {messaging} from "../../../initFirebase.js";
+import {toast} from "react-hot-toast";
+import {errorToastStyle, successToastStyle} from "../api/toastStyle.js";
 
 function MemHeader({setIsAlarmOpen}) {
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme'));
@@ -45,6 +47,25 @@ function MemHeader({setIsAlarmOpen}) {
         console.log('Message received. ', payload);
         console.log(payload.data?.title);
         console.log(payload.data?.content);
+        if (payload.data?.content.split(" ")[1] === "승인") {
+          toast.success(
+            <div>
+              <strong>{payload.data.title}</strong><br />
+              {payload.data?.content}
+            </div>,
+            successToastStyle,
+            {duration:5000}
+          )
+        } else {
+          toast.error(
+              <div>
+                <strong>{payload.data.title}</strong><br />
+                {payload.data?.content}
+              </div>,
+              errorToastStyle,
+              {duration:5000}
+          )
+        }
         setIsNewAlarm(true)
       });
     };

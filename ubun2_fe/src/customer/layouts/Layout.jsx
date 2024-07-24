@@ -1,5 +1,6 @@
 import LeftSidebar from './LeftSideBar';
 import PageContent from './PageContent';
+import RightSidebar from "./RightSideBar.jsx";
 
 const Layout = () => {
   return (
@@ -9,6 +10,9 @@ const Layout = () => {
         <PageContent />
         <LeftSidebar />
       </div>
+
+        {/* 알림 사이드바 */}
+        <RightSidebar/>
     </>
   );
 };

@@ -16,7 +16,7 @@ const ProductItemReadOnly = ({
   const finalTotalPrice = totalPrice || finalPrice * quantity || 0;
 
   const formatPrice = price => {
-    return typeof price === 'number' ? price.toLocaleString() : '0';
+    return typeof price === 'number' ? price?.toLocaleString() : '0';
   };
 
   return (

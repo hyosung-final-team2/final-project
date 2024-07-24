@@ -1,21 +1,21 @@
 import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircleIcon';
 import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
 import { useParams } from 'react-router-dom';
+import { formatAccountNumber } from '../../../customer/utils/accountFormat';
+import { formatCardNumber } from '../../../customer/utils/cardFormat';
 import { useGetOrderDetail, useUpdateCancelOrder } from '../../api/Order/queris';
 import OrderStatusBadge from '../../components/common/badge/OrderStatusBadge';
 import OrderStatusTextBadge from '../../components/common/badge/OrderStatusTextBadge';
+import DoubleBottomButton from '../../components/common/button/DoubleBottomButton';
 import PaymentSummaryCompleted from '../../components/common/paymentSummary/PaymentSummaryCompleted';
 import ProductItemReadOnly from '../../components/common/productItem/ProductItemReadOnly';
 import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
-import DoubleBottomButton from '../../components/common/button/DoubleBottomButton';
-import { formatCardNumber } from '../../../customer/utils/cardFormat';
-import { formatAccountNumber } from '../../../customer/utils/accountFormat';
 
 const MySingleOrderDetail = () => {
   const { customerId, orderId } = useParams();
-  const { data: orderResponse, isLoading, isError } = useGetOrderDetail(customerId, orderId);
-  const updateCancelOrderMutation = useUpdateCancelOrder();
+  const { data: orderResponse, isLoading, isError, refetch } = useGetOrderDetail(customerId, orderId);
+  const updateCancelOrderMutation = useUpdateCancelOrder(customerId, orderId);
   const { modalState, setModalState } = useModalStore();
   const modalButtonStyle = 'bg-main text-white';
 
@@ -23,6 +23,7 @@ const MySingleOrderDetail = () => {
   if (isError) return <div>Error occurred while fetching order details.</div>;
 
   const orderData = orderResponse?.data?.data;
+  console.log(orderData);
 
   const paymentInfo = {
     paymentName: orderData.paymentType === 'CARD' ? orderData.cardCompanyName : orderData.bankName,
@@ -41,17 +42,18 @@ const MySingleOrderDetail = () => {
     setModalState(false);
   };
 
-  const handelCandel = async () => {
-    try {
-      await updateCancelOrderMutation.mutateAsync({
+  const handleCancel = () => {
+    updateCancelOrderMutation.mutate(
+      {
         customerId: Number(customerId),
         orderId: Number(orderId),
-      });
-      console.log('주문이 성공적으로 취소되었습니다.');
-    } catch (error) {
-      console.error('주문 취소 중 오류 발생:', error);
-      console.log('주문 취소에 실패했습니다. 다시 시도해주세요.');
-    }
+      },
+      {
+        onSuccess: () => {
+          closeCancelModal();
+        },
+      }
+    );
   };
 
   return (
@@ -119,7 +121,7 @@ const MySingleOrderDetail = () => {
             firstButtonText='취소'
             secondButtonText='삭제'
             firstButtonFunc={closeCancelModal}
-            secondButtonFunc={handelCandel}
+            secondButtonFunc={handleCancel}
           />
         </SlideUpModal>
       )}

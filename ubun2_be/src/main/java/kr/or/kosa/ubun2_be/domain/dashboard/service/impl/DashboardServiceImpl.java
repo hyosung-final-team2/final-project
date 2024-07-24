@@ -35,14 +35,14 @@ public class DashboardServiceImpl implements DashboardService {
     private final MemberCustomerRepository memberCustomerRepository;
     private final PendingMemberRepository pendingMemberRepository;
     @Override
-    public Page<UnifiedOrderResponse> getUnifiedOrdersByDateRangeAndCustomerId(LocalDate startDate, LocalDate endDate, Long customerId, Pageable pageable) {
+    public List<UnifiedOrderResponse> getUnifiedOrdersByDateRangeAndCustomerId(LocalDate startDate, LocalDate endDate, Long customerId) {
         //localdate를 localdatetime으로 변환
         LocalDateTime start = startDate.atStartOfDay();
-        LocalDateTime end = endDate.atTime(LocalTime.MAX);
+        LocalDateTime end = endDate.atTime(LocalTime.MAX).minusSeconds(1);
 
         // 주문 목록 조회
-        List<Order> orders = orderRepository.findOrdersByDateRangeAndCustomerId(start,end,customerId);
-        List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findSubscriptionOrderByDateRangeAndCustomerId(start,end,customerId);
+        List<Order> orders = orderRepository.findAllOrdersByDateRangeAndCustomerId(start,end,customerId);
+        List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findAllSubscriptionOrderByDateRangeAndCustomerId(start,end,customerId);
 
         // 주문 목록을 통합
         List<UnifiedOrderResponse> unifiedOrders = new ArrayList<>();
@@ -52,10 +52,7 @@ public class DashboardServiceImpl implements DashboardService {
         // 생성일자 기준으로 정렬
         unifiedOrders.sort(Comparator.comparing(UnifiedOrderResponse::getCreatedAt).reversed());
 
-        // 페이지네이션 처리
-        int pageStart = (int) pageable.getOffset();
-        int pageEnd = Math.min((pageStart + pageable.getPageSize()), unifiedOrders.size());
-        return new PageImpl<>(unifiedOrders.subList(pageStart, pageEnd), pageable, unifiedOrders.size());
+        return unifiedOrders;
 
     }
 
@@ -80,7 +77,7 @@ public class DashboardServiceImpl implements DashboardService {
     public List<TopSellingProductDto> getTopSellingProducts(Long customerId, LocalDate startDate, LocalDate endDate, long limit) {
         //localdate를 localdatetime으로 변환
         LocalDateTime start = startDate.atStartOfDay();
-        LocalDateTime end = endDate.atTime(LocalTime.MAX);
+        LocalDateTime end = endDate.atTime(LocalTime.MAX).minusSeconds(1);
 
         // 일반 주문과 구독 주문에서 상위 N개 판매 상품 조회
         List<Object[]> topSellingProducts = orderRepository.findTopSellingProductsByCustomerId(customerId, start, end);
@@ -122,7 +119,7 @@ public class DashboardServiceImpl implements DashboardService {
     public List<AddressesResponse> getAddressesByDateRange(Long customerId, LocalDate startDate, LocalDate endDate) {
         //localdate를 localdatetime으로 변환
         LocalDateTime start = startDate.atStartOfDay();
-        LocalDateTime end = endDate.atTime(LocalTime.MAX);
+        LocalDateTime end = endDate.atTime(LocalTime.MAX).minusSeconds(1);
 
         // 일반 주문과 구독 주문에서 배송지 조회
         List<AddressesResponse> addresses = orderRepository.findAddressesByDateRange(customerId, start, end).stream()
@@ -147,10 +144,10 @@ public class DashboardServiceImpl implements DashboardService {
 
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
             LocalDateTime start = date.atStartOfDay();
-            LocalDateTime end = date.atTime(LocalTime.MAX);
+            LocalDateTime end = date.atTime(LocalTime.MAX).minusSeconds(1);
 
-            List<Order> orders = orderRepository.findOrdersByDateRangeAndCustomerId(start, end, customerId);
-            List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findSubscriptionOrderByDateRangeAndCustomerId(start, end, customerId);
+            List<Order> orders = orderRepository.findAllOrdersByDateRangeAndCustomerId(start, end, customerId);
+            List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findAllSubscriptionOrderByDateRangeAndCustomerId(start, end, customerId);
 
             long orderCount = orders.size();
             long subscriptionOrderCount = subscriptionOrders.size();
@@ -175,10 +172,10 @@ public class DashboardServiceImpl implements DashboardService {
 
         for (LocalDate date = startDate; !date.isAfter(endDate); date = date.plusDays(1)) {
             LocalDateTime start = date.atStartOfDay();
-            LocalDateTime end = date.atTime(LocalTime.MAX);
+            LocalDateTime end = date.atTime(LocalTime.MAX).minusSeconds(1);
 
-            List<Order> orders = orderRepository.findOrdersByDateRangeAndCustomerId(start, end, customerId);
-            List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findSubscriptionOrderByDateRangeAndCustomerId(start, end, customerId);
+            List<Order> orders = orderRepository.findAllOrdersByDateRangeAndCustomerId(start, end, customerId);
+            List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findAllSubscriptionOrderByDateRangeAndCustomerId(start, end, customerId);
 
             long orderCount = orders.size();
             long subscriptionOrderCount = subscriptionOrders.size();

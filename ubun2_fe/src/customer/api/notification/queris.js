@@ -7,9 +7,10 @@
 // - title : "스토어 이름"
 // - content : "주문번호 BC-${orderId}${random-5자리}가 승인 거절되었습니다. - TODO: 거절 사유 넣을지 말지 "
 
-import {useMutation} from "@tanstack/react-query";
-import {sendGroupAlarm, sendPersonalAlarm} from "./notification.js";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {getAlarmList, readCustomerAlarm, sendGroupAlarm, sendPersonalAlarm} from "./notification.js";
 import useCustomerStore from "../../store/customerStore.js";
+import useNotificationStore from "../../store/Notification/notificationStore.js";
 
 export const useSendPersonalAlarm = (targetMemberId, orderId, orderType, isApproved) => {
     const {businessName} = useCustomerStore()
@@ -60,5 +61,25 @@ export const useSendPersonalAlarmMember = (memberName) => {
     }
     return useMutation({
         mutationFn:() => sendGroupAlarm(groupData)
+    })
+}
+
+export const useGetAlarmList = (customerId) => {
+    const {isRightBarOpen} = useNotificationStore()
+    return useQuery({
+        queryKey: ["notification", {customerId}],
+        queryFn: () => getAlarmList(customerId),
+        enabled: isRightBarOpen
+    })
+}
+
+export const useReadCustomerAlarm = (alarmId) => {
+    const queryClient = useQueryClient();
+    const {customerId}= useCustomerStore()
+    return useMutation({
+        mutationFn: () => readCustomerAlarm(customerId, alarmId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey:['notification', {customerId}]})
+        }
     })
 }
