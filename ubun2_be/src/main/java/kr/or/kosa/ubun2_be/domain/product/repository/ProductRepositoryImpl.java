@@ -7,6 +7,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
+import kr.or.kosa.ubun2_be.domain.product.dto.CategoryRequest;
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import org.apache.commons.lang3.ObjectUtils;
@@ -117,5 +118,25 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
             case "orderOption" -> product.orderOption;
             default -> null;
         };
+    }
+    @Override
+    public Page<Product> findProductsByCategory(Long customerId, CategoryRequest categoryRequest, Pageable pageable) {
+        QueryResults<Product> results = from(product)
+                .where(product.customer.customerId.eq(customerId), categorySearch(categoryRequest),productStatusForMember(true))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(product.createdAt.desc()) //생성날짜 내림차순
+                .fetchResults();
+
+        List<Product> content = results.getResults();
+        long total = results.getTotal();
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    private BooleanBuilder categorySearch(CategoryRequest categoryRequest) {
+        if (categoryRequest == null || categoryRequest.getCategoryName() == null || categoryRequest.getCategoryName().trim().isEmpty()) {
+            return new BooleanBuilder();
+        }
+        return new BooleanBuilder().and(product.category.categoryName.eq(categoryRequest.getCategoryName()));
     }
 }
