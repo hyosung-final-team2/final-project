@@ -54,4 +54,11 @@ public class MemberController {
         memberService.simpleCheck(customUserDetails.getUserId(),request);
         return ResponseDto.ok(null,"결제 비밀번호 일치 확인");
     }
+
+    @Operation(summary = "로그인시 필요한 회원 정보")
+    @GetMapping("/memberinfo")
+    public ResponseDto<?> memberInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        MemberInfoResponse response = memberService.memberInfo(customUserDetails.getUserId());
+        return ResponseDto.ok(response,"정상출력 데이터");
+    }
 }

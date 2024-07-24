@@ -122,4 +122,10 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(MemberExceptionType.NOT_CORRECT_PAYMENT_PW);
         }
     }
+
+    @Override
+    public MemberInfoResponse memberInfo(Long memberId) {
+        Member member = findById(memberId);
+        return MemberInfoResponse.of(member.getMemberName());
+    }
 }
