@@ -5,10 +5,20 @@ import EnvelopeIcon from '@heroicons/react/24/outline/EnvelopeIcon';
 import EllipsisVerticalIcon from '@heroicons/react/24/outline/EllipsisVerticalIcon';
 import ArrowPathIcon from '@heroicons/react/24/outline/ArrowPathIcon';
 import Datepicker from 'react-tailwindcss-datepicker';
+import { useState } from 'react';
 
-const DashboardTopBar = ({ dateValue, setDateValue }) => {
+const DashboardTopBar = ({ dateValue, setDateValue, onRefresh }) => {
+  const [refreshKey, setRefreshKey] = useState(0);
+
   const handleDatePickerValueChange = newValue => {
     setDateValue(newValue);
+  };
+
+  const handleRefreshData = () => {
+    setRefreshKey(prevKey => prevKey + 1);
+    if (onRefresh) {
+      onRefresh();
+    }
   };
 
   return (
@@ -30,7 +40,7 @@ const DashboardTopBar = ({ dateValue, setDateValue }) => {
         />
       </div>
       <div className='text-right '>
-        <button className='btn btn-ghost btn-sm normal-case'>
+        <button className='btn btn-ghost btn-sm normal-case' onClick={handleRefreshData}>
           <ArrowPathIcon className='w-4 mr-2' />
           Refresh Data
         </button>

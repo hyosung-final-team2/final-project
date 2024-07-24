@@ -1,8 +1,8 @@
 import React from 'react';
 import { Table } from 'flowbite-react';
 import TableHead from '../../../common/Table/TableHead';
-import DynamicTableBody from '../../../common/Table/DynamicTableBody';
 import RecentOrderTableRow from './RecentOrdersTableRow';
+import UnifiedOrdersTableBody from './UnifiedOrdersTableBody';
 
 const RecentOrdersTable = ({ ordersByDateValue }) => {
   const tableColumns = ['날짜', '고객명', '주문 내역', '총액', '상태'];
@@ -15,7 +15,13 @@ const RecentOrdersTable = ({ ordersByDateValue }) => {
           <div className='overflow-hidden h-30'>
             <Table className='min-w-full divide-y divide-gray-200'>
               <TableHead tableColumns={tableColumns} isCheckable={false} />
-              <DynamicTableBody dataList={ordersByDateValue} TableRowComponent={RecentOrderTableRow} dynamicKey='orderId' dynamicId='id' isCheckable={false} />
+              <UnifiedOrdersTableBody
+                dataList={ordersByDateValue}
+                TableRowComponent={RecentOrderTableRow}
+                dynamicKey='orderId'
+                dynamicId='orderId'
+                isCheckable={false}
+              />
             </Table>
           </div>
         </div>

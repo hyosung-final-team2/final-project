@@ -10,37 +10,45 @@ const salesColors = {
   '0+': '#FFEBDE',
 };
 
+const initialSalesData = {
+  서울특별시: '0',
+  경기도: '0',
+  경상남도: '0',
+  경상북도: '0',
+  전라남도: '0',
+  전라북도: '0',
+  충청남도: '0',
+  충청북도: '0',
+  강원도: '0',
+  부산광역시: '0',
+  대구광역시: '0',
+  인천광역시: '0',
+  광주광역시: '0',
+  대전광역시: '0',
+  울산광역시: '0',
+  세종특별자치시: '0',
+  제주특별자치도: '0',
+};
+
 const SidoMap = ({ addressesByDateValue }) => {
   const [tooltipContent, setTooltipContent] = useState('');
-  const [salesDatas, setSalesDatas] = useState({
-    서울특별시: '0',
-    경기도: '0',
-    경상남도: '0',
-    경상북도: '0',
-    전라남도: '0',
-    전라북도: '0',
-    충청남도: '0',
-    충청북도: '0',
-    강원도: '0',
-    부산광역시: '0',
-    대구광역시: '0',
-    인천광역시: '0',
-    광주광역시: '0',
-    대전광역시: '0',
-    울산광역시: '0',
-    세종특별자치시: '0',
-    제주특별자치도: '0',
-  });
+  const [salesDatas, setSalesDatas] = useState(initialSalesData);
 
   useEffect(() => {
-    const newSalesDatas = { ...salesDatas };
-    addressesByDateValue?.forEach(address => {
-      const sidoName = address.addressName.split(',')[1].trim();
-      if (newSalesDatas.hasOwnProperty(sidoName)) {
-        newSalesDatas[sidoName] = String(Number(newSalesDatas[sidoName]) + 1);
-      }
-    });
-    setSalesDatas(newSalesDatas);
+    // 데이터 초기화
+    setSalesDatas(initialSalesData);
+
+    // 새로운 데이터로 salesDatas 업데이트
+    if (addressesByDateValue) {
+      const newSalesDatas = { ...initialSalesData };
+      addressesByDateValue.forEach(address => {
+        const sidoName = address.addressName.split(',')[1].trim();
+        if (newSalesDatas.hasOwnProperty(sidoName)) {
+          newSalesDatas[sidoName] = String(Number(newSalesDatas[sidoName]) + 1);
+        }
+      });
+      setSalesDatas(newSalesDatas);
+    }
   }, [addressesByDateValue]);
 
   const salesData = useMemo(() => {
@@ -63,7 +71,7 @@ const SidoMap = ({ addressesByDateValue }) => {
   return (
     <div className='flex rounded-2xl p-6 bg-white drop-shadow-lg shadow-lg col-span-2 h-[30dvh]'>
       <div className='w-[30%] p-3 border-r'>
-        <h1 className='text-xl font-bold'>상품 판매 현황</h1>
+        <h1 className='text-xl font-bold'>지역별 주문 현황</h1>
         <p className='text-sm text-gray-500 mb-4'>지역별 판매 현황을 확인할 수 있습니다.</p>
         <div className='flex flex-col mt-4'>
           <h2 className='text-lg font-bold mb-2'>판매 현황</h2>
