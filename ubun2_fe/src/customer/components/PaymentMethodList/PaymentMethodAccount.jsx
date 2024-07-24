@@ -3,7 +3,7 @@ import { getBankLogo } from '../../../member/components/PaymentMethod/CardList';
 
 const PaymentMethodAccount = ({ bgColor, bankName, memberName, accountNumber }) => {
   return (
-    <div className={`flex-1 bg-slate-600 ${bgColor}} text-white w-[95%] h-full rounded-lg p-6 relative flex flex-col`}>
+    <div className={`flex-1 bg-slate-600 ${bgColor}} text-white w-[90%] h-[95%] p-6 relative flex flex-col`}>
       {/* <div className='mt-auto flex justify-between'> */}
       <div>
         <img className='h-[30%]' src={`/src/assets/banklogos/${getBankLogo(bankName)}`} alt='' />
