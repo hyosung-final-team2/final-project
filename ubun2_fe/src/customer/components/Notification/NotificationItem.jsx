@@ -1,3 +1,5 @@
+import {useReadCustomerAlarm} from "../../api/notification/queris.js";
+
 const NotificationItem = ({id, title, content, timestamp}) => {
 
     const timeAgo = (timestamp) => {
@@ -20,18 +22,21 @@ const NotificationItem = ({id, title, content, timestamp}) => {
         }
     }
 
+    const {mutate: customerAlarmReadMutate} = useReadCustomerAlarm(id)
+
     const handleNotificationClick = () => {
         // TODO : 나중에 링크 받으면 거기로 navigate 하는 부분
+        customerAlarmReadMutate()
     }
 
     return (
         <>
-            <div className="flex items-center justify-between mb-4" onClick={() => handleNotificationClick()}>
+            <div className="flex items-center justify-between mb-4 cursor-pointer" onClick={() => handleNotificationClick()}>
                 <div className="flex items-center gap-1">
                     <span className="flex w-3 h-3 me-3 bg-purple-500 rounded-full"></span>
                     <div className="flex flex-col">
                         <div className="font-bold">{title}</div>
-                        <div className="text-gray-600">{content}</div>
+                        <div className="text-gray-600 text-sm">{content}</div>
                     </div>
                 </div>
                 <div className="text-sm text-gray-400">{timeAgo(timestamp)}</div>

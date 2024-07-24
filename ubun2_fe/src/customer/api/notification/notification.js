@@ -5,3 +5,5 @@ export const sendPersonalAlarm = async (alarmData) => await privateFetch.post("/
 export const sendGroupAlarm = async (groupData) => await privateFetch.post("/customers/alarm/group", groupData);
 
 export const getAlarmList = async (customerId) => await privateFetch.get(`/customers/alarm/${customerId}`);
+
+export const readCustomerAlarm = async (customerId, alarmId) => await privateFetch.delete(`/customers/alarm/${customerId}/${alarmId}`);
