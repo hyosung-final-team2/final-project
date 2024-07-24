@@ -71,7 +71,7 @@ const SidoMap = ({ addressesByDateValue }) => {
   return (
     <div className='flex rounded-2xl p-6 bg-white drop-shadow-lg shadow-lg col-span-2 h-[30dvh]'>
       <div className='w-[30%] p-3 border-r'>
-        <h1 className='text-xl font-bold'>지역별 주문 현황</h1>
+        <h1 className='text-xl font-bold'>지역별 판매 현황</h1>
         <p className='text-sm text-gray-500 mb-4'>지역별 판매 현황을 확인할 수 있습니다.</p>
         <div className='flex flex-col mt-4'>
           <h2 className='text-lg font-bold mb-2'>판매 현황</h2>

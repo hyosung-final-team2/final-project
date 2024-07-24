@@ -61,10 +61,10 @@ module.exports = {
         'custom-card-nonghyup-to': '#15773b',
 
         //dashboard custom color
-        'custom-dashboard-pending-bg': '#ff8447',
-        'custom-dashboard-orders-bg': '#06d38b',
-        'custom-dashboard-members-bg': '#32c1ff',
-        'custom-dashboard-products-bg': '#bcaaed',
+        'custom-dashboard-pending-bg': '#F86767',
+        'custom-dashboard-orders-bg': '#12BC95',
+        'custom-dashboard-members-bg': '#0f83ff',
+        'custom-dashboard-products-bg': '#6147DB',
         'custom-dashboard-pending-hover': '#fff',
         'custom-dashboard-orders-hover': '#05b97b',
         'custom-dashboard-members-hover': '#2aa7e2',
