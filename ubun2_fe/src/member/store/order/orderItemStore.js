@@ -180,20 +180,33 @@ const useOrderItemsStore = create(
       calculateTotals: () => {
         const { selectedItems } = get();
         let productAmount = 0;
-        let discount = 0;
+        let discountedAmount = 0;
         let selectedCount = 0;
 
         selectedItems.forEach(store => {
           store.cartProducts.forEach(product => {
-            productAmount += product.productPrice * product.quantity;
-            discount += product.productDiscount * product.quantity;
-            selectedCount += product.quantity;
+            const price = product.productPrice || 0;
+            const discountRate = (product.productDiscount || 0) / 100;
+            const quantity = product.quantity || 0;
+
+            const originalSubtotal = price * quantity;
+            const discountedPrice = Math.round((price * (1 - discountRate)) / 10) * 10;
+            const discountedSubtotal = discountedPrice * quantity;
+
+            productAmount += originalSubtotal;
+            discountedAmount += discountedSubtotal;
+            selectedCount += quantity;
           });
         });
 
-        const totalAmount = productAmount - discount;
+        const discount = productAmount - discountedAmount;
 
-        return { productAmount, discount, totalAmount, selectedCount };
+        return {
+          productAmount: Math.round(productAmount),
+          discount: Math.round(discount),
+          totalAmount: Math.round(discountedAmount),
+          selectedCount,
+        };
       },
 
       // 업데이트된 장바구니 데이터를 반환하는 함수

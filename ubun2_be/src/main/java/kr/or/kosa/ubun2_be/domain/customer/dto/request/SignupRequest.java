@@ -21,6 +21,7 @@ public class SignupRequest {
     private String businessOpenDate;
     private String businessAddress;
     private String description;
+    private String fcmToken;
 
     public Customer toEntity(PasswordEncoder passwordEncoder) {
         return Customer.builder()
@@ -35,6 +36,7 @@ public class SignupRequest {
                 .businessOpenDate(businessOpenDate)
                 .businessAddress(businessAddress)
                 .description(description)
+                .fcmToken(fcmToken)
                 .userRole(UserRole.ROLE_CUSTOMER)
                 .build();
     }

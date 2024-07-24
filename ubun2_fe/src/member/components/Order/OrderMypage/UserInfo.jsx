@@ -30,7 +30,7 @@ const UserInfo = ({ memberInfo }) => {
           </div>
         </div>
       </div>
-      <div className='flex justify-between mt-6'>
+      <div className='flex justify-between mt-6 text-sm'>
         <div className='flex gap-1'>
           <span className='text-purple-600'>승인대기</span>
           <span className='text-purple-600'>{memberInfo.pending} 건</span>

@@ -18,6 +18,7 @@ import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
+import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
 import kr.or.kosa.ubun2_be.domain.member.entity.PendingMember;
@@ -181,6 +182,18 @@ public class CustomerServiceImpl implements CustomerService {
         return StoreInfoResponse.builder()
                 .businessName(customer.getBusinessName())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public void updateCustomerFcmToken(Long customerId, FcmTokenRequest fcmTokenRequest) {
+        Customer customer = findById(customerId);
+        System.out.println(customer.getFcmToken());
+        System.out.println(fcmTokenRequest.getFcmToken());
+        if (customer.getFcmToken().equals(fcmTokenRequest.getFcmToken())) {
+            return;
+        }
+        customer.updateCustomerFcmToken(fcmTokenRequest.getFcmToken());
     }
 
     public boolean validateRegisterRequest(RegisterMemberRequest registerMemberRequest) {
