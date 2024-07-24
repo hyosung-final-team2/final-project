@@ -12,6 +12,10 @@ public interface SubscriptionOrderService {
 
     void validateAllCustomerProducts(List<SubscriptionOrderRequest> requests);
 
+    void processApprovedSubscriptionOrders();
+
+    void processDelaySubscriptionOrders();
+
     SubscriptionOrderDetailResponse getSubscriptionOrderByMemberIdAndOrderId(Long memberId, Long customerId, Long orderId);
 
     void removeSubscriptionOrderProducts(Long memberId, RemoveSubscriptionOrderProductRequest request);
