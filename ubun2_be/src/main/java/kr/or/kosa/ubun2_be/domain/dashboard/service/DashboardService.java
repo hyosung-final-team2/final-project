@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface DashboardService {
-    Page<UnifiedOrderResponse> getUnifiedOrdersByDateRangeAndCustomerId(LocalDate startDate, LocalDate endDate, Long customerId, Pageable pageable);
+    List<UnifiedOrderResponse> getUnifiedOrdersByDateRangeAndCustomerId(LocalDate startDate, LocalDate endDate, Long customerId);
     ProductCountResponseDto getProductCounts(Long customerId);
     MemberCountResponseDto getMemberCounts(Long customerId);
     List<TopSellingProductDto> getTopSellingProducts(Long customerId, LocalDate startDate, LocalDate endDate, long limit);

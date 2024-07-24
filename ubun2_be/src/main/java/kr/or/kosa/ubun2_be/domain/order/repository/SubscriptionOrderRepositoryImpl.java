@@ -110,8 +110,20 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                 .join(member.memberCustomers, memberCustomer)
                 .join(memberCustomer.customer, customer)
                 .where(customer.customerId.eq(customerId)
-                        .and(subscriptionOrder.createdAt.between(startDate, endDate)
-                                .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED))))
+                        .and(subscriptionOrder.createdAt.between(startDate, endDate)))
+                .fetch();
+    }
+
+  public List<SubscriptionOrder> findAllSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+
+        return from(subscriptionOrder)
+                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
+                .join(subscriptionOrderProduct.product, product)
+                .join(subscriptionOrder.member, member)
+                .join(member.memberCustomers, memberCustomer)
+                .join(memberCustomer.customer, customer)
+                .where(customer.customerId.eq(customerId)
+                        .and(subscriptionOrder.createdAt.between(startDate, endDate)))
                 .fetch();
   }
 
