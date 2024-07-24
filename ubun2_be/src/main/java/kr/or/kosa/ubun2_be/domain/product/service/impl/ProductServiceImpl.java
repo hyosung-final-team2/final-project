@@ -3,10 +3,7 @@ package kr.or.kosa.ubun2_be.domain.product.service.impl;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
 import kr.or.kosa.ubun2_be.domain.member.service.MemberService;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductDetailResponse;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductRequest;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductResponse;
-import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
+import kr.or.kosa.ubun2_be.domain.product.dto.*;
 import kr.or.kosa.ubun2_be.domain.product.entity.Category;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductException;
@@ -103,8 +100,9 @@ public class ProductServiceImpl implements ProductService {
         Product findProduct = productRepository.findByCustomerCustomerIdAndProductId(customerId, productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
         inventoryService.removeStock(findProduct.getProductId());
-        if(findProduct.getProductImagePath()==null) return;
-        imageService.deleteImage(findProduct.getProductImagePath());
+        if(findProduct.getProductImagePath()!=null) {
+            imageService.deleteImage(findProduct.getProductImagePath());
+        }
         productRepository.delete(findProduct);
 
     }
@@ -134,6 +132,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product getProductById(Long productId) {
         return productRepository.findById(productId).orElseThrow(()->new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
+    }
+
+    @Override
+    public Page<ProductResponse> getProductsByCategory(Long customerId, CategoryRequest categoryRequest, Pageable pageable,Long memberId) {
+        memberService.isExistMemberCustomer(memberId, customerId);
+        return productRepository.findProductsByCategory(customerId, categoryRequest, pageable).map(ProductResponse::new);
     }
 
 }

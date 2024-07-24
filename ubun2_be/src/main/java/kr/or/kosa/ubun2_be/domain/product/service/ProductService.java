@@ -1,9 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.product.service;
 
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductDetailResponse;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductRequest;
-import kr.or.kosa.ubun2_be.domain.product.dto.ProductResponse;
-import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
+import kr.or.kosa.ubun2_be.domain.product.dto.*;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,5 +19,6 @@ public interface ProductService {
     Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable,Long memberId);
     ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId,Long memberId);
     Product getProductById(Long productId);
+    Page<ProductResponse> getProductsByCategory(Long customerId, CategoryRequest categoryRequest, Pageable pageable, Long memberId);
 
 }
