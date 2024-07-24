@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import MyPagePaymentItem from '../../components/PaymentMethod/MyPagePaymentItem';
 import PaymentItem from '../../components/PaymentMethod/PaymentItem';
 import SlideUpModal from '../../components/common/SlideUpModal';
@@ -87,15 +87,15 @@ const MyPaymentsList = () => {
   }, [modalState]);
 
   return (
-    <div className='flex flex-col bg-white h-full pt-3'>
-      <div className='flex mt-3 mb-6 justify-center justify-around'>
+    <div className='flex flex-col h-full pt-3 bg-white'>
+      <div className='flex justify-center justify-around mt-3 mb-6'>
         <div className='mr-4 cursor-pointer' onClick={() => setActiveTab('creditCard')}>
           <h2 className={`text-2xl font-bold ${activeTab === 'creditCard' ? 'text-main' : 'text-gray-400'}`}>신용카드</h2>
-          {activeTab === 'creditCard' && <div className='h-1 bg-indigo-700 mt-2'></div>}
+          {activeTab === 'creditCard' && <div className='h-1 mt-2 bg-indigo-700'></div>}
         </div>
         <div className='cursor-pointer' onClick={() => setActiveTab('bankAccount')}>
           <h2 className={`text-2xl font-bold ${activeTab === 'bankAccount' ? 'text-main' : 'text-gray-400'}`}>은행계좌</h2>
-          {activeTab === 'bankAccount' && <div className='h-1 bg-indigo-700 mt-2'></div>}
+          {activeTab === 'bankAccount' && <div className='h-1 mt-2 bg-indigo-700'></div>}
         </div>
       </div>
 
@@ -104,7 +104,7 @@ const MyPaymentsList = () => {
         {activeTab === 'bankAccount' && renderPaymentItems(bankAccounts)}
       </div>
 
-      <button className='mt-4 mx-6 py-4 bg-gray-200 text-gray-800 font-semibold rounded-2xl' onClick={handleOnButtonClick}>
+      <button className='py-4 mx-6 mt-4 font-semibold text-gray-800 bg-gray-200 rounded-2xl' onClick={handleOnButtonClick}>
         {activeTab === 'bankAccount' ? '계좌 추가하기' : '카드 추가하기'}
       </button>
 

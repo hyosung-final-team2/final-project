@@ -12,7 +12,9 @@ java {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
-
+jar {
+	enabled = false
+}
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -67,7 +69,9 @@ dependencies {
 
 	// fcm
 	implementation 'com.google.firebase:firebase-admin:9.2.0'
-	implementation group: 'com.squareup.okhttp3', name: 'okhttp', version:'4.2.2'
+	implementation 'com.squareup.okhttp3:okhttp:4.11.0'  // 최신 안정 버전
+	implementation 'com.squareup.okio:okio:3.5.0'  // 최신 안정 버전
+	//implementation group: 'com.squareup.okhttp3', name: 'okhttp', version:'4.2.2'
 
 	tasks.named('test') {
 		useJUnitPlatform()

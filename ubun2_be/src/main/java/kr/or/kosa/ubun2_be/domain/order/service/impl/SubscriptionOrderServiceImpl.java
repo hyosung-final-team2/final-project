@@ -3,6 +3,7 @@ package kr.or.kosa.ubun2_be.domain.order.service.impl;//package kr.or.kosa.ubun2
 import jakarta.transaction.Transactional;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
+import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.cart.repository.CartProductRepository;
 import kr.or.kosa.ubun2_be.domain.financial.institution.entity.Bank;
 import kr.or.kosa.ubun2_be.domain.financial.institution.service.BankService;
@@ -51,6 +52,7 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
     private final BankService bankService;
     private final AddressService addressService;
     private final CardCompanyService cardCompanyService;
+    private final AlarmService alarmService;
 
     @Override
     @Transactional
@@ -77,6 +79,10 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
 
             // 6. cartProduct 삭제
             deleteCartProducts(memberId, request.getSubscriptionOrderProducts());
+
+            // 7. 고객에게 push notification (정기주문)
+            alarmService.sendMessageToCustomer(request);
+
         }
     }
 
@@ -235,6 +241,7 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
 
         } catch (Exception e) {
             subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
+            // TODO: 연기 단건 알림 보내는 부분
         }
         subscriptionOrderRepository.save(subscriptionOrder);//        명시적 save
 

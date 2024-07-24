@@ -12,11 +12,13 @@ import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.*;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
+import kr.or.kosa.ubun2_be.domain.customer.dto.response.StoreInfoResponse;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
+import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
 import kr.or.kosa.ubun2_be.domain.member.entity.PendingMember;
@@ -172,6 +174,26 @@ public class CustomerServiceImpl implements CustomerService {
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
         List<MemberListResponse> paginatedList = combinedList.subList(start, end);
         return new PageImpl<>(paginatedList, pageable, combinedList.size());
+    }
+
+    @Override
+    public StoreInfoResponse getStoreInfo(Long customerId) {
+        Customer customer = findById(customerId);
+        return StoreInfoResponse.builder()
+                .businessName(customer.getBusinessName())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public void updateCustomerFcmToken(Long customerId, FcmTokenRequest fcmTokenRequest) {
+        Customer customer = findById(customerId);
+        System.out.println(customer.getFcmToken());
+        System.out.println(fcmTokenRequest.getFcmToken());
+        if (customer.getFcmToken().equals(fcmTokenRequest.getFcmToken())) {
+            return;
+        }
+        customer.updateCustomerFcmToken(fcmTokenRequest.getFcmToken());
     }
 
     public boolean validateRegisterRequest(RegisterMemberRequest registerMemberRequest) {

@@ -7,6 +7,7 @@ import lombok.Getter;
 
 @Getter
 public class SubscriptionOrderDetailProductResponse {
+    private Long subscriptionOrderProductId;
     private Long productId;
     private String productName;
     private String productDescription;
@@ -21,6 +22,7 @@ public class SubscriptionOrderDetailProductResponse {
 
     public SubscriptionOrderDetailProductResponse(SubscriptionOrderProduct subscriptionOrderProduct) {
         Product product = subscriptionOrderProduct.getProduct();
+        this.subscriptionOrderProductId = subscriptionOrderProduct.getSubscriptionOrderProductId();
         this.productId = product.getProductId();
         this.productName = product.getProductName();
         this.productDescription = product.getProductDescription();

@@ -3,10 +3,10 @@ package kr.or.kosa.ubun2_be.domain.order.dto;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.AccountPayment;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +30,7 @@ public class SubscriptionOrderDetailResponse {
     private int paymentAmount;
     private List<SubscriptionOrderDetailProductResponse> subscriptionOrderProducts;
     private OrderStatus orderStatus;
+    private LocalDateTime nextOrderDate;
     private int latestCycleNumber;
 
     public SubscriptionOrderDetailResponse(SubscriptionOrder order, int latestCycleNumber) {
@@ -45,22 +46,25 @@ public class SubscriptionOrderDetailResponse {
                 .map(SubscriptionOrderDetailProductResponse::new)
                 .collect(Collectors.toList());
         this.orderStatus = order.getOrderStatus();
+        this.nextOrderDate = order.getNextOrderDate();
         this.latestCycleNumber = latestCycleNumber;
-        setPaymentDetails(order.getPaymentMethod());
         calculateOrderAmounts(order);
     }
 
-    private void setPaymentDetails(PaymentMethod paymentMethod) {
-        if (paymentMethod instanceof AccountPayment) {
-            this.paymentType = "ACCOUNT";
-            this.accountNumber = ((AccountPayment) paymentMethod).getAccountNumber();
-            this.bankName = ((AccountPayment) paymentMethod).getBankName();
-        } else if (paymentMethod instanceof CardPayment) {
-            this.paymentType = "CARD";
-            this.cardCompanyName = ((CardPayment) paymentMethod).getCardCompanyName();
-            this.cardNumber = ((CardPayment) paymentMethod).getCardNumber();
-        }
-        this.paymentMethodNickname = paymentMethod.getPaymentMethodNickname();
+    public SubscriptionOrderDetailResponse(SubscriptionOrder order, int latestCycleNumber, CardPayment cardPayment) {
+        this(order, latestCycleNumber);
+        this.paymentType = "CARD";
+        this.cardCompanyName = cardPayment.getCardCompanyName();
+        this.cardNumber = cardPayment.getCardNumber();
+        this.paymentMethodNickname = cardPayment.getPaymentMethodNickname();
+    }
+
+    public SubscriptionOrderDetailResponse(SubscriptionOrder order, int latestCycleNumber, AccountPayment accountPayment) {
+        this(order, latestCycleNumber);
+        this.paymentType = "ACCOUNT";
+        this.accountNumber = accountPayment.getAccountNumber();
+        this.bankName = accountPayment.getBankName();
+        this.paymentMethodNickname = accountPayment.getPaymentMethodNickname();
     }
 
     private void calculateOrderAmounts(SubscriptionOrder order) {
@@ -73,4 +77,3 @@ public class SubscriptionOrderDetailResponse {
         this.paymentAmount = this.orderAmount - this.discountAmount;
     }
 }
-

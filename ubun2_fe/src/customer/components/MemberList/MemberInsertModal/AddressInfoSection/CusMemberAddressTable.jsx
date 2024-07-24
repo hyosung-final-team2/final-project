@@ -33,7 +33,6 @@ const CusMemberAddressTable = ({ memberAddresses, title, handleAddressDelete }) 
         setPaginatedData(currentData);
     }, [currentPage, memberAddresses]);
 
-    console.log(paginatedData)
 
     return (
     <div className='p-3'>

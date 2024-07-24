@@ -51,7 +51,10 @@ const Login = () => {
           </div>
           {/* 로그인 페이지 우측 */}
           <div className='py-24 px-10'>
-            <h2 className='text-main text-2xl font-semibold mb-2 text-center tracking-widest	'>로그인</h2>
+            {/*<h2 className='text-main text-2xl font-semibold mb-2 text-center tracking-widest	'>로그인</h2>*/}
+            <div className="w-full flex justify-center items-center">
+              <img src='/text_logo.png' alt='Logo' className="w-1/2"/>
+            </div>
             <form onSubmit={e => submitForm(e)}>
               <div className='mb-4'>
                 <InputText

@@ -18,11 +18,7 @@ const OrderCompleteStore = ({ store }) => {
       <div className='flex flex-col w-full gap-8 '>
         <div className='flex flex-col w-full gap-3 bg-white'>
           <div className='flex items-center pb-2 border-b'>
-            <div className='flex gap-3 text-gray-500'>
-              {/* TODO: API 연결 후 주문번호 넣어주기 */}
-              <span>주문번호</span>
-              <span>12345</span>
-            </div>
+            <div className='flex gap-3 text-gray-500'></div>
           </div>
           <div className='flex flex-col gap-5'>
             {products.map(product => (

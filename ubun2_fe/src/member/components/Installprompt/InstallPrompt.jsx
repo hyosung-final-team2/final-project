@@ -46,7 +46,7 @@ const InstallPrompt = () => {
                 <SlideUpModal isOpen={isModalOpen} setIsModalOpen={setModalState} buttonText="설치하기" buttonStyle={modalButtonStyle} buttonFunc={handleInstallClick} isInstallPrompt={true}>
                     <div className='flex flex-col items-center gap-2'>
                         <img  src="/prompt_logo.png" alt="로고" className="shadow-lg mb-3"/>
-                        <h1 className='text-xl'>홈화면에 <span className='text-main text-bold'>OrderSwift앱</span> 추가하고</h1>
+                        <h1 className='text-xl'>홈화면에 <span className='text-main text-bold'>clickNbuy앱</span> 추가하고</h1>
                         <p className='text-xl '>다양한 소식과 혜택을 받아보세요!</p>
                     </div>
                 </SlideUpModal>

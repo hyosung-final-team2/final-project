@@ -19,13 +19,19 @@ import OrderComplete from '../pages/internal/OrderComplete';
 import MyOrdersList from '../pages/internal/MyOrdersList';
 import MySingleOrderDetail from '../pages/internal/MySingleOrderDetail';
 import MySubscriptionOrderDetail from '../pages/internal/MySubscriptionOrderDetail';
+import { useState } from 'react';
+import SlideUpModal from '../components/common/SlideUpModal.jsx';
+import Notification from '../components/notification/Notification.jsx';
 
 function PageContent({ hasFootNav }) {
   const { memberId } = useMemberStore(state => ({ memberId: state.memberId }));
+  const [isAlarmOpen, setIsAlarmOpen] = useState(false);
+
+  const modalButtonStyle = 'bg-main text-white';
 
   return (
     <div className='flex flex-col flex-1 overflow-auto'>
-      <MemHeader />
+      <MemHeader setIsAlarmOpen={setIsAlarmOpen} />
       <main className={` flex-1 overflow-y-auto ${hasFootNav ? 'mb-[10dvh]' : ''} bg-base-100`}>
         <Routes>
           <Route path='mypage' element={<MyPage />} />
@@ -47,6 +53,11 @@ function PageContent({ hasFootNav }) {
           <Route path='mypage/subscription-order/:customerId/:orderId' element={<MySubscriptionOrderDetail />} />
         </Routes>
       </main>
+
+      {/* 회원 가입 완료 모달*/}
+      <SlideUpModal isOpen={isAlarmOpen} headerText='미확인 알림' setIsModalOpen={setIsAlarmOpen} buttonText='확인' buttonStyle={modalButtonStyle}>
+        <Notification />
+      </SlideUpModal>
     </div>
   );
 }

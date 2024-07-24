@@ -1,18 +1,21 @@
-import React from 'react';
-
-const AddressItem = ({ recipientName, memberAddress, recipientPhone, addressNickname, defaultStatus, handleEdit }) => {
+const AddressItem = ({ recipientName, memberAddress, recipientPhone, addressNickname, defaultStatus, handleEdit, handleSelect }) => {
   return (
-    <div className='bg-white mb-4'>
+    <div className='mb-4 bg-white' onClick={handleSelect}>
       <div className='flex mb-2'>
-        {/* 배송지 이름 */}
-        <h3 className='text-black py-1 mr-2 text-xl font-bold'>{addressNickname}</h3>
-        {/* 배송지 상태 */}
-        {defaultStatus ? <div className='bg-gray-200 text-gray-600 px-3 py-1 rounded-full text-xs self-center font-bold'>현재 배송지</div> : null}
+        <h3 className='py-1 mr-2 text-xl font-bold text-black'>{addressNickname}</h3>
+        {defaultStatus ? <div className='self-center px-3 py-1 text-xs font-bold text-gray-600 bg-gray-200 rounded-full'>현재 배송지</div> : null}
       </div>
       <p className='text-sm '>{recipientName}</p>
       <p className='text-lg text-gray-500'>{memberAddress}</p>
-      <p className='text-md text-gray-500'>{recipientPhone}</p>
-      <a href='#' className='text-blue-600 text-sm' onClick={handleEdit}>
+      <p className='text-gray-500 text-md'>{recipientPhone}</p>
+      <a
+        href='#'
+        className='text-sm text-blue-600'
+        onClick={e => {
+          e.stopPropagation();
+          handleEdit();
+        }}
+      >
         수정하기
       </a>
     </div>

@@ -20,6 +20,7 @@ import MemberResetPassword from './member/pages/external/ResetPassword.jsx'
 import MemberLayout from './member/layouts/Layout.jsx'
 import {useEffect} from "react";
 import useFCMTokenStore from "./FCMTokenStore.js";
+import {messaging} from "../initFirebase.js";
 
 const App = () => {
   const customToastStyle = {
@@ -29,43 +30,25 @@ const App = () => {
   const notify = () => toast('Here is your toast!');
   const token = localStorage.getItem('token');
 
-  const {FCMToken, setFCMToken} = useFCMTokenStore()
+  const { setFCMToken} = useFCMTokenStore()
 
   const onMessageFCM = async () => {
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') return;
 
-    const firebaseApp = initializeApp({
-      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-      appId: import.meta.env.VITE_FIREBASE_APP_ID,
-      measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
-    });
-
-    const messaging = getMessaging(firebaseApp);
-
-    getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY })
-        .then(currentToken => {
-          if (currentToken) {
-            console.log(currentToken);
-            setFCMToken(currentToken);
-          } else {
-            console.log('No registration token available. Request permission to generate one.');
-          }
-        })
-        .catch(err => {
-          console.log('An error occurred while retrieving token. ', err);
-        });
-
-    onMessage(messaging, payload => {
-      console.log('Message received. ', payload);
-      console.log(payload.notification?.title);
-      // setOnMessageTitle(payload.notification?.title);
-    });
+    try {
+      const currentToken = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY });
+      if (currentToken) {
+        console.log(currentToken);
+        setFCMToken(currentToken);
+      } else {
+        console.log('No registration token available. Request permission to generate one.');
+      }
+    } catch (err) {
+      console.log('An error occurred while retrieving token. ', err);
+    }
   };
+
 
   useEffect(() => {
     onMessageFCM();
@@ -101,7 +84,7 @@ const App = () => {
               <Route path={'reset-password'} element={<MemberResetPassword />} />
               <Route path='register' element={<MemberRegister />} />
               <Route path='app/*' element={<MemberLayout />} />
-              <Route path='*' element={<Navigate to={token ? '/member/app/welcome' : '/member/login'} replace />} />
+              <Route path='*' element={<Navigate to={token ? '/member/app/home' : '/member/login'} replace />} />
             </Routes>
           }
         />

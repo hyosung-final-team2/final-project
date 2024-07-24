@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class AlarmController {
 
     private final AlarmService alarmService;
@@ -32,10 +33,10 @@ public class AlarmController {
         return ResponseDto.ok(null,"토픽 알람 전송 성공");
     }
 
-    @Operation(summary = "고객별 알림 조회")
+    @Operation(summary = "회원별 알림 조회")
     @GetMapping("/members/alarm/{memberId}")
-    public ResponseDto<List<Alarm>> getPushMessages(@PathVariable Long memberId) {
-        List<Alarm> alarms = alarmService.getPushMessages(memberId);
+    public ResponseDto<List<Alarm>> getMemberPushMessages(@PathVariable Long memberId) {
+        List<Alarm> alarms = alarmService.getMemberPushMessages(memberId);
         return ResponseDto.ok(alarms, "메시지 조회 성공");
     }
 
@@ -44,5 +45,12 @@ public class AlarmController {
     public ResponseDto<?> markAlarmAsRead(@PathVariable Long memberId, @PathVariable String alarmId) {
         alarmService.markAsRead(memberId, alarmId);
         return ResponseDto.ok(null, "알림 읽음 처리 완료");
+    }
+
+    @Operation(summary = "고객별 알림 조회")
+    @GetMapping("/customers/alarm/{customerId}")
+    public ResponseDto<List<Alarm>> getCustomerPushMessages(@PathVariable Long customerId) {
+        List<Alarm> alarms = alarmService.getCustomerPushMessages(customerId);
+        return ResponseDto.ok(alarms, "메시지 조회 성공");
     }
 }

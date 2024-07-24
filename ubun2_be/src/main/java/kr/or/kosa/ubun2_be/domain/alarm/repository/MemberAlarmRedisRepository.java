@@ -10,10 +10,10 @@ import java.util.concurrent.TimeUnit;
 
 @Repository
 @RequiredArgsConstructor
-public class AlarmRedisRepository {
+public class MemberAlarmRedisRepository {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private static final String ALARM_PREFIX = "alarm:";
+    private static final String ALARM_PREFIX = "member_alarm:";
 
     public void saveAlarm(String memberId, Alarm alarm) {
         String key = ALARM_PREFIX + memberId;

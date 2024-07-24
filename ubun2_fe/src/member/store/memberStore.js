@@ -4,7 +4,7 @@ import { persist } from 'zustand/middleware';
 const useMemberStore = create(
   persist(
     set => ({
-      memberId: 1,
+      memberId: null,
       setMemberId: state => set({ memberId: state }),
     }),
     {
