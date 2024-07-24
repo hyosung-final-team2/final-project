@@ -7,8 +7,8 @@
 // - title : "스토어 이름"
 // - content : "주문번호 BC-${orderId}${random-5자리}가 승인 거절되었습니다. - TODO: 거절 사유 넣을지 말지 "
 
-import {useMutation} from "@tanstack/react-query";
-import {sendGroupAlarm, sendPersonalAlarm} from "./notification.js";
+import {useMutation, useQuery} from "@tanstack/react-query";
+import {getAlarmList, sendGroupAlarm, sendPersonalAlarm} from "./notification.js";
 import useCustomerStore from "../../store/customerStore.js";
 
 export const useSendPersonalAlarm = (targetMemberId, orderId, orderType, isApproved) => {
@@ -60,5 +60,12 @@ export const useSendPersonalAlarmMember = (memberName) => {
     }
     return useMutation({
         mutationFn:() => sendGroupAlarm(groupData)
+    })
+}
+
+export const useGetAlarmList = (customerId) => {
+    return useQuery({
+        queryKey: ["notification", {customerId}],
+        queryFn: () => getAlarmList(customerId)
     })
 }

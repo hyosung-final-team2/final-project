@@ -1,8 +1,7 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
 import { Toaster, toast } from 'react-hot-toast';
-import {initializeApp} from "firebase/app";
-import { getMessaging, onMessage, getToken } from 'firebase/messaging';
+import { getToken } from 'firebase/messaging';
 
 // Customer
 import CustomerLogin from './customer/pages/external/Login';
@@ -18,6 +17,7 @@ import MemberForgotPassword from './member/pages/external/ForgotPassword.jsx'
 import MemberForgotLoginId from "./member/pages/external/ForgotLoginId.jsx";
 import MemberResetPassword from './member/pages/external/ResetPassword.jsx'
 import MemberLayout from './member/layouts/Layout.jsx'
+
 import {useEffect} from "react";
 import useFCMTokenStore from "./FCMTokenStore.js";
 import {messaging} from "../initFirebase.js";
