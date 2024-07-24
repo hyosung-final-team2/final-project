@@ -6,12 +6,12 @@ import kr.or.kosa.ubun2_be.domain.address.exception.AddressException;
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressExceptionType;
 import kr.or.kosa.ubun2_be.domain.address.repository.AddressRepository;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
-import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.dto.MyAddressResponse;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
+import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,8 +30,8 @@ public class AddressServiceImpl implements AddressService {
     private final MemberRepository memberRepository;
 
     @Override
-    public Page<AddressResponse> getAllAddresses(Pageable pageable, Long customerId) {
-        return addressRepository.findAllAddressesWithMember(pageable, customerId).map(AddressResponse::new);
+    public Page<AddressResponse> getAllAddresses(Pageable pageable, SearchRequest searchRequest, Long customerId) {
+        return addressRepository.findAllAddressesWithMember(pageable,searchRequest, customerId).map(AddressResponse::new);
     }
 
     @Override

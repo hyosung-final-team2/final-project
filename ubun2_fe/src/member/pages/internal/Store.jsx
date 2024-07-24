@@ -113,6 +113,7 @@ function Store() {
                             productName={item.productName}
                             productPrice={item.productPrice}
                             productDiscountPercent={item.productDiscount}
+                            productImage={item.productImagePath}
                             orderOption={item.orderOption}
                             stockQuantity={item.stockQuantity}
                             isOdd={idx % 2 === 0}
