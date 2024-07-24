@@ -69,7 +69,7 @@ const MySubscriptionOrderDetail = () => {
     setModalState(false);
   };
 
-  const handleRemoveProducts = async () => {
+  const handleRemoveProducts = () => {
     const validProductIds = selectedProducts.filter(id => id !== null);
 
     if (validProductIds.length === 0) {
@@ -77,26 +77,20 @@ const MySubscriptionOrderDetail = () => {
       return;
     }
 
-    console.log('Sending data:', {
-      orderId: Number(orderId),
-      customerId: Number(customerId),
-      subscriptionOrderProductIds: validProductIds,
-    });
-
-    try {
-      await updateCancelSubscriptionOrderMutation.mutateAsync({
+    updateCancelSubscriptionOrderMutation.mutate(
+      {
         orderId: Number(orderId),
         customerId: Number(customerId),
         subscriptionOrderProductIds: validProductIds,
-      });
-      setModalState(false);
-      setIsEditing(false);
-      setSelectedProducts([]);
-      refetch();
-    } catch (error) {
-      console.error('Failed to remove products:', error);
-      console.log('상품 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.');
-    }
+      },
+      {
+        onSuccess: () => {
+          setModalState(false);
+          setIsEditing(false);
+          setSelectedProducts([]);
+        },
+      }
+    );
   };
 
   if (isLoading) return <div>Loading...</div>;
