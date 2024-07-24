@@ -132,6 +132,11 @@ public class AlarmServiceImpl implements AlarmService{
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void markCustomerAlarmAsRead(Long customerId, String alarmId) {
+        customerAlarmRedisRepository.removeAlarmById(String.valueOf(customerId),alarmId);
+    }
+
     private Message makeOrderMessage(String title, String content, String token) {
         return Message.builder()
                 .putData("title", title)
