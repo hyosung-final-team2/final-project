@@ -10,6 +10,8 @@ import { getPng } from '../../components/PaymentMethod/CardList';
 import PaymentItem from '../../components/PaymentMethod/PaymentItem';
 import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
+import toast from 'react-hot-toast';
+import { errorToastStyle } from '../../api/toastStyle';
 
 const ChoosePayment = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -72,23 +74,16 @@ const ChoosePayment = () => {
     [setSelectedPaymentMethodId, setSelectedPaymentMethodType]
   );
 
-  const { calculateTotals } = useOrderItemsStore();
+  const { totals } = useOrderItemsStore();
 
   const handleAddPaymentMethod = useCallback(() => {
     navigate('/member/app/payments/edit');
     setIsModalOpen(false);
   }, [navigate]);
 
-  // 결제 금액 추가
-  const [totals, setTotals] = useState({ productAmount: 0, discount: 0, totalAmount: 0, selectedCount: 0 });
-
-  useEffect(() => {
-    setTotals(calculateTotals());
-  }, [calculateTotals]);
-
   const handleOrder = useCallback(() => {
     if (!selectedPaymentMethodId) {
-      console.log('결제 수단을 선택해주세요.');
+      toast.error('결제 수단을 선택해주세요.', errorToastStyle);
       return;
     }
 
@@ -109,7 +104,7 @@ const ChoosePayment = () => {
     <div className='flex flex-col h-full bg-gray-100'>
       <main className='flex flex-col items-center flex-grow pt-12 px-7'>
         <h2 className='text-[3.8dvw] text-gray-500 mb-1 font-bold'>결제 수단 선택</h2>
-        <p className='text-[7dvw] font-bold mb-12'>{`${totals.totalAmount.toLocaleString()}`}원</p>
+        <p className='text-[7dvw] font-bold mb-12'>{`${totals.totalAmount?.toLocaleString()}`}원</p>
 
         <div className='w-full p-8 pt-6 mb-8 bg-white shadow-sm rounded-3xl '>
           <p className='text-[3dvw] text-gray-500 mb-2'>결제수단</p>
