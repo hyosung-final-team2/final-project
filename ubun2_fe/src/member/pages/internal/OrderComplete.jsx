@@ -1,6 +1,5 @@
 import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircleIcon';
 import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
-import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetMyAddresses } from '../../api/Address/queries';
 import { useCreateOrder } from '../../api/Order/queris';
@@ -13,19 +12,19 @@ import OrderCompleteStore from '../../components/OrderComplete/OrderCompleteStor
 import useModalStore from '../../store/modalStore';
 import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
-import { replace } from 'lodash';
+import toast from 'react-hot-toast';
+import { successToastStyle } from '../../api/toastStyle';
 
 const OrderComplete = () => {
-  const { selectedItems, calculateTotals, clearCart } = useOrderItemsStore();
+  const { selectedItems, totals, clearCart } = useOrderItemsStore();
   const { orderData, selectedAddressId, selectedPaymentMethodId, selectedPaymentMethodType, resetOrderData } = useOrderDataStore();
   const navigate = useNavigate();
-  const createOrderMutation = useCreateOrder();
+  const { mutate: createOrder } = useCreateOrder(navigate);
   const { data: addresses, isLoading: addressesLoading, isError: addressesError } = useGetMyAddresses();
   const { data: card, isLoading: cardLoading, isError: cardError } = useGetCard(selectedPaymentMethodId);
   const { data: account, isLoading: accountLoading, isError: accountError } = useGetAccount(selectedPaymentMethodId);
   const addressInfo = addresses?.data?.data.find(address => address.addressId === selectedAddressId);
   const { modalState, setModalState } = useModalStore();
-  const totals = calculateTotals();
   const modalButtonStyle = 'bg-main text-white';
 
   const paymentInfo =
@@ -39,28 +38,21 @@ const OrderComplete = () => {
           paymentContent: account?.accountNumber,
         };
 
-  const handleConfirmOrder = useCallback(async () => {
+  const handleConfirmOrder = async () => {
     const orderDataWithPayment = orderData.map(item => ({
       ...item,
       addressId: selectedAddressId,
     }));
 
-    try {
-      console.log('주문 데이터:', orderDataWithPayment);
-      await createOrderMutation.mutateAsync(orderDataWithPayment);
-      console.log('주문이 완료되었습니다.');
-      // 주문 완료 후 데이터 초기화
-      resetOrderData();
-      clearCart();
-      navigate('/member/app/home', { replace: true });
-    } catch (error) {
-      console.log('주문에 실패했습니다:', error);
-    }
-  }, [orderData, selectedAddressId, createOrderMutation, navigate]);
+    await createOrder(orderDataWithPayment);
+    resetOrderData();
+    clearCart();
+  };
 
   const handleCancel = () => {
     resetOrderData();
-    navigate('/member/app/home');
+    toast.success('주문이 취소되었습니다.', successToastStyle);
+    navigate('/member/app/home', { replace: true });
   };
 
   const handleCloseModal = () => {
@@ -82,7 +74,7 @@ const OrderComplete = () => {
   return (
     <div>
       <div className='px-4 py-4 bg-white'>
-        <h1 className='mb-2 text-3xl font-bold'>결제가 완료됐어요</h1>
+        <h1 className='my-2 text-3xl font-bold'>결제가 완료됐어요</h1>
         <div className='flex gap-3 py-4'>
           <span>주문 일자 </span>
           <span className='text-gray-500'>{new Date().toLocaleDateString()}</span>

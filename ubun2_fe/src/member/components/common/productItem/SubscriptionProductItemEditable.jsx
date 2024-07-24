@@ -26,13 +26,13 @@ const SubscriptionProductItemEditable = ({
             <div className='flex gap-1 text-sm text-gray-500'>
               <p>{productName}</p>
               <span>/</span>
-              <p>{`${price.toLocaleString()} 원`}</p>
+              <p>{`${price?.toLocaleString()} 원`}</p>
               <span>/</span>
               <p>{`${quantity} 개`}</p>
             </div>
           </div>
           <div className='flex items-start justify-between mt-2'>
-            <p className='text-lg font-bold'>{`${totalPrice.toLocaleString()} 원`}</p>
+            <p className='text-lg font-bold'>{`${totalPrice?.toLocaleString()} 원`}</p>
             {discount > 0 && <span className='text-sm text-red-500'>{`${discount}% 할인`}</span>}
           </div>
         </div>

@@ -7,19 +7,20 @@ import useOrderDataStore from '../../../store/order/orderDataStore';
 const OrderDeliveryInfo = ({ selectedDelivery, handleDeliveryModal, setIsOrderButtonDisabled }) => {
   const navigate = useNavigate();
   const { data: addresses } = useGetMyAddresses();
-  const { selectedAddressId, updateOrderData } = useOrderDataStore();
+  const { selectedAddressId, setSelectedAddressId, updateOrderData } = useOrderDataStore();
   const [defaultAddress, setDefaultAddress] = useState(null);
 
   useEffect(() => {
     if (addresses?.data?.data) {
       const defaultAddr = addresses?.data?.data.find(address => address.defaultStatus);
-      if (defaultAddr) {
+      if (defaultAddr && !selectedAddressId) {
+        setSelectedAddressId(defaultAddr.addressId);
         updateOrderData({ addressId: defaultAddr.addressId });
         setDefaultAddress(defaultAddr);
         setIsOrderButtonDisabled(false);
       }
     }
-  }, [addresses, updateOrderData]);
+  }, [addresses, setSelectedAddressId, updateOrderData, selectedAddressId, setIsOrderButtonDisabled]);
 
   const selectedAddress = addresses?.data?.data.find(address => address.addressId === selectedAddressId) || defaultAddress;
 
