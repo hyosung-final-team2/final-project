@@ -1,39 +1,83 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-const DashboardPieChart = () => {
-  const data = [
-    { name: '김치', value: 400 },
-    { name: '우유', value: 300 },
-    { name: '집게', value: 300 },
-    { name: '치즈', value: 200 },
-  ];
+const DashboardPieChart = ({ topSellingProductsValue }) => {
+  const [legendLayout, setLegendLayout] = useState('vertical');
+  const containerRef = useRef(null);
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+  const data =
+    topSellingProductsValue?.map(item => ({
+      name: item.productName,
+      value: item.salesCount,
+    })) ?? [];
+
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#7F6CF6'];
+
+  //가장 큰 값 찾기
+  const maxValue = Math.max(...data.map(item => item.value), 0);
+
+  //가장 큰 값과 같은 값들 찾기
+  const topSellingProducts = data.filter(item => item.value === maxValue);
+
+  //가장 많이 팔린 상품들 splits
+  const topSellingProductNames = topSellingProducts.map(product => product.name).join(', ');
+
+  useEffect(() => {
+    const updateLayout = () => {
+      if (containerRef.current) {
+        const { width } = containerRef.current.getBoundingClientRect();
+        setLegendLayout(width > 400 ? 'vertical' : 'horizontal');
+      }
+    };
+
+    updateLayout();
+    window.addEventListener('resize', updateLayout);
+    return () => window.removeEventListener('resize', updateLayout);
+  }, []);
 
   return (
-    <div className='h-[30dvh] rounded-2xl p-5 bg-white drop-shadow-lg shadow-lg'>
+    <div ref={containerRef} className='h-[30dvh] rounded-2xl p-5 bg-white drop-shadow-lg shadow-lg'>
       <div className='p-2 text-2xl font-bold'>
-        한달 간 <span className='text-red-600'>김치</span>가 <br /> 가장 많이 팔렸어요!
+        기간 동안 <span className='text-red-600'>{topSellingProductNames}</span>가 <br /> 가장 많이 팔렸어요!
       </div>
       <ResponsiveContainer width='100%' height='75%'>
-        <PieChart className=''>
-          <Pie data={data} dataKey='value' cx='40%' cy='45%' innerRadius='40%' outerRadius='60%' fill='#8884d8' paddingAngle={5} label>
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey='value'
+            cx={legendLayout === 'vertical' ? '40%' : '50%'}
+            cy='45%'
+            innerRadius='40%'
+            outerRadius='60%'
+            fill='#8884d8'
+            paddingAngle={5}
+            label
+          >
             {data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
           </Pie>
           <Tooltip />
           <Legend
-            layout='vertical'
-            verticalAlign='middle'
-            wrapperStyle={{
-              paddingLeft: '10px',
-              right: 0,
-              top: '50%',
-              transform: 'translate(0, -50%)',
-              fontSize: '40%',
-            }}
+            layout={legendLayout}
+            verticalAlign={legendLayout === 'vertical' ? 'middle' : 'bottom'}
+            align={legendLayout === 'vertical' ? 'right' : 'center'}
+            wrapperStyle={
+              legendLayout === 'vertical'
+                ? {
+                    paddingLeft: '10px',
+                    right: 0,
+                    top: '50%',
+                    transform: 'translate(0, -50%)',
+                    fontSize: '90%',
+                  }
+                : {
+                    bottom: '20px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    fontSize: '90%',
+                  }
+            }
           />
         </PieChart>
       </ResponsiveContainer>
