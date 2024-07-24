@@ -20,16 +20,19 @@ public class OrderProductResponse {
     private int totalPrice;
     private String productName;
 
-    public OrderProductResponse(OrderProduct orderProduct) {
-        this.orderProductId = orderProduct.getOrderProductId();
-        this.quantity = orderProduct.getQuantity();
-        this.price = orderProduct.getPrice();
-        this.orderProductStatus = orderProduct.getOrderProductStatus();
-        this.totalPrice = calculateTotalPrice(orderProduct);
-        this.productName = orderProduct.getProduct().getProductName();
+    public static OrderProductResponse of(OrderProduct orderProduct) {
+        int price = orderProduct.getPrice();
+        int quantity = orderProduct.getQuantity();
+
+        return OrderProductResponse.builder()
+                .orderProductId(orderProduct.getOrderProductId())
+                .quantity(orderProduct.getQuantity())
+                .price(orderProduct.getPrice())
+                .orderProductStatus(orderProduct.getOrderProductStatus())
+                .totalPrice(price * quantity)
+                .productName(orderProduct.getProduct().getProductName())
+                .build();
     }
 
-    private int calculateTotalPrice(OrderProduct orderProduct) {
-        return orderProduct.getPrice() * orderProduct.getQuantity();
-    }
+
 }

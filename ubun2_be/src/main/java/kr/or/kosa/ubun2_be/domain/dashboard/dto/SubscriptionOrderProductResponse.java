@@ -18,15 +18,18 @@ public class SubscriptionOrderProductResponse {
     private int totalPrice;
     private String productName;
 
-    public SubscriptionOrderProductResponse(SubscriptionOrderProduct subscriptionOrderProduct) {
-        this.subscriptionOrderProductId = subscriptionOrderProduct.getSubscriptionOrderProductId();
-        this.quantity = subscriptionOrderProduct.getQuantity();
-        this.price = subscriptionOrderProduct.getPrice();
-        this.totalPrice = calculateTotalPrice(subscriptionOrderProduct);
-        this.productName = subscriptionOrderProduct.getProduct().getProductName();
+    public static SubscriptionOrderProductResponse of(SubscriptionOrderProduct subscriptionOrderProduct) {
+        int price = subscriptionOrderProduct.getPrice();
+        int quantity = subscriptionOrderProduct.getQuantity();
+
+        return SubscriptionOrderProductResponse.builder()
+                .subscriptionOrderProductId(subscriptionOrderProduct.getSubscriptionOrderProductId())
+                .quantity(subscriptionOrderProduct.getQuantity())
+                .price(subscriptionOrderProduct.getPrice())
+                .totalPrice(price * quantity)
+                .productName(subscriptionOrderProduct.getProduct().getProductName())
+                .build();
     }
 
-    private int calculateTotalPrice(SubscriptionOrderProduct subscriptionOrderProduct) {
-        return subscriptionOrderProduct.getPrice() * subscriptionOrderProduct.getQuantity();
-    }
+
 }
