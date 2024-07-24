@@ -146,8 +146,8 @@ public class DashboardServiceImpl implements DashboardService {
             LocalDateTime start = date.atStartOfDay();
             LocalDateTime end = date.atTime(LocalTime.MAX).minusSeconds(1);
 
-            List<Order> orders = orderRepository.findOrdersByDateRangeAndCustomerId(start, end, customerId);
-            List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findSubscriptionOrderByDateRangeAndCustomerId(start, end, customerId);
+            List<Order> orders = orderRepository.findAllOrdersByDateRangeAndCustomerId(start, end, customerId);
+            List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findAllSubscriptionOrderByDateRangeAndCustomerId(start, end, customerId);
 
             long orderCount = orders.size();
             long subscriptionOrderCount = subscriptionOrders.size();
@@ -174,8 +174,8 @@ public class DashboardServiceImpl implements DashboardService {
             LocalDateTime start = date.atStartOfDay();
             LocalDateTime end = date.atTime(LocalTime.MAX).minusSeconds(1);
 
-            List<Order> orders = orderRepository.findOrdersByDateRangeAndCustomerId(start, end, customerId);
-            List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findSubscriptionOrderByDateRangeAndCustomerId(start, end, customerId);
+            List<Order> orders = orderRepository.findAllOrdersByDateRangeAndCustomerId(start, end, customerId);
+            List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findAllSubscriptionOrderByDateRangeAndCustomerId(start, end, customerId);
 
             long orderCount = orders.size();
             long subscriptionOrderCount = subscriptionOrders.size();

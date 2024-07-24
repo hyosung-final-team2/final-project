@@ -1,8 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.dashboard.service;
 
 import kr.or.kosa.ubun2_be.domain.dashboard.dto.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -109,7 +109,8 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                 .join(member.memberCustomers, memberCustomer)
                 .join(memberCustomer.customer, customer)
                 .where(customer.customerId.eq(customerId)
-                        .and(order.createdAt.between(startDate, endDate)))
+                        .and(order.createdAt.between(startDate, endDate))
+                        .and(order.orderStatus.ne(OrderStatus.APPROVED)))
                 .fetch();
 
     }
@@ -120,9 +121,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
         return from(order)
                 .join(order.orderProducts, orderProduct)
                 .join(orderProduct.product, product)
-                .join(order.member, member)
-                .join(member.memberCustomers, memberCustomer)
-                .join(memberCustomer.customer, customer)
+                .join(product.customer, customer)
                 .where(customer.customerId.eq(customerId)
                         .and(order.createdAt.between(startDate, endDate)))
                 .fetch();
@@ -135,8 +134,8 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                 .select(product.productId, product.productName, orderProduct.quantity.sum())
                 .join(orderProduct.order, order)
                 .join(orderProduct.product, product)
-                .join(order.member.memberCustomers, memberCustomer)
-                .where(memberCustomer.customer.customerId.eq(customerId)
+                .join(product.customer, customer)
+                .where(customer.customerId.eq(customerId)
                         .and(order.createdAt.between(startDate, endDate))
                         .and(order.orderStatus.eq(OrderStatus.APPROVED)))
                 .groupBy(product.productId, product.productName)
@@ -155,11 +154,12 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     @Override
     public List<Address> findAddressesByDateRange(Long customerId, LocalDateTime startDate, LocalDateTime endDate) {
         return from(order)
-                .join(order.member.memberCustomers, memberCustomer)
-                .where(memberCustomer.customer.customerId.eq(customerId)
+                .select(order.address)
+                .join(order.orderProducts, orderProduct)
+                .join(orderProduct.product.customer, customer)
+                .where(customer.customerId.eq(customerId)
                         .and(order.createdAt.between(startDate, endDate))
                         .and(order.orderStatus.eq(OrderStatus.APPROVED)))
-                .select(order.address)
                 .fetch();
     }
 }
