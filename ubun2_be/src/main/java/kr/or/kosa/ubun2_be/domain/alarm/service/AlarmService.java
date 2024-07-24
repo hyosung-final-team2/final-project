@@ -4,6 +4,7 @@ import kr.or.kosa.ubun2_be.domain.alarm.dto.GroupAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.PersonalAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.entity.Alarm;
 import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderRequest;
+import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 
 import java.util.List;
 
@@ -25,4 +26,6 @@ public interface AlarmService {
     List<Alarm> getCustomerPushMessages(Long customerId);
 
     void markCustomerAlarmAsRead(Long customerId, String alarmId);
+
+    void sendSubCycleMessage(SubscriptionOrder subscriptionOrder);
 }

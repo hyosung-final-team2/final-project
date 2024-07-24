@@ -233,24 +233,29 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             return;
         }
         try {
-            checkInventory(previousCycleProducts);
+            checkInventory(previousCycleProducts, subscriptionOrder.getSubscriptionOrderId());
             checkPayment(subscriptionOrder, paymentMethod, member.getMemberName());
             decreaseInventory(previousCycleProducts);
             List<SubscriptionOrderProduct> nextProducts = createNextCycleProducts(subscriptionOrder, previousCycleProducts);
             updateOrderWithNewProducts(subscriptionOrder, nextProducts);
-
-        } catch (Exception e) {
+            // TODO: 정기주문 회차 생성 (회원)
+            alarmService.sendSubCycleMessage(subscriptionOrder);
+        } catch (ProductException e) {
+            // TODO: 연기 알림 보내는 부분 (회원) - 사유 : 재고부족
             subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
-            // TODO: 연기 단건 알림 보내는 부분
+        } catch (Exception e) {
+            // TODO: 연기 알림 보내는 부분(회원) - 사유 : 결제실패
+            subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
         }
         subscriptionOrderRepository.save(subscriptionOrder);//        명시적 save
 
     }
 
-    private void checkInventory(List<SubscriptionOrderProduct> products) {
+    private void checkInventory(List<SubscriptionOrderProduct> products, Long orderId) {
         for (SubscriptionOrderProduct product : products) {
             int availableStock = inventoryService.getStock(product.getProduct().getProductId());
             if (availableStock < product.getQuantity()) {
+                // TODO: 재고부족한 상품이름 (고객)
                 throw new ProductException(ProductExceptionType.INSUFFICIENT_STOCK);
             }
         }

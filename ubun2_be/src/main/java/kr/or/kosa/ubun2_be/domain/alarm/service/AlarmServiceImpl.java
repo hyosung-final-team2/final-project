@@ -18,6 +18,7 @@ import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberCustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
 import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderRequest;
+import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductException;
 import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductExceptionType;
@@ -137,6 +138,17 @@ public class AlarmServiceImpl implements AlarmService{
         customerAlarmRedisRepository.removeAlarmById(String.valueOf(customerId),alarmId);
     }
 
+    @Override
+    public void sendSubCycleMessage(SubscriptionOrder subscriptionOrder) {
+        String businessName = subscriptionOrder.getSubscriptionOrderProducts().get(0).getProduct().getCustomer().getBusinessName();
+        Long orderId = subscriptionOrder.getSubscriptionOrderId(); // navigate 위한 link data
+        int currentCycle = subscriptionOrder.getMaxCycleNumber();
+        String fcmToken = subscriptionOrder.getMember().getFcmToken();
+
+        String content = currentCycle + "회차 정기주문 완료 - 주문번호 : " + orderId;
+        makeSubCycleMessage(businessName,content,fcmToken);
+    }
+
     private Message makeOrderMessage(String title, String content, String token) {
         return Message.builder()
                 .putData("title", title)
@@ -158,6 +170,14 @@ public class AlarmServiceImpl implements AlarmService{
                 .putData("title", request.getTitle())
                 .putData("content", request.getContent())
                 .setTopic(topic)
+                .build();
+    }
+
+    private Message makeSubCycleMessage(String title, String content, String token) {
+        return Message.builder()
+                .putData("title",title)
+                .putData("content",content)
+                .setToken(token)
                 .build();
     }
 
