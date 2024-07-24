@@ -1,18 +1,19 @@
-import {useParams} from 'react-router-dom';
-import {useGetProductDetail} from "../../api/Store/queris.js";
-import BottomButton from "../../components/common/button/BottomButton.jsx";
-import SingleOrder from "../../../assets/images/single.svg";
-import SubscriptionOrder from "../../../assets/images/subscription.svg";
-import AccordionBody from "../../components/common/accordion/AccordionBody.jsx";
-import {useState} from "react";
-import SlideUpModal from "../../components/common/SlideUpModal.jsx";
-import useModalStore from "../../store/modalStore.js";
-import SelectOrderTypeModal from "../../components/Product/SelectOrderTypeModal.jsx";
-import SelectQuantityModal from "../../components/Product/SelectQuantityModal.jsx";
-import {useCreateCart} from "../../api/Cart/queris.js";
+import { useNavigate, useParams } from 'react-router-dom';
+import { useGetProductDetail } from '../../api/Store/queris.js';
+import BottomButton from '../../components/common/button/BottomButton.jsx';
+import SingleOrder from '../../../assets/images/single.svg';
+import SubscriptionOrder from '../../../assets/images/subscription.svg';
+import AccordionBody from '../../components/common/accordion/AccordionBody.jsx';
+import { useState } from 'react';
+import SlideUpModal from '../../components/common/SlideUpModal.jsx';
+import useModalStore from '../../store/modalStore.js';
+import SelectOrderTypeModal from '../../components/Product/SelectOrderTypeModal.jsx';
+import SelectQuantityModal from '../../components/Product/SelectQuantityModal.jsx';
+import { useCreateCart } from '../../api/Cart/queris.js';
 
 function Product() {
-    const {productId} = useParams()
+  const { productId } = useParams();
+  const navigate = useNavigate();
 
 
     const {data: productData} = useGetProductDetail(parseInt(productId))
@@ -68,7 +69,7 @@ function Product() {
         setModalState(true)
     }
 
-    console.log(`productId : ${product?.productId}, orderType : ${orderType === null ? product?.orderOption : orderType}, productQuantity : ${productQuantity}` )
+  console.log(`productId : ${product?.productId}, orderType : ${orderType === null ? product?.orderOption : orderType}, productQuantity : ${productQuantity}`);
 
     const handleModalClose = () => {
         setIsSelectOrderType(false);
@@ -80,17 +81,16 @@ function Product() {
     const {mutate } = useCreateCart({productId:parseInt(productId),quantity:productQuantity, orderOption:orderType === null ? product?.orderOption : orderType  })
 
 
-    const clickCartBtn = async () => {
-        // TODO: cart 넣는 API 호출, 카트에 추가됐다는 토스트 , orderType이 null 이면 product?.orderOption 넣으면 댐
-        console.log("cart Btn")
-        await mutate()
-        setModalState(false)
-    }
+  const clickCartBtn = async () => {
+    await mutate();
+    setModalState(false);
+  };
 
-    const clickBuyBtn = () => {
-        // TODO: cart 넣는 API 호출, 카트에 추가됐다는 토스트 , orderType이 null 이면 product?.orderOption 넣으면 댐, 주문 내역으로 navigate
-        setModalState(false)
-    }
+  const clickBuyBtn = async () => {
+    await mutate();
+    setModalState(false);
+    navigate('/member/app/cart');
+  };
 
     return (
 
