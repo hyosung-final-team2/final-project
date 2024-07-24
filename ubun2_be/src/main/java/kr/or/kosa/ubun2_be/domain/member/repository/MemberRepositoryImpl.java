@@ -1,23 +1,29 @@
 package kr.or.kosa.ubun2_be.domain.member.repository;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.StringPath;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
-import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMember.member;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCustomer;
 
 public class MemberRepositoryImpl extends QuerydslRepositorySupport implements MemberRepositoryCustom {
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
+    private static final List<String> STRING_SEARCH_FIELDS = List.of("memberEmail","memberName","memberPhone");
+    private static final List<String> DATE_SEARCH_FIELDS = List.of("createdAt");
+
     public MemberRepositoryImpl() {
         super(Member.class);
     }
@@ -32,47 +38,51 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport implements M
 
     private BooleanBuilder memberSearch(SearchRequest searchRequest) {
         BooleanBuilder builder = new BooleanBuilder();
-        if (searchRequest != null && searchRequest.getSearchKeyword() != null) {
-            builder.and(member.memberName.containsIgnoreCase(searchRequest.getSearchKeyword()));
+        if (searchRequest == null ||searchRequest.getSearchCategory()==null|| searchRequest.getSearchKeyword() == null) {
+            return null;
+        }
+        String category = searchRequest.getSearchCategory();
+        String keyword = searchRequest.getSearchKeyword();
+
+        ComparableExpressionBase<?> path = getPath(category);
+        if (path == null) {
+            return new BooleanBuilder();
+        }
+
+        if (STRING_SEARCH_FIELDS.contains(category)) {
+            return new BooleanBuilder().and(((StringPath) path).containsIgnoreCase(keyword));
+        } else if (DATE_SEARCH_FIELDS.contains(category)) {
+            return dateTimeSearch((DateTimePath<LocalDateTime>) path, keyword);
         }
         return builder;
     }
+    private BooleanBuilder dateTimeSearch(DateTimePath<LocalDateTime> path, String keyword) {
+        String[] range = keyword.split(",");
+        if (range.length != 2) return new BooleanBuilder();
 
-    private List<OrderSpecifier<?>> memberSort(Pageable pageable) {
-        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
-        if (!ObjectUtils.isEmpty(pageable.getSort())) {
-            for (Sort.Order order : pageable.getSort()) {
-                Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
-                OrderSpecifier<?> orderSpecifier = createOrderSpecifier(direction, order.getProperty());
-                if (orderSpecifier != null) {
-                    orderSpecifiers.add(orderSpecifier);
-                }
-            }
-        }
-        return orderSpecifiers;
-    }
+        try {
+            LocalDate startDate = LocalDate.parse(range[0].trim(), DATE_FORMATTER);
+            LocalDate endDate = LocalDate.parse(range[1].trim(), DATE_FORMATTER);
 
-    private OrderSpecifier<?> createOrderSpecifier(Order direction, String property) {
-        ComparableExpressionBase<?> path = getPath(property);
-        if (path != null) {
-            return new OrderSpecifier<>(direction, path);
+            LocalDateTime startDateTime = startDate.atStartOfDay();
+            LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+
+            return new BooleanBuilder()
+                    .and(path.goe(startDateTime))
+                    .and(path.lt(endDateTime.plusDays(1))); // 다음 날의 시작 직전까지
+        } catch (DateTimeParseException e) {
+            return new BooleanBuilder();
         }
-        return null;
     }
 
     private ComparableExpressionBase<?> getPath(String property) {
-        switch (property) {
-            case "memberEmail":
-                return member.memberEmail;
-            case "memberName":
-                return member.memberName;
-            case "memberPhone":
-                return member.memberPhone;
-            case "createdAt":
-                return member.createdAt;
-            default:
-                return null;
-        }
+        return switch (property) {
+            case "memberEmail" -> member.memberEmail;
+            case "memberName" -> member.memberName;
+            case "memberPhone" -> member.memberPhone;
+            case "createdAt" -> member.createdAt;
+            default -> null;
+        };
     }
 
 }
