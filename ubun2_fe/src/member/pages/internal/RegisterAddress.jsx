@@ -148,7 +148,6 @@ const RegisterAddress = () => {
               labelStyle={labelStyle}
               value={addressData[info.key]}
               onChange={e => handleInputChange(info.key, e.target.value)}
-              onFocus={handleAddressSearch}
             />
           </div>
         ))}
