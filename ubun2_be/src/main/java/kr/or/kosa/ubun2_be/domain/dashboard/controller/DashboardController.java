@@ -6,10 +6,6 @@ import kr.or.kosa.ubun2_be.domain.dashboard.service.DashboardService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +18,14 @@ import java.util.List;
 @RequestMapping("/customers/dashboard")
 public class DashboardController {
     private final DashboardService dashboardService;
-    private static final String SORT_DEFAULT = "createdAt";
-    private static final int PAGE_SIZE = 9;
 
 
     @Operation(summary = "기간별 주문 목록 조회 (일반 주문 + 구독 주문)")
     @GetMapping("/orders/{start_date}/{end_date}")
     public ResponseDto<?> getOrders(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-                                    @PathVariable("start_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate startDate,
-                                    @PathVariable("end_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate endDate,
-                                    @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<UnifiedOrderResponse> orderResponseList = dashboardService.getUnifiedOrdersByDateRangeAndCustomerId(startDate, endDate, customUserDetails.getUserId(), pageable);
+                                    @PathVariable("start_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                    @PathVariable("end_date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        List<UnifiedOrderResponse> orderResponseList = dashboardService.getUnifiedOrdersByDateRangeAndCustomerId(startDate, endDate, customUserDetails.getUserId());
         return ResponseDto.ok(orderResponseList, "정상출력 데이터");
     }
 

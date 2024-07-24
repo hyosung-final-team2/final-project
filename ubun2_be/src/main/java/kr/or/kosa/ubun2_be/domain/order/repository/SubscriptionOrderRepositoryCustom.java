@@ -21,6 +21,8 @@ public interface SubscriptionOrderRepositoryCustom {
 
     List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
 
+    List<SubscriptionOrder> findAllSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+
     List<Object[]> findTopSellingProductsByCustomerId(Long customerId, LocalDateTime startDate, LocalDateTime endDate);
 
     List<Address> findAddressesByDateRange(Long customerId,LocalDateTime startDate, LocalDateTime endDate);

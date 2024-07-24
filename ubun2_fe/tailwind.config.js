@@ -59,6 +59,16 @@ module.exports = {
         'custom-card-shinhan-to': '#002a96',
         'custom-card-nonghyup-from': '#1EAE57',
         'custom-card-nonghyup-to': '#15773b',
+
+        //dashboard custom color
+        'custom-dashboard-pending-bg': '#ff8447',
+        'custom-dashboard-orders-bg': '#06d38b',
+        'custom-dashboard-members-bg': '#32c1ff',
+        'custom-dashboard-products-bg': '#bcaaed',
+        'custom-dashboard-pending-hover': '#fff',
+        'custom-dashboard-orders-hover': '#05b97b',
+        'custom-dashboard-members-hover': '#2aa7e2',
+        'custom-dashboard-products-hover': '#a89ed6',
       },
       animation: {
         'move-sideways': 'moveSideways 1s infinite alternate',

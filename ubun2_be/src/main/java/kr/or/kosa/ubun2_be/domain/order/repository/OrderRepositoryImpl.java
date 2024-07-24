@@ -109,8 +109,22 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                 .join(member.memberCustomers, memberCustomer)
                 .join(memberCustomer.customer, customer)
                 .where(customer.customerId.eq(customerId)
-                        .and(order.createdAt.between(startDate, endDate)
-                                .and(order.orderStatus.eq(OrderStatus.APPROVED))))
+                        .and(order.createdAt.between(startDate, endDate)))
+                .fetch();
+
+    }
+
+    @Override
+    public List<Order> findAllOrdersByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+
+        return from(order)
+                .join(order.orderProducts, orderProduct)
+                .join(orderProduct.product, product)
+                .join(order.member, member)
+                .join(member.memberCustomers, memberCustomer)
+                .join(memberCustomer.customer, customer)
+                .where(customer.customerId.eq(customerId)
+                        .and(order.createdAt.between(startDate, endDate)))
                 .fetch();
 
     }

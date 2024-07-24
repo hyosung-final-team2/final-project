@@ -76,7 +76,7 @@ const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId
                 </div>
               ) : (
                 <div className='flex w-full'>
-                  <div className='flex-1'>
+                  <div className='flex-1 p-4'>
                     <PaymentMethodAccount
                       bankName={clickedPayment?.bankName}
                       accountNumber={clickedPayment?.accountNumber}
