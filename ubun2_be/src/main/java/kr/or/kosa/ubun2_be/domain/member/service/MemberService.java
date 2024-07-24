@@ -1,9 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.member.service;
 
-import kr.or.kosa.ubun2_be.domain.member.dto.AnnouncementResponse;
-import kr.or.kosa.ubun2_be.domain.member.dto.CustomerResponse;
-import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
-import kr.or.kosa.ubun2_be.domain.member.dto.MemberSignUpRequest;
+import kr.or.kosa.ubun2_be.domain.member.dto.*;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 
 import java.util.List;
@@ -19,4 +16,6 @@ public interface MemberService {
     Member findById(Long memberId);
 
     void updateMemberFcmToken(Long memberId, FcmTokenRequest fcmTokenRequest);
+
+    void simpleCheck(Long memberId, PaymentPasswordRequest request);
 }
