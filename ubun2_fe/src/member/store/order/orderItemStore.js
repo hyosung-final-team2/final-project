@@ -8,9 +8,15 @@ const useOrderItemsStore = create(
       cartData: [], // 장바구니 데이터
       selectedItems: [], // 선택된 아이템들
       updatedQuantities: {}, // 수량 변경 추적용 상태관리
+      totals: { productAmount: 0, discount: 0, totalAmount: 0, selectedCount: 0 }, // totals 관리
 
       // 장바구니 데이터를 설정하는 함수
-      setCartData: newCartData => set({ cartData: newCartData }),
+      setCartData: newCartData => {
+        set(state => {
+          const newState = { ...state, cartData: newCartData };
+          return { ...newState, totals: calculateTotals(newState) };
+        });
+      },
 
       // 스토어의 모든 제품이 선택되었는지 확인하는 함수
       isStoreAllSelected: customerId => {
@@ -40,7 +46,7 @@ const useOrderItemsStore = create(
           const store = state.cartData.find(s => s.customerId === customerId);
           if (!store) return state;
 
-          const newSelectedItems = [...state.selectedItems];
+          let newSelectedItems = [...state.selectedItems];
           const storeIndex = newSelectedItems.findIndex(s => s.customerId === customerId);
 
           if (checked) {
@@ -61,14 +67,15 @@ const useOrderItemsStore = create(
             }
           }
 
-          return { selectedItems: newSelectedItems };
+          const newState = { ...state, selectedItems: newSelectedItems };
+          return { ...newState, totals: calculateTotals(newState) };
         });
       },
 
       // 특정 제품을 선택하거나 선택 해제하는 함수
       handleSelectProduct: (customerId, product, checked) => {
         set(state => {
-          const newSelectedItems = [...state.selectedItems];
+          let newSelectedItems = [...state.selectedItems];
           const storeIndex = newSelectedItems.findIndex(store => store.customerId === customerId);
 
           if (checked) {
@@ -97,7 +104,8 @@ const useOrderItemsStore = create(
             }
           }
 
-          return { selectedItems: newSelectedItems };
+          const newState = { ...state, selectedItems: newSelectedItems };
+          return { ...newState, totals: calculateTotals(newState) };
         });
       },
 
@@ -131,11 +139,14 @@ const useOrderItemsStore = create(
             [`${customerId}-${cartProductId}`]: newQuantity,
           };
 
-          return {
+          const newState = {
+            ...state,
             cartData: newCartData,
             selectedItems: newSelectedItems,
             updatedQuantities,
           };
+
+          return { ...newState, totals: calculateTotals(newState) };
         });
       },
 
@@ -154,10 +165,13 @@ const useOrderItemsStore = create(
             }))
             .filter(store => store.cartProducts.length > 0);
 
-          return {
+          const newState = {
+            ...state,
             cartData: newCartData,
             selectedItems: newSelectedItems,
           };
+
+          return { ...newState, totals: calculateTotals(newState) };
         });
       },
 
@@ -166,48 +180,25 @@ const useOrderItemsStore = create(
         set(state => {
           const newCartData = state.cartData.filter(store => store.customerId !== customerId || store.cartProducts.length > 0);
           const newSelectedItems = state.selectedItems.filter(store => store.customerId !== customerId || store.cartProducts.length > 0);
-          return {
+
+          const newState = {
+            ...state,
             cartData: newCartData,
             selectedItems: newSelectedItems,
           };
+
+          return { ...newState, totals: calculateTotals(newState) };
         });
       },
 
       // 장바구니를 비우는 함수
-      clearCart: () => set({ cartData: [], selectedItems: [], updatedQuantities: {} }),
-
-      // 총합을 계산하는 함수
-      calculateTotals: () => {
-        const { selectedItems } = get();
-        let productAmount = 0;
-        let discountedAmount = 0;
-        let selectedCount = 0;
-
-        selectedItems.forEach(store => {
-          store.cartProducts.forEach(product => {
-            const price = product.productPrice || 0;
-            const discountRate = (product.productDiscount || 0) / 100;
-            const quantity = product.quantity || 0;
-
-            const originalSubtotal = price * quantity;
-            const discountedPrice = Math.round((price * (1 - discountRate)) / 10) * 10;
-            const discountedSubtotal = discountedPrice * quantity;
-
-            productAmount += originalSubtotal;
-            discountedAmount += discountedSubtotal;
-            selectedCount += quantity;
-          });
-        });
-
-        const discount = productAmount - discountedAmount;
-
-        return {
-          productAmount: Math.round(productAmount),
-          discount: Math.round(discount),
-          totalAmount: Math.round(discountedAmount),
-          selectedCount,
-        };
-      },
+      clearCart: () =>
+        set({
+          cartData: [],
+          selectedItems: [],
+          updatedQuantities: {},
+          totals: { productAmount: 0, discount: 0, totalAmount: 0, selectedCount: 0 },
+        }),
 
       // 업데이트된 장바구니 데이터를 반환하는 함수
       getUpdatedCartData: () => {
@@ -223,7 +214,7 @@ const useOrderItemsStore = create(
         return updatedCartData;
       },
 
-      // 구독 주기를 설정하는 함수 추가
+      // 구독 주기를 설정하는 함수
       setSubscriptionPeriod: (customerId, intervalDays) => {
         set(state => {
           const newSelectedItems = state.selectedItems.map(store => {
@@ -240,7 +231,8 @@ const useOrderItemsStore = create(
             return store;
           });
 
-          return { selectedItems: newSelectedItems };
+          const newState = { ...state, selectedItems: newSelectedItems };
+          return { ...newState, totals: calculateTotals(newState) };
         });
       },
     }),
@@ -250,5 +242,37 @@ const useOrderItemsStore = create(
     }
   )
 );
+
+// 총합을 계산하는 함수 (스토어 외부로 이동)
+const calculateTotals = state => {
+  let productAmount = 0;
+  let discountedAmount = 0;
+  let selectedCount = 0;
+
+  state.selectedItems.forEach(store => {
+    store.cartProducts.forEach(product => {
+      const price = product.productPrice || 0;
+      const discountRate = (product.productDiscount || 0) / 100;
+      const quantity = product.quantity || 0;
+
+      const originalSubtotal = price * quantity;
+      const discountedPrice = Math.round((price * (1 - discountRate)) / 10) * 10;
+      const discountedSubtotal = discountedPrice * quantity;
+
+      productAmount += originalSubtotal;
+      discountedAmount += discountedSubtotal;
+      selectedCount += quantity;
+    });
+  });
+
+  const discount = productAmount - discountedAmount;
+
+  return {
+    productAmount: Math.round(productAmount),
+    discount: Math.round(discount),
+    totalAmount: Math.round(discountedAmount),
+    selectedCount,
+  };
+};
 
 export default useOrderItemsStore;
