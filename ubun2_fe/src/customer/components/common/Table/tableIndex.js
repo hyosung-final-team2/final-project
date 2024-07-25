@@ -13,3 +13,12 @@ export const tableColumn = {
   pendingOrders: ['정기 주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '결제수단', '승인 처리'],
   product: ['상품 아이디', '상품명', '수량', '상품가격(등록가)', '상품 할인율', '상품게시 상태', '배송 종류'],
 };
+
+
+export const columnMapping = {
+  '회원 이메일': 'memberEmail',
+  '회원명': 'memberName',
+  '전화번호': 'memberPhone',
+  '가입일': 'createdAt',
+  '가입 상태': 'isPending'
+};
