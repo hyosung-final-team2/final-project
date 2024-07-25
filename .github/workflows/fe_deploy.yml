@@ -55,4 +55,5 @@ jobs:
           script: |
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             sudo docker pull ${{ secrets.DOCKER_FRONT_REPO }}
+            sudo docker rm -f react-app
             docker-compose up --build -d
