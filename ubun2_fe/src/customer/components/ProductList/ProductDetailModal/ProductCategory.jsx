@@ -1,5 +1,9 @@
+import {useGetAllCategories} from "../../../api/Product/ProductList/ProductInsertModal/queris.js";
+
 const ProductCategory = ({ product, onlyInfo = false, title, handleInputChange }) => {
-  return (
+    const {data: categoryList } = useGetAllCategories()
+    const categories = categoryList?.data?.data
+    return (
     <div className='bg-gray-50 p-4 rounded-lg'>
       <div className='mb-2 text-lg font-bold'>{title}</div>
       <div className='mt-4'>
@@ -15,9 +19,9 @@ const ProductCategory = ({ product, onlyInfo = false, title, handleInputChange }
           onChange={e => handleInputChange(e)}
           disabled={onlyInfo}
         >
-          <option value='과일'>과일</option>
-          <option value='유제품'>유제품</option>
-          {/* Add more options as needed */}
+            {categories.map((category) => {
+                return <option key={category.categoryId} value={category.categoryName}>{category.categoryName}</option>
+            })}
         </select>
       </div>
     </div>
