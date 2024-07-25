@@ -19,11 +19,9 @@ jobs:
           java-version: '17'
           distribution: "temurin"
       - name: Make application.properties
-        run: |
-          cd ./ubun2_be/src/main/resources
-          touch ./application.properties
-          echo "${{ secrets.PROPERTIES }}" > ./application.properties
-        shell: bash
+        run: 
+          echo "${{ secrets.PROPERTIES }}" > ubun2_be/src/main/resources/application.properties
+          
       - name: Build with Gradle
         run: |
           cd ./ubun2_be
@@ -56,4 +54,3 @@ jobs:
             docker-compose down -v
             sudo docker pull ${{ secrets.DOCKER_BACK_REPO }}
             docker-compose up --build -d
-            docker image prune -f
