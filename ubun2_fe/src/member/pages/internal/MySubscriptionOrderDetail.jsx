@@ -1,57 +1,59 @@
-import { Checkbox, Select } from 'flowbite-react';
+import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
+import { Select } from 'flowbite-react';
 import { useEffect, useMemo, useState } from 'react';
-import { ORDER_LIST_DUMMY_DATA } from '../../components/Order/orderDummyData';
+import { useParams } from 'react-router-dom';
+import { useGetSubscriptionOrderDetail, useUpdateSuscriptionCancelOrder } from '../../api/Order/queris';
 import OrderStatusBadge from '../../components/common/badge/OrderStatusBadge';
+import DoubleBottomButton from '../../components/common/button/DoubleBottomButton';
 import PaymentSummaryCompleted from '../../components/common/paymentSummary/PaymentSummaryCompleted';
 import ProductItemReadOnly from '../../components/common/productItem/ProductItemReadOnly';
 import SubscriptionProductItemEditable from '../../components/common/productItem/SubscriptionProductItemEditable';
+import SlideUpModal from '../../components/common/SlideUpModal';
+import useModalStore from '../../store/modalStore';
 
 const MySubscriptionOrderDetail = () => {
+  const { customerId, orderId } = useParams();
+  const { data: orderResponse, isLoading, isError, refetch } = useGetSubscriptionOrderDetail(customerId, orderId);
   const [orderData, setOrderData] = useState(null);
   const [selectedCycle, setSelectedCycle] = useState(1);
-  const [isEditing, setIsEditing] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const updateCancelSubscriptionOrderMutation = useUpdateSuscriptionCancelOrder();
+  const { modalState, setModalState } = useModalStore();
+
+  const modalButtonStyle = 'bg-main text-white';
 
   useEffect(() => {
-    const targetOrder = ORDER_LIST_DUMMY_DATA.subscriptionOrderList.find(order => order.orderId === 3);
-    setOrderData(targetOrder);
-    if (targetOrder) {
-      const firstCycle = Math.min(...targetOrder.orderProducts.map(product => product.cycleNumber));
-      setSelectedCycle(firstCycle);
+    if (orderResponse?.data?.data) {
+      setOrderData(orderResponse.data.data);
+      setSelectedCycle(orderResponse.data.data.latestCycleNumber);
+      setModalState(false);
     }
-  }, []);
+  }, [orderResponse]);
 
   const filteredProducts = useMemo(() => {
     if (!orderData) return [];
-    return orderData.orderProducts.filter(product => product.cycleNumber === selectedCycle);
+    return orderData.subscriptionOrderProducts.filter(product => product.cycleNumber === selectedCycle);
   }, [orderData, selectedCycle]);
 
   const isDeliveryEditable = useMemo(() => {
-    if (!filteredProducts.length) return false;
+    if (!orderData) return false;
     const today = new Date();
-    const deliveryDate = new Date(filteredProducts[0].deliveryDate);
-    return deliveryDate > today;
-  }, [filteredProducts]);
-
-  const isAllSelected = useMemo(() => {
-    return filteredProducts.length > 0 && selectedProducts.length === filteredProducts.length;
-  }, [filteredProducts, selectedProducts]);
-
-  if (!orderData) return <div>Loading...</div>;
-
-  const paymentInfo = {
-    paymentName: orderData.paymentType === 'CARD' ? orderData.cardName : orderData.accountName,
-    paymentContent: orderData.paymentType === 'CARD' ? orderData.cardNumber : orderData.accountNumber,
-  };
-
-  const totalOrderPrice = filteredProducts.reduce((sum, product) => sum + product.totalPrice, 0);
+    const nextOrderDate = new Date(orderData.nextOrderDate);
+    return nextOrderDate > today && selectedCycle === orderData.latestCycleNumber;
+  }, [orderData, selectedCycle]);
 
   const onCycleChange = cycleNumber => {
     setSelectedCycle(Number(cycleNumber));
     setIsEditing(false);
+    setSelectedProducts([]);
   };
 
-  const maxCycle = Math.max(...orderData.orderProducts.map(product => product.cycleNumber));
+  const handleProductSelect = subscriptionOrderProductId => {
+    setSelectedProducts(prev =>
+      prev.includes(subscriptionOrderProductId) ? prev.filter(id => id !== subscriptionOrderProductId) : [...prev, subscriptionOrderProductId]
+    );
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -63,29 +65,49 @@ const MySubscriptionOrderDetail = () => {
     setSelectedProducts([]);
   };
 
-  const handleSelect = productId => {
-    setSelectedProducts(prev => (prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]));
+  const handleCloseModal = () => {
+    setModalState(false);
   };
 
-  const handleSelectAll = () => {
-    if (isAllSelected) {
-      setSelectedProducts([]);
-    } else {
-      setSelectedProducts(filteredProducts.map(product => product.productId));
+  const handleRemoveProducts = () => {
+    const validProductIds = selectedProducts.filter(id => id !== null);
+
+    if (validProductIds.length === 0) {
+      console.log('선택된 유효한 상품이 없습니다.');
+      return;
     }
+
+    updateCancelSubscriptionOrderMutation.mutate(
+      {
+        orderId: Number(orderId),
+        customerId: Number(customerId),
+        subscriptionOrderProductIds: validProductIds,
+      },
+      {
+        onSuccess: () => {
+          setModalState(false);
+          setIsEditing(false);
+          setSelectedProducts([]);
+        },
+      }
+    );
   };
 
-  const handleDelete = () => {
-    // TODO: 선택된 상품 삭제 로직 구현
-    console.log(`삭제될 제품 id: ${selectedProducts.join(', ')}`);
-    setSelectedProducts([]);
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error occurred while fetching order details.</div>;
+  if (!orderData) return null;
+
+  const paymentInfo = {
+    paymentName: orderData.paymentType === 'CARD' ? orderData.cardCompanyName : orderData.bankName,
+    paymentContent: orderData.paymentType === 'CARD' ? orderData.cardNumber : orderData.accountNumber,
   };
 
   return (
-    <div className='bg-gray-100'>
-      <div className='flex flex-col gap-3 p-4'>
+    // TODO: 취소 처리 시, 재 렌더링 & 페이지 뱃지 만들어서 취소된 상품 구분 지어주기
+    <div className='h-full bg-gray-100'>
+      <div className='flex flex-col p-4'>
         <div className='flex items-center justify-between py-4 text-main'>
-          <h1 className='text-2xl font-bold'>주문번호 {orderData.orderId}</h1>
+          <h1 className='text-2xl font-bold'>주문번호 {orderId}</h1>
           <OrderStatusBadge status='SUBSCRIPTION' />
         </div>
 
@@ -95,7 +117,7 @@ const MySubscriptionOrderDetail = () => {
               * 정기주문 회차
             </label>
             <Select id='cycle-select' value={selectedCycle} onChange={e => onCycleChange(e.target.value)} className='mt-2 w-fit'>
-              {[...Array(maxCycle)].map((_, index) => (
+              {[...Array(orderData.latestCycleNumber)].map((_, index) => (
                 <option key={index + 1} value={index + 1}>
                   {index + 1} 회차
                 </option>
@@ -104,8 +126,7 @@ const MySubscriptionOrderDetail = () => {
           </div>
 
           <div className='flex flex-col items-end text-lg text-main'>
-            <p>{`${maxCycle} 회차`}</p>
-            <p>{`${orderData.createdAt} ~`}</p>
+            <p>{`${selectedCycle} / ${orderData.latestCycleNumber} 회차`}</p>
           </div>
         </div>
 
@@ -113,42 +134,58 @@ const MySubscriptionOrderDetail = () => {
           <div className='flex items-center justify-between mb-4'>
             <h2 className='text-xl font-bold text-gray-600'>주문 내역</h2>
             {isDeliveryEditable && !isEditing && (
-              <span onClick={handleEdit} className='text-gray-500 underline cursor-pointer'>
-                수정
+              <span className='flex gap-3 text-gray-400 underline' onClick={handleEdit}>
+                <PencilSquareIcon className='w-5 h-5' />
               </span>
             )}
-          </div>
-          {isEditing && (
-            <div className='flex justify-between p-4'>
-              <div className='flex items-center'>
-                <Checkbox checked={isAllSelected} onChange={handleSelectAll} className='mr-2' color={'purple'} />
-                <span>전체 선택</span>
-              </div>
+
+            {isEditing && (
               <div className='flex gap-3 text-gray-400 underline'>
-                <span onClick={handleDelete} className={`cursor-pointer ${selectedProducts.length === 0 ? 'opacity-50' : ''}`}>
+                <span
+                  onClick={() => selectedProducts.length > 0 && setModalState(true)}
+                  className={`cursor-pointer ${selectedProducts.length === 0 ? 'opacity-50' : ''}`}
+                >
                   선택 삭제
                 </span>
                 <span onClick={handleCancel} className='cursor-pointer'>
                   취소
                 </span>
               </div>
-            </div>
-          )}
+            )}
+          </div>
           {filteredProducts.map(product =>
             isEditing ? (
               <SubscriptionProductItemEditable
-                key={product.productId}
+                key={product.subscriptionOrderProductId}
                 {...product}
-                isSelected={selectedProducts.includes(product.productId)}
-                onSelect={handleSelect}
+                isSelected={selectedProducts.includes(product.subscriptionOrderProductId)}
+                onSelect={() => product.orderProductStatus !== 'DENIED' && handleProductSelect(product.subscriptionOrderProductId)}
+                disabled={product.orderProductStatus === 'DENIED'}
               />
             ) : (
-              <ProductItemReadOnly key={product.productId} {...product} />
+              <ProductItemReadOnly key={product.subscriptionOrderProductId} {...product} orderProductStatus={product.orderProductStatus} />
             )
           )}
         </div>
-        <PaymentSummaryCompleted productAmount={totalOrderPrice} discount={0} totalAmount={totalOrderPrice} paymentInfo={paymentInfo} style={'rounded-3xl'} />
+        <PaymentSummaryCompleted
+          productAmount={orderData.orderAmount}
+          discount={orderData.discountAmount}
+          totalAmount={orderData.paymentAmount}
+          paymentInfo={paymentInfo}
+          style={'rounded-3xl'}
+        />
       </div>
+
+      <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='선택한 상품 삭제' isButton={false}>
+        <DoubleBottomButton
+          buttonStyle={modalButtonStyle}
+          firstButtonText='취소'
+          secondButtonText='삭제'
+          firstButtonFunc={handleCloseModal}
+          secondButtonFunc={handleRemoveProducts}
+          disabled={updateCancelSubscriptionOrderMutation.isLoading}
+        />
+      </SlideUpModal>
     </div>
   );
 };

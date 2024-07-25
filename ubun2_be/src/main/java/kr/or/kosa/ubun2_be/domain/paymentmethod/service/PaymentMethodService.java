@@ -10,15 +10,16 @@ import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.RegisterPaymentMethodRequest
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.UpdatePaymentMethodRequest;
 
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
+import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface PaymentMethodService {
-    Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(Pageable pageable, Long customerId);
+    Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(Pageable pageable, SearchRequest searchRequest,Long customerId);
 
-    Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(Pageable pageable, Long customerId);
+    Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(Pageable pageable,SearchRequest searchRequest, Long customerId);
 
     PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(Long paymentMethodId, Long customerId);
 

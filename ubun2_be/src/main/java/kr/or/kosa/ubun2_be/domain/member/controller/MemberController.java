@@ -1,10 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.member.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import kr.or.kosa.ubun2_be.domain.member.dto.AnnouncementResponse;
-import kr.or.kosa.ubun2_be.domain.member.dto.CustomerResponse;
-import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
-import kr.or.kosa.ubun2_be.domain.member.dto.MemberSignUpRequest;
+import kr.or.kosa.ubun2_be.domain.member.dto.*;
 import kr.or.kosa.ubun2_be.domain.member.service.MemberService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
@@ -46,7 +43,22 @@ public class MemberController {
     @PutMapping("/fcmtoken")
     public ResponseDto<?> updateFcmToken(@RequestBody FcmTokenRequest fcmTokenRequest,
                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        memberService.updateFcmToken(customUserDetails.getUserId(),fcmTokenRequest);
+        memberService.updateMemberFcmToken(customUserDetails.getUserId(),fcmTokenRequest);
         return ResponseDto.ok(null,"fcm 토큰 등록/업데이트 완료");
+    }
+
+    @Operation(summary = "회원의 간편 결제 비밀번호 체크")
+    @PostMapping("/simplecheck")
+    public ResponseDto<?> simpleCheck(@RequestBody PaymentPasswordRequest request,
+                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        memberService.simpleCheck(customUserDetails.getUserId(),request);
+        return ResponseDto.ok(null,"결제 비밀번호 일치 확인");
+    }
+
+    @Operation(summary = "로그인시 필요한 회원 정보")
+    @GetMapping("/memberinfo")
+    public ResponseDto<?> memberInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        MemberInfoResponse response = memberService.memberInfo(customUserDetails.getUserId());
+        return ResponseDto.ok(response,"정상출력 데이터");
     }
 }

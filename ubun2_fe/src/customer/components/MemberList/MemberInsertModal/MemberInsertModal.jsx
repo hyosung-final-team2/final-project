@@ -11,6 +11,7 @@ import {
     useUpdateMember
 } from "../../../api/Customer/MemberList/MemberModal/queris.js";
 import useMemberUpdateStore from "../../../store/MemberInsertModal/memberUpdateStore.js";
+import {useSendPersonalAlarmMember} from "../../../api/notification/queris.js";
 
 const MemberInsertModal = ({isOpen, setOpenModal, selectedMemberDetail, currentPage}) => {
     const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
@@ -44,9 +45,6 @@ const MemberInsertModal = ({isOpen, setOpenModal, selectedMemberDetail, currentP
 
     const [memberData, setMemberData] = useState(INITIAL_MEMBER_OBJ); // 변경용 데이터
     const [initialData, setInitialData] = useState(INITIAL_MEMBER_OBJ); // 복원용 데이터
-
-    console.log(memberData)
-
 
     useEffect(() => {
         if (isOpen && !selectedMemberDetail.pending) {
@@ -151,6 +149,7 @@ const MemberInsertModal = ({isOpen, setOpenModal, selectedMemberDetail, currentP
     }, [isOpen, selectedMemberDetail, member]);
 
 
+    console.log(pendingMemberData)
 
     // =============================================================
 
@@ -191,6 +190,8 @@ const MemberInsertModal = ({isOpen, setOpenModal, selectedMemberDetail, currentP
     // const [isAllValuePossible, setIsAllValuePossible] = useState(false);
 
     const [isUpdate, setIsUpdate] = useState(false);
+
+    const {mutate:deleteMemberMutate} = useSendPersonalAlarmMember(pendingMemberData?.memberName)
 
     return (
         <Modal
@@ -250,6 +251,7 @@ const MemberInsertModal = ({isOpen, setOpenModal, selectedMemberDetail, currentP
                         <button
                             onClick={() => {
                                 deleteMutate(selectedMemberDetail.memberId, selectedMemberDetail.pending)
+                                deleteMemberMutate()
                                 setIsUpdate(false)
                                 setIsUpdateGlobal(false)
                                 setOpenModal(false)
@@ -259,7 +261,6 @@ const MemberInsertModal = ({isOpen, setOpenModal, selectedMemberDetail, currentP
                     </> : <>
                       <button
                           onClick={() => {
-                              console.log(selectedMemberDetail.pending)
                               handleUpdateMember()
                               setIsUpdate(false)
                               setIsUpdateGlobal(false)

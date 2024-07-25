@@ -79,7 +79,7 @@ class CustomerControllerTest {
     @DisplayName("고객 회원가입")
     void signupCustomer() throws Exception {
         // Given
-        SignupRequest signupRequest = new SignupRequest("user", "password", "User", "010-1234-5678", "user@example.com", "123-45-67890", "Business", "Owner", "2023-01-01", "Address", "Description");
+        SignupRequest signupRequest = new SignupRequest("user", "password", "User", "010-1234-5678", "user@example.com", "123-45-67890", "Business", "Owner", "2023-01-01", "Address", "Description","qweqweqweqwewr");
 
         // When & Then
         mockMvc.perform(post("/customers/signup")

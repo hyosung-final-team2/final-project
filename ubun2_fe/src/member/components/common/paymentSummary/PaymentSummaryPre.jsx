@@ -10,15 +10,15 @@ const PaymentSummaryPre = ({ productAmount, discount, totalAmount, isOrder = fal
     <div className='flex flex-col w-full gap-3 px-4 py-5 bg-white'>
       <div className='flex justify-between mb-2'>
         <span className={paymentColor.subtitle}>총 상품금액</span>
-        <span className={paymentColor.content}>{productAmount.toLocaleString()}원</span>
+        <span className={paymentColor.content}>{productAmount?.toLocaleString()}원</span>
       </div>
       <div className='flex justify-between mb-2'>
         <span className={paymentColor.subtitle}>총 할인</span>
-        <span className={paymentColor.content}>{discount.toLocaleString()}원</span>
+        <span className={paymentColor.content}>{discount?.toLocaleString()}원</span>
       </div>
       <div className={`flex justify-between text-2xl ${borderStyle}`}>
         <span className={paymentColor.content}>총 결제금액</span>
-        <span className={`${paymentColor.content} text-main`}>{totalAmount.toLocaleString()}원</span>
+        <span className={`${paymentColor.content} text-main`}>{totalAmount?.toLocaleString()}원</span>
       </div>
     </div>
   );

@@ -1,7 +1,5 @@
 package kr.or.kosa.ubun2_be.domain.dashboard.dto;
 
-import kr.or.kosa.ubun2_be.domain.order.dto.OrderProductResponse;
-import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderProductResponse;
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.AccountPayment;
@@ -34,7 +32,7 @@ public class UnifiedOrderResponse {
                 .totalOrderPrice(calculateTotalOrderPrice(order))
                 .isSubscription(false)
                 .orderProducts(order.getOrderProducts().stream()
-                        .map(OrderProductResponse::new)
+                        .map(OrderProductResponse::of)
                         .collect(Collectors.toList()))
                 .paymentType(getPaymentType(order.getPaymentMethod()))
                 .build();
@@ -49,7 +47,7 @@ public class UnifiedOrderResponse {
                 .totalOrderPrice(calculateTotalSubscriptionOrderPrice(subscriptionOrder))
                 .isSubscription(true)
                 .subscriptionOrderProducts(subscriptionOrder.getSubscriptionOrderProducts().stream()
-                        .map(SubscriptionOrderProductResponse::new)
+                        .map(SubscriptionOrderProductResponse::of)
                         .collect(Collectors.toList()))
                 .paymentType(getPaymentType(subscriptionOrder.getPaymentMethod()))
                 .build();
@@ -57,13 +55,13 @@ public class UnifiedOrderResponse {
 
     private static int calculateTotalOrderPrice(Order order) {
         return order.getOrderProducts().stream()
-                .mapToInt(op -> new OrderProductResponse(op).getTotalPrice())
+                .mapToInt(op -> OrderProductResponse.of(op).getTotalPrice())
                 .sum();
     }
 
     private static int calculateTotalSubscriptionOrderPrice(SubscriptionOrder subscriptionOrder) {
         return subscriptionOrder.getSubscriptionOrderProducts().stream()
-                .mapToInt(op -> new SubscriptionOrderProductResponse(op).getTotalPrice())
+                .mapToInt(op -> SubscriptionOrderProductResponse.of(op).getTotalPrice())
                 .sum();
     }
 

@@ -10,6 +10,9 @@ import PaymentSummaryPre from '../../components/common/paymentSummary/PaymentSum
 import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
+import toast from 'react-hot-toast';
+import { errorToastStyle } from '../../api/toastStyle';
+import EmptyCartBox from '../../components/Cart/cartList/EmptyCartBox';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -24,19 +27,16 @@ const Cart = () => {
     selectedItems,
     handleSelectProduct,
     updateProductQuantity,
-    calculateTotals,
     handleSelectAllStore,
     setCartData,
-    clearCart,
     removeProducts,
     removeStoreIfEmpty,
-    getUpdatedCartData,
     setSubscriptionPeriod,
+    totals,
   } = useOrderItemsStore();
 
   const { data: fetchedCartData, isLoading, isError, refetch } = useGetCarts();
   const deleteCartMutation = useDeleteCart();
-  const [totals, setTotals] = useState({ productAmount: 0, discount: 0, totalAmount: 0, selectedCount: 0 });
 
   useEffect(() => {
     refetch();
@@ -50,15 +50,11 @@ const Cart = () => {
   }, [fetchedCartData, setCartData]);
 
   useEffect(() => {
-    setTotals(calculateTotals());
-  }, [selectedItems, cartData, calculateTotals]);
-
-  useEffect(() => {
     const unsetSubs = selectedItems.filter(store =>
       store.cartProducts.some(product => product.orderOption === 'SUBSCRIPTION' && (!store.intervalDays || store.intervalDays === 0))
     );
     setUnsetSubscriptions(unsetSubs);
-    setIsOrderButtonDisabled(unsetSubs.length > 0);
+    setIsOrderButtonDisabled(unsetSubs.length > 0 || selectedItems.length === 0 || selectedItems.every(store => store.cartProducts.length === 0));
   }, [selectedItems]);
 
   if (isLoading) return <div>Loading...</div>;
@@ -73,27 +69,6 @@ const Cart = () => {
     setSubscriptionPeriod(selectedStore, period);
     setModalState(false);
     console.log(`Store ${selectedStore}의 구독 주기가 ${period}로 설정되었습니다.`);
-  };
-
-  const handleOrder = () => {
-    if (isOrderButtonDisabled) {
-      alert('모든 정기 주문 상품의 배송 주기를 선택해주세요.');
-      return;
-    }
-
-    const selectedOrderData = selectedItems
-      .map(store => ({
-        customerId: store.customerId,
-        cartProducts: store.cartProducts.map(product => ({
-          ...product,
-          intervalDays: store.intervalDays || 0,
-        })),
-      }))
-      .filter(store => store.cartProducts.length > 0);
-
-    console.log('선택된 items들:', selectedOrderData);
-
-    navigate('/member/app/order');
   };
 
   const handleDeleteProduct = async (customerId, cartProductId) => {
@@ -139,85 +114,97 @@ const Cart = () => {
     }
   };
 
+  const handleProceedToPayment = () => {
+    if (isOrderButtonDisabled) {
+      if (selectedItems.length === 0 || selectedItems.every(store => store.cartProducts.length === 0)) {
+        toast.error('주문할 상품이 없습니다.', errorToastStyle);
+      } else if (unsetSubscriptions.length > 0) {
+        toast.error('모든 정기주문 상품의 배송 주기를 선택해주세요.', errorToastStyle);
+      }
+      return;
+    }
+
+    const selectedOrderData = selectedItems
+      .map(store => ({
+        customerId: store.customerId,
+        cartProducts: store.cartProducts.map(product => ({
+          ...product,
+          intervalDays: store.intervalDays || 0,
+        })),
+      }))
+      .filter(store => store.cartProducts.length > 0);
+
+    console.log('선택된 items들:', selectedOrderData);
+
+    navigate('/member/app/order');
+  };
+
   return (
     <div className='h-full'>
-      {cartData && cartData.length !== 0 && (
-        <div className='flex items-center justify-between p-4 font-bold'>
-          <span className='text-2xl text-main'>{'장바구니'}</span>
-          <span onClick={handleDeleteSelected} className='underline cursor-pointer text-main'>
-            선택 상품 삭제
-          </span>
-        </div>
-      )}
-      {selectedItems.length > 0 && (
-        <div>
-          <div className='w-full h-3 bg-gray-100'></div>
-        </div>
-      )}
+      <div className='flex items-center justify-between p-4 font-bold'>
+        <span className='text-2xl text-main'>{'장바구니'}</span>
+        <span onClick={handleDeleteSelected} className='underline cursor-pointer text-main'>
+          선택 상품 삭제
+        </span>
+      </div>
       <div className='flex flex-col flex-1 w-full'>
         <div className='flex-1'>
           {cartData && cartData.length === 0 ? (
-            <div className='flex flex-col items-center justify-center h-full'>
-              <div style={{ width: '100%', aspectRatio: '1/1', position: 'relative' }}>
-                <img src={cartImage} alt='Empty cart' />
-                <h2 className='mb-10 text-3xl font-semibold font-bold text-center'>장바구니가 비었어요!</h2>
-              </div>
-            </div>
+            <EmptyCartBox />
           ) : (
-            cartData?.map(store => (
-              <CartStore
-                key={store.customerId}
-                store={store}
-                selectedItems={selectedItems.find(s => s.customerId === store.customerId)}
-                onSelectProduct={handleSelectProduct}
-                onQuantityChange={updateProductQuantity}
-                onDeleteProduct={handleDeleteProduct}
-                onSubscriptionPeriodSelect={handleSubscriptionPeriodSelect}
-                onSelectAllStore={handleSelectAllStore}
-              />
-            ))
+            <>
+              <div className='w-full h-3 bg-gray-100'></div>
+              {cartData?.map(store => (
+                <CartStore
+                  key={store.customerId}
+                  store={store}
+                  selectedItems={selectedItems.find(s => s.customerId === store.customerId)}
+                  onSelectProduct={handleSelectProduct}
+                  onQuantityChange={updateProductQuantity}
+                  onDeleteProduct={handleDeleteProduct}
+                  onSubscriptionPeriodSelect={handleSubscriptionPeriodSelect}
+                  onSelectAllStore={handleSelectAllStore}
+                />
+              ))}
+              <div className='w-full h-3 bg-gray-100'></div>
+            </>
           )}
 
-          {selectedItems.length > 0 && (
-            <div>
-              <div className='w-full h-3 bg-gray-100'></div>
-              <PaymentSummaryPre productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} />
-            </div>
-          )}
-        </div>
-      </div>
-      {selectedItems.length > 0 && (
-        <div
-          className='sticky bottom-0 left-0 right-0 flex flex-col w-full p-4 px-3 py-4'
-          style={{ background: 'linear-gradient(to top, white, white 65%, transparent)' }}
-        >
-          {unsetSubscriptions.length > 0 && (
-            <div className='mb-2 text-red-500'>
-              <span>다음 상점의 정기 주문 상품 배송 주기를 선택해주세요</span>
-              <ul>
-                {unsetSubscriptions.map(store => (
-                  <li key={store.customerId} className='flex gap-3 my-2'>
-                    <ShoppingBagIcon className='w-5 h-5' />
-                    {`${store.businessName}`}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          <div className='flex items-end justify-between w-full'>
-            <div className='flex items-end justify-between w-5/6 gap-2 py-4 mr-3 text-xl'>
-              <span className='text-sm font-semibold'>{`${totals.selectedCount}개 선택`}</span>
-              <span className='font-bold text-main'>{`${totals.totalAmount.toLocaleString()}원`}</span>
-            </div>
-            <BottomButton
-              buttonText='구매하기'
-              buttonStyle={`${isOrderButtonDisabled ? 'bg-gray-400' : 'bg-main'} text-white`}
-              buttonFunc={handleOrder}
-              disabled={isOrderButtonDisabled}
-            />
+          <div>
+            <PaymentSummaryPre productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} />
           </div>
         </div>
-      )}
+      </div>
+      <div
+        className='sticky bottom-0 left-0 right-0 flex flex-col w-full p-4 px-3 py-4'
+        style={{ background: 'linear-gradient(to top, white, white 65%, transparent)' }}
+      >
+        {unsetSubscriptions.length > 0 && (
+          <div className='mb-2 text-red-500'>
+            <span>다음 상점의 정기 주문 상품 배송 주기를 선택해주세요</span>
+            <ul>
+              {unsetSubscriptions.map(store => (
+                <li key={store.customerId} className='flex gap-3 my-2'>
+                  <ShoppingBagIcon className='w-5 h-5' />
+                  {`${store.businessName}`}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <div className='flex items-end justify-between w-full'>
+          <div className='flex items-end justify-between w-5/6 gap-2 py-4 mr-3 text-xl'>
+            <span className='text-sm font-semibold'>{`${totals.selectedCount}개 선택`}</span>
+            <span className='font-bold text-main'>{`${totals.totalAmount?.toLocaleString()}원`}</span>
+          </div>
+          <BottomButton
+            buttonText='구매하기'
+            buttonStyle={`${isOrderButtonDisabled ? 'bg-gray-400' : 'bg-main'} text-white`}
+            buttonFunc={handleProceedToPayment}
+            disabled={isOrderButtonDisabled}
+          />
+        </div>
+      </div>
 
       <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='배송 주기 선택' isButton={false}>
         <div className='flex flex-col items-start space-y-4'>

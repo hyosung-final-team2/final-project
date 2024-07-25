@@ -17,6 +17,7 @@ import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentM
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodExceptionType;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.PaymentMethodRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.service.PaymentMethodService;
+import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,21 +35,21 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     private final MemberRepository memberRepository;
 
     @Override
-    public Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(Pageable pageable, Long customerId) {
-        return paymentMethodRepository.findAllCardPaymentMethodsByMemberId(pageable, customerId)
+    public Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(Pageable pageable,SearchRequest searchRequest, Long customerId) {
+        return paymentMethodRepository.findAllCardPaymentMethodsByMemberId(pageable,searchRequest, customerId)
                 .map(paymentMethod -> new CardPaymentResponse((CardPayment) paymentMethod));
     }
 
     @Override
-    public Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(Pageable pageable, Long customerId) {
-        return paymentMethodRepository.findAllAccountPaymentMethodsByMemberId(pageable, customerId)
+    public Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(Pageable pageable, SearchRequest searchRequest,Long customerId) {
+        return paymentMethodRepository.findAllAccountPaymentMethodsByMemberId(pageable, searchRequest,customerId)
                 .map(paymentMethod -> new AccountPaymentResponse((AccountPayment) paymentMethod));
     }
 
     @Override
     public PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(Long paymentMethodId, Long customerId) {
         PaymentMethodDetailRequest request = PaymentMethodDetailRequest.builder().paymentMethodId(paymentMethodId).build();
-        PaymentMethod paymentMethod = paymentMethodRepository.findPaymentMethodbyPaymentMethodIdAndCustomerId(request.getPaymentMethodId(), customerId)
+        PaymentMethod paymentMethod = paymentMethodRepository.findPaymentMethodByPaymentMethodIdAndCustomerId(request.getPaymentMethodId(), customerId)
                 .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
 
         Member member = paymentMethod.getMember();

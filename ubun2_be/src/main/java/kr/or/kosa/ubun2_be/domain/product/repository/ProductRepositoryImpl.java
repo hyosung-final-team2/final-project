@@ -5,6 +5,9 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
+import kr.or.kosa.ubun2_be.domain.product.dto.CategoryRequest;
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import org.apache.commons.lang3.ObjectUtils;
@@ -22,6 +25,10 @@ import static kr.or.kosa.ubun2_be.domain.product.entity.QProduct.product;
 
 @Repository
 public class ProductRepositoryImpl extends QuerydslRepositorySupport implements ProductRepositoryCustom {
+
+    private static final List<String> STRING_SEARCH_FIELDS = List.of("productName");
+    private static final List<String> NUMERIC_SEARCH_FIELDS = List.of("stockQuantity", "productPrice", "productDiscount");
+
     public ProductRepositoryImpl() {
         super(Product.class);
     }
@@ -45,10 +52,36 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
     }
 
     private BooleanBuilder productSearch(SearchRequest searchRequest) {
-        if (searchRequest == null || searchRequest.getSearchKeyword() == null || searchRequest.getSearchCategory() == null) {
+        if (searchRequest == null || searchRequest.getSearchCategory() == null || searchRequest.getSearchKeyword() == null) {
             return null;
         }
-        return new BooleanBuilder().and(product.productName.containsIgnoreCase(searchRequest.getSearchKeyword()));
+        String category = searchRequest.getSearchCategory();
+        String keyword = searchRequest.getSearchKeyword();
+
+        ComparableExpressionBase<?> path = getPath(category);
+        if (path == null) {
+            return new BooleanBuilder();
+        }
+
+        if (STRING_SEARCH_FIELDS.contains(category)) {
+            return new BooleanBuilder().and(((StringPath) path).containsIgnoreCase(keyword));
+        } else if (NUMERIC_SEARCH_FIELDS.contains(category)) {
+            return numericSearch((NumberPath<?>) path, keyword);
+        }
+
+        return new BooleanBuilder();
+    }
+    private BooleanBuilder numericSearch(NumberPath<?> path, String keyword) {
+        String[] range = keyword.split(",");
+        if (range.length != 2) return new BooleanBuilder();
+
+        try {
+            Long start = Long.parseLong(range[0].trim());
+            Long end = Long.parseLong(range[1].trim());
+            return new BooleanBuilder().and(path.between(start, end));
+        } catch (NumberFormatException e) {
+            return new BooleanBuilder();
+        }
     }
 
     private List<OrderSpecifier<?>> productSort(Pageable pageable) {
@@ -74,25 +107,36 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
     }
 
     private ComparableExpressionBase<?> getPath(String property) {
-        switch (property) {
-            case "productId":
-                return product.productId;
-            case "productName":
-                return product.productName;
-            case "stockQuantity":
-                return product.stockQuantity;
-            case "productPrice":
-                return product.productPrice;
-            case "productDiscount":
-                return product.productDiscount;
-            case "createdAt":
-                return product.createdAt;
-            case "productStatus":
-                return product.productStatus;
-            case "orderOption":
-                return product.orderOption;
-            default:
-                return null;
+        return switch (property) {
+            case "productId" -> product.productId;
+            case "productName" -> product.productName;
+            case "stockQuantity" -> product.stockQuantity;
+            case "productPrice" -> product.productPrice;
+            case "productDiscount" -> product.productDiscount;
+            case "createdAt" -> product.createdAt;
+            case "productStatus" -> product.productStatus;
+            case "orderOption" -> product.orderOption;
+            default -> null;
+        };
+    }
+    @Override
+    public Page<Product> findProductsByCategory(Long customerId, CategoryRequest categoryRequest, Pageable pageable) {
+        QueryResults<Product> results = from(product)
+                .where(product.customer.customerId.eq(customerId), categorySearch(categoryRequest),productStatusForMember(true))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(product.createdAt.desc()) //생성날짜 내림차순
+                .fetchResults();
+
+        List<Product> content = results.getResults();
+        long total = results.getTotal();
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    private BooleanBuilder categorySearch(CategoryRequest categoryRequest) {
+        if (categoryRequest == null || categoryRequest.getCategoryName() == null || categoryRequest.getCategoryName().trim().isEmpty()) {
+            return new BooleanBuilder();
         }
+        return new BooleanBuilder().and(product.category.categoryName.eq(categoryRequest.getCategoryName()));
     }
 }

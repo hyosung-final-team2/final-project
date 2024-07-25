@@ -6,7 +6,8 @@ import ProductImageCard from '../ProductDetailModal/ProductImageCard.jsx';
 import ProductCategory from '../ProductDetailModal/ProductCategory.jsx';
 import ProductInfo from '../ProductDetailModal/ProductInfo.jsx';
 import ProductSaleInfo from '../ProductDetailModal/ProductSaleInfo.jsx';
-import { useRegisterProduct } from '../../../api/Product/ProductList/ProductList/queris.js';
+import { useRegisterProduct} from '../../../api/Product/ProductList/ProductList/queris.js';
+import {useSendGroupAlarmProduct} from "../../../api/notification/queris.js";
 
 const ProductInsertModal = ({ isOpen, setOpenModal, title, currentPage }) => {
   const [newProduct, setNewProduct] = useState({
@@ -28,6 +29,7 @@ const ProductInsertModal = ({ isOpen, setOpenModal, title, currentPage }) => {
   };
 
   const { mutate: productRegisterMutate } = useRegisterProduct(newProduct, imageFile, currentPage);
+  const { mutate: addProductGroupAlarmMutate } = useSendGroupAlarmProduct(newProduct?.productName)
 
   const handleInputChange = e => {
     console.log(typeof e.target.value);
@@ -75,6 +77,7 @@ const ProductInsertModal = ({ isOpen, setOpenModal, title, currentPage }) => {
                 className='w-28 bg-custom-button-purple text-custom-font-purple'
                 onClick={async () => {
                   await productRegisterMutate();
+                  await addProductGroupAlarmMutate()
                   setOpenModal(false);
                   setNewProduct(null);
                   setImageFile(null);

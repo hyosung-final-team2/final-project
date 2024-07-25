@@ -1,17 +1,37 @@
 import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGetMyAddresses } from '../../../api/Address/queries';
+import useOrderDataStore from '../../../store/order/orderDataStore';
 
-const OrderDeliveryInfo = ({ selectedAddress, selectedDelivery, handleAddressModal, handleDeliveryModal }) => {
+const OrderDeliveryInfo = ({ selectedDelivery, handleDeliveryModal, setIsOrderButtonDisabled }) => {
   const navigate = useNavigate();
+  const { data: addresses } = useGetMyAddresses();
+  const { selectedAddressId, setSelectedAddressId, updateOrderData } = useOrderDataStore();
+  const [defaultAddress, setDefaultAddress] = useState(null);
 
-  const handleEditAddress = () => {
-    navigate('/member/app/addresses');
+  useEffect(() => {
+    if (addresses?.data?.data) {
+      const defaultAddr = addresses?.data?.data.find(address => address.defaultStatus);
+      if (defaultAddr && !selectedAddressId) {
+        setSelectedAddressId(defaultAddr.addressId);
+        updateOrderData({ addressId: defaultAddr.addressId });
+        setDefaultAddress(defaultAddr);
+        setIsOrderButtonDisabled(false);
+      }
+    }
+  }, [addresses, setSelectedAddressId, updateOrderData, selectedAddressId, setIsOrderButtonDisabled]);
+
+  const selectedAddress = addresses?.data?.data.find(address => address.addressId === selectedAddressId) || defaultAddress;
+
+  const handleAddressNavigation = () => {
+    navigate('/member/app/addresses', { state: { fromOrder: true } });
   };
 
   return (
     <div className='flex flex-col gap-5 p-6 bg-white'>
       <div className='flex items-center w-full gap-3 mb-4 font-bold'>
-        <div onClick={handleAddressModal} className='inline-flex p-2 border-none rounded-md text-main bg-main bg-opacity-5'>
+        <div onClick={handleAddressNavigation} className='inline-flex p-2 border-none rounded-md text-main bg-main bg-opacity-5'>
           <input
             type='input'
             value={selectedAddress?.addressNickname || '주소를 선택해주세요'}
@@ -32,7 +52,7 @@ const OrderDeliveryInfo = ({ selectedAddress, selectedDelivery, handleAddressMod
           </div>
 
           <div>
-            <button color='dark' className='w-full px-4 py-2 text-white rounded-md bg-main' onClick={handleEditAddress}>
+            <button color='dark' className='w-full px-4 py-2 text-white rounded-md bg-main' onClick={handleAddressNavigation}>
               <span className='text-sm'>수정</span>
             </button>
           </div>

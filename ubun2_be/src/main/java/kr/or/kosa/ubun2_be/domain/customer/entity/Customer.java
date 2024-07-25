@@ -69,6 +69,9 @@ public class Customer extends BaseTimeEntity implements UserType {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    @Column
+    private String fcmToken;
+
     @OneToMany(mappedBy = "customer")
     private List<MemberCustomer> memberCustomers;
 
@@ -104,5 +107,7 @@ public class Customer extends BaseTimeEntity implements UserType {
     public void updateCustomerPassword(String newPassword) {
         this.customerPassword = newPassword;
     }
+
+    public void updateCustomerFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
 }
 

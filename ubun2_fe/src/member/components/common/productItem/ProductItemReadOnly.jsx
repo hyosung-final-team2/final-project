@@ -2,16 +2,22 @@ const ProductItemReadOnly = ({
   productImagePath,
   productDescription,
   productName,
+  price,
   productPrice,
+  discount,
   productDiscount,
   quantity,
   productImageOriginalName,
+  totalPrice,
   isComplete = false,
 }) => {
-  const discountRate = productDiscount / 100;
-  const discountedUnitPrice = productPrice * (1 - discountRate);
-  const ProductAmount = discountedUnitPrice * quantity;
-  const roundedProductAmount = Math.round(ProductAmount);
+  const finalPrice = price || productPrice || 0;
+  const finalDiscount = discount || productDiscount || 0;
+  const finalTotalPrice = totalPrice || finalPrice * quantity || 0;
+
+  const formatPrice = price => {
+    return typeof price === 'number' ? price?.toLocaleString() : '0';
+  };
 
   return (
     <div className='flex items-start justify-between px-4 mb-6'>
@@ -23,13 +29,13 @@ const ProductItemReadOnly = ({
             <div className='flex gap-2 text-sm text-gray-500'>
               <p>{productName}</p>
               <span>/</span>
-              <p>{`${productPrice} 원`}</p>
+              <p>{`${formatPrice(finalPrice)} 원`}</p>
               <span>/</span>
               <p>{`${quantity} 개`}</p>
             </div>
             <div className='flex items-end gap-3'>
-              <p className='font-bold'>{`${roundedProductAmount.toLocaleString()} 원`}</p>
-              {productDiscount > 0 ? <span className='text-red-500'>{`${productDiscount}% 할인`}</span> : ''}
+              <p className='font-bold'>{`${formatPrice(finalTotalPrice)} 원`}</p>
+              {finalDiscount > 0 ? <span className='text-red-500'>{`${finalDiscount}% 할인`}</span> : ''}
             </div>
             {isComplete && <p className='text-sm text-blue-600'>결제완료</p>}
           </div>

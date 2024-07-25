@@ -5,6 +5,7 @@ import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberInfoResponse;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
+import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +25,10 @@ public class AddressController {
     private static final String SORT_DEFAULT = "createdAt";
 
     @Operation(summary = "전체 주소 목록 조회")
-    @GetMapping("/")
-
+    @GetMapping
     public ResponseDto<?> getAllAddresses(
-            @PageableDefault(size = PAGE_SIZE, sort = "addressId", direction = Sort.Direction.DESC) Pageable pageable, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Page<AddressResponse> addresses = addressService.getAllAddresses(pageable,userDetails.getUserId());
+            @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable, SearchRequest searchRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Page<AddressResponse> addresses = addressService.getAllAddresses(pageable,searchRequest,userDetails.getUserId());
         return ResponseDto.ok(addresses, "주소 목록을 성공적으로 조회했습니다.");
     }
 

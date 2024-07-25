@@ -113,6 +113,17 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                         .and(subscriptionOrder.createdAt.between(startDate, endDate)
                                 .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED))))
                 .fetch();
+    }
+
+  public List<SubscriptionOrder> findAllSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+
+        return from(subscriptionOrder)
+                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
+                .join(subscriptionOrderProduct.product, product)
+                .join(product.customer, customer)
+                .where(customer.customerId.eq(customerId)
+                        .and(subscriptionOrder.createdAt.between(startDate, endDate)))
+                .fetch();
   }
 
     @Override
@@ -172,11 +183,11 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     @Override
     public List<Address> findAddressesByDateRange(Long customerId, LocalDateTime startDate, LocalDateTime endDate) {
         return from(subscriptionOrder)
+                .select(subscriptionOrder.address)
                 .join(subscriptionOrder.member.memberCustomers, memberCustomer)
                 .where(memberCustomer.customer.customerId.eq(customerId)
                         .and(subscriptionOrder.createdAt.between(startDate, endDate))
                         .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED)))
-                .select(subscriptionOrder.address)
                 .fetch();
     }
 

@@ -12,11 +12,13 @@ import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.*;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
+import kr.or.kosa.ubun2_be.domain.customer.dto.response.StoreInfoResponse;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
+import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
 import kr.or.kosa.ubun2_be.domain.member.entity.PendingMember;
@@ -39,6 +41,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -168,10 +172,59 @@ public class CustomerServiceImpl implements CustomerService {
         combinedList.addAll(memberListResponses);
         combinedList.addAll(pendingMemberListResponses);
 
+        List<Sort.Order> sortOrders = pageable.getSort().get().collect(Collectors.toList());
+        if (!sortOrders.isEmpty()) {
+            combinedList.sort((m1, m2) -> {
+                for (Sort.Order order : sortOrders) {
+                    int comparison = compareMembers(m1, m2, order.getProperty());
+                    if (comparison != 0) {
+                        return order.isAscending() ? comparison : -comparison;
+                    }
+                }
+                return 0;
+            });
+        }
+
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
         List<MemberListResponse> paginatedList = combinedList.subList(start, end);
         return new PageImpl<>(paginatedList, pageable, combinedList.size());
+    }
+    private int compareMembers(MemberListResponse m1, MemberListResponse m2, String property) {
+        return switch (property) {
+            case "memberEmail" -> compareNullable(m1.getMemberEmail(), m2.getMemberEmail());
+            case "memberName" -> compareNullable(m1.getMemberName(), m2.getMemberName());
+            case "memberPhone" -> compareNullable(m1.getMemberPhone(), m2.getMemberPhone());
+            case "createdAt" -> compareNullable(m1.getCreatedAt(), m2.getCreatedAt());
+            default -> 0;
+        };
+    }
+
+    private <T extends Comparable<T>> int compareNullable(T t1, T t2) {
+        if (t1 == null && t2 == null) return 0;
+        if (t1 == null) return -1;
+        if (t2 == null) return 1;
+        return t1.compareTo(t2);
+    }
+
+    @Override
+    public StoreInfoResponse getStoreInfo(Long customerId) {
+        Customer customer = findById(customerId);
+        return StoreInfoResponse.builder()
+                .businessName(customer.getBusinessName())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public void updateCustomerFcmToken(Long customerId, FcmTokenRequest fcmTokenRequest) {
+        Customer customer = findById(customerId);
+        System.out.println(customer.getFcmToken());
+        System.out.println(fcmTokenRequest.getFcmToken());
+        if (customer.getFcmToken().equals(fcmTokenRequest.getFcmToken())) {
+            return;
+        }
+        customer.updateCustomerFcmToken(fcmTokenRequest.getFcmToken());
     }
 
     public boolean validateRegisterRequest(RegisterMemberRequest registerMemberRequest) {

@@ -39,7 +39,7 @@ const ProductItemEditable = ({
           </div>
           <div className='flex items-center justify-between mt-2'>
             <QuantityButton initialQuantity={quantity} onQuantityChange={onQuantityChange} cartProductId={cartProductId} />
-            <p className='text-lg font-bold'>{`${roundedProductAmount.toLocaleString()} 원`}</p>
+            <p className='text-lg font-bold'>{`${roundedProductAmount?.toLocaleString()} 원`}</p>
           </div>
         </div>
         <XMarkIcon className='w-5 ml-2 cursor-pointer' onClick={() => onDelete(cartProductId)} />

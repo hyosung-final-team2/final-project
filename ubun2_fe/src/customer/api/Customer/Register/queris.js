@@ -1,12 +1,14 @@
 import { useMutation } from '@tanstack/react-query';
 import { signUp } from './register.js';
 import useRegisterStepStore from '../../../store/Register/registerStepStore.js';
+import useFCMTokenStore from "../../../../FCMTokenStore.js";
 
 export const useSignup = thirdRegisterObj => {
   const { registerFirstData, registerSecondData } = useRegisterStepStore(state => ({
     registerFirstData: state.registerFirstData,
     registerSecondData: state.registerSecondData,
   }));
+  const { FCMToken } = useFCMTokenStore()
 
   const signUpData = {
     customerLoginId: registerSecondData.customerLoginId,
@@ -20,6 +22,7 @@ export const useSignup = thirdRegisterObj => {
     businessOpenDate: registerFirstData.businessOpenDate,
     businessAddress: `${thirdRegisterObj.businessAddressNumber} ${thirdRegisterObj.businessAddressDefault} ${thirdRegisterObj.businessAddressDetail}`,
     description: '상점 설명',
+    fcmToken:FCMToken
   };
 
   return useMutation({

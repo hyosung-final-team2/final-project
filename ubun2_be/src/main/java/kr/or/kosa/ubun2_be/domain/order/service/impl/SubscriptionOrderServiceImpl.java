@@ -3,6 +3,7 @@ package kr.or.kosa.ubun2_be.domain.order.service.impl;//package kr.or.kosa.ubun2
 import jakarta.transaction.Transactional;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
+import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.cart.repository.CartProductRepository;
 import kr.or.kosa.ubun2_be.domain.financial.institution.entity.Bank;
 import kr.or.kosa.ubun2_be.domain.financial.institution.service.BankService;
@@ -51,6 +52,7 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
     private final BankService bankService;
     private final AddressService addressService;
     private final CardCompanyService cardCompanyService;
+    private final AlarmService alarmService;
 
     @Override
     @Transactional
@@ -77,6 +79,10 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
 
             // 6. cartProduct 삭제
             deleteCartProducts(memberId, request.getSubscriptionOrderProducts());
+
+            // 7. 고객에게 push notification (정기주문)
+            alarmService.sendMessageToCustomer(request);
+
         }
     }
 
@@ -227,23 +233,32 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             return;
         }
         try {
-            checkInventory(previousCycleProducts);
+            checkInventory(previousCycleProducts, subscriptionOrder.getSubscriptionOrderId());
             checkPayment(subscriptionOrder, paymentMethod, member.getMemberName());
             decreaseInventory(previousCycleProducts);
             List<SubscriptionOrderProduct> nextProducts = createNextCycleProducts(subscriptionOrder, previousCycleProducts);
             updateOrderWithNewProducts(subscriptionOrder, nextProducts);
-
+            // 정기주문 회차 생성 (회원)
+            alarmService.sendSubCycleMessage(subscriptionOrder, null);
+        } catch (ProductException e) {
+            // 연기 알림 보내는 부분 (회원) - 사유 : 재고부족
+            alarmService.sendSubCycleMessage(subscriptionOrder, "재고부족");
+            subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
         } catch (Exception e) {
+            // 연기 알림 보내는 부분(회원) - 사유 : 결제실패
+            alarmService.sendSubCycleMessage(subscriptionOrder, "결제실패");
             subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
         }
         subscriptionOrderRepository.save(subscriptionOrder);//        명시적 save
 
     }
 
-    private void checkInventory(List<SubscriptionOrderProduct> products) {
+    private void checkInventory(List<SubscriptionOrderProduct> products, Long orderId) {
         for (SubscriptionOrderProduct product : products) {
             int availableStock = inventoryService.getStock(product.getProduct().getProductId());
             if (availableStock < product.getQuantity()) {
+                // 재고부족한 상품이름 (고객)
+                alarmService.sendNoStock(product,orderId);
                 throw new ProductException(ProductExceptionType.INSUFFICIENT_STOCK);
             }
         }

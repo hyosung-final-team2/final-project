@@ -89,7 +89,11 @@ public class InventoryService {
 
             if (redisQuantity == null) continue;
             Product product =  productRepository.findById(productId)
-                    .orElseThrow(()->new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
+                    .orElseGet(()->{
+                        redisTemplate.delete(key);
+                        return null;
+                    });
+            if(product==null) continue;
             product.updateStockQuantity(redisQuantity);
             productRepository.save(product); //명시적 호출
         }

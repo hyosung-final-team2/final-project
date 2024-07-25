@@ -4,10 +4,7 @@ import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
-import kr.or.kosa.ubun2_be.domain.member.dto.AnnouncementResponse;
-import kr.or.kosa.ubun2_be.domain.member.dto.CustomerResponse;
-import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
-import kr.or.kosa.ubun2_be.domain.member.dto.MemberSignUpRequest;
+import kr.or.kosa.ubun2_be.domain.member.dto.*;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
 import kr.or.kosa.ubun2_be.domain.member.entity.PendingMember;
@@ -96,7 +93,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public void updateFcmToken(Long memberId, FcmTokenRequest fcmTokenRequest) {
+    public void updateMemberFcmToken(Long memberId, FcmTokenRequest fcmTokenRequest) {
         Member member = findById(memberId);
         if (member.getFcmToken().equals(fcmTokenRequest.getFcmToken())) {
             return;
@@ -116,5 +113,19 @@ public class MemberServiceImpl implements MemberService {
             alarmService.subscribeCustomer(fcmTokenRequest.getFcmToken(), memberCustomer.getCustomer().getCustomerId());
         }
 
+    }
+
+    @Override
+    public void simpleCheck(Long memberId, PaymentPasswordRequest request) {
+        Member member = findById(memberId);
+        if (!member.getPaymentPassword().equals(request.getPaymentPassword())){
+            throw new MemberException(MemberExceptionType.NOT_CORRECT_PAYMENT_PW);
+        }
+    }
+
+    @Override
+    public MemberInfoResponse memberInfo(Long memberId) {
+        Member member = findById(memberId);
+        return MemberInfoResponse.of(member.getMemberName());
     }
 }
