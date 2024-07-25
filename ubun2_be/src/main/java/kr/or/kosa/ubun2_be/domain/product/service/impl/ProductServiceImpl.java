@@ -8,6 +8,7 @@ import kr.or.kosa.ubun2_be.domain.product.entity.Category;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductException;
 import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductExceptionType;
+import kr.or.kosa.ubun2_be.domain.product.repository.CategoryRepository;
 import kr.or.kosa.ubun2_be.domain.product.repository.ProductRepository;
 import kr.or.kosa.ubun2_be.domain.product.service.CategoryService;
 import kr.or.kosa.ubun2_be.domain.product.service.ImageService;
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class ProductServiceImpl implements ProductService {
     private final ImageService imageService;
     private final MemberService memberService;
     private final InventoryService inventoryService;
+    private final CategoryRepository categoryRepository;
 
     @Override
     public Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable,boolean isMember) {
@@ -138,6 +142,15 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductResponse> getProductsByCategory(Long customerId, CategoryRequest categoryRequest, Pageable pageable,Long memberId) {
         memberService.isExistMemberCustomer(memberId, customerId);
         return productRepository.findProductsByCategory(customerId, categoryRequest, pageable).map(ProductResponse::new);
+    }
+
+    @Override
+    public List<CategoryResponse> getProductCategory() {
+        List<Category> categories = categoryRepository.findAll();
+
+        return categories.stream()
+                .map(CategoryResponse::new)
+                .toList();
     }
 
 }

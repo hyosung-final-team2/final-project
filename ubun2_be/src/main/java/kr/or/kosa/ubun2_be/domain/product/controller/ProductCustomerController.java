@@ -2,6 +2,7 @@ package kr.or.kosa.ubun2_be.domain.product.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kr.or.kosa.ubun2_be.domain.product.dto.*;
+import kr.or.kosa.ubun2_be.domain.product.entity.Category;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
@@ -14,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @RestController
@@ -58,6 +61,13 @@ public class ProductCustomerController {
     public ResponseDto<?> removeProduct(@PathVariable("product_id") Long productId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         productService.removeProduct(customUserDetails.getUserId(), productId);
         return ResponseDto.ok(null, "정상출력 데이터");
+    }
+
+    @Operation(summary = "전체 카테고리 조회")
+    @GetMapping("/category")
+    public ResponseDto<?> getProductCategory() {
+        List<CategoryResponse> categories= productService.getProductCategory();
+        return ResponseDto.ok(categories,"정상출력 데이터");
     }
 
 }
