@@ -1,5 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getCards, getAccounts, getCard, getAccount, registerPayment, deletePayment, updatePayment, checkIfPasswordExists } from './payments';
+import {
+  getCards,
+  getAccounts,
+  getCard,
+  getAccount,
+  registerPayment,
+  deletePayment,
+  updatePayment,
+  checkIfPasswordExists,
+  checkPassword,
+  setNewPassword,
+} from './payments';
 
 export const useGetCards = memberId => {
   return useQuery({
@@ -67,6 +78,32 @@ export const useDeletePayment = () => {
 
   return useMutation({
     mutationFn: paymentMethodId => deletePayment(paymentMethodId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payments'] });
+    },
+    onError: error => {
+      console.log('error', error);
+    },
+  });
+};
+
+export const useCheckPassword = () => {
+  return useMutation({
+    mutationFn: paymentMethod => checkPassword(paymentMethod),
+    onSuccess: res => {
+      return res.data;
+    },
+    onError: () => {
+      console.log(error);
+    },
+  });
+};
+
+export const useSetNewPassword = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: password => setNewPassword(password),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
     },

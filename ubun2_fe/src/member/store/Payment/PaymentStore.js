@@ -4,8 +4,9 @@ import { persist } from 'zustand/middleware';
 const usePaymentStore = create(
   persist(
     set => ({
-      selectedCompany: null,
-      setSelectedCompany: company => set({ selectedCompany: company }),
+      isEditPassword: false,
+      setIsEditPassword: isEdit => set({ isEditPassword: isEdit }),
+      resetEditPassword: () => set({ isEditPassword: false }),
     }),
     {
       name: 'payment-storage',
