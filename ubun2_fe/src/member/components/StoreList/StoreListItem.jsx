@@ -1,14 +1,17 @@
 import StoreArrow from '@heroicons/react/24/outline/ChevronRightIcon';
 import { useNavigate } from 'react-router-dom';
 import useStoreStore from '../../store/storeStore';
+import useCategoryStore from "../../store/category/categoryStore.js";
 
 function StoreListItem({ customerId, storeName, storeDesc, storeImg }) {
   const navigate = useNavigate();
   const { setCurrentStoreName, setCustomerId } = useStoreStore();
+  const { setCategory } = useCategoryStore()
 
   const handleClick = () => {
     setCustomerId(customerId);
     setCurrentStoreName(storeName);
+    setCategory(null)
     navigate(`/member/app/store`, {state: {customerId:customerId}});
   };
 
