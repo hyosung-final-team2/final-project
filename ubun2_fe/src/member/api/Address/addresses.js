@@ -17,6 +17,5 @@ export const deleteAddress = async addressId => {
 };
 
 export const updateAddress = async (addressId, data) => {
-  console.log('data:', data);
   return await privateFetch.put(`/members/addresses/${addressId}`, data);
 };

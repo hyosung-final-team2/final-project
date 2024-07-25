@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { getCardColor, getCardLogo, getIcon } from './CardList';
+import { formatCardNumberWithSpace } from '../../../customer/utils/cardFormat';
 
 const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, handleClick, owner, cardCompany }) => {
   return (
@@ -26,7 +27,7 @@ const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, 
 
                   {cardNickname}
                 </div>
-                <div className='text-2xl mb-4'>{cardNumber || '****-****-****-****'}</div>
+                <div className='text-[120%] mb-4'>{formatCardNumberWithSpace(cardNumber) || '****-****-****-****'}</div>
                 <div className='flex justify-between'>
                   <div>
                     <div className='text-xs uppercase'>카드 별명</div>

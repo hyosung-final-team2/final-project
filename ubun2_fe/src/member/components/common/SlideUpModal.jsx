@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import BottomButton from './button/BottomButton';
+import ModalBottomButton from './button/ModalBottomButton';
 
-const SlideUpModal = ({ isOpen, setIsModalOpen, children, headerText, buttonText, isButton = true, buttonStyle, buttonFunc, isInstallPrompt=false }) => {
+const SlideUpModal = ({ isOpen, setIsModalOpen, children, headerText, buttonText, isButton = true, buttonStyle, buttonFunc, isInstallPrompt = false }) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -36,8 +36,10 @@ const SlideUpModal = ({ isOpen, setIsModalOpen, children, headerText, buttonText
             {children}
 
             {/* bottom */}
-            {isButton && <BottomButton buttonStyle={buttonStyle} buttonText={buttonText} buttonFunc={buttonFunc} setIsModalOpen={setIsModalOpen} />}
-            {isInstallPrompt && <p className="my-3 text-gray-400 underline text-center">오늘은 그냥 볼게요</p>}
+            <div className='relative w-full'>
+              {isButton && <ModalBottomButton buttonStyle={buttonStyle} buttonText={buttonText} buttonFunc={buttonFunc} setIsModalOpen={setIsModalOpen} />}
+              {isInstallPrompt && <p className='my-3 text-gray-400 underline text-center'>오늘은 그냥 볼게요</p>}
+            </div>
           </motion.div>
         </>
       )}
