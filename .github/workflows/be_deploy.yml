@@ -1,4 +1,5 @@
 name: Backend CD with Gradle
+
 on:
   push:
     branches:
@@ -7,13 +8,8 @@ on:
       - 'ubun2_be/**'
   
 permissions:
-  pages: write
-  id-token: write
-  contents: write
-  issues: read
-  checks: write
-  pull-requests: write
-  
+  contents: read
+
 jobs:
   build-test:
     runs-on: ubuntu-latest
@@ -23,16 +19,36 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: "temurin"
-      - name: Make application.properties
-        run: 
-          echo "${{ secrets.PROPERTIES }}" > ubun2_be/src/main/resources/application.properties
-          
+          distribution: 'temurin'
+      - name: Set up environment variables
+        run: |
+          echo "DB_HOST=${{ secrets.RDS_HOST }}" >> $GITHUB_ENV
+          echo "DB_PORT=${{ secrets.RDS_PORT }}" >> $GITHUB_ENV
+          echo "DB_NAME=${{ secrets.RDS_DB_NAME }}" >> $GITHUB_ENV
+          echo "DB_USERNAME=${{ secrets.RDS_USERNAME }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.RDS_PASSWORD }}" >> $GITHUB_ENV
+          echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> $GITHUB_ENV
+          echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> $GITHUB_ENV
+          echo "S3_BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }}" >> $GITHUB_ENV
+          echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> $GITHUB_ENV
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
+          echo "JWT_ACCESS_EXPIRATION=${{ secrets.JWT_ACCESS_EXPIRATION }}" >> $GITHUB_ENV
+          echo "JWT_REFRESH_EXPIRATION=${{ secrets.JWT_REFRESH_EXPIRATION }}" >> $GITHUB_ENV
+          echo "JWT_REFRESH_COOKIE_EXPIRATION=${{ secrets.JWT_REFRESH_COOKIE_EXPIRATION }}" >> $GITHUB_ENV
+          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> $GITHUB_ENV
+          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> $GITHUB_ENV
+          echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> $GITHUB_ENV
+          echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> $GITHUB_ENV
+          echo "SMS_API_KEY=${{ secrets.SMS_API_KEY }}" >> $GITHUB_ENV
+          echo "SMS_API_SECRET=${{ secrets.SMS_API_SECRET }}" >> $GITHUB_ENV         
+          echo "SMS_API_DOMAIN=${{ secrets.SMS_API_DOMAIN }}" >> $GITHUB_ENV
+          echo "SMS_FROM_NUMBER=${{ secrets.SMS_FROM_NUMBER }}" >> $GITHUB_ENV
       - name: Build with Gradle
         run: |
           cd ./ubun2_be
           chmod +x ./gradlew
           ./gradlew clean build -x test
+
   deploy-to-Server:
     if: github.event_name == 'push'
     name: Deploy
@@ -45,7 +61,7 @@ jobs:
           cd ./ubun2_be
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker buildx build --push --platform linux/amd64 -t ${{ secrets.DOCKER_BACK_REPO }} .
-          
+
       - name: Deploy start
         uses: appleboy/ssh-action@master
         id: deploy
@@ -54,9 +70,10 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_KEY }}
           port: ${{ secrets.EC2_SSH_PORT }}
-          
           script: |
             sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker-compose down -v
             sudo docker pull ${{ secrets.DOCKER_BACK_REPO }}
+            sudo docker rm -f springboot-app
             docker-compose up --build -d
+
+
