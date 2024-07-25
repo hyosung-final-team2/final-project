@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { initDropdowns } from 'flowbite';
+import {columnMapping} from "../Table/tableIndex.js";
 
 const DropDownMenu = ({ menuTitle, handleCategorySelect }) => {
   return (
@@ -17,7 +18,8 @@ const DropDownMenu = ({ menuTitle, handleCategorySelect }) => {
 
 const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('카테고리');
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [showCategory, setShowCategory] = useState('카테고리');
   const dropdownRef = useRef(null);
 
   initDropdowns();
@@ -27,7 +29,9 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
   };
 
   const handleCategorySelect = category => {
-    setSelectedCategory(category);
+    const mappedCategory = columnMapping[category] || category;
+    setSelectedCategory(mappedCategory);
+    setShowCategory(category)
     dropdownRef.current.click();
   };
 
@@ -49,7 +53,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
           className='flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600'
           type='button'
         >
-          {selectedCategory}
+          {showCategory}
           <svg className='w-2.5 h-2.5 ms-2.5' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 6'>
             <path stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='m1 1 4 4 4-4' />
           </svg>

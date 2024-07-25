@@ -105,4 +105,6 @@ public class Member extends BaseTimeEntity implements UserType {
         this.fcmToken = fcmToken;
     }
 
+    public void updatePaymentPassword(String paymentPassword) { this.paymentPassword = paymentPassword; }
+
 }

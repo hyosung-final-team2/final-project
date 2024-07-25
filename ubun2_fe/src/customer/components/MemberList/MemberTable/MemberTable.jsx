@@ -15,6 +15,7 @@ import { getMembers } from '../../../api/Customer/MemberList/MemberTable/memberT
 import {useGetMemberDetail} from '../../../api/Customer/MemberList/MemberModal/queris.js';
 import MemberInsertModal from "../MemberInsertModal/MemberInsertModal.jsx";
 import MemberRegisterModal from "../MemberRegisterModal/MemberRegisterModal.jsx";
+import useMemberTableStore from "../../../store/MemberTable/memberTableStore.js";
 
 const MemberTable = () => {
 
@@ -25,13 +26,16 @@ const MemberTable = () => {
 
   const [selectedMembers, setSelectedMembers] = useState([]); // 체크된 멤버
   const [selectedMemberDetail, setSelectedMemberDetail] = useState({ memberId: null, pending: null, currentPage: null }); // 선택된 멤버 ID - 모달 오픈 시
-  const [searchTerm, setSearchTerm] = useState(''); // 검색된 단어
-  const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
+
+  const { sort, updateSort } = useMemberTableStore()
+  const {searchCategory, setSearchCategory} = useMemberTableStore() // 검색할 카테고리 (드롭다운)
+  const {searchKeyword, setSearchKeyword} = useMemberTableStore() // 검색된 단어
+  const { resetData } = useMemberTableStore()
 
   const [currentPage, setCurrentPage] = useState(1);
 
   const PAGE_SIZE = 8
-  const { data: members,refetch: refetchMembers } = useGetMembers(currentPage,PAGE_SIZE);
+  const { data: members,refetch: refetchMembers } = useGetMembers(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
   const totalPages = members?.data?.data?.totalPages ?? 5;
   const memberList = members?.data?.data?.content || [];
@@ -44,11 +48,11 @@ const MemberTable = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['member', nextPage],
+        queryKey: ['member', nextPage, sort, searchCategory, searchKeyword],
         queryFn: () => getMembers(nextPage,PAGE_SIZE),
       });
     }
-  }, [currentPage, queryClient, totalPages]);
+  }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -76,13 +80,19 @@ const MemberTable = () => {
   };
 
   const handleSearch = (term, category) => {
-    setSearchTerm(term);
+    setSearchKeyword(term);
     setSearchCategory(category);
     if (term.trim() === '' || category === '카테고리') return;
-
-    // TODO: 검색 API 호출
-    console.log(`${category} : ${term}`);
+    // 변경 부분
+    refetchMembers()
+    setCurrentPage(1)
   };
+
+  const handleSort = async (column,sortType) => {
+    await updateSort(column,sortType);
+    refetchMembers()
+    setCurrentPage(1)
+  }
 
   const handleRegisterSuccess = () => {
     const newTotalPages = Math.ceil((members.data.data.totalElements + 1) / PAGE_SIZE); //  받고싶은 데이터 양 , 페이지네이션 불러오는 함수도 size 해당 변수로 넣어줘야함
@@ -93,15 +103,28 @@ const MemberTable = () => {
     }
   };
 
+
+  const {toggleIsReset} = useMemberTableStore();
+  const handleDataReset = async () => {
+    await toggleIsReset()
+    await resetData()
+    await refetchMembers()
+    await setCurrentPage(1)
+  }
+
+  useEffect(() => {
+    return resetData()
+  },[])
+
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      {/* 각종 기능 버튼 : 검색, 정렬 등 */}
-      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} selectedMembers={selectedMembers}/>
+      {/* 각종 기능 버튼 : 검색  등 */}
+      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} selectedMembers={selectedMembers} handleDataReset={handleDataReset}/>
 
       {/* 테이블 */}
       <div className='px-4 shadow-md'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.member} allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} />
+          <TableHead tableColumns={tableColumn.member} allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
 
           <DynamicTableBody
             dataList={memberList}

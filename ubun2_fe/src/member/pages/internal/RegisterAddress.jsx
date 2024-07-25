@@ -155,30 +155,22 @@ const RegisterAddress = () => {
 
       {/* bottom */}
       {isRegister ? (
-        <div className='flex w-full absolute bottom-6 px-6'>
-          <div className='flex-1 ml-1'>
-            <BottomButton
-              buttonStyle={isAllValuePossible ? 'bg-main text-white' : 'bg-gray-300 text-gray-500'}
-              buttonText='확인'
-              buttonFunc={handleConfirm}
-              disabled={!isAllValuePossible}
-            />
-          </div>
-        </div>
+        <BottomButton
+          buttonStyle={isAllValuePossible ? 'bg-main text-white' : 'bg-gray-300 text-gray-500'}
+          buttonText='확인'
+          buttonFunc={handleConfirm}
+          disabled={!isAllValuePossible}
+        />
       ) : (
-        <div className='flex w-full absolute bottom-6 px-6'>
-          <div className='flex-1 mr-1'>
-            <BottomButton buttonStyle='bg-custom-input-gray text-black' buttonText='삭제' buttonFunc={handleDelete} />
-          </div>
-          <div className='flex-1 ml-1'>
-            <BottomButton
-              buttonStyle={isAllValuePossible ? 'bg-main text-white' : 'bg-gray-300 text-gray-500'}
-              buttonText='확인'
-              buttonFunc={handleConfirm}
-              disabled={!isAllValuePossible}
-            />
-          </div>
-        </div>
+        <>
+          <BottomButton buttonStyle='bg-custom-input-gray text-black' buttonText='삭제' buttonFunc={handleDelete} />
+          <BottomButton
+            buttonStyle={isAllValuePossible ? 'bg-main text-white' : 'bg-gray-300 text-gray-500'}
+            buttonText='확인'
+            buttonFunc={handleConfirm}
+            disabled={!isAllValuePossible}
+          />
+        </>
       )}
     </div>
   );

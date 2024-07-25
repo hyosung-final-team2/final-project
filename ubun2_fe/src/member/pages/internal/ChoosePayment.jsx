@@ -28,6 +28,12 @@ const ChoosePayment = () => {
 
   const buttonStyle = 'bg-main text-white';
 
+  const handleBottomButtonClick = () => {
+    if (!isPasswordSet) {
+      navigate('/member/app/password');
+    }
+  };
+
   const paymentMethods = useMemo(() => {
     const methods = [
       ...accountList.map(account => ({
@@ -103,17 +109,17 @@ const ChoosePayment = () => {
   return (
     <div className='flex flex-col h-full bg-gray-100'>
       <main className='flex flex-col items-center flex-grow pt-12 px-7'>
-        <h2 className='text-[3.8dvw] text-gray-500 mb-1 font-bold'>결제 수단 선택</h2>
-        <p className='text-[7dvw] font-bold mb-12'>{`${totals.totalAmount?.toLocaleString()}`}원</p>
+        <h2 className='text-[100%] text-gray-500 mb-1 font-bold'>결제 수단 선택</h2>
+        <p className='text-[180%] font-bold mb-12'>{`${totals.totalAmount?.toLocaleString()}`}원</p>
 
-        <div className='w-full p-8 pt-6 mb-8 bg-white shadow-sm rounded-3xl '>
-          <p className='text-[3dvw] text-gray-500 mb-2'>결제수단</p>
+        <div className='w-full p-7 pt-6 mb-8 bg-white shadow-sm rounded-2xl '>
+          <p className='text-sm text-gray-500 mb-2'>결제수단</p>
           <div className='flex items-center justify-between flex-nowrap'>
             <div className='flex items-center'>
               {selectedPaymentMethod ? selectedPaymentMethod.icon : <div className='w-10 h-10 bg-gray-200 rounded-full'></div>}
               <div className='ml-3'>
-                <p className='font-semibold text-[4dvw] truncate'>{selectedPaymentMethod ? selectedPaymentMethod.title : '결제 수단을 선택해주세요'}</p>
-                <p className='text-[3dvw] text-gray-500'>
+                <p className='font-semibold text-[100%] truncate'>{selectedPaymentMethod ? selectedPaymentMethod.title : '결제 수단을 선택해주세요'}</p>
+                <p className='text-[80%] text-gray-500'>
                   {selectedPaymentMethod
                     ? selectedPaymentMethod.type === 'ACCOUNT'
                       ? `${selectedPaymentMethod.bankName} ${selectedPaymentMethod.accountNumber}`
@@ -122,30 +128,30 @@ const ChoosePayment = () => {
                 </p>
               </div>
             </div>
-            <button
-              className='px-4 mx-3 py-2 bg-gray-100 rounded-lg text-[3dvw] text-gray-500 flex-shrink-0 whitespace-nowrap'
-              onClick={() => setIsModalOpen(true)}
-            >
-              변경
-            </button>
+            <div>
+              <button
+                className='px-4 py-2 bg-gray-100 rounded-lg text-[80%] text-gray-600 flex-shrink-0 whitespace-nowrap'
+                onClick={() => setIsModalOpen(true)}
+              >
+                변경
+              </button>
+            </div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className='p-6'>
-        <BottomButton buttonText='구매하기' buttonStyle={buttonStyle} buttonFunc={handleOrder} disabled={!selectedPaymentMethodId} />
-        <p className='mt-4 text-sm text-center text-gray-500'>결제 정보 확인 및 정보 제공 동의</p>
-      </footer>
+      <BottomButton buttonText='구매하기' buttonStyle={buttonStyle} buttonFunc={handleOrder} disabled={!selectedPaymentMethodId} />
+      <p className='mt-4 text-sm text-center text-gray-500'>결제 정보 확인 및 정보 제공 동의</p>
 
       {/* modal */}
       <SlideUpModal
         isOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
-        headerText={`${isPasswordSet ? '결제수단 선택' : '결제 비밀번호 설정'}`}
         isButton={!isPasswordSet}
         buttonStyle={buttonStyle}
         buttonText='설정하기'
+        buttonFunc={handleBottomButtonClick}
       >
         {isPasswordSet ? (
           <>

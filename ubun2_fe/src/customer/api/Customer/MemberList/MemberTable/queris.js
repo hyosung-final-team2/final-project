@@ -2,10 +2,10 @@ import {getMembers, sendSms} from './memberTable.js';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import {toast} from "react-hot-toast";
 
-export const useGetMembers = (page, size) => {
+export const useGetMembers = (page, size, sort, searchCategory, searchKeyword) => {
   return useQuery({
-    queryKey: ['member', page],
-    queryFn: () => getMembers(page, size),
+    queryKey: ['member', page, sort, searchCategory, searchKeyword],
+    queryFn: () => getMembers(page, size, sort, searchCategory, searchKeyword),
   });
 };
 
