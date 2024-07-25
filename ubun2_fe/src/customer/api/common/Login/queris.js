@@ -1,9 +1,10 @@
-import {getStoreName, login} from "./login.js";
+import {getMemberInfo, getStoreName, login} from "./login.js";
 import {useMutation} from "@tanstack/react-query";
 import useFCMTokenStore from "../../../../FCMTokenStore.js";
 import {updateCustomerFcmToken, updateMemberFcmToken} from "../../../../member/api/FcmToken/fcmToken.js";
 import useMemberStore from "../../../../member/store/memberStore.js";
 import useCustomerStore from "../../../store/customerStore.js";
+import * as res from "autoprefixer";
 
 export const useLogin = (loginObj,role) => {
 
@@ -14,7 +15,7 @@ export const useLogin = (loginObj,role) => {
     }
 
     const {FCMToken} = useFCMTokenStore()
-    const {setMemberId} = useMemberStore()
+    const {setMemberId,setMemberName} = useMemberStore()
     const {setCustomerId} = useCustomerStore()
     const {setBusinessName} = useCustomerStore()
 
@@ -33,6 +34,10 @@ export const useLogin = (loginObj,role) => {
                 } catch (error) {
                     console.error("FCM 토큰 업데이트 실패", error);
                 }
+                await getMemberInfo().then(async (res) => {
+                    console.log(res.data)
+                    await setMemberName(res.data.data.memberName);
+                });
             } else {
                 try {
                     await updateCustomerFcmToken(FCMToken)

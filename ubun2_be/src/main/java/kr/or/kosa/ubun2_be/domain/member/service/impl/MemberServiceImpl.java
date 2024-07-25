@@ -133,4 +133,10 @@ public class MemberServiceImpl implements MemberService {
         Member member = findById(memberId);
         member.updatePaymentPassword(passwordEncoder.encode(request.getPaymentPassword()));
     }
+
+    @Override
+    public MemberInfoResponse memberInfo(Long memberId) {
+        Member member = findById(memberId);
+        return MemberInfoResponse.of(member.getMemberName());
+    }
 }

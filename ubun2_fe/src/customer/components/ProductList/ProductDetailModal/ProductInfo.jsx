@@ -1,8 +1,6 @@
 import { Radio } from 'flowbite-react';
 
-
 const ProductInfo = ({product, onlyInfo = false, title ,handleInputChange} ) => {
-
   return (
       <div className='bg-gray-50 p-4 rounded-lg'>
         <div className='mb-2 text-lg font-bold'>{title}</div>

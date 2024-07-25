@@ -5,7 +5,9 @@ const useMemberStore = create(
   persist(
     set => ({
       memberId: null,
+      memberName: null,
       setMemberId: state => set({ memberId: state }),
+      setMemberName: state => set({ memberName: state }),
     }),
     {
       name: 'member-storage',

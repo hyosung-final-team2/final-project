@@ -22,4 +22,6 @@ public interface MemberService {
     void registerSimplePassword(Long memberId, PaymentPasswordRequest request);
 
     void updateSimplePassword(Long memberId, PaymentPasswordRequest request);
+
+    MemberInfoResponse memberInfo(Long memberId);
 }
