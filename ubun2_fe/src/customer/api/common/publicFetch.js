@@ -4,7 +4,7 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 
 const publicFetch = axios.create({
     baseURL: BASE_URL,
-    timeout: 3000,
+    //timeout: 3000,
     withCredentials: true
 });
 
