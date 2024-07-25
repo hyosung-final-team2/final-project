@@ -116,10 +116,21 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void simpleCheck(Long memberId, PaymentPasswordRequest request) {
+    public boolean simpleCheck(Long memberId, PaymentPasswordRequest request) {
         Member member = findById(memberId);
-        if (!member.getPaymentPassword().equals(request.getPaymentPassword())){
-            throw new MemberException(MemberExceptionType.NOT_CORRECT_PAYMENT_PW);
-        }
+        return passwordEncoder.matches(request.getPaymentPassword(), member.getPaymentPassword());
+    }
+
+    @Override
+    public void registerSimplePassword(Long memberId, PaymentPasswordRequest request) {
+        Member member = findById(memberId);
+        member.updatePaymentPassword(passwordEncoder.encode(request.getPaymentPassword()));
+        memberRepository.save(member);
+    }
+
+    @Override
+    public void updateSimplePassword(Long memberId,  PaymentPasswordRequest request) {
+        Member member = findById(memberId);
+        member.updatePaymentPassword(passwordEncoder.encode(request.getPaymentPassword()));
     }
 }
