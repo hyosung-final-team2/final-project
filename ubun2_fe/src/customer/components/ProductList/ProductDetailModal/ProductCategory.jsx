@@ -19,7 +19,7 @@ const ProductCategory = ({ product, onlyInfo = false, title, handleInputChange }
           onChange={e => handleInputChange(e)}
           disabled={onlyInfo}
         >
-            {categories.map((category) => {
+            {categories?.map((category) => {
                 return <option key={category.categoryId} value={category.categoryName}>{category.categoryName}</option>
             })}
         </select>

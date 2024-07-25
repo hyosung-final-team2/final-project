@@ -2,10 +2,11 @@ import privateFetch from "../../../customer/api/common/privateFetch.js";
 
 export const getStores = async () => await privateFetch.get("/members/stores")
 
-export const getProducts = async (customerId,page,size) => await privateFetch.get(`/members/products/${customerId}`,{
+export const getProductsByCategory = async (customerId,page,size,categoryName) => await privateFetch.get(`/members/products/${customerId}/category`,{
     params: {
         page: page - 1,
         size: size,
+        categoryName
     },
 })
 
