@@ -368,8 +368,8 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
         memberService.isExistMemberCustomer(memberId, request.getCustomerId());
 
         SubscriptionOrder order = subscriptionOrderRepository
-                .findFutureOrderByIdAndMemberId(request.getOrderId(), memberId)
-                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_OR_PAST_ORDER));
+                .findBySubscriptionOrderIdAndMemberId(request.getOrderId(), memberId)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
         for (Long productId : request.getSubscriptionOrderProductIds()) {
             SubscriptionOrderProduct productToRemove = order.getSubscriptionOrderProducts().stream()

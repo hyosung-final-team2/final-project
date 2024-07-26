@@ -1,7 +1,7 @@
-import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
-import { Select } from 'flowbite-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Select } from 'flowbite-react';
+import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
 import { formatAccountNumber } from '../../../customer/utils/accountFormat';
 import { formatCardNumber } from '../../../customer/utils/cardFormat';
 import { useGetSubscriptionOrderDetail, useUpdateSuscriptionCancelOrder } from '../../api/Order/queris';
@@ -14,8 +14,8 @@ import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
 
 const MySubscriptionOrderDetail = () => {
-  const { customerId, orderId } = useParams();
-  const { data: orderResponse, isLoading, isError } = useGetSubscriptionOrderDetail(customerId, orderId);
+  const { orderId } = useParams();
+  const { data: orderResponse, isLoading, isError } = useGetSubscriptionOrderDetail(orderId);
   const [orderData, setOrderData] = useState(null);
   const [selectedCycle, setSelectedCycle] = useState(1);
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -32,6 +32,10 @@ const MySubscriptionOrderDetail = () => {
       setModalState(false);
     }
   }, [orderResponse]);
+
+  const customerId = useMemo(() => {
+    return orderData?.subscriptionOrderProducts?.[0]?.customerId;
+  }, [orderData]);
 
   const filteredProducts = useMemo(() => {
     if (!orderData) return [];
@@ -91,20 +95,24 @@ const MySubscriptionOrderDetail = () => {
       return;
     }
 
-    updateCancelSubscriptionOrderMutation.mutate(
-      {
-        orderId: Number(orderId),
-        customerId: Number(customerId),
-        subscriptionOrderProductIds: validProductIds,
-      },
-      {
-        onSuccess: () => {
-          setModalState(false);
-          setIsEditing(false);
-          setSelectedProducts([]);
+    if (customerId) {
+      updateCancelSubscriptionOrderMutation.mutate(
+        {
+          orderId: Number(orderId),
+          customerId: Number(customerId),
+          subscriptionOrderProductIds: validProductIds,
         },
-      }
-    );
+        {
+          onSuccess: () => {
+            setModalState(false);
+            setIsEditing(false);
+            setSelectedProducts([]);
+          },
+        }
+      );
+    } else {
+      console.error('customerId is not available');
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;

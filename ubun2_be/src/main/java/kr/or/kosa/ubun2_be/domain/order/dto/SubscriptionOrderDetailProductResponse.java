@@ -19,6 +19,7 @@ public class SubscriptionOrderDetailProductResponse {
     private double discount;
     private int totalPrice;
     private OrderProductStatus orderProductStatus;
+    private Long customerId;
 
     public SubscriptionOrderDetailProductResponse(SubscriptionOrderProduct subscriptionOrderProduct) {
         Product product = subscriptionOrderProduct.getProduct();
@@ -34,5 +35,6 @@ public class SubscriptionOrderDetailProductResponse {
         this.discount = subscriptionOrderProduct.getDiscount();
         this.totalPrice = (int) (price * quantity * (100 - discount) / 100.0);
         this.orderProductStatus = subscriptionOrderProduct.getOrderProductStatus();
+        this.customerId = product.getCustomer().getCustomerId();
     }
 }

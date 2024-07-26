@@ -20,6 +20,5 @@ public interface SubscriptionOrderRepository extends JpaRepository<SubscriptionO
 
     Optional<SubscriptionOrder> findBySubscriptionOrderIdAndMemberMemberId(Long orderId, Long memberId);
 
-    @Query("SELECT so FROM SubscriptionOrder so WHERE so.subscriptionOrderId = :orderId AND so.member.memberId = :memberId AND so.nextOrderDate > CURRENT_TIMESTAMP")
-    Optional<SubscriptionOrder> findFutureOrderByIdAndMemberId(@Param("orderId") Long orderId, @Param("memberId") Long memberId);
+    Optional<SubscriptionOrder> findBySubscriptionOrderIdAndMemberId(Long orderId, Long memberId);
 }

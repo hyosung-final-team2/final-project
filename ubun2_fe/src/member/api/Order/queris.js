@@ -36,9 +36,9 @@ export const useGetOrderDetail = (customerId, orderId) => {
   });
 };
 
-export const useGetSubscriptionOrderDetail = (customerId, subscriptionOrderId) => {
+export const useGetSubscriptionOrderDetail = subscriptionOrderId => {
   return useQuery({
-    queryKey: ['subscriptionOrder', customerId, subscriptionOrderId],
+    queryKey: ['subscriptionOrder', subscriptionOrderId],
     queryFn: () => getSubscriptionOrder(subscriptionOrderId),
     enabled: !!subscriptionOrderId,
   });
