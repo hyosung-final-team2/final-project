@@ -29,6 +29,7 @@ const ProductInsertModal = ({ isOpen, setOpenModal, title, currentPage }) => {
   };
 
   const { mutate: productRegisterMutate } = useRegisterProduct(newProduct, imageFile, currentPage);
+  // TODO: productRegisterMutate의 onSuccess에다가 addProductGroupAlarmMutate 요고 달기
   const { mutate: addProductGroupAlarmMutate } = useSendGroupAlarmProduct(newProduct?.productName)
 
   const handleInputChange = e => {
