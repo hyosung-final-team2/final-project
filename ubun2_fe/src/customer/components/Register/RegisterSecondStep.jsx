@@ -75,14 +75,14 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
   };
 
   const buttonFuncSendEmail = (e) => {
-    e.preventDefault();
+    //e.preventDefault();
     sendEmailMutate()
     setIsSendEmail(true);
     setTimerValue(300);
   };
 
   const buttonFuncAuthEmail = (e) => {
-    e.preventDefault();
+   // e.preventDefault();
     authEmailMutate({
       email: secondRegisterObj.customerEmail,
       authenticationNumber: secondRegisterObj.emailAuthentication

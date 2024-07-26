@@ -323,4 +323,12 @@ public class CustomerServiceImpl implements CustomerService {
         memberRepository.deleteById(memberId);
         alarmService.unsubscribeCustomer(member.getFcmToken(), customerId);
     }
+
+    @Transactional
+    @Override
+    public void deleteSelectedProducts(List<MemberDeleteRequest> memberDeleteRequestList, Long customerId) {
+        for (MemberDeleteRequest memberDeleteRequest : memberDeleteRequestList) {
+            deleteMember(customerId,memberDeleteRequest.getId(),memberDeleteRequest.getIsPending());
+        }
+    }
 }
