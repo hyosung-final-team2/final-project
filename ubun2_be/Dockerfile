@@ -17,4 +17,4 @@ RUN mv ${JAR_PATH}/*.jar /app/app.jar
 
 ENV GOOGLE_APPLICATION_CREDENTIALS=/app/firebase_service_key.json
 
-ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "app.jar"]
+ENTRYPOINT ["java", "-jar","app.jar"]
