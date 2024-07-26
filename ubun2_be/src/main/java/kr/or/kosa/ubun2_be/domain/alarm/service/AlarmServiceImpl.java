@@ -1,8 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.alarm.service;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.*;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.GroupAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.PersonalAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.entity.Alarm;
@@ -52,7 +50,7 @@ public class AlarmServiceImpl implements AlarmService{
         Message message = makePersonalMessage(request, member.getFcmToken());
         String messageId = sendMessage(message);
 
-        Alarm alarm = Alarm.createAlarm(request.getTitle(), request.getContent());
+        Alarm alarm = Alarm.createAlarm(request.getTitle(), request.getContent(), request.getLink());
         memberAlarmRedisRepository.saveAlarm(String.valueOf(member.getMemberId()), alarm);
         return messageId;
     }
@@ -84,7 +82,8 @@ public class AlarmServiceImpl implements AlarmService{
         Message message = makeGroupMessage(request, topic);
         sendMessage(message);
 
-        Alarm alarm = Alarm.createAlarm(request.getTitle(), request.getContent());
+        // TODO: 실제 링크로 변경
+        Alarm alarm = Alarm.createAlarm(request.getTitle(), request.getContent(),"");
         List<Member> members = memberCustomerRepository.findMembersByCustomerId(request.getCustomerId());
 
         for (Member member : members) {
@@ -117,11 +116,13 @@ public class AlarmServiceImpl implements AlarmService{
 
         String title = getOrderTitle(request.getIntervalDays());
         String content = getOrderContent(firstProductName, productListSize);
+        String link = "http://localhost:5173/customer/app/pendingorder";
 
-        Message message = makeOrderMessage(title, content, customer.getFcmToken());
+        Message message = makeOrderMessage(title, content, customer.getFcmToken(), link);
         String messageId = sendMessage(message);
 
-        Alarm alarm = Alarm.createAlarm(title, content);
+        // TODO: 실제 링크로 변경
+        Alarm alarm = Alarm.createAlarm(title, content, link);
         customerAlarmRedisRepository.saveAlarm(String.valueOf(customer.getCustomerId()), alarm);
     }
 
@@ -152,7 +153,8 @@ public class AlarmServiceImpl implements AlarmService{
 
         Message message = makeSubCycleMessage(businessName, content, fcmToken, subscriptionOrder.getSubscriptionOrderId());
         sendMessage(message);
-        Alarm alarm = Alarm.createAlarm(businessName, content);
+        // TODO: 실제 링크로 변경
+        Alarm alarm = Alarm.createAlarm(businessName, content,"");
         memberAlarmRedisRepository.saveAlarm(String.valueOf(subscriptionOrder.getMember().getMemberId()),alarm);
     }
 
@@ -161,32 +163,56 @@ public class AlarmServiceImpl implements AlarmService{
         String fcmToken = subscriptionOrderProduct.getProduct().getCustomer().getFcmToken();
         String title = "재고부족";
         String content = subscriptionOrderProduct.getProduct().getProductName() + " - 상품 재고가 부족합니다.";
+        String link = "http://localhost:5173/customer/app/product";
 
-        sendMessage(makeOrderMessage(title,content,fcmToken));
-        Alarm alarm = Alarm.createAlarm(title, content);
+        sendMessage(makeOrderMessage(title,content,fcmToken,link));
+        // TODO: 실제 링크로 변경
+        Alarm alarm = Alarm.createAlarm(title, content,link);
         customerAlarmRedisRepository.saveAlarm(String.valueOf(subscriptionOrderProduct.getProduct().getCustomer().getCustomerId()),alarm);
     }
 
-    private Message makeOrderMessage(String title, String content, String token) {
+    // 단건,정기주문 들어왔을때, 재고 부족할때 - 고객에게 날아가는 push
+    private Message makeOrderMessage(String title, String content, String token, String link) {
         return Message.builder()
+                .setWebpushConfig(WebpushConfig.builder()
+                        .setFcmOptions(WebpushFcmOptions.builder()
+                                .setLink(link)
+                                .build())
+                        .build())
                 .putData("title", title)
                 .putData("content", content)
+                .putData("link",link)
+                .putData("receiver","CUSTOMER")
                 .setToken(token)
                 .build();
     }
 
     private Message makePersonalMessage(PersonalAlarmSendRequest request, String token) {
         return Message.builder()
+                .setWebpushConfig(WebpushConfig.builder()
+                        .setFcmOptions(WebpushFcmOptions.builder()
+                                .setLink(request.getLink())
+                                .build())
+                        .build())
                 .putData("title", request.getTitle())
                 .putData("content", request.getContent())
+                .putData("link",request.getLink())
+                .putData("receiver","MEMBER")
                 .setToken(token)
                 .build();
     }
 
     private Message makeGroupMessage(GroupAlarmSendRequest request, String topic) {
         return Message.builder()
+                .setWebpushConfig(WebpushConfig.builder()
+                        .setFcmOptions(WebpushFcmOptions.builder()
+                                .setLink(request.getLink())
+                                .build())
+                        .build())
                 .putData("title", request.getTitle())
                 .putData("content", request.getContent())
+                .putData("link",request.getLink())
+                .putData("receiver","MEMBER")
                 .setTopic(topic)
                 .build();
     }
@@ -196,6 +222,7 @@ public class AlarmServiceImpl implements AlarmService{
                 .putData("title", title)
                 .putData("content", content)
                 .putData("orderId",String.valueOf(orderId))
+                .putData("receiver","MEMBER")
                 .setToken(token)
                 .build();
     }
