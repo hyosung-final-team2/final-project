@@ -51,7 +51,6 @@ const Login = () => {
           </div>
           {/* 로그인 페이지 우측 */}
           <div className='py-24 px-10'>
-            {/*<h2 className='text-main text-2xl font-semibold mb-2 text-center tracking-widest	'>로그인</h2>*/}
             <div className="w-full flex justify-center items-center">
               <img src='/text_logo.png' alt='Logo' className="w-1/2"/>
             </div>
@@ -77,9 +76,9 @@ const Login = () => {
               </div>
 
               <div className='text-right text-primary'>
-                <Link to='/customer/forgot-password'>
+                <Link to='/customer/forgot-loginid'>
                   <span className='text-main text-sm  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200'>
-                    Forgot Password?
+                    계정 정보를 잊어버렸어요.
                   </span>
                 </Link>
               </div>

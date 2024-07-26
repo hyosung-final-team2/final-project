@@ -1,12 +1,11 @@
 import {useState} from "react";
 import LandingIntro from "../../components/Login/LandingIntro.jsx";
-import ResetPasswordResult from "../../components/ForgotPassword/ResetPasswordResult.jsx";
-import FindPassword from "../../components/ForgotPassword/FindPassword.jsx";
-import ResetPassword from "../../components/ForgotPassword/ResetPassword.jsx";
+import FindLoginId from "../../components/ForgotLoginId/FindLoginId.jsx";
+import FindLoginIdResult from "../../components/ForgotLoginId/FindLoginIdResult.jsx";
 
-const ForgotPassword = () => {
+const ForgotLoginId = () => {
     const [isSuccess, setIsSuccess] = useState(false);
-    const [isResetSuccess, setIsResetSuccess] = useState(false);
+    const [findId, setFindId] = useState(null);
 
     return (
         <>
@@ -17,13 +16,14 @@ const ForgotPassword = () => {
                             <LandingIntro />
                         </div>
                         <div className='py-24 px-10'>
-                            {!isSuccess ? <FindPassword setIsSuccess={setIsSuccess}/> : !isResetSuccess ? <ResetPassword setIsResetSuccess={setIsResetSuccess}/> : <ResetPasswordResult/>}
+                            {/*<div className={registerStep === 4 ? 'py-44 px-10' : 'py-24 px-10'}>*/}
+                            {!isSuccess ? <FindLoginId setIsSuccess={setIsSuccess} setFindId={setFindId}/> : <FindLoginIdResult findId={findId}/>}
                         </div>
                     </div>
                 </div>
             </div>
         </>
     )
-};
+}
 
-export default ForgotPassword;
+export default ForgotLoginId;
