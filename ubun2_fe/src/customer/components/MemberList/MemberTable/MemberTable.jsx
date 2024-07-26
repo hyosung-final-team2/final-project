@@ -19,7 +19,6 @@ import useMemberTableStore from "../../../store/MemberTable/memberTableStore.js"
 
 const MemberTable = () => {
 
-  // const [openMemberDetailModal, setOpenMemberDetailModal] = useState(false);
   const [openExcelModal, setOpenExcelModal] = useState(false);
   const [openInsertModal, setOpenInsertModal] = useState(false);
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
@@ -35,7 +34,8 @@ const MemberTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const PAGE_SIZE = 8
-  const { data: members,refetch: refetchMembers } = useGetMembers(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
+  const { data: members,refetch: refetchMembers , isLoading } = useGetMembers(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
+  console.log("isLoading",isLoading)
 
   const totalPages = members?.data?.data?.totalPages ?? 5;
   const memberList = members?.data?.data?.content || [];
@@ -143,13 +143,13 @@ const MemberTable = () => {
       <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
 
       {/* 엑셀 조회 모달 */}
-      <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} />
+      {openExcelModal && <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} /> }
 
     {/* 회원 조회 & 수정 모달 */}
-      <MemberInsertModal isOpen={openInsertModal} setOpenModal={setOpenInsertModal} selectedMemberDetail={selectedMemberDetail} setCurrentPage={setCurrentPage} currentPage={currentPage} setSelectedMemberDetail={setSelectedMemberDetail}/>
+      {openInsertModal && <MemberInsertModal isOpen={openInsertModal} setOpenModal={setOpenInsertModal} selectedMemberDetail={selectedMemberDetail} setCurrentPage={setCurrentPage} currentPage={currentPage} setSelectedMemberDetail={setSelectedMemberDetail}/>}
 
     {/*  회원 등록 모달*/}
-      <MemberRegisterModal isOpen={openRegisterModal} setOpenModal={setOpenRegisterModal} handleRegisterSuccess={handleRegisterSuccess}/>
+      {openRegisterModal && <MemberRegisterModal isOpen={openRegisterModal} setOpenModal={setOpenRegisterModal} handleRegisterSuccess={handleRegisterSuccess}/>}
     </div>
   );
 };
