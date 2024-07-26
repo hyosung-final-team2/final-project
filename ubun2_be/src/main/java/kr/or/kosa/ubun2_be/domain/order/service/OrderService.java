@@ -22,7 +22,7 @@ public interface OrderService {
 
     List<UnifiedOrderResponse> getAllOrdersByMemberId(Long memberId);
 
-    OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long customerId, Long orderId);
+    OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long orderId);
 
     void cancelOrder(Long memberId, CancelOrderRequest cancelOrderRequest);
 }

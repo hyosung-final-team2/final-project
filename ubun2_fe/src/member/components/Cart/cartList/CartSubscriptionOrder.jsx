@@ -7,6 +7,8 @@ const CartSubscriptionOrder = ({ regularOrderProducts, selectedItems, onSelectPr
 
   if (filteredProducts.length === 0) return null;
 
+  const isAnySubscriptionSelected = selectedItems.some(item => filteredProducts.some(product => product.cartProductId === item.cartProductId));
+
   return (
     <div className='flex flex-col w-full gap-3 bg-white'>
       <div className='flex justify-between px-4 pb-2 border-b'>
@@ -14,10 +16,12 @@ const CartSubscriptionOrder = ({ regularOrderProducts, selectedItems, onSelectPr
           <Subscription className='w-5 mr-2' />
           <h2 className='text-lg font-semibold'>정기배송</h2>
         </div>
-        <div className='flex items-center gap-1 font-bold text-main' onClick={onSubscriptionPeriodSelect}>
-          <CalendarDaysIcon className='w-5' />
-          <span>주기 선택하기</span>
-        </div>
+        {isAnySubscriptionSelected && (
+          <div className='flex items-center gap-1 font-bold text-main' onClick={onSubscriptionPeriodSelect}>
+            <CalendarDaysIcon className='w-5' />
+            <span>주기 선택하기</span>
+          </div>
+        )}
       </div>
       <div className='flex flex-col gap-5 pt-2'>
         {filteredProducts.map(product => (

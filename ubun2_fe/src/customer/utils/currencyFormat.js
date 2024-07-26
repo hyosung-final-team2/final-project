@@ -9,7 +9,7 @@ export const formatCurrency = amount => {
   }
 
   if (typeof amount === 'string') {
-    amount = amount.replace(/,/g, '');
+    amount = amount?.replace(/,/g, '');
     amount = parseFloat(amount);
   }
 
@@ -19,7 +19,7 @@ export const formatCurrency = amount => {
 
   const integerAmount = Math.floor(amount);
 
-  return integerAmount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return integerAmount?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
 /**
@@ -36,7 +36,7 @@ export const parseCurrency = amountString => {
     return amountString;
   }
 
-  const cleanedString = amountString.replace(/,/g, '');
+  const cleanedString = amountString?.replace(/,/g, '');
 
   return parseFloat(cleanedString);
 };

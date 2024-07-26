@@ -69,10 +69,8 @@ export const useUpdateCart = () => {
     mutationFn: updateCartQuantity,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['carts'] });
-      toast.success('상품 수량 변경이 완료되었습니다.', successToastStyle);
     },
     onError: error => {
-      toast.error('상품 수량 변경 실패! 다시 시도해주세요.', errorToastStyle);
       console.log('장바구니 물품 수량 변경 실패 : ', error);
     },
   });

@@ -15,6 +15,7 @@ import { errorToastStyle } from '../../api/toastStyle';
 
 const ChoosePayment = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   const { data: cards } = useGetCards();
   const { data: accounts } = useGetAccounts();
   const { data: passwordExists } = useCheckIfPasswordExists();
@@ -65,11 +66,12 @@ const ChoosePayment = () => {
   }, [paymentMethods, selectedPaymentMethodId]);
 
   useEffect(() => {
-    if (paymentMethods.defaultMethod && !selectedPaymentMethodId) {
+    if (!isInitialized && paymentMethods.defaultMethod && !selectedPaymentMethodId) {
       setSelectedPaymentMethodId(paymentMethods.defaultMethod.paymentMethodId);
       setSelectedPaymentMethodType(paymentMethods.defaultMethod.type);
+      setIsInitialized(true);
     }
-  }, []);
+  }, [paymentMethods.defaultMethod, selectedPaymentMethodId, isInitialized]);
 
   const handlePaymentMethodSelect = useCallback(
     method => {
@@ -112,8 +114,8 @@ const ChoosePayment = () => {
         <h2 className='text-[100%] text-gray-500 mb-1 font-bold'>결제 수단 선택</h2>
         <p className='text-[180%] font-bold mb-12'>{`${totals.totalAmount?.toLocaleString()}`}원</p>
 
-        <div className='w-full p-7 pt-6 mb-8 bg-white shadow-sm rounded-2xl '>
-          <p className='text-sm text-gray-500 mb-2'>결제수단</p>
+        <div className='w-full pt-6 mb-8 bg-white shadow-sm p-7 rounded-2xl '>
+          <p className='mb-2 text-sm text-gray-500'>결제수단</p>
           <div className='flex items-center justify-between flex-nowrap'>
             <div className='flex items-center'>
               {selectedPaymentMethod ? selectedPaymentMethod.icon : <div className='w-10 h-10 bg-gray-200 rounded-full'></div>}
