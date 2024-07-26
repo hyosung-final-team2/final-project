@@ -9,4 +9,5 @@ public class PersonalAlarmSendRequest {
     private Long targetMemberId;
     private String title;
     private String content;
+    private String link;
 }

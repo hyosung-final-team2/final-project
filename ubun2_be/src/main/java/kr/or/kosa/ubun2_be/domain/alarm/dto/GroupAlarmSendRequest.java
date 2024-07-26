@@ -9,4 +9,5 @@ public class GroupAlarmSendRequest {
     private Long customerId;
     private String title;
     private String content;
+    private String link;
 }
