@@ -52,8 +52,8 @@ function PageContent({ hasFootNav }) {
           <Route path='order' element={<Order />} />
           <Route path='order-complete' element={<OrderComplete />} />
           <Route path='mypage/order-list' element={<MyOrdersList />} />
-          <Route path='mypage/single-order/:customerId/:orderId' element={<MySingleOrderDetail />} />
-          <Route path='mypage/subscription-order/:customerId/:orderId' element={<MySubscriptionOrderDetail />} />
+          <Route path='mypage/single-order/:orderId' element={<MySingleOrderDetail />} />
+          <Route path='mypage/subscription-order/:orderId' element={<MySubscriptionOrderDetail />} />
         </Routes>
       </main>
 

@@ -330,8 +330,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long customerId, Long orderId) {
-        memberService.isExistMemberCustomer(memberId, customerId);
+    public OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long orderId) {
 
         Order findOrder = orderRepository.findByOrderIdAndMemberMemberId(orderId, memberId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));

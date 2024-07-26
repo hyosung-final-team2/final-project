@@ -1,3 +1,5 @@
+import OrderStatusTextBadge from '../badge/OrderStatusTextBadge';
+
 const ProductItemReadOnly = ({
   productImagePath,
   productDescription,
@@ -10,6 +12,7 @@ const ProductItemReadOnly = ({
   productImageOriginalName,
   totalPrice,
   isComplete = false,
+  orderProductStatus,
 }) => {
   const finalPrice = price || productPrice || 0;
   const finalDiscount = discount || productDiscount || 0;
@@ -38,6 +41,7 @@ const ProductItemReadOnly = ({
               {finalDiscount > 0 ? <span className='text-red-500'>{`${finalDiscount}% 할인`}</span> : ''}
             </div>
             {isComplete && <p className='text-sm text-blue-600'>결제완료</p>}
+            <div className='text-xs'>{orderProductStatus && <OrderStatusTextBadge status={orderProductStatus} />}</div>
           </div>
         </div>
       </div>

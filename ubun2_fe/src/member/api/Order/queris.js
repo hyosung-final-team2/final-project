@@ -3,17 +3,19 @@ import toast from 'react-hot-toast';
 import { errorToastStyle, successToastStyle } from '../toastStyle';
 import { createOrder, getOrderDetail, getOrderList, getSubscriptionOrder, updateOrderCancel, updateSubscriptionCancel } from './order';
 
-export const useCreateOrder = () => {
+export const useCreateOrder = navigate => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: data => createOrder(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
       toast.success('주문이 완료되었습니다.', successToastStyle);
+      navigate('/member/app/mypage/order-list', { replace: true }); // 성공 시 주문목록 리스트로 이동
     },
     onError: error => {
       toast.error('주문에 실패했습니다. 다시 시도해주세요.', errorToastStyle);
       console.error('Order creation failed:', error);
+      navigate('/member/app/home', { replace: true }); // 실패 시 홈으로 이동
     },
   });
 };
@@ -26,30 +28,48 @@ export const useGetOrderList = () => {
 };
 
 export const useGetOrderDetail = (customerId, orderId) => {
+  console.log(customerId, orderId);
   return useQuery({
     queryKey: ['orders', customerId, orderId],
-    queryFn: () => getOrderDetail(customerId, orderId),
-    enabled: !!customerId && !!orderId,
+    queryFn: () => getOrderDetail(orderId),
+    enabled: !!orderId,
   });
 };
 
-export const useGetSubscriptionOrderDetail = (customerId, orderId) => {
+export const useGetSubscriptionOrderDetail = subscriptionOrderId => {
   return useQuery({
-    queryKey: ['subscriptionOrder', customerId, orderId],
-    queryFn: () => getSubscriptionOrder(customerId, orderId),
-    enabled: !!customerId && !!orderId,
+    queryKey: ['subscriptionOrder', subscriptionOrderId],
+    queryFn: () => getSubscriptionOrder(subscriptionOrderId),
+    enabled: !!subscriptionOrderId,
   });
 };
 
-export const useUpdateCancelOrder = (customerId, orderId) => {
+export const useUpdateCancelOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: data => updateOrderCancel(data), // TODO: invalidateQueries 적용하기
+    mutationFn: ({ customerId, orderId }) => updateOrderCancel({ customerId, orderId }),
+    onSuccess: ({ customerId, orderId }) => {
+      queryClient.invalidateQueries({ queryKey: ['orders', customerId, orderId] });
+      toast.success('주문이 성공적으로 취소되었습니다.', successToastStyle);
+    },
+    onError: error => {
+      toast.error('주문 취소에 실패했습니다. 다시 시도해주세요.', errorToastStyle);
+      console.error('Failed to cancel order:', error);
+    },
   });
 };
 
-export const useUpdateSuscriptionCancelOrder = (customerId, orderId) => {
+export const useUpdateSuscriptionCancelOrder = () => {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: data => updateSubscriptionCancel(data), // TODO: invalidateQueries 적용하기
+    mutationFn: data => updateSubscriptionCancel(data),
+    onSuccess: ({ orderId, customerId, subscriptionOrderId }) => {
+      queryClient.invalidateQueries({ queryKey: ['subscriptionOrder', customerId, subscriptionOrderId] });
+      toast.success('정기주문 상품이 수정되었습니다.', successToastStyle);
+    },
+    onError: error => {
+      toast.error('정기주문 상품 수정에 실패했습니다. 다시 시도해주세요.', errorToastStyle);
+      console.error('Failed to update subscription order:', error);
+    },
   });
 };

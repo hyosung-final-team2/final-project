@@ -51,7 +51,7 @@ public class SubscriptionOrderDetailResponse {
         calculateOrderAmounts(order);
     }
 
-    public SubscriptionOrderDetailResponse(SubscriptionOrder order, int latestCycleNumber, CardPayment cardPayment) {
+    public SubscriptionOrderDetailResponse(SubscriptionOrder order, CardPayment cardPayment, int latestCycleNumber) {
         this(order, latestCycleNumber);
         this.paymentType = "CARD";
         this.cardCompanyName = cardPayment.getCardCompanyName();
@@ -59,14 +59,13 @@ public class SubscriptionOrderDetailResponse {
         this.paymentMethodNickname = cardPayment.getPaymentMethodNickname();
     }
 
-    public SubscriptionOrderDetailResponse(SubscriptionOrder order, int latestCycleNumber, AccountPayment accountPayment) {
+    public SubscriptionOrderDetailResponse(SubscriptionOrder order, AccountPayment accountPayment, int latestCycleNumber) {
         this(order, latestCycleNumber);
         this.paymentType = "ACCOUNT";
         this.accountNumber = accountPayment.getAccountNumber();
         this.bankName = accountPayment.getBankName();
         this.paymentMethodNickname = accountPayment.getPaymentMethodNickname();
     }
-
     private void calculateOrderAmounts(SubscriptionOrder order) {
         this.orderAmount = subscriptionOrderProducts.stream()
                 .mapToInt(op -> op.getPrice() * op.getQuantity())
