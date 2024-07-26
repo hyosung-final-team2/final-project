@@ -56,7 +56,7 @@ function PageContent({ hasFootNav }) {
 
       {/* 회원 가입 완료 모달*/}
       <SlideUpModal isOpen={isAlarmOpen} headerText='미확인 알림' setIsModalOpen={setIsAlarmOpen} buttonText='확인' buttonStyle={modalButtonStyle}>
-        <Notification />
+        <Notification setIsAlarmOpen={setIsAlarmOpen}/>
       </SlideUpModal>
     </div>
   );

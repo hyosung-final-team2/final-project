@@ -45,8 +45,7 @@ function MemHeader({setIsAlarmOpen}) {
 
       onMessage(messaging, payload => {
         console.log('Message received. ', payload);
-        console.log(payload.data?.title);
-        console.log(payload.data?.content);
+        if (payload.data?.receiver === "CUSTOMER") return;
         if (payload.data?.content.split(" ")[1] === "승인") {
           toast.success(
             <div>
