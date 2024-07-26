@@ -1,9 +1,11 @@
 import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircleIcon';
 import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useGetMyAddresses } from '../../api/Address/queries';
 import { useCreateOrder } from '../../api/Order/queris';
 import { useGetAccount, useGetCard } from '../../api/Payment/queries';
+import { successToastStyle } from '../../api/toastStyle';
 import BottomButton from '../../components/common/button/BottomButton';
 import DoubleBottomButton from '../../components/common/button/DoubleBottomButton';
 import PaymentSummaryCompleted from '../../components/common/paymentSummary/PaymentSummaryCompleted';
@@ -12,8 +14,6 @@ import OrderCompleteStore from '../../components/OrderComplete/OrderCompleteStor
 import useModalStore from '../../store/modalStore';
 import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
-import toast from 'react-hot-toast';
-import { successToastStyle } from '../../api/toastStyle';
 
 const OrderComplete = () => {
   const { selectedItems, totals, clearCart } = useOrderItemsStore();
@@ -87,7 +87,7 @@ const OrderComplete = () => {
             <OrderCompleteStore
               store={{
                 ...store,
-                orderType: '단건 주문',
+                orderType: store.intervalDays > 0 ? '정기 주문' : '단건 주문',
                 products: store.cartProducts.map(product => ({
                   ...product,
                   ...orderData

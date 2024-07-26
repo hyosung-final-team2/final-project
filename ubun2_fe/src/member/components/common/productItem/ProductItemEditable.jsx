@@ -18,10 +18,7 @@ const ProductItemEditable = ({
   onQuantityChange,
   onDelete,
 }) => {
-  const discountRate = productDiscount / 100;
-  const discountedUnitPrice = productPrice * (1 - discountRate);
-  const ProductAmount = discountedUnitPrice * quantity;
-  const roundedProductAmount = Math.round(ProductAmount);
+  const discountedPrice = Math.round((productPrice * (1 - productDiscount / 100)) / 10) * 10 * quantity;
 
   return (
     <div className='flex items-start justify-between px-4 mb-4'>
@@ -33,13 +30,13 @@ const ProductItemEditable = ({
             <h3 className='font-semibold'>{productDescription}</h3>
             <div className='flex gap-3'>
               <p>{productName}</p>
-              <span>/</span>
-              <p>{`${quantity} 개`}</p>
             </div>
+            <p className='font-bold'>
+              <span className='text-red-500 mr-0.5'>{productDiscount}%</span> {discountedPrice.toLocaleString()}원
+            </p>
           </div>
           <div className='flex items-center justify-between mt-2'>
             <QuantityButton initialQuantity={quantity} onQuantityChange={onQuantityChange} cartProductId={cartProductId} />
-            <p className='text-lg font-bold'>{`${roundedProductAmount?.toLocaleString()} 원`}</p>
           </div>
         </div>
         <XMarkIcon className='w-5 ml-2 cursor-pointer' onClick={() => onDelete(cartProductId)} />

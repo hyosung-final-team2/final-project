@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useGetOrderList } from '../../api/Order/queris';
+import SlideUpModal from '../../components/common/SlideUpModal';
 import OrderList from '../../components/Order/OrderMypage/OrderList';
 import UserInfo from '../../components/Order/OrderMypage/UserInfo';
 import useModalStore from '../../store/modalStore';
-import SlideUpModal from '../../components/common/SlideUpModal';
-import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon';
 
 const MyOrdersList = () => {
   const { data: orderListResponse, isLoading, isError } = useGetOrderList();
@@ -50,19 +49,13 @@ const MyOrdersList = () => {
   if (isError) return <div>에러가 발생했습니다.</div>;
 
   return (
-    <div className='flex flex-col gap-5 p-4 bg-gray-100'>
+    <div className='flex flex-col gap-5 p-4 bg-white'>
       <UserInfo memberInfo={memberInfo} />
-      <div className='flex items-center w-full gap-3 mb-4 font-bold'>
-        <div onClick={() => setModalState(true)} className='inline-flex p-2 border-none rounded-md text-main bg-main bg-opacity-5'>
-          <input type='input' value={'기간 선택'} className='min-w-20 bg-transparent cursor-pointer max-w-[10dvw]' readOnly />
-          <ChevronDownIcon className='w-5' />
-        </div>
-      </div>
 
       {singleOrders.length > 0 && (
         <>
-          <div className='flex items-center gap-3 mt-3 text-gray-500'>
-            <h5 className='mb-2 text-3xl font-semibold'>{'단건 주문'}</h5>
+          <div className='flex items-center gap-3 mt-5 text-main'>
+            <h5 className='text-3xl font-semibold'>{'단건 주문'}</h5>
             <span>총 {singleOrders.length}건</span>
           </div>
           {singleOrders.map(order => (
@@ -73,8 +66,8 @@ const MyOrdersList = () => {
 
       {subscriptionOrders.length > 0 && (
         <>
-          <div className='flex items-center gap-3 text-gray-500'>
-            <h5 className='mb-2 text-3xl font-semibold'>{'정기 주문'}</h5>
+          <div className='flex items-center gap-3 mt-5 text-main'>
+            <h5 className='text-3xl font-semibold'>{'정기 주문'}</h5>
             <span>총 {subscriptionOrders.length}건</span>
           </div>
           {subscriptionOrders.map(order => (
