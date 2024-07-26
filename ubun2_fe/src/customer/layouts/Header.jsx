@@ -38,8 +38,7 @@ const Header = () => {
 
       onMessage(messaging, payload => {
         console.log('Message received. ', payload);
-        console.log(payload.data?.title);
-        console.log(payload.data?.content);
+        if (payload.data?.receiver === "MEMBER") return;
         if (payload.data?.title === "단건주문" || payload.data?.title === "정기주문" ) {
           toast.success(
               <div>
