@@ -35,11 +35,13 @@ const AddressSearchMobilePopUp = () => {
     setTimeout(() => debouncedFetchAddress(newTerm), 100);
   };
 
+  // 주소 선택 시 데이터 전송
   const postData = result => {
     setSelectedAddress(result);
     setAddressData(prevData => ({
       ...prevData,
-      address: result.roadAddr,
+      address: `${result.roadAddrPart1}`,
+      zipNo: result.zipNo,
     }));
     navigate(-1);
   };
