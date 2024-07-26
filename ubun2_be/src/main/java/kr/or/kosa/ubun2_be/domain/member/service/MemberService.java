@@ -17,7 +17,11 @@ public interface MemberService {
 
     void updateMemberFcmToken(Long memberId, FcmTokenRequest fcmTokenRequest);
 
-    void simpleCheck(Long memberId, PaymentPasswordRequest request);
+    boolean simpleCheck(Long memberId, PaymentPasswordRequest request);
+
+    void registerSimplePassword(Long memberId, PaymentPasswordRequest request);
+
+    void updateSimplePassword(Long memberId, PaymentPasswordRequest request);
 
     MemberInfoResponse memberInfo(Long memberId);
 }

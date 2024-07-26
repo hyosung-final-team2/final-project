@@ -32,3 +32,12 @@ export const deletePayment = async paymentId => {
 export const updatePayment = async (paymentId, data) => {
   return await privateFetch.put(`/members/payments/${paymentId}`, data);
 };
+
+export const checkPassword = async paymentPassword => {
+  console.log(paymentPassword);
+  return await privateFetch.post('/members/simplecheck', { paymentPassword });
+};
+
+export const setNewPassword = async paymentPassword => {
+  return await privateFetch.post('/members/simplepassword', { paymentPassword });
+};

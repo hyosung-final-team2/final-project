@@ -10,13 +10,16 @@ export const getOrderList = async () => {
   return res;
 };
 
-export const getOrderDetail = async (customerId, orderId) => {
-  const res = await privateFetch.get(`/members/orders/${customerId}/${orderId}`);
+export const getOrderDetail = async orderId => {
+  console.log('orderId:', orderId);
+  const res = await privateFetch.get(`/members/orders/${orderId}`);
+  console.log('res:', res);
   return res;
 };
 
-export const getSubscriptionOrder = async (customerId, orderId) => {
-  const res = await privateFetch.get(`/members/orders/subscription/${customerId}/${orderId}`);
+export const getSubscriptionOrder = async orderId => {
+  const res = await privateFetch.get(`/members/orders/subscription/${orderId}`);
+  console.log(res);
   return res;
 };
 

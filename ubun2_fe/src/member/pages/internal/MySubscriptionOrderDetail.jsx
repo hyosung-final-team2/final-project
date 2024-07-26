@@ -1,7 +1,9 @@
-import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
-import { Select } from 'flowbite-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Select } from 'flowbite-react';
+import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
+import { formatAccountNumber } from '../../../customer/utils/accountFormat';
+import { formatCardNumber } from '../../../customer/utils/cardFormat';
 import { useGetSubscriptionOrderDetail, useUpdateSuscriptionCancelOrder } from '../../api/Order/queris';
 import OrderStatusBadge from '../../components/common/badge/OrderStatusBadge';
 import DoubleBottomButton from '../../components/common/button/DoubleBottomButton';
@@ -12,8 +14,8 @@ import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
 
 const MySubscriptionOrderDetail = () => {
-  const { customerId, orderId } = useParams();
-  const { data: orderResponse, isLoading, isError, refetch } = useGetSubscriptionOrderDetail(customerId, orderId);
+  const { orderId } = useParams();
+  const { data: orderResponse, isLoading, isError } = useGetSubscriptionOrderDetail(orderId);
   const [orderData, setOrderData] = useState(null);
   const [selectedCycle, setSelectedCycle] = useState(1);
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -30,6 +32,10 @@ const MySubscriptionOrderDetail = () => {
       setModalState(false);
     }
   }, [orderResponse]);
+
+  const customerId = useMemo(() => {
+    return orderData?.subscriptionOrderProducts?.[0]?.customerId;
+  }, [orderData]);
 
   const filteredProducts = useMemo(() => {
     if (!orderData) return [];
@@ -50,10 +56,19 @@ const MySubscriptionOrderDetail = () => {
   };
 
   const handleProductSelect = subscriptionOrderProductId => {
-    setSelectedProducts(prev =>
-      prev.includes(subscriptionOrderProductId) ? prev.filter(id => id !== subscriptionOrderProductId) : [...prev, subscriptionOrderProductId]
-    );
+    const product = orderData.subscriptionOrderProducts.find(item => item.subscriptionOrderProductId === subscriptionOrderProductId);
+    if (product && product.orderProductStatus !== 'REJECTED') {
+      setSelectedProducts(prev =>
+        prev.includes(subscriptionOrderProductId) ? prev.filter(id => id !== subscriptionOrderProductId) : [...prev, subscriptionOrderProductId]
+      );
+    }
   };
+
+  const editableProducts = useMemo(() => {
+    return filteredProducts.filter(product => product.orderProductStatus !== 'REJECTED');
+  }, [filteredProducts]);
+
+  const hasEditableProducts = editableProducts.length > 0;
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -70,27 +85,34 @@ const MySubscriptionOrderDetail = () => {
   };
 
   const handleRemoveProducts = () => {
-    const validProductIds = selectedProducts.filter(id => id !== null);
+    const validProductIds = selectedProducts.filter(id => {
+      const product = orderData.subscriptionOrderProducts.find(item => item.subscriptionOrderProductId === id);
+      return product && product.orderProductStatus !== 'REJECTED';
+    });
 
     if (validProductIds.length === 0) {
       console.log('선택된 유효한 상품이 없습니다.');
       return;
     }
 
-    updateCancelSubscriptionOrderMutation.mutate(
-      {
-        orderId: Number(orderId),
-        customerId: Number(customerId),
-        subscriptionOrderProductIds: validProductIds,
-      },
-      {
-        onSuccess: () => {
-          setModalState(false);
-          setIsEditing(false);
-          setSelectedProducts([]);
+    if (customerId) {
+      updateCancelSubscriptionOrderMutation.mutate(
+        {
+          orderId: Number(orderId),
+          customerId: Number(customerId),
+          subscriptionOrderProductIds: validProductIds,
         },
-      }
-    );
+        {
+          onSuccess: () => {
+            setModalState(false);
+            setIsEditing(false);
+            setSelectedProducts([]);
+          },
+        }
+      );
+    } else {
+      console.error('customerId is not available');
+    }
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -98,20 +120,19 @@ const MySubscriptionOrderDetail = () => {
   if (!orderData) return null;
 
   const paymentInfo = {
-    paymentName: orderData.paymentType === 'CARD' ? orderData.cardCompanyName : orderData.bankName,
-    paymentContent: orderData.paymentType === 'CARD' ? orderData.cardNumber : orderData.accountNumber,
+    paymentName: orderData?.paymentType === 'CARD' ? orderData?.cardCompanyName : orderData?.bankName,
+    paymentContent: orderData?.paymentType === 'CARD' ? formatCardNumber(orderData?.cardNumber) : formatAccountNumber(orderData?.accountNumber),
   };
 
   return (
-    // TODO: 취소 처리 시, 재 렌더링 & 페이지 뱃지 만들어서 취소된 상품 구분 지어주기
-    <div className='h-full bg-gray-100'>
+    <div className='bg-gray-100'>
       <div className='flex flex-col p-4'>
         <div className='flex items-center justify-between py-4 text-main'>
           <h1 className='text-2xl font-bold'>주문번호 {orderId}</h1>
           <OrderStatusBadge status='SUBSCRIPTION' />
         </div>
 
-        <div className='flex items-center justify-between'>
+        <div className='flex items-center justify-start'>
           <div className='mb-4'>
             <label htmlFor='cycle-select' className='block mb-2 text-sm font-medium text-gray-500'>
               * 정기주문 회차
@@ -124,22 +145,18 @@ const MySubscriptionOrderDetail = () => {
               ))}
             </Select>
           </div>
-
-          <div className='flex flex-col items-end text-lg text-main'>
-            <p>{`${selectedCycle} / ${orderData.latestCycleNumber} 회차`}</p>
-          </div>
         </div>
 
-        <div className='px-4 py-8 mb-4 bg-white rounded-3xl'>
+        <div className='px-4 py-6 mb-2 bg-white rounded-3xl'>
           <div className='flex items-center justify-between mb-4'>
             <h2 className='text-xl font-bold text-gray-600'>주문 내역</h2>
-            {isDeliveryEditable && !isEditing && (
+            {isDeliveryEditable && !isEditing && hasEditableProducts && (
               <span className='flex gap-3 text-gray-400 underline' onClick={handleEdit}>
                 <PencilSquareIcon className='w-5 h-5' />
               </span>
             )}
 
-            {isEditing && (
+            {isEditing && hasEditableProducts && (
               <div className='flex gap-3 text-gray-400 underline'>
                 <span
                   onClick={() => selectedProducts.length > 0 && setModalState(true)}
@@ -154,13 +171,13 @@ const MySubscriptionOrderDetail = () => {
             )}
           </div>
           {filteredProducts.map(product =>
-            isEditing ? (
+            isEditing && product.orderProductStatus !== 'REJECTED' ? (
               <SubscriptionProductItemEditable
                 key={product.subscriptionOrderProductId}
                 {...product}
                 isSelected={selectedProducts.includes(product.subscriptionOrderProductId)}
-                onSelect={() => product.orderProductStatus !== 'DENIED' && handleProductSelect(product.subscriptionOrderProductId)}
-                disabled={product.orderProductStatus === 'DENIED'}
+                onSelect={() => handleProductSelect(product.subscriptionOrderProductId)}
+                disabled={false}
               />
             ) : (
               <ProductItemReadOnly key={product.subscriptionOrderProductId} {...product} orderProductStatus={product.orderProductStatus} />

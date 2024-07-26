@@ -3,9 +3,11 @@ import MyPagePaymentItem from '../../components/PaymentMethod/MyPagePaymentItem'
 import PaymentItem from '../../components/PaymentMethod/PaymentItem';
 import SlideUpModal from '../../components/common/SlideUpModal';
 import { getIcon, getPng } from '../../components/PaymentMethod/CardList';
-import { useGetCards, useGetAccounts, useDeletePayment, useUpdatePayment } from '../../api/Payment/queries';
+import { useGetCards, useGetAccounts, useDeletePayment, useUpdatePayment, useCheckIfPasswordExists } from '../../api/Payment/queries';
 import { useNavigate } from 'react-router-dom';
 import useModalStore from '../../store/modalStore';
+import BottomButton from '../../components/common/button/BottomButton';
+import usePaymentStore from '../../store/Payment/PaymentStore';
 
 const MyPaymentsList = () => {
   const [activeTab, setActiveTab] = useState('creditCard');
@@ -19,16 +21,22 @@ const MyPaymentsList = () => {
   const { mutate: deletePayment } = useDeletePayment();
   const { mutate: updatePayment } = useUpdatePayment();
   const { modalState, setModalState } = useModalStore();
+  const { data: passwordExists } = useCheckIfPasswordExists();
+  const { setIsEditPassword } = usePaymentStore();
 
   const navigate = useNavigate();
-
   const creditCards = cards?.data?.data || [];
   const bankAccounts = accounts?.data?.data || [];
-
-  console.log('creditCards', creditCards);
-  console.log('bankAccounts', bankAccounts);
+  const checkPasswordExists = passwordExists?.data?.data || false;
+  const buttonStyle = 'text-gray-800 bg-gray-200 mb-3';
 
   const renderPaymentItems = items => {
+    if (items?.length === 0)
+      return (
+        <div className='flex-grow flex items-center justify-center mb-[60%]'>
+          <p className='text-gray-500 text-lg'>등록된 {activeTab === 'bankAccount' ? '계좌가' : '카드가'} 없어요</p>
+        </div>
+      );
     return items.map((item, index) => (
       <MyPagePaymentItem
         key={index}
@@ -73,6 +81,7 @@ const MyPaymentsList = () => {
           setSelectedItem(null);
         },
         onError: error => {
+          ß;
           console.error(error);
         },
       });
@@ -86,9 +95,19 @@ const MyPaymentsList = () => {
     }
   }, [modalState]);
 
+  const handleSetPassword = () => {
+    if (checkPasswordExists) {
+      setIsEditPassword(true);
+      navigate('/member/app/password/update');
+    } else {
+      setIsEditPassword(false);
+      navigate('/member/app/password/set');
+    }
+  };
+
   return (
-    <div className='flex flex-col h-full pt-3 bg-white'>
-      <div className='flex justify-center justify-around mt-3 mb-6'>
+    <div className='flex flex-col h-full pt-3 bg-white relative'>
+      <div className='flex justify-around mt-3 mb-6'>
         <div className='mr-4 cursor-pointer' onClick={() => setActiveTab('creditCard')}>
           <h2 className={`text-2xl font-bold ${activeTab === 'creditCard' ? 'text-main' : 'text-gray-400'}`}>신용카드</h2>
           {activeTab === 'creditCard' && <div className='h-1 mt-2 bg-indigo-700'></div>}
@@ -99,15 +118,16 @@ const MyPaymentsList = () => {
         </div>
       </div>
 
-      <div className='px-4'>
+      <div className='px-4 flex-1 flex flex-col overflow-y-scroll relative h-full'>
         {activeTab === 'creditCard' && renderPaymentItems(creditCards)}
         {activeTab === 'bankAccount' && renderPaymentItems(bankAccounts)}
       </div>
 
-      <button className='py-4 mx-6 mt-4 font-semibold text-gray-800 bg-gray-200 rounded-2xl' onClick={handleOnButtonClick}>
-        {activeTab === 'bankAccount' ? '계좌 추가하기' : '카드 추가하기'}
-      </button>
-
+      <div className='p-7 bg-transparent'></div>
+      <BottomButton buttonText={activeTab === 'bankAccount' ? '계좌 추가하기' : '카드 추가하기'} buttonFunc={handleOnButtonClick} buttonStyle={buttonStyle} />
+      <div className='z-10 self-center mb-[4%] text-gray-500 border-b border-gray-300 text-sm cursor-pointer' onClick={handleSetPassword}>
+        간편비밀번호 설정
+      </div>
       {isEdit ? (
         <SlideUpModal
           isOpen={modalState}

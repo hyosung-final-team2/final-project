@@ -7,6 +7,7 @@ import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,8 +52,25 @@ public class MemberController {
     @PostMapping("/simplecheck")
     public ResponseDto<?> simpleCheck(@RequestBody PaymentPasswordRequest request,
                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        memberService.simpleCheck(customUserDetails.getUserId(),request);
-        return ResponseDto.ok(null,"결제 비밀번호 일치 확인");
+        boolean result = memberService.simpleCheck(customUserDetails.getUserId(), request);
+        return ResponseDto.ok(result,"결제 비밀번호 체크 완료");
+    }
+
+    @Operation(summary = "회원의 간편 결제 비밀번호 등록")
+    @PostMapping("/simplepassword")
+    public ResponseDto<?> simplePassword(@RequestBody PaymentPasswordRequest request,
+                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        memberService.registerSimplePassword(customUserDetails.getUserId(), request);
+        return ResponseDto.ok(null,"결제 비밀번호 등록 완료");
+    }
+
+    @Transactional
+    @Operation(summary = "회원의 간편 결제 비밀번호 수정")
+    @PutMapping("/simplepassword")
+    public ResponseDto<?> updateSimplePassword(@RequestBody PaymentPasswordRequest request,
+                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        memberService.updateSimplePassword(customUserDetails.getUserId(), request);
+        return ResponseDto.ok(null,"결제 비밀번호 수정 완료");
     }
 
     @Operation(summary = "로그인시 필요한 회원 정보")

@@ -15,6 +15,7 @@ import EditPayment from '../pages/internal/EditPayment';
 import MyPaymentsList from '../pages/internal/MyPaymentsList';
 import Order from '../pages/internal/Order';
 import InputPassword from '../pages/internal/InputPassword';
+import SetPassword from '../pages/internal/SetPassword.jsx';
 import OrderComplete from '../pages/internal/OrderComplete';
 import MyOrdersList from '../pages/internal/MyOrdersList';
 import MySingleOrderDetail from '../pages/internal/MySingleOrderDetail';
@@ -46,11 +47,13 @@ function PageContent({ hasFootNav }) {
           <Route path='payments/edit' element={<EditPayment />} />
           <Route path='mypage/payment-list' element={<MyPaymentsList />} />
           <Route path='password' element={<InputPassword />} />
+          <Route path='password/set' element={<SetPassword />} />
+          <Route path='password/update' element={<SetPassword />} />
           <Route path='order' element={<Order />} />
           <Route path='order-complete' element={<OrderComplete />} />
           <Route path='mypage/order-list' element={<MyOrdersList />} />
-          <Route path='mypage/single-order/:customerId/:orderId' element={<MySingleOrderDetail />} />
-          <Route path='mypage/subscription-order/:customerId/:orderId' element={<MySubscriptionOrderDetail />} />
+          <Route path='mypage/single-order/:orderId' element={<MySingleOrderDetail />} />
+          <Route path='mypage/subscription-order/:orderId' element={<MySubscriptionOrderDetail />} />
         </Routes>
       </main>
 
