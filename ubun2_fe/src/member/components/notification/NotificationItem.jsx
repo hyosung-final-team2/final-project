@@ -1,6 +1,9 @@
 import {useReadNotification} from "../../api/notification/queris.js";
+import {useNavigate} from "react-router-dom";
 
-const NotificationItem = ({id, title, content, timestamp}) => {
+const NotificationItem = ({id, title, content, timestamp, link, setIsAlarmOpen}) => {
+    const navigate = useNavigate();
+    // const {}
 
     const timeAgo = (timestamp) => {
         const now = new Date();
@@ -24,9 +27,20 @@ const NotificationItem = ({id, title, content, timestamp}) => {
 
     const {mutate: readMutate} = useReadNotification(id)
 
+    const extractPath = (url) => {
+        const parts = url?.split('/');
+        // 나중에 배포 url로 변경
+        const index = parts?.findIndex(part => part?.includes('localhost:5173'));
+        if (index === -1) {
+            return '';
+        }
+        return '/' + parts?.slice(index + 1).join('/');
+    }
+
     const handleNotificationClick = () => {
         readMutate()
-        // TODO : 나중에 링크 받으면 거기로 navigate 하는 부분
+        navigate(extractPath(link))
+        setIsAlarmOpen(false)
     }
 
     return (
