@@ -38,7 +38,6 @@ const useOrderDataStore = create(
     {
       // 영속성 설정
       name: 'order-data-storage',
-      getStorage: () => localStorage,
     }
   )
 );
