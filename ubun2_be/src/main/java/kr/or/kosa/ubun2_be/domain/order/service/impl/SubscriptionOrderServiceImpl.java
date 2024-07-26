@@ -10,18 +10,21 @@ import kr.or.kosa.ubun2_be.domain.financial.institution.service.BankService;
 import kr.or.kosa.ubun2_be.domain.financial.institution.service.CardCompanyService;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.service.MemberService;
-import kr.or.kosa.ubun2_be.domain.order.dto.RemoveSubscriptionOrderProductRequest;
-import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderDetailResponse;
-import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderProductRequest;
-import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderRequest;
+import kr.or.kosa.ubun2_be.domain.order.dto.*;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
+import kr.or.kosa.ubun2_be.domain.order.exception.OrderException;
+import kr.or.kosa.ubun2_be.domain.order.exception.OrderExceptionType;
 import kr.or.kosa.ubun2_be.domain.order.repository.SubscriptionOrderProductRepository;
 import kr.or.kosa.ubun2_be.domain.order.repository.SubscriptionOrderRepository;
 import kr.or.kosa.ubun2_be.domain.order.service.SubscriptionOrderService;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.AccountPayment;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodException;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodExceptionType;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.AccountPaymentRepository;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.CardPaymentRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.service.PaymentMethodService;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderProductStatus;
@@ -53,6 +56,8 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
     private final AddressService addressService;
     private final CardCompanyService cardCompanyService;
     private final AlarmService alarmService;
+    private final CardPaymentRepository cardPaymentRepository;
+    private final AccountPaymentRepository accountPaymentRepository;
 
     @Override
     @Transactional
@@ -258,7 +263,7 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             int availableStock = inventoryService.getStock(product.getProduct().getProductId());
             if (availableStock < product.getQuantity()) {
                 // 재고부족한 상품이름 (고객)
-                alarmService.sendNoStock(product,orderId);
+                alarmService.sendNoStock(product, orderId);
                 throw new ProductException(ProductExceptionType.INSUFFICIENT_STOCK);
             }
         }
@@ -329,41 +334,51 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
     }
 
     @Override
-    public SubscriptionOrderDetailResponse getSubscriptionOrderByMemberIdAndOrderId(Long memberId, Long customerId, Long orderId) {
-        memberService.isExistMemberCustomer(memberId, customerId);
-
+    public SubscriptionOrderDetailResponse getSubscriptionOrderByMemberIdAndOrderId(Long memberId, Long orderId) {
         SubscriptionOrder findSubscriptionOrder = subscriptionOrderRepository.findBySubscriptionOrderIdAndMemberMemberId(orderId, memberId)
-                .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
         int latestCycleNumber = findSubscriptionOrder.getMaxCycleNumber();
+        PaymentMethod paymentMethod = findSubscriptionOrder.getPaymentMethod();
 
-        return new SubscriptionOrderDetailResponse(findSubscriptionOrder, latestCycleNumber);
+        if (paymentMethod == null) {
+            return new SubscriptionOrderDetailResponse(findSubscriptionOrder, latestCycleNumber);
+        }
+
+        Long paymentMethodId = paymentMethod.getPaymentMethodId();
+        String paymentMethodType = paymentMethod.getPaymentType();
+
+        switch (paymentMethodType) {
+            case "CARD" -> {
+                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new SubscriptionOrderDetailResponse(findSubscriptionOrder, cardPayment, latestCycleNumber);
+            }
+            case "ACCOUNT" -> {
+                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new SubscriptionOrderDetailResponse(findSubscriptionOrder, accountPayment, latestCycleNumber);
+            }
+            default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
+        }
     }
 
-    @Override
     @Transactional
     public void removeSubscriptionOrderProducts(Long memberId, RemoveSubscriptionOrderProductRequest request) {
-        // 회원과 고객이 존재하는지 확인
         memberService.isExistMemberCustomer(memberId, request.getCustomerId());
 
-        // 회원의 최신 정기 주문을 가져옴
-        List<SubscriptionOrder> orders = subscriptionOrderRepository.findLatestByMemberId(memberId);
-        if (orders.isEmpty()) {
-            throw new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT);
-        }
-        SubscriptionOrder latestOrder = orders.get(0);
+        SubscriptionOrder order = subscriptionOrderRepository
+                .findFutureOrderByIdAndMemberId(request.getOrderId(), memberId)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_OR_PAST_ORDER));
 
-        // 요청에 있는 제품 ID를 반복하여 상태를 REJECTED로 변경
         for (Long productId : request.getSubscriptionOrderProductIds()) {
-            SubscriptionOrderProduct productToRemove = latestOrder.getSubscriptionOrderProducts().stream()
+            SubscriptionOrderProduct productToRemove = order.getSubscriptionOrderProducts().stream()
                     .filter(product -> product.getSubscriptionOrderProductId().equals(productId))
                     .findFirst()
                     .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
 
             productToRemove.changeSubscriptionOrderProductStatus(OrderProductStatus.REJECTED);
         }
-
-        // 업데이트된 정기 주문을 저장
-        subscriptionOrderRepository.save(latestOrder);
+        subscriptionOrderRepository.save(order);
     }
 }
