@@ -9,6 +9,12 @@ const useAddressStore = create(set => ({
   setSelectedMemberId: memberId => set({ selectedMemberId: memberId }),
   isUpdate: false,
   setIsUpdate: state => set({ isUpdate: state }),
+
+  modalAddressId: null,
+  setModalAddressId: id => set({ modalAddressId: id }),
+
+  openMemberAddressModal: false,
+  setOpenMemberAddressModal: state => set({ openMemberAddressModal: state }),
 }));
 
 export default useAddressStore;

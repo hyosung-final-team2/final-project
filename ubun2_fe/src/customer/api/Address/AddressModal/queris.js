@@ -18,7 +18,7 @@ export const useDeleteAddress = currentPage => {
   return useMutation({
     mutationFn: addressId => deleteAddress(addressId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['address'] }); // TODO: 코너 케이스 - 해당 페이지의 마지막 row 라면 체크해서 하나 이전 페이지 갱신해야함
+      queryClient.invalidateQueries({ queryKey: ['address'] });
       toast.success('주소지를 성공적으로 삭제했습니다.');
     },
     onError: error => {

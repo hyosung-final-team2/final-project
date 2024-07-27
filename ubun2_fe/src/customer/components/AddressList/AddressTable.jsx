@@ -15,17 +15,21 @@ import { getAddresses } from '../../api/Address/AddressTable/addressTable.js';
 import useAddressStore from '../../store/Address/useAddressStore.js';
 import DynamicTableBody from '../common/Table/DynamicTableBody.jsx';
 import AddressRegistrationModal from './AddressRegistrationModal.jsx';
+import useAddressTableStore from '../../store/Address/addressTableStore.js';
 
 const AddressTable = () => {
-  const [openMemberAddressModal, setOpenMemberAddressModal] = useState(false);
+  // const [openMemberAddressModal, setOpenMemberAddressModal] = useState(false);
   const [openAddressRegistration, setOpenAddressRegistration] = useState(false);
   const [selectedAddresses, setSelectedAddresses] = useState([]); // 체크된 멤버 ID
   const [addressId, setAddressId] = useState(null);
   const [clickedAddress, setClickedAddress] = useState(null);
-  const { setSelectedMemberId } = useAddressStore();
+  const { setSelectedMemberId, openMemberAddressModal, setOpenMemberAddressModal } = useAddressStore();
+
+  const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset } = useAddressTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: addresses } = useGetAddresses(currentPage);
+  const PAGE_SIZE = 8;
+  const { data: addresses, refetch: refetchAddresses } = useGetAddresses(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
   const totalPages = addresses?.data?.data?.totalPages ?? 5;
   const addressList = addresses?.data?.data?.content || [];
@@ -36,11 +40,11 @@ const AddressTable = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['address', { page: nextPage }],
-        queryFn: () => getAddresses(nextPage),
+        queryKey: ['address', nextPage, sort, searchCategory, searchKeyword],
+        queryFn: () => getAddresses(nextPage, PAGE_SIZE),
       });
     }
-  }, [currentPage, queryClient, totalPages]);
+  }, [currentPage, queryClient, totalPages, sort, searchCategory, searchKeyword]);
 
   //
   const { refetch } = useGetAddressDetail(addressId);
@@ -61,17 +65,54 @@ const AddressTable = () => {
   const handleRowClick = async (addressId, memberId, clickedAddress) => {
     await setAddressId(addressId);
     await refetch();
-    await setOpenMemberAddressModal(true);
+    setOpenMemberAddressModal(true);
     await setClickedAddress(clickedAddress);
     setSelectedMemberId(memberId);
   };
 
+  const handleSearch = (term, category) => {
+    setSearchKeyword(term);
+    setSearchCategory(category);
+    if (term.trim() === '' || category === '카테고리') return;
+    refetchAddresses();
+    setCurrentPage(1);
+  };
+
+  const handleSort = async (column, sortType) => {
+    await updateSort(column, sortType);
+    refetchAddresses();
+    setCurrentPage(1);
+    console.log(addressList);
+  };
+
+  const handleDataReset = async () => {
+    await toggleIsReset();
+    await resetData();
+    await refetchAddresses();
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    return resetData();
+  }, []);
+
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      <AddressTableFeature setOpenModal={setOpenAddressRegistration} />
+      <AddressTableFeature
+        setOpenModal={setOpenAddressRegistration}
+        tableColumns={tableColumn.address.list}
+        onSearch={handleSearch}
+        selectedAddresses={selectedAddresses}
+        handleDataReset={handleDataReset}
+      />
       <div className='px-4'>
         <Table hoverable>
-          <TableHead tableColumns={tableColumn.address.list} allChecked={selectedAddresses.length === addressList.length} setAllChecked={handleAllChecked} />
+          <TableHead
+            tableColumns={tableColumn.address.list}
+            allChecked={selectedAddresses.length === addressList.length}
+            setAllChecked={handleAllChecked}
+            handleSort={handleSort}
+          />
           <DynamicTableBody
             TableRowComponent={AddressTableRow}
             dataList={addressList}

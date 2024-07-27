@@ -12,7 +12,7 @@ import MemberAddressMap from './MemberAddressTable/MemberAddressMap';
 const MemberAddressModal = ({ isOpen, setOpenModal, addressId, address, setAddressId, currentPage }) => {
   const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
-  const { isEditMode, setIsEditMode, isUpdate, setIsUpdate, selectedMemberId } = useAddressStore();
+  const { isEditMode, setIsEditMode, isUpdate, setIsUpdate, setModalAddressId } = useAddressStore();
 
   const initialInfos = [
     {
@@ -32,7 +32,7 @@ const MemberAddressModal = ({ isOpen, setOpenModal, addressId, address, setAddre
     },
   ];
 
-  const { data: detail, isLoading } = useGetAddressDetail(addressId);
+  const { data: detail } = useGetAddressDetail(addressId);
   const { mutate: deleteMutate } = useDeleteAddress(currentPage);
   const memberInfo = detail?.data?.data;
 
@@ -44,6 +44,12 @@ const MemberAddressModal = ({ isOpen, setOpenModal, addressId, address, setAddre
   };
 
   useEffect(() => {
+    if (addressId) {
+      setModalAddressId(addressId);
+    }
+  }, [addressId, setModalAddressId]);
+
+  useEffect(() => {
     if (!isOpen) {
       // 모달이 닫힐 때 실행
       setIsEditMode(false);
@@ -51,6 +57,15 @@ const MemberAddressModal = ({ isOpen, setOpenModal, addressId, address, setAddre
     }
   }, [isOpen, setIsEditMode, setAddressId]);
 
+  useEffect(() => {
+    console.log('memberInfo', memberInfo);
+  }, [memberInfo]);
+
+  const handleOnDelete = () => {
+    deleteMutate(addressId);
+    setIsUpdate(false);
+    setOpenModal(false);
+  };
   return (
     <>
       <Modal
@@ -89,14 +104,7 @@ const MemberAddressModal = ({ isOpen, setOpenModal, addressId, address, setAddre
               <button onClick={() => setIsUpdate(true)} className={`${commonButtonStyles} bg-green-300 text-green-600 hover:text-white hover:bg-green-600`}>
                 수정
               </button>
-              <button
-                onClick={() => {
-                  deleteMutate(addressId);
-                  setIsUpdate(false);
-                  setOpenModal(false);
-                }}
-                className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 `}
-              >
+              <button onClick={handleOnDelete} className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 `}>
                 삭제
               </button>
             </>
