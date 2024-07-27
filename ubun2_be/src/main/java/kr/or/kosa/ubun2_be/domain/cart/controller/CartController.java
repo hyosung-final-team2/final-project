@@ -9,10 +9,6 @@ import kr.or.kosa.ubun2_be.domain.cart.service.CartService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,9 +21,6 @@ public class CartController {
 
     private final CartService cartService;
 
-    private static final int PAGE_SIZE = 9;
-    private static final String SORT_DEFAULT = "cartId";
-
     @Operation(summary = "장바구니 생성")
     @PostMapping("/carts")
     public ResponseDto<?> registerCarts(@RequestBody List<CartRequest> cartRequests,
@@ -38,8 +31,8 @@ public class CartController {
 
     @Operation(summary = "전체 상점 통합 장바구니 조회")
     @GetMapping("/carts")
-    public ResponseDto<?> getCarts(@AuthenticationPrincipal CustomUserDetails customerUserDetails, @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<CartResponse> cartResponseList = cartService.getCarts(customerUserDetails.getUserId(), pageable);
+    public ResponseDto<?> getCarts(@AuthenticationPrincipal CustomUserDetails customerUserDetails) {
+        List<CartResponse> cartResponseList = cartService.getCarts(customerUserDetails.getUserId());
         return ResponseDto.ok(cartResponseList, "정상출력 데이터");
     }
 

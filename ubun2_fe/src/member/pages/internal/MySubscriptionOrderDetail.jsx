@@ -4,7 +4,7 @@ import { Select } from 'flowbite-react';
 import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
 import { formatAccountNumber } from '../../../customer/utils/accountFormat';
 import { formatCardNumber } from '../../../customer/utils/cardFormat';
-import { useGetSubscriptionOrderDetail, useUpdateSuscriptionCancelOrder } from '../../api/Order/queris';
+import { useGetSubscriptionOrderDetail, useUpdateSubscriptionCancelOrder } from '../../api/Order/queris';
 import OrderStatusBadge from '../../components/common/badge/OrderStatusBadge';
 import DoubleBottomButton from '../../components/common/button/DoubleBottomButton';
 import PaymentSummaryCompleted from '../../components/common/paymentSummary/PaymentSummaryCompleted';
@@ -20,7 +20,7 @@ const MySubscriptionOrderDetail = () => {
   const [selectedCycle, setSelectedCycle] = useState(1);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-  const updateCancelSubscriptionOrderMutation = useUpdateSuscriptionCancelOrder();
+  const updateCancelSubscriptionOrderMutation = useUpdateSubscriptionCancelOrder();
   const { modalState, setModalState } = useModalStore();
 
   const modalButtonStyle = 'bg-main text-white';

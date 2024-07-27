@@ -15,13 +15,12 @@ import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -68,11 +67,14 @@ public class CartServiceImpl implements CartService {
         Product product = productRepository.findById(cartProductRequest.getProductId())
                 .orElseThrow(() -> new CartException(CartExceptionType.NO_EXIST_PRODUCT));
 
-        // 동일한 제품 존재 여부 확인(존재 시 기존 수량 추가)
+        // 동일한 제품 ID와 주문 옵션을 가진 카트 제품이 있는지 확인
         CartProduct existCartProduct = cart.getCartProducts().stream()
-                .filter(cp -> cp.getProduct().getProductId().equals(product.getProductId()))
+                .filter(cp -> cp.getProduct().getProductId().equals(product.getProductId()) &&
+                        cp.getOrderOption().equals(cartProductRequest.getOrderOption()))
                 .findFirst()
                 .orElse(null);
+
+        System.out.println("???cartOrderOption: " + cartProductRequest.getOrderOption());
 
         if (existCartProduct != null) {
             existCartProduct.updateQuantity(existCartProduct.getQuantity() + cartProductRequest.getQuantity());
@@ -89,8 +91,9 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Page<CartResponse> getCarts(Long userId, Pageable pageable) {
-        return cartRepository.findCarts(userId, pageable).map(CartResponse::new);
+    public List<CartResponse> getCarts(Long userId) {
+        List<Cart> carts = cartRepository.findByMemberId(userId);
+        return carts.stream().map(CartResponse::new).collect(Collectors.toList());
     }
 
     @Transactional
@@ -101,7 +104,7 @@ public class CartServiceImpl implements CartService {
                     .orElseThrow(() -> new CartException(CartExceptionType.NO_EXIST_CART));
 
             for (CartProductDetailRequest cartProductDetailRequest : cartProductUpdateRequest.getCartProducts()) {
-                CartProduct cartProduct = cartProductRepository.findByCartCartIdAndProductProductId(cart.getCartId(), cartProductDetailRequest.getProductId())
+                CartProduct cartProduct = cartProductRepository.findByCartCartIdAndCartProductId(cart.getCartId(), cartProductDetailRequest.getCartProductId())
                         .orElseThrow(() -> new CartException(CartExceptionType.NO_EXIST_CART_PRODUCT));
                 cartProduct.updateQuantity(cartProductDetailRequest.getQuantity());
             }
@@ -116,8 +119,8 @@ public class CartServiceImpl implements CartService {
             Cart cart = cartRepository.findByMemberIdAndCustomerId(userId, cartProductDeleteRequest.getCustomerId())
                     .orElseThrow(() -> new CartException(CartExceptionType.NO_EXIST_CART));
 
-            for (Long productId : cartProductDeleteRequest.getProductIds()) {
-                CartProduct cartProduct = cartProductRepository.findByCartCartIdAndProductProductId(cart.getCartId(), productId)
+            for (CartProductDetailRequest cartProductDetailRequest : cartProductDeleteRequest.getCartProducts()) {
+                CartProduct cartProduct = cartProductRepository.findByCartCartIdAndCartProductId(cart.getCartId(), cartProductDetailRequest.getCartProductId())
                         .orElseThrow(() -> new CartException(CartExceptionType.NO_EXIST_CART_PRODUCT));
                 cartProductRepository.delete(cartProduct);
             }
@@ -125,8 +128,9 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart findByMemberId(Long memberId) {
-        return cartRepository.findByMemberId(memberId)
+    public Cart findByMemberIdAndCustomerId(Long memberId, Long customerId) {
+        return cartRepository.findByMemberIdAndCustomerId(memberId, customerId)
                 .orElseThrow(() -> new CartException(CartExceptionType.NO_EXIST_CART));
     }
+
 }
