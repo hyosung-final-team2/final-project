@@ -2,17 +2,22 @@ package kr.or.kosa.ubun2_be.domain.address.repository.impl;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.StringPath;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.repository.AddressRepositoryCustom;
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +43,7 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
                 .where(memberCustomer.customer.customerId.eq(customerId),addressSearch(searchRequest))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(addressSort(pageable).stream().toArray(OrderSpecifier[]::new))
                 .fetchResults();
 
         List<Address> content = results.getResults();
@@ -63,6 +69,29 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
 
         return new BooleanBuilder();
     }
+
+    private List<OrderSpecifier<?>> addressSort(Pageable pageable) {
+        List<OrderSpecifier<?>> orders = new ArrayList<>();
+        if (!ObjectUtils.isEmpty(pageable.getSort())) {
+            for (Sort.Order order : pageable.getSort()) {
+                Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
+                OrderSpecifier<?> orderSpecifier = createOrderSpecifier(direction, order.getProperty());
+                if (orderSpecifier != null) {
+                    orders.add(orderSpecifier);
+                }
+            }
+        }
+        return orders;
+    }
+
+    private OrderSpecifier<?> createOrderSpecifier(Order direction, String property) {
+        ComparableExpressionBase<?> path = getPath(property);
+        if (path != null) {
+            return new OrderSpecifier<>(direction, path);
+        }
+        return null;
+    }
+
     private ComparableExpressionBase<?> getPath(String property) {
         return switch (property) {
             case "memberName" -> member.memberName;
