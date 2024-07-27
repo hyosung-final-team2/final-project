@@ -1,10 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.customer.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import kr.or.kosa.ubun2_be.domain.customer.dto.request.MemberDetailRequest;
-import kr.or.kosa.ubun2_be.domain.customer.dto.request.MemberRequestWrapper;
-import kr.or.kosa.ubun2_be.domain.customer.dto.request.RegisterMemberRequest;
-import kr.or.kosa.ubun2_be.domain.customer.dto.request.SignupRequest;
+import kr.or.kosa.ubun2_be.domain.customer.dto.request.*;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.StoreInfoResponse;
@@ -20,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -97,4 +96,11 @@ public class CustomerController {
         return ResponseDto.ok(null,"fcm 토큰 등록/업데이트 완료");
     }
 
+    @Operation(summary = "회원 & 가입대기 회원 리스트 삭제")
+    @DeleteMapping("/members/selected")
+    public ResponseDto<?> deleteMember(@RequestBody List<MemberDeleteRequest> memberDeleteRequestList,
+                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        customerService.deleteSelectedProducts(memberDeleteRequestList, customUserDetails.getUserId());
+        return ResponseDto.ok(null, "회원 삭제 정상 완료");
+    }
 }
