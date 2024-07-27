@@ -119,7 +119,7 @@ const RegisterAddress = () => {
       const [city, town, ...rest] = addressData.address.split(' ');
       const data = {
         memberId: memberId,
-        address: `${addressData.zipNo.trim()},${city},${town},${rest.join(' ')},${addressData.detailAddress}`,
+        address: `${addressData.zipNo.trim()},${city},${town},${rest.join(' ')} ${addressData.detailAddress}`,
         recipientName: addressData.recipientName,
         recipientPhone: addressData.phoneNumber,
         addressNickname: addressData.name,

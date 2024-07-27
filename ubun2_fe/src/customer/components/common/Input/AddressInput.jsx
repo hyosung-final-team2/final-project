@@ -101,6 +101,12 @@ const AddressInput = ({ disabled = false, infos, title }) => {
 
   const handleOnClick = async () => {
     const allFieldsFilled = Object.values(formData).every(value => value.trim() !== '');
+    setFormData(
+      infos.reduce((acc, info) => {
+        acc[info.label] = info.value || '';
+        return acc;
+      }, {})
+    );
     if (!allFieldsFilled) {
       alert('모든 필드를 입력해 주세요.');
       return;
