@@ -1,9 +1,8 @@
 import React from 'react';
-import SearchInput from '../common/Input/SearchInput';
 import ArrowPathIcon from '@heroicons/react/24/outline/ArrowPathIcon.js';
 import SearchBarWithDrop from '../common/SearchBar/SearchBarWithDrop';
 
-const AddressTableFeature = ({ onSearch, tableColumns, selectedAddresses, handleDataReset, setOpenModal }) => {
+const AddressTableFeature = ({ onSearch, tableColumns, handleDataReset, setOpenModal }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
   const handleClick = () => {
@@ -14,7 +13,7 @@ const AddressTableFeature = ({ onSearch, tableColumns, selectedAddresses, handle
       <div className='flex'>
         <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} />
       </div>
-      <div className='flex space-x-2'>
+      <div className='flex space-x-2 items-center'>
         <button className='btn btn-ghost btn-sm normal-case' onClick={() => handleDataReset()}>
           <ArrowPathIcon className='w-4 mr-2' />
           Reset
