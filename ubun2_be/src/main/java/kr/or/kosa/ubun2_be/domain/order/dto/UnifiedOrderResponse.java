@@ -53,13 +53,19 @@ public class UnifiedOrderResponse {
 
     private int calculateTotalOrderPrice(Order order) {
         return order.getOrderProducts().stream()
-                .mapToInt(op -> OrderProductResponse.of(op).getTotalPrice())
+                .mapToInt(op -> {
+                    int discountedPrice = op.getPrice() - (int) (op.getPrice() * (op.getDiscount() / 100.0));
+                    return discountedPrice * op.getQuantity();
+                })
                 .sum();
     }
 
     private int calculateTotalSubscriptionOrderPrice(SubscriptionOrder subscriptionOrder) {
         return subscriptionOrder.getSubscriptionOrderProducts().stream()
-                .mapToInt(op -> SubscriptionOrderProductResponse.of(op).getTotalPrice())
+                .mapToInt(op -> {
+                    int discountedPrice = op.getPrice() - (int) (op.getPrice() * (op.getDiscount() / 100.0));
+                    return discountedPrice * op.getQuantity();
+                })
                 .sum();
     }
 }
