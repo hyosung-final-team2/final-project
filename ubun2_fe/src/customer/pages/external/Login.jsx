@@ -51,7 +51,8 @@ const Login = () => {
           </div>
           {/* 로그인 페이지 우측 */}
           <div className='py-24 px-10'>
-            <div className="w-full flex justify-center items-center">
+            <div className="w-full flex justify-center items-center gap-1">
+              <img src='/fms_logo.png' alt='logo' className='w-14'/>
               <img src='/text_logo.png' alt='Logo' className="w-1/2"/>
             </div>
             <form onSubmit={e => submitForm(e)}>

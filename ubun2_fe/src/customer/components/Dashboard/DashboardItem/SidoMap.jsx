@@ -42,7 +42,7 @@ const SidoMap = ({ addressesByDateValue }) => {
     if (addressesByDateValue) {
       const newSalesDatas = { ...initialSalesData };
       addressesByDateValue.forEach(address => {
-        const sidoName = address.addressName.split(',')[1].trim();
+        const sidoName = address?.addressName?.split(',')[1]?.trim();
         if (newSalesDatas.hasOwnProperty(sidoName)) {
           newSalesDatas[sidoName] = String(Number(newSalesDatas[sidoName]) + 1);
         }

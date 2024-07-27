@@ -14,7 +14,7 @@ const DynamicTableBody = ({ dataList, TableRowComponent, dynamicKey, dynamicId, 
               key={keyValue}
               {...data}
               setOpenModal={setOpenModal}
-              isChecked={selectedMembers.some(member => member.memberId === idValue && member.pending === pending)}
+              isChecked={selectedMembers?.some(member => member.memberId === idValue && member.pending === pending)}
               handleRowChecked={() => handleRowChecked(idValue, pending, data.memberName, data.memberPhone)}
               currentPage={currentPage}
             />
