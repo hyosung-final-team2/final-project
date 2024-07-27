@@ -142,7 +142,13 @@ public class OrderServiceImpl implements OrderService {
     public OrderDetailResponse getOrderByCustomerIdAndOrderId(Long orderId, Long customerId) {
         Order findOrder = orderRepository.findOrderByIdAndCustomerId(orderId, customerId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
-        return new OrderDetailResponse(findOrder);
+
+        PaymentMethod paymentMethod = findOrder.getPaymentMethod();
+        if (paymentMethod == null) {
+            return new OrderDetailResponse(findOrder);
+        }
+
+        return createOrderDetailResponseWithPayment(findOrder, paymentMethod);
     }
 
     @Override
@@ -407,7 +413,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long orderId) {
-
         Order findOrder = orderRepository.findByOrderIdAndMemberMemberId(orderId, memberId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
@@ -416,22 +421,7 @@ public class OrderServiceImpl implements OrderService {
             return new OrderDetailResponse(findOrder);
         }
 
-        Long paymentMethodId = paymentMethod.getPaymentMethodId();
-        String paymentMethodType = paymentMethod.getPaymentType();
-
-        switch (paymentMethodType) {
-            case "CARD" -> {
-                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
-                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
-                return new OrderDetailResponse(findOrder, cardPayment);
-            }
-            case "ACCOUNT" -> {
-                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
-                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
-                return new OrderDetailResponse(findOrder, accountPayment);
-            }
-            default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
-        }
+        return createOrderDetailResponseWithPayment(findOrder, paymentMethod);
     }
 
     @Override
@@ -458,4 +448,24 @@ public class OrderServiceImpl implements OrderService {
             inventoryService.increaseStock(subscriptionOrderProduct.getProduct().getProductId(), subscriptionOrderProduct.getQuantity());
         }
     }
+
+    private OrderDetailResponse createOrderDetailResponseWithPayment(Order findOrder, PaymentMethod paymentMethod) {
+        Long paymentMethodId = paymentMethod.getPaymentMethodId();
+        String paymentMethodType = paymentMethod.getPaymentType();
+
+        switch (paymentMethodType) {
+            case "CARD" -> {
+                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new OrderDetailResponse(findOrder, cardPayment);
+            }
+            case "ACCOUNT" -> {
+                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new OrderDetailResponse(findOrder, accountPayment);
+            }
+            default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
+        }
+    }
+
 }
