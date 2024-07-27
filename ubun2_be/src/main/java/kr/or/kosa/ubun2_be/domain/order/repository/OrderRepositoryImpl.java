@@ -2,6 +2,9 @@ package kr.or.kosa.ubun2_be.domain.order.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
@@ -9,7 +12,11 @@ import kr.or.kosa.ubun2_be.domain.order.entity.Order;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,12 +26,16 @@ import static kr.or.kosa.ubun2_be.domain.member.entity.QMember.member;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCustomer;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QOrder.order;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QOrderProduct.orderProduct;
-import static kr.or.kosa.ubun2_be.domain.product.entity.QProduct.product;
 import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QAccountPayment.accountPayment;
 import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QCardPayment.cardPayment;
 import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QPaymentMethod.paymentMethod;
+import static kr.or.kosa.ubun2_be.domain.product.entity.QProduct.product;
 
 public class OrderRepositoryImpl extends QuerydslRepositorySupport implements OrderRepositoryCustom {
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
+    private static final List<String> STRING_SEARCH_FIELDS = List.of("orderStatus","memberName","paymentType");
+    private static final List<String> DATE_SEARCH_FIELDS = List.of("createdAt");
 
     public OrderRepositoryImpl() {
         super(Order.class);
@@ -85,21 +96,55 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
 
 
     private BooleanBuilder searchCondition(SearchRequest searchRequest) {
-        BooleanBuilder builder = new BooleanBuilder();
-        if (searchRequest != null && searchRequest.getSearchKeyword() != null) {
-            String category = searchRequest.getSearchCategory().toLowerCase();
-            String keyword = searchRequest.getSearchKeyword();
-            switch (category) {
-                case "membername":
-                    builder.and(order.member.memberName.containsIgnoreCase(keyword));
-                    break;
-                case "orderstatus":
-                    builder.and(order.orderStatus.stringValue().containsIgnoreCase(keyword));
-                    break;
-            }
+        if (searchRequest == null || searchRequest.getSearchCategory() == null || searchRequest.getSearchKeyword() == null) {
+            return null;
         }
-        return builder;
+        String category = searchRequest.getSearchCategory();
+        String keyword = searchRequest.getSearchKeyword();
+
+        ComparableExpressionBase<?> path = getPath(category);
+        if (path == null) {
+            return new BooleanBuilder();
+        }
+
+        if (STRING_SEARCH_FIELDS.contains(category)) {
+            return new BooleanBuilder().and(((StringPath) path).containsIgnoreCase(keyword));
+        } else if (DATE_SEARCH_FIELDS.contains(category)) {
+            return dateTimeSearch((DateTimePath<LocalDateTime>) path, keyword);
+        }
+
+        return new BooleanBuilder();
     }
+
+    private ComparableExpressionBase<?> getPath(String property) {
+        return switch (property) {
+            case "orderStatus" -> order.orderStatus;
+            case "createdAt" -> order.createdAt;
+            case "memberName" -> member.memberName;
+            case "paymentType" -> order.paymentMethod.paymentType;
+            default -> null;
+        };
+    }
+
+    private BooleanBuilder dateTimeSearch(DateTimePath<LocalDateTime> path, String keyword) {
+        String[] range = keyword.split(",");
+        if (range.length != 2) return new BooleanBuilder();
+
+        try {
+            LocalDate startDate = LocalDate.parse(range[0].trim(), DATE_FORMATTER);
+            LocalDate endDate = LocalDate.parse(range[1].trim(), DATE_FORMATTER);
+
+            LocalDateTime startDateTime = startDate.atStartOfDay();
+            LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+
+            return new BooleanBuilder()
+                    .and(path.goe(startDateTime))
+                    .and(path.lt(endDateTime.plusDays(1))); // 다음 날의 시작 직전까지
+        } catch (DateTimeParseException e) {
+            return new BooleanBuilder();
+        }
+    }
+
     @Override
     public List<Order> findOrdersByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
 
@@ -110,7 +155,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                 .join(memberCustomer.customer, customer)
                 .where(customer.customerId.eq(customerId)
                         .and(order.createdAt.between(startDate, endDate))
-                        .and(order.orderStatus.ne(OrderStatus.APPROVED)))
+                        .and(order.orderStatus.eq(OrderStatus.APPROVED)))
                 .fetch();
 
     }

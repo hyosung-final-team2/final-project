@@ -41,6 +41,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,11 +80,62 @@ public class OrderServiceImpl implements OrderService {
         combinedList.addAll(orderResponseLists);
         combinedList.addAll(subscriptionOrderResponseList);
 
+        // totalCost 필터링
+        if (searchRequest != null && "totalCost".equals(searchRequest.getSearchCategory())) {
+            String[] range = searchRequest.getSearchKeyword().split(",");
+            if (range.length == 2) {
+                long start = Long.parseLong(range[0].trim());
+                long end = Long.parseLong(range[1].trim());
+                combinedList = combinedList.stream()
+                        .filter(order -> order.getTotalOrderPrice() >= start && order.getTotalOrderPrice() <= end)
+                        .collect(Collectors.toList());
+            }
+        }
+
+        // isSubscription 필터링
+        if (searchRequest != null && "isSubscription".equals(searchRequest.getSearchCategory())) {
+            boolean isSubscription = Boolean.parseBoolean(searchRequest.getSearchKeyword());
+            combinedList = combinedList.stream()
+                    .filter(order -> order.isSubscription() == isSubscription)
+                    .collect(Collectors.toList());
+        }
+
+        List<Sort.Order> sortOrders = pageable.getSort().get().collect(Collectors.toList());
+        if (!sortOrders.isEmpty()) {
+            combinedList.sort((m1, m2) -> {
+                for (Sort.Order order : sortOrders) {
+                    int comparison = compareOrders(m1, m2, order.getProperty());
+                    if (comparison != 0) {
+                        return order.isAscending() ? comparison : -comparison;
+                    }
+                }
+                return 0;
+            });
+        }
+
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
         List<UnifiedOrderResponse> paginatedList = combinedList.subList(start, end);
 
         return new PageImpl<>(paginatedList, pageable, combinedList.size());
+    }
+    private int compareOrders(UnifiedOrderResponse o1, UnifiedOrderResponse o2, String property) {
+        return switch (property) {
+            case "totalCost" -> compareNullable(o1.getTotalOrderPrice(), o2.getTotalOrderPrice());
+            case "createdAt" -> compareNullable(o1.getCreatedAt(), o2.getCreatedAt());
+            case "memberName" -> compareNullable(o1.getMemberName(), o2.getMemberName());
+            case "orderStatus" -> compareNullable(o1.getOrderStatus(), o2.getOrderStatus());
+            case "paymentType" -> compareNullable(o1.getPaymentType(), o2.getPaymentType());
+            case "isSubscription" -> Boolean.compare(o1.isSubscription(), o2.isSubscription());
+            default -> 0;
+        };
+    }
+
+    private <T extends Comparable<T>> int compareNullable(T t1, T t2) {
+        if (t1 == null && t2 == null) return 0;
+        if (t1 == null) return -1;
+        if (t2 == null) return 1;
+        return t1.compareTo(t2);
     }
 
     @Override
