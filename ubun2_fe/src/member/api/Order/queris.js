@@ -1,7 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { errorToastStyle, successToastStyle } from '../toastStyle';
-import { createOrder, getOrderDetail, getOrderList, getSubscriptionOrder, updateOrderCancel, updateSubscriptionCancel } from './order';
+import { validateOrder, createOrder, getOrderDetail, getOrderList, getSubscriptionOrder, updateOrderCancel, updateSubscriptionCancel } from './order';
+
+export const useValidateOrder = () => {
+  return useMutation({
+    mutationFn: data => validateOrder(data),
+    onError: error => {
+      const errorMessage = error.response?.data?.errorMessage || '유효성 검사에 실패했습니다. 다시 시도해주세요.';
+      toast.error(errorMessage, errorToastStyle);
+    },
+  });
+};
 
 export const useCreateOrder = navigate => {
   const queryClient = useQueryClient();
@@ -59,16 +69,16 @@ export const useUpdateCancelOrder = () => {
   });
 };
 
-export const useUpdateSuscriptionCancelOrder = () => {
+export const useUpdateSubscriptionCancelOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: data => updateSubscriptionCancel(data),
-    onSuccess: ({ orderId, customerId, subscriptionOrderId }) => {
-      queryClient.invalidateQueries({ queryKey: ['subscriptionOrder', customerId, subscriptionOrderId] });
+    onSuccess: ({ subscriptionOrderId }) => {
+      queryClient.invalidateQueries({ queryKey: ['subscriptionOrder', subscriptionOrderId] });
       toast.success('정기주문 상품이 수정되었습니다.', successToastStyle);
     },
     onError: error => {
-      toast.error('정기주문 상품 수정에 실패했습니다. 다시 시도해주세요.', errorToastStyle);
+      toast.error('정기주문 상품 수정에 실패했습니다. 다시 시도해주세요.', successToastStyle);
       console.error('Failed to update subscription order:', error);
     },
   });

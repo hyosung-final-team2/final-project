@@ -129,18 +129,26 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void updateOrderStatus(Long customerId, List<OrderApproveRequest> orderApproveRequests) {
         for (OrderApproveRequest request : orderApproveRequests) {
+            // 1. PENDING 상태인 주문 조회
             Order findPendingOrder = orderRepository.findPendingOrderByIdAndCustomerId(request.getOrderId(), customerId)
                     .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
+            // 2. 새로운 주문 상태 검증 & 설정
             OrderStatus newStatus = validateAndGetOrderStatus(request.getOrderStatus());
             findPendingOrder.changeOrderStatus(newStatus);
 
+            // 3. 주문 상품 상태 변경
             for (OrderProduct orderProduct : findPendingOrder.getOrderProducts()) {
                 if (newStatus.equals(OrderStatus.APPROVED)) {
                     orderProduct.changeOrderProductStatus(OrderProductStatus.APPROVED);
                 } else {
                     orderProduct.changeOrderProductStatus(OrderProductStatus.DENIED);
                 }
+            }
+
+            // 4. 주문 상태가 DENIED 인 경우 재고 복구
+            if (newStatus.equals(OrderStatus.DENIED)) {
+                restoreInventory(findPendingOrder.getOrderProducts());
             }
             orderRepository.save(findPendingOrder);
         }
@@ -150,19 +158,26 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void updateSubscriptionOrderStatus(Long customerId, List<SubscriptionApproveRequest> subscriptionApproveRequests) {
         for (SubscriptionApproveRequest request : subscriptionApproveRequests) {
+            // 1. PENDING 상태인 주문 조회
             SubscriptionOrder findSubscriptionPendingOrder = subscriptionOrderRepository
                     .findPendingSubscriptionOrderByIdAndCustomerId(request.getSubscriptionOrderId(), customerId)
                     .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
+            // 2. 새로운 주문 상태 검증 & 설정
             OrderStatus newOrderStatus = validateAndGetOrderStatus(request.getOrderStatus());
             findSubscriptionPendingOrder.changeOrderStatus(newOrderStatus);
 
+            // 3. 주문 상품 상태 변경
             for (SubscriptionOrderProduct subscriptionOrderProduct : findSubscriptionPendingOrder.getSubscriptionOrderProducts()) {
                 if (newOrderStatus.equals(OrderStatus.APPROVED)) {
                     subscriptionOrderProduct.changeSubscriptionOrderProductStatus(OrderProductStatus.APPROVED);
                 } else {
                     subscriptionOrderProduct.changeSubscriptionOrderProductStatus(OrderProductStatus.DENIED);
                 }
+            }
+
+            if(newOrderStatus.equals(OrderStatus.DENIED)) {
+                restoreInventoryForSubscription(findSubscriptionPendingOrder.getSubscriptionOrderProducts());
             }
             subscriptionOrderRepository.save(findSubscriptionPendingOrder);
         }
@@ -176,9 +191,10 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    // 회원의 주문 유효성 검사
     @Override
     @Transactional
-    public void createSingleOrder(Long memberId, SubscriptionOrderRequest orderRequest) {
+    public void validateAndPrepareOrder(Long memberId, SubscriptionOrderRequest orderRequest) {
         // 1. 회원 및 결제 수단 확인
         Member member = memberService.findById(memberId);
         PaymentMethod paymentMethod = paymentMethodService.findById(orderRequest.getPaymentMethodId());
@@ -191,17 +207,25 @@ public class OrderServiceImpl implements OrderService {
 
         // 4. 결제 확인
         checkPayment(orderRequest, paymentMethod, member.getMemberName());
+    }
 
-        // 5. 주문 생성
-        Order order = createOrder(paymentMethod, member, orderRequest);
+    // 단건 주문 생성
+    @Override
+    @Transactional
+    public void createSingleOrder(Long memberId, SubscriptionOrderRequest orderRequest) {
+        // 1. 주문 생성 전 유효성 검사
+        validateAndPrepareOrder(memberId, orderRequest);
 
-        // 6. 재고 감소
+        // 2. 주문 생성
+        Order order = createOrder(paymentMethodService.findById(orderRequest.getPaymentMethodId()), memberService.findById(memberId), orderRequest);
+
+        // 3. 재고 감소
         decreaseInventory(order.getOrderProducts());
 
-        // 7. 장바구니 상품 삭제
+        // 4. 장바구니 상품 삭제
         deleteCartProducts(memberId, orderRequest.getSubscriptionOrderProducts());
 
-        // 7. 고객에게 push notification (단건주문)
+        // 5. 고객에게 push notification (단건주문)
         alarmService.sendMessageToCustomer(orderRequest);
     }
 
@@ -283,7 +307,7 @@ public class OrderServiceImpl implements OrderService {
 
     private Order createOrder(PaymentMethod paymentMethod, Member member, SubscriptionOrderRequest request) {
         Address address = addressService.findByAddressIdAndMemberId(request.getAddressId(), member.getMemberId());
-        Cart cart = cartService.findByMemberId(member.getMemberId()); // Cart 객체를 가져오는 로직 추가
+        Cart cart = cartService.findByMemberIdAndCustomerId(member.getMemberId(), request.getCustomerId()); // Cart 객체를 가져오는 로직 추가
 
 
         Order order = Order.builder()
@@ -374,6 +398,12 @@ public class OrderServiceImpl implements OrderService {
     private void restoreInventory(List<OrderProduct> orderProducts) {
         for (OrderProduct orderProduct : orderProducts) {
             inventoryService.increaseStock(orderProduct.getProduct().getProductId(), orderProduct.getQuantity());
+        }
+    }
+
+    private void restoreInventoryForSubscription(List<SubscriptionOrderProduct> subscriptionOrderProducts) {
+        for (SubscriptionOrderProduct subscriptionOrderProduct : subscriptionOrderProducts) {
+            inventoryService.increaseStock(subscriptionOrderProduct.getProduct().getProductId(), subscriptionOrderProduct.getQuantity());
         }
     }
 }
