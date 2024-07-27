@@ -23,6 +23,7 @@ import MySubscriptionOrderDetail from '../pages/internal/MySubscriptionOrderDeta
 import { useState } from 'react';
 import SlideUpModal from '../components/common/SlideUpModal.jsx';
 import Notification from '../components/notification/Notification.jsx';
+import MyAddressList from '../pages/internal/MyAddressList.jsx';
 
 function PageContent({ hasFootNav }) {
   const { memberId } = useMemberStore(state => ({ memberId: state.memberId }));
@@ -46,9 +47,10 @@ function PageContent({ hasFootNav }) {
           <Route path='payments' element={<ChoosePayment />} />
           <Route path='payments/edit' element={<EditPayment />} />
           <Route path='mypage/payment-list' element={<MyPaymentsList />} />
+          <Route path='mypage/address-list' element={<MyAddressList />} />
           <Route path='password' element={<InputPassword />} />
           <Route path='password/set' element={<SetPassword />} />
-          <Route path='password/update' element={<SetPassword />} />
+          {/* <Route path='password/update' element={<SetPassword />} /> */}
           <Route path='order' element={<Order />} />
           <Route path='order-complete' element={<OrderComplete />} />
           <Route path='mypage/order-list' element={<MyOrdersList />} />
@@ -59,7 +61,7 @@ function PageContent({ hasFootNav }) {
 
       {/* 회원 가입 완료 모달*/}
       <SlideUpModal isOpen={isAlarmOpen} headerText='미확인 알림' setIsModalOpen={setIsAlarmOpen} buttonText='확인' buttonStyle={modalButtonStyle}>
-        <Notification setIsAlarmOpen={setIsAlarmOpen}/>
+        <Notification setIsAlarmOpen={setIsAlarmOpen} />
       </SlideUpModal>
     </div>
   );

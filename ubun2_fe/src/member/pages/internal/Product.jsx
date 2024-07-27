@@ -98,7 +98,7 @@ function Product() {
     <div className='flex flex-col w-full'>
       {/* 이미지 */}
       <div style={{ width: '100%', aspectRatio: '1/1', position: 'relative' }} className='bg-second'>
-        <img src={product?.productImagePath} style={{aspectRatio:1}} className="w-full" alt="상품사진"/>
+        <img src={product?.productImagePath} style={{ aspectRatio: 1 }} className='w-full' alt='상품사진' />
       </div>
       {/* 상품 정보*/}
       <div className='p-6'>
@@ -130,10 +130,8 @@ function Product() {
       </div>
 
       {/* 구매 버튼 */}
-      <div
-        className='sticky bottom-0 left-0 right-0 flex w-full p-4 px-6 py-4 '
-        style={{ background: 'linear-gradient(to top, white, white 65%, transparent)' }}
-      >
+      <div className='sticky bottom-0 left-0 right-0 flex w-full'>
+        <div className='p-10'></div>
         <BottomButton buttonText='구매하기' buttonStyle='bg-main text-white' buttonFunc={buyButtonFunc} />
       </div>
 
