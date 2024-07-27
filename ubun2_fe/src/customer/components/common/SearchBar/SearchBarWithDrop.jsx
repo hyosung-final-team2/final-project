@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { initDropdowns } from 'flowbite';
-import {columnMapping} from "../Table/tableIndex.js";
+import { columnMapping } from '../Table/tableIndex.js';
 
 const DropDownMenu = ({ menuTitle, handleCategorySelect }) => {
   return (
@@ -31,7 +31,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
   const handleCategorySelect = category => {
     const mappedCategory = columnMapping[category] || category;
     setSelectedCategory(mappedCategory);
-    setShowCategory(category)
+    setShowCategory(category);
     dropdownRef.current.click();
   };
 
@@ -70,7 +70,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
             type='search'
             id='search-dropdown'
             className='block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300  focus:outline-none dark:bg-gray-700 dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500'
-            placeholder='Search'
+            placeholder='검색어를 입력하세요'
             required
             value={searchTerm}
             onChange={handleSearchChange}

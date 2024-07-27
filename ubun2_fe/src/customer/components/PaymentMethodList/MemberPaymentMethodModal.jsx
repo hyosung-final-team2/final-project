@@ -6,7 +6,7 @@ import { useGetPaymentDetail, useDeletePaymentMethod } from '../../api/PaymentMe
 import PaymentInfo from './PaymentInfo';
 import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
 import PaymentMethodCard from './PaymentMethodCard';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import InputLabel from '../common/Input/InputLabel';
 import { formatCardNumber } from '../../utils/cardFormat';
 import PaymentMethodAccount from './PaymentMethodAccount';
@@ -16,7 +16,7 @@ const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId
   const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const [isFlipped, setIsFlipped] = useState(false);
 
-  const { isUpdate, setIsUpdate, paymentMethodType } = paymentMethodStore();
+  const { isUpdate, setIsUpdate, paymentMethodType, setModalPaymentId } = paymentMethodStore();
   const { data: detail } = useGetPaymentDetail(paymentMethodId);
   const { mutate: deleteMutate } = useDeletePaymentMethod(currentPage);
 
@@ -33,6 +33,10 @@ const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId
 
   const formattedCardNumber = clickedPayment?.cardNumber ? formatCardNumber(clickedPayment?.cardNumber) : '****-****-****-****';
   const formattedBankNumber = clickedPayment?.accountNumber ? formatCardNumber(clickedPayment?.accountNumber) : '****-****-****-****';
+
+  useEffect(() => {
+    setModalPaymentId(paymentMethodId);
+  }, [paymentMethodId]);
 
   return (
     <>
@@ -71,7 +75,7 @@ const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId
                     <InputLabel labelTitle='카드사명' defaultValue={clickedPayment?.cardCompany} disabled />
                     <InputLabel labelTitle='카드번호' defaultValue={formattedCardNumber} disabled />
                     <InputLabel labelTitle='소유자명' defaultValue={clickedPayment?.memberName} disabled />
-                    <InputLabel labelTitle='등록일' defaultValue={clickedPayment?.createdAt} disabled />
+                    <InputLabel labelTitle='등록일' defaultValue={clickedPayment?.createdAt?.split('T')[0]} disabled />
                   </div>
                 </div>
               ) : (
@@ -88,7 +92,7 @@ const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId
                     <InputLabel labelTitle='은행명' defaultValue={clickedPayment?.bankName} disabled />
                     <InputLabel labelTitle='계좌번호' defaultValue={formattedBankNumber} disabled />
                     <InputLabel labelTitle='소유자명' defaultValue={clickedPayment?.memberName} disabled />
-                    <InputLabel labelTitle='등록일' defaultValue={clickedPayment?.createdAt} disabled />
+                    <InputLabel labelTitle='등록일' defaultValue={clickedPayment?.createdAt?.split('T')[0]} disabled />
                   </div>
                 </div>
               )}
