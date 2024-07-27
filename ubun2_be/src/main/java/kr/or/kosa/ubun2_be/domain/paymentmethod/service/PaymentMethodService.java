@@ -1,13 +1,10 @@
 package kr.or.kosa.ubun2_be.domain.paymentmethod.service;
 
+import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.*;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.MyAccountPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.MyCardPaymentResponse;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailResponse;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodRequest;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.RegisterPaymentMethodRequest;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.UpdatePaymentMethodRequest;
 
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
@@ -46,5 +43,7 @@ public interface PaymentMethodService {
     PaymentMethod findById(Long paymentMethodId);
 
     boolean hasPaymentPassword(Long memberId);
+
+    void deleteSelectedPaymentMethod(List<PaymentMethodDeleteRequest> paymentMethodDeleteRequestList, Long customerId);
 }
 
