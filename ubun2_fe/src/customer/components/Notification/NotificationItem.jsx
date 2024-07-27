@@ -1,7 +1,9 @@
 import {useReadCustomerAlarm} from "../../api/notification/queris.js";
+import {useNavigate} from "react-router-dom";
+import useNotificationStore from "../../store/Notification/notificationStore.js";
 
-const NotificationItem = ({id, title, content, timestamp}) => {
-
+const NotificationItem = ({id, title, content, timestamp, link}) => {
+    const navigate = useNavigate()
     const timeAgo = (timestamp) => {
         const now = new Date();
         const timeDifference = now - new Date(timestamp);
@@ -21,12 +23,24 @@ const NotificationItem = ({id, title, content, timestamp}) => {
             return `${days}일 전`;
         }
     }
+    const {setIsRightBarOpen} = useNotificationStore()
 
     const {mutate: customerAlarmReadMutate} = useReadCustomerAlarm(id)
 
+    const extractPath = (url) => {
+        const parts = url?.split('/');
+        // 나중에 배포 url로 변경
+        const index = parts?.findIndex(part => part?.includes('localhost:5173'));
+        if (index === -1) {
+            return '';
+        }
+        return '/' + parts?.slice(index + 1).join('/');
+    }
+
     const handleNotificationClick = () => {
-        // TODO : 나중에 링크 받으면 거기로 navigate 하는 부분
         customerAlarmReadMutate()
+        navigate(extractPath(link))
+        setIsRightBarOpen(false)
     }
 
     return (
