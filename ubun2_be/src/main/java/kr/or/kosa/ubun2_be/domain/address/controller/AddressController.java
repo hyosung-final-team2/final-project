@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.address.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import kr.or.kosa.ubun2_be.domain.address.dto.AddressDeleteRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberInfoResponse;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -57,6 +60,13 @@ public class AddressController {
     @DeleteMapping("/{address_id}")
     public ResponseDto<?> deleteAddress(@PathVariable("address_id") Long addressId,@AuthenticationPrincipal CustomUserDetails userDetails) {
         addressService.deleteAddress(addressId,userDetails.getUserId());
+        return ResponseDto.ok(null, "주소가 성공적으로 삭제되었습니다.");
+    }
+
+    @Operation(summary = "주소 리스트 삭제")
+    @DeleteMapping("/selected")
+    public ResponseDto<?> deleteSelectedAddress(@RequestBody List<AddressDeleteRequest> addressDeleteRequestList, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        addressService.deleteSelectedAddress(addressDeleteRequestList,userDetails.getUserId());
         return ResponseDto.ok(null, "주소가 성공적으로 삭제되었습니다.");
     }
 

@@ -140,6 +140,14 @@ public class AddressServiceImpl implements AddressService {
         addressRepository.delete(address);
     }
 
+    @Transactional
+    @Override
+    public void deleteSelectedAddress(List<AddressDeleteRequest> addressDeleteRequestList, Long customerId) {
+        for (AddressDeleteRequest addressDeleteRequest : addressDeleteRequestList) {
+            deleteAddress(addressDeleteRequest.getAddressId(), customerId);
+        }
+    }
+
 
     @Override
     public Address findByAddressIdAndMemberId(Long addressId, Long memberId) {
