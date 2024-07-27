@@ -15,7 +15,7 @@ function Layout() {
   const isModalOpen = modalState ? 'overflow-y-hidden' : 'overflow-y-scroll';
 
   return (
-    <div className={`relative flex flex-col h-dvh mx-auto my-0 ${isModalOpen} `} style={{ minWidth: '320px', maxWidth: '480px' }}>
+    <div className={`relative flex flex-col h-dvh mx-auto my-0 ${isModalOpen} `} style={{ minWidth:'320px', maxWidth: '480px' }}>
       <PageContent hasFootNav={showFootNav} pathList={pathList} />
       {showFootNav && <FootNav pathList={pathList} />}
     </div>
