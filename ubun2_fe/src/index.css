@@ -5,6 +5,8 @@
 @tailwind components;
 @tailwind utilities;
 
+html { overscroll-behavior: none; }
+
 .loading-indicator:before {
   content: '';
   background: #00000080;

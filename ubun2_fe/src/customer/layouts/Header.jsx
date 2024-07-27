@@ -13,6 +13,7 @@ import {
   delayCustomerToastStyle,
   successCustomerToastStyle,
 } from "../../member/api/toastStyle.js";
+import {useLogout} from "../api/common/Logout/queris.js";
 
 const Header = () => {
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme'));
@@ -67,10 +68,8 @@ const Header = () => {
   }, []);
 
 
-  function logoutUser() {
-    localStorage.clear();
-    window.location.href = '/';
-  }
+  const {mutate:logoutMutate} = useLogout("ROLE_CUSTOMER")
+
 
   return (
     <>
@@ -124,7 +123,7 @@ const Header = () => {
             <ul tabIndex={0}
                 className='menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52'>
               <li>
-                <a onClick={logoutUser}>Logout</a>
+                <a onClick={() => logoutMutate()}>Logout</a>
               </li>
             </ul>
           </div>

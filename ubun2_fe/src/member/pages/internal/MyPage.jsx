@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SubscriptionLineIcon from '../../../assets/images/subscription-line.svg';
 import { useGetOrderList } from '../../api/Order/queris';
+import {useLogout} from "../../../customer/api/common/Logout/queris.js";
 
 function MyPage() {
   const { data: orderListResponse } = useGetOrderList();
@@ -36,11 +37,11 @@ function MyPage() {
     { id: 4, name: '로그아웃', icon: ArrowRightOnRectangleIcon, value: '/logout' },
   ];
 
+  const {mutate:logoutMutate} = useLogout("ROLE_MEMBER")
+
   const handleMyInfoMenu = value => {
     if (value === '/logout') {
-      console.log('TODO: 로그아웃 처리');
-      localStorage.clear();
-      navigate('/member/login');
+      logoutMutate()
       return;
     }
     if (value === '/member/app/mypage/address-list') {
