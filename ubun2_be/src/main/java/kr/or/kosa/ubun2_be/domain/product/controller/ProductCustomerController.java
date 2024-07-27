@@ -71,8 +71,8 @@ public class ProductCustomerController {
 
     @Operation(summary = "상품 리스트 삭제")
     @DeleteMapping("/selected")
-    public ResponseDto<?> removeSelectedProducts(@RequestBody DeleteSelectedProductRequest deleteSelectedProductRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        productService.removeSelectedProducts(deleteSelectedProductRequest,customUserDetails.getUserId());
+    public ResponseDto<?> removeSelectedProducts(@RequestBody ProductDeleteSelectedRequest productDeleteSelectedRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        productService.removeSelectedProducts(productDeleteSelectedRequest,customUserDetails.getUserId());
         return ResponseDto.ok(null, "정상출력 데이터");
     }
 

@@ -154,8 +154,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void removeSelectedProducts(DeleteSelectedProductRequest deleteSelectedProductRequest, Long customerId) {
-        for (Long productId : deleteSelectedProductRequest.getProductIdList()) {
+    public void removeSelectedProducts(ProductDeleteSelectedRequest productDeleteSelectedRequest, Long customerId) {
+        for (Long productId : productDeleteSelectedRequest.getProductIdList()) {
             removeProduct(customerId, productId);
         }
     }

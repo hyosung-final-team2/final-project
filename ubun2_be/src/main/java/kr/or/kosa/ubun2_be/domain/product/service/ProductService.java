@@ -23,5 +23,5 @@ public interface ProductService {
     Product getProductById(Long productId);
     Page<ProductResponse> getProductsByCategory(Long customerId, CategoryRequest categoryRequest, Pageable pageable, Long memberId);
     List<CategoryResponse> getProductCategory();
-    void removeSelectedProducts(DeleteSelectedProductRequest deleteSelectedProductRequest, Long customerId);
+    void removeSelectedProducts(ProductDeleteSelectedRequest productDeleteSelectedRequest, Long customerId);
 }
