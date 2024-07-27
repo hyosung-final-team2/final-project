@@ -2,10 +2,11 @@ package kr.or.kosa.ubun2_be.domain.customer.entity;
 
 import jakarta.persistence.*;
 import kr.or.kosa.ubun2_be.domain.cart.entity.Cart;
+import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
+import kr.or.kosa.ubun2_be.domain.customer.dto.request.MyPageUpdateRequest;
+import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
 import kr.or.kosa.ubun2_be.domain.member.entity.PendingMember;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
-import kr.or.kosa.ubun2_be.domain.common.entity.BaseTimeEntity;
-import kr.or.kosa.ubun2_be.domain.member.entity.MemberCustomer;
 import kr.or.kosa.ubun2_be.global.auth.enums.UserRole;
 import kr.or.kosa.ubun2_be.global.auth.model.UserType;
 import lombok.*;
@@ -109,5 +110,18 @@ public class Customer extends BaseTimeEntity implements UserType {
     }
 
     public void updateCustomerFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
+
+    public void updateCustomer(MyPageUpdateRequest myPageUpdateRequest) {
+        this.customerName = myPageUpdateRequest.getCustomerName();
+        this.customerPhone = myPageUpdateRequest.getCustomerPhone();
+        this.businessAddress = myPageUpdateRequest.getBusinessAddress();
+        this.description = myPageUpdateRequest.getDescription();
+        this.announcement = myPageUpdateRequest.getAnnouncement();
+    }
+
+    public void saveImage(String logoImageOriginalName, String logoImagePath) {
+        this.logoImageOriginalName = logoImageOriginalName;
+        this.logoImagePath = logoImagePath;
+    }
 }
 
