@@ -10,7 +10,7 @@ export const useGetMembers = (page, size, sort, searchCategory, searchKeyword) =
 };
 
 export const useSendSms = (selectedMembers) => {
-  const nameAndPhoneNumbers = selectedMembers.map((member) => {
+  const nameAndPhoneNumbers = selectedMembers?.map((member) => {
     return { memberName: member.memberName, phoneNumber: member.memberPhone}
   })
 

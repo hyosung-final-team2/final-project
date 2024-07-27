@@ -16,6 +16,10 @@ import {useGetMemberDetail} from '../../../api/Customer/MemberList/MemberModal/q
 import MemberInsertModal from "../MemberInsertModal/MemberInsertModal.jsx";
 import MemberRegisterModal from "../MemberRegisterModal/MemberRegisterModal.jsx";
 import useMemberTableStore from "../../../store/MemberTable/memberTableStore.js";
+import SkeletonTable from "../../Skeleton/SkeletonTable.jsx";
+import useSkeletonStore from "../../../store/skeletonStore.js";
+import SkeletonMemberTableFeature from "../Skeleton/SkeletonMemberTableFeature.jsx";
+import SkeletonMemberTableRow from "../Skeleton/SkeletonMemberTableRow.jsx";
 
 const MemberTable = () => {
 
@@ -35,7 +39,6 @@ const MemberTable = () => {
 
   const PAGE_SIZE = 8
   const { data: members,refetch: refetchMembers , isLoading } = useGetMembers(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
-  console.log("isLoading",isLoading)
 
   const totalPages = members?.data?.data?.totalPages ?? 5;
   const memberList = members?.data?.data?.content || [];
@@ -116,6 +119,22 @@ const MemberTable = () => {
     return resetData()
   },[])
 
+  // isLoading 시, skeletonTable
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore()
+
+  useEffect(() => {
+    if (!isLoading) {
+      setSkeletonData(memberList);
+      setSkeletonTotalPage(totalPages)
+      setSkeletonSortData(sort)
+    }
+  }, [memberList, totalPages,sort, setSkeletonTotalPage, setSkeletonData, isLoading]);
+
+  if (isLoading) {
+    // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
+    return <SkeletonTable SkeletonTableFeature={SkeletonMemberTableFeature} TableRowComponent={SkeletonMemberTableRow} tableColumns={tableColumn.member}/>
+  }
+
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색  등 */}
@@ -133,7 +152,6 @@ const MemberTable = () => {
             dynamicId='memberId'
             selectedMembers={selectedMembers}
             handleRowChecked={handleRowChecked}
-            // setOpenModal={setOpenMemberDetailModal}
             setOpenModal={handleRowClick}
             currentPage={currentPage}
           />
