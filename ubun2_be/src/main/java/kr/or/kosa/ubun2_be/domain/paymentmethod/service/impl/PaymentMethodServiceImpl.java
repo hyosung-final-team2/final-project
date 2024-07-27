@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -248,5 +249,12 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     public boolean hasPaymentPassword(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
         return member.getPaymentPassword() != null;
+    }
+    @Transactional
+    @Override
+    public void deleteSelectedPaymentMethod(List<PaymentMethodDeleteRequest> paymentMethodDeleteRequestList, Long customerId) {
+        for (PaymentMethodDeleteRequest paymentMethodDeleteRequest : paymentMethodDeleteRequestList) {
+            deletePaymentMethod(paymentMethodDeleteRequest.getPaymentMethodId(), customerId);
+        }
     }
 }

@@ -1,30 +1,24 @@
 import { useNavigate } from 'react-router-dom';
 import { useGetMyAddresses } from '../../api/Address/queries';
 import useAddressStore from '../../store/address/AddressStore';
-import useOrderDataStore from '../../store/order/orderDataStore';
 import AddressItem from '../../components/Address/AddressItem';
 import BottomButton from '../../components/common/button/BottomButton';
 import { useLocation } from 'react-router-dom';
 
-const ChooseAddress = ({ title }) => {
+const MyAddressList = ({ title }) => {
   const navigate = useNavigate();
   const { memberId } = useAddressStore(state => ({ memberId: state.memberId }));
   const { resetAddressData } = useAddressStore();
   const { data: addresses } = useGetMyAddresses(memberId);
-  const { updateOrderData } = useOrderDataStore();
   const location = useLocation();
   const isFromMyPage = location.state?.isFromMyPage;
 
   const addressList = addresses?.data?.data || [];
   const buttonStyle = 'bg-main text-white';
 
-  const { setSelectedAddressId } = useOrderDataStore();
-
   const isAddressEmpty = addressList.length === 0;
   const handleAddressSelect = addressId => {
-    setSelectedAddressId(addressId);
-    updateOrderData({ addressId });
-    navigate(-1);
+    //현재 배송지 로직으로 할지..
   };
 
   const handleEdit = address => {
@@ -32,13 +26,13 @@ const ChooseAddress = ({ title }) => {
     navigate(`/member/app/addresses/register`, {
       state: {
         isRegister: false,
+        isFromMyPage: isFromMyPage,
         recipientName: address.recipientName,
         address: address.address,
         recipientPhone: address.recipientPhone,
         addressNickname: address.addressNickname,
         defaultStatus: address.defaultStatus,
         addressId: address.addressId,
-        isFromMyPage: isFromMyPage,
       },
     });
   };
@@ -48,13 +42,13 @@ const ChooseAddress = ({ title }) => {
     navigate('/member/app/addresses/register', {
       state: {
         isRegister: true,
+        isFromMyPage: isFromMyPage,
         recipientName: '',
         address: '',
         recipientPhone: '',
         addressNickname: '',
         defaultStatus: '',
         addressId: '',
-        isFromMyPage: isFromMyPage,
       },
     });
   };
@@ -108,4 +102,4 @@ const ChooseAddress = ({ title }) => {
   );
 };
 
-export default ChooseAddress;
+export default MyAddressList;

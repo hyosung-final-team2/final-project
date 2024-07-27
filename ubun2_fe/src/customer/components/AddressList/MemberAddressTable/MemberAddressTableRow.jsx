@@ -3,10 +3,15 @@ import useAddressStore from '../../../store/Address/useAddressStore';
 import { useDeleteAddress } from '../../../api/Address/AddressModal/queris';
 
 const MemberAddressTableRow = ({ addressId, addressNum, addressFirst, addressSecond, addressThird, currentPage }) => {
-  const { isUpdate } = useAddressStore();
+  const { isUpdate, modalAddressId, setOpenMemberAddressModal } = useAddressStore();
   const { mutate: deleteMutate } = useDeleteAddress();
 
   const handleAddressDelete = addressId => {
+    if (addressId === modalAddressId) {
+      deleteMutate(addressId);
+      setOpenMemberAddressModal(false);
+      return;
+    }
     deleteMutate(addressId);
   };
 

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useKakaoLoader, Map, MapMarker, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import { useKakaoAddressSearch } from '../../../api/Address/AddressModal/kakaoAddressSearch';
 

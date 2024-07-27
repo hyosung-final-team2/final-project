@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.address.service;
 
+import kr.or.kosa.ubun2_be.domain.address.dto.AddressDeleteRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressMemberInfoResponse;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressResponse;
@@ -31,4 +32,6 @@ public interface AddressService {
     Address findByAddressIdAndMemberId(Long addressId, Long memberId);
 
     public void deleteMemberAddress(Long addressId, Long memberId);
+
+    void deleteSelectedAddress(List<AddressDeleteRequest> addressDeleteRequestList, Long customerId);
 }

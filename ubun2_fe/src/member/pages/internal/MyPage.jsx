@@ -32,7 +32,7 @@ function MyPage() {
   const myInfoItems = [
     { id: 1, name: '주문 관리', icon: ShoppingBagIcon, value: '/member/app/mypage/order-list' },
     { id: 2, name: '결제수단 관리', icon: CreditCardIcon, value: '/member/app/mypage/payment-list' },
-    { id: 3, name: '배송지 관리', icon: TruckIcon, value: '/member/app/addresses' },
+    { id: 3, name: '배송지 관리', icon: TruckIcon, value: '/member/app/mypage/address-list' },
     { id: 4, name: '로그아웃', icon: ArrowRightOnRectangleIcon, value: '/logout' },
   ];
 
@@ -41,6 +41,10 @@ function MyPage() {
       console.log('TODO: 로그아웃 처리');
       localStorage.clear();
       navigate('/member/login');
+      return;
+    }
+    if (value === '/member/app/mypage/address-list') {
+      navigate(value, { state: { isFromMyPage: true } });
       return;
     }
     navigate(value);

@@ -6,7 +6,6 @@ import useAddressStore from '../../store/address/AddressStore';
 import { useRegisterAddress, useUpdateAddress, useDeleteAddress } from '../../api/Address/queries';
 
 const SEARCH_URL = '/member/app/addresses/address-search';
-const ADDRESS_LIST_URL = '/member/app/addresses'; // 주소 목록 페이지 URL
 
 const RegisterAddress = () => {
   const [isAllValuePossible, setIsAllValuePossible] = useState(false);
@@ -14,11 +13,13 @@ const RegisterAddress = () => {
   const { selectedAddress, resetAddressData, setSelectedAddress, addressData, setAddressData, memberId } = useAddressStore();
   const navigate = useNavigate();
   const location = useLocation();
+  const isFromMyPage = location.state?.isFromMyPage;
   const isRegister = location.state?.isRegister;
-  const { recipientName, address, recipientPhone, addressNickname, addressId } = location.state || {};
   const { mutate: registerAddress } = useRegisterAddress();
   const { mutate: updateAddress } = useUpdateAddress();
   const { mutate: deleteAddress } = useDeleteAddress();
+
+  const ADDRESS_LIST_URL = isFromMyPage ? '/member/app/mypage/address-list' : '/member/app/addresses'; // 주소 목록 페이지 URL
 
   const addressInfo = [
     { label: '배송지 이름', placeholder: '배송지 이름을 알려주세요', key: 'name' },
@@ -28,44 +29,74 @@ const RegisterAddress = () => {
     { label: '휴대폰번호', placeholder: '휴대폰 번호를 알려주세요', key: 'phoneNumber' },
   ];
 
+  // useEffect(() => {
+  //   if (addressId) {
+  //     setLocalAddressId(addressId);
+  //   }
+  // }, [addressId]);
+
+  // 수정 시 기존 데이터 불러오기
   useEffect(() => {
-    if (addressId) {
-      setLocalAddressId(addressId);
+    console.log(isRegister);
+
+    resetAddressData();
+
+    if (location.state) {
+      const { isRegister, recipientName, address, recipientPhone, addressNickname, addressId } = location.state || {};
+
+      if (isRegister === false) {
+        // 수정된 정규식
+        const addressRegex = /^(.*(?:로|길)\s*\d+(?:-\d+)?(?:\s*\d*)?)\s+(.+)$/;
+
+        const separateAddress = fullAddress => {
+          const match = fullAddress.match(addressRegex);
+          if (match) {
+            return {
+              roadAddress: match[1].trim(),
+              detailAddress: match[2].trim(),
+            };
+          }
+          return { roadAddress: fullAddress, detailAddress: '' };
+        };
+
+        const [zipNo, ...rest] = address.split(',');
+        const refinedAddress = rest.join(' ').trim();
+
+        const { roadAddress, detailAddress } = separateAddress(refinedAddress || '');
+
+        // 주소 데이터 세팅
+        setAddressData({
+          name: addressNickname || '',
+          recipientName: recipientName || '',
+          zipNo: zipNo || '',
+          address: roadAddress,
+          detailAddress: detailAddress,
+          phoneNumber: recipientPhone || '',
+        });
+
+        setLocalAddressId(addressId);
+      }
     }
-  }, [addressId]);
+  }, [location.state, resetAddressData, isRegister, setAddressData]);
 
   useEffect(() => {
-    if (isRegister === false) {
-      const addressRegex = /^(.*?(?:(?:\d+(?:번지)?)|(?:[가-힣]+(?:로|길)\s*\d+(?:-\d+)?)))(.*)$/;
+    const handlePopState = () => {
+      resetAddressData();
+    };
 
-      const separateAddress = fullAddress => {
-        const match = fullAddress.match(addressRegex);
-        if (match) {
-          return {
-            roadAddress: match[1].trim(),
-            detailAddress: match[2].trim(),
-          };
-        }
-        return { roadAddress: fullAddress, detailAddress: '' };
-      };
+    window.addEventListener('popstate', handlePopState);
 
-      const { roadAddress, detailAddress } = separateAddress(address || '');
-
-      setAddressData({
-        name: addressNickname || '',
-        recipientName: recipientName || '',
-        address: roadAddress,
-        detailAddress: detailAddress,
-        phoneNumber: recipientPhone || '',
-      });
-    }
-  }, [isRegister, addressNickname, recipientName, address, recipientPhone, setAddressData]);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [resetAddressData]);
 
   useEffect(() => {
     if (selectedAddress) {
       setAddressData({
         ...addressData,
-        address: selectedAddress.roadAddr,
+        address: `${selectedAddress.roadAddrPart1}`,
+        zipNo: selectedAddress.zipNo,
       });
     }
   }, [selectedAddress, setAddressData]);
@@ -85,9 +116,10 @@ const RegisterAddress = () => {
 
   const handleConfirm = () => {
     if (isAllValuePossible) {
+      const [city, town, ...rest] = addressData.address.split(' ');
       const data = {
         memberId: memberId,
-        address: `${addressData.address} ${addressData.detailAddress}`,
+        address: `${addressData.zipNo.trim()},${city},${town},${rest.join(' ')} ${addressData.detailAddress}`,
         recipientName: addressData.recipientName,
         recipientPhone: addressData.phoneNumber,
         addressNickname: addressData.name,

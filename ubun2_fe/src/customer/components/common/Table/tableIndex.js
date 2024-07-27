@@ -14,11 +14,16 @@ export const tableColumn = {
   product: ['상품 아이디', '상품명', '수량', '상품가격(등록가)', '상품 할인율', '상품게시 상태', '배송 종류'],
 };
 
-
 export const columnMapping = {
   '회원 이메일': 'memberEmail',
-  '회원명': 'memberName',
-  '전화번호': 'memberPhone',
-  '가입일': 'createdAt',
-  '가입 상태': 'isPending'
+  회원명: 'memberName',
+  전화번호: 'memberPhone',
+  가입일: 'createdAt',
+  '가입 상태': 'isPending',
+  결제수단: 'paymentMethod',
+  은행명: 'bankName',
+  계좌번호: 'accountNumber',
+  카드사명: 'cardCompany',
+  '주소(시, 도)': 'address',
+  카드번호: 'cardNumber',
 };
