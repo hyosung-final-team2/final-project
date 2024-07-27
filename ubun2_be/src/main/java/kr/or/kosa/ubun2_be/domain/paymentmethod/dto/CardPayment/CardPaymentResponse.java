@@ -12,6 +12,7 @@ public class CardPaymentResponse {
     private String paymentType;
     private String cardCompanyName;
     private String cardNumber;
+    private String createdAt;
 
     public CardPaymentResponse(CardPayment cardPayment) {
         this.memberId = cardPayment.getMember().getMemberId();
@@ -21,5 +22,6 @@ public class CardPaymentResponse {
         this.paymentType = cardPayment.getPaymentType();
         this.cardCompanyName = cardPayment.getCardCompanyName();
         this.cardNumber = cardPayment.getCardNumber();
+        this.createdAt = cardPayment.getCreatedAt().toString();
     }
 }
