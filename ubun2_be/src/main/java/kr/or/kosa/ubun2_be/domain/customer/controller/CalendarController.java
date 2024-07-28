@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.customer.controller;
 
+import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.customer.dto.DailyOrderSummaryRequest;
 import kr.or.kosa.ubun2_be.domain.customer.dto.DailyOrderSummaryResponse;
 import kr.or.kosa.ubun2_be.domain.customer.service.CalendarService;
@@ -22,7 +23,7 @@ public class CalendarController {
     private final CalendarService calendarService;
 
     @GetMapping("/calendar")
-    public ResponseDto<?> getDailySalesForMonthAndCustomer(@ModelAttribute DailyOrderSummaryRequest dailyOrderSummaryRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
+    public ResponseDto<?> getDailySalesForMonthAndCustomer(@Valid @ModelAttribute DailyOrderSummaryRequest dailyOrderSummaryRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         List<DailyOrderSummaryResponse> dailySalesForMonthAndCustomer = calendarService.getDailySalesForMonthAndCustomer(dailyOrderSummaryRequest, customUserDetails.getUserId());
         return ResponseDto.ok(dailySalesForMonthAndCustomer,"주문 데이터 ");
     }

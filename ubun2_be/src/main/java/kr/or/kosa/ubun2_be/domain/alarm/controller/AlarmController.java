@@ -2,6 +2,7 @@ package kr.or.kosa.ubun2_be.domain.alarm.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.GroupAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.PersonalAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.entity.Alarm;
@@ -21,14 +22,14 @@ public class AlarmController {
 
     @Operation(summary = "단일 구매자에게 알람 보내기")
     @PostMapping("/customers/alarm/personal")
-    public ResponseDto<?> pushMessagePersonal(@RequestBody PersonalAlarmSendRequest request) {
+    public ResponseDto<?> pushMessagePersonal(@Valid @RequestBody PersonalAlarmSendRequest request) {
         String messageId = alarmService.sendMessageToPersonal(request);
         return ResponseDto.ok(messageId,"개인 알람 전송 성공");
     }
 
     @Operation(summary = "고객의 상점에 구독되어있는 회원 전체에게 알람 보내기")
     @PostMapping("/customers/alarm/group")
-    public ResponseDto<?> pushMessageGroup(@RequestBody GroupAlarmSendRequest request) {
+    public ResponseDto<?> pushMessageGroup(@Valid @RequestBody GroupAlarmSendRequest request) {
         alarmService.sendMessageToGroup(request);
         return ResponseDto.ok(null,"토픽 알람 전송 성공");
     }

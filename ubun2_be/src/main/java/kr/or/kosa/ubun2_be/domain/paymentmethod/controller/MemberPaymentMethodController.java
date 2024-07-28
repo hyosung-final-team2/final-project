@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.paymentmethod.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.*;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.MyAccountPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.MyCardPaymentResponse;
@@ -57,14 +58,14 @@ public class MemberPaymentMethodController {
 
     @Operation(summary = "결제수단 등록")
     @PostMapping
-    public ResponseDto<?> registerPaymentMethod(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody RegisterPaymentMethodRequest registerPaymentMethodRequest) {
+    public ResponseDto<?> registerPaymentMethod(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody RegisterPaymentMethodRequest registerPaymentMethodRequest) {
         paymentMethodService.registerPaymentMethod(registerPaymentMethodRequest, customUserDetails.getUserId());
         return ResponseDto.ok(null,"결제수단을 성공적으로 등록했습니다.");
     }
 
     @Operation(summary = "결제수단 수정")
     @PutMapping("/{paymentMethodId}")
-    public ResponseDto<?> updatePaymentMethod(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long paymentMethodId, @RequestBody UpdatePaymentMethodRequest updatePaymentMethodRequest) {
+    public ResponseDto<?> updatePaymentMethod(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long paymentMethodId, @Valid @RequestBody UpdatePaymentMethodRequest updatePaymentMethodRequest) {
         paymentMethodService.updatePaymentMethod(paymentMethodId, updatePaymentMethodRequest, customUserDetails.getUserId());
         return ResponseDto.ok(null,"결제수단을 성공적으로 수정했습니다.");
     }

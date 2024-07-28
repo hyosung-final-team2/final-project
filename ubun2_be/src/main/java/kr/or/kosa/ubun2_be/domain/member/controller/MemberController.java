@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.member.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.member.dto.*;
 import kr.or.kosa.ubun2_be.domain.member.service.MemberService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
@@ -20,7 +21,7 @@ public class MemberController {
 
     @Operation(summary = "회원 회원가입")
     @PostMapping("/signup")
-    public ResponseDto<?> createMember(@RequestBody MemberSignUpRequest memberSignUpRequest) {
+    public ResponseDto<?> createMember(@Valid @RequestBody MemberSignUpRequest memberSignUpRequest) {
         memberService.createMember(memberSignUpRequest);
         return ResponseDto.ok(null, "정상출력 데이터");
     }
@@ -42,7 +43,7 @@ public class MemberController {
 
     @Operation(summary = "회원의 기기등록 FcmToken 전송 받기")
     @PutMapping("/fcmtoken")
-    public ResponseDto<?> updateFcmToken(@RequestBody FcmTokenRequest fcmTokenRequest,
+    public ResponseDto<?> updateFcmToken(@Valid @RequestBody FcmTokenRequest fcmTokenRequest,
                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         memberService.updateMemberFcmToken(customUserDetails.getUserId(),fcmTokenRequest);
         return ResponseDto.ok(null,"fcm 토큰 등록/업데이트 완료");
@@ -50,7 +51,7 @@ public class MemberController {
 
     @Operation(summary = "회원의 간편 결제 비밀번호 체크")
     @PostMapping("/simplecheck")
-    public ResponseDto<?> simpleCheck(@RequestBody PaymentPasswordRequest request,
+    public ResponseDto<?> simpleCheck(@Valid @RequestBody PaymentPasswordRequest request,
                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boolean result = memberService.simpleCheck(customUserDetails.getUserId(), request);
         return ResponseDto.ok(result,"결제 비밀번호 체크 완료");
@@ -58,7 +59,7 @@ public class MemberController {
 
     @Operation(summary = "회원의 간편 결제 비밀번호 등록")
     @PostMapping("/simplepassword")
-    public ResponseDto<?> simplePassword(@RequestBody PaymentPasswordRequest request,
+    public ResponseDto<?> simplePassword(@Valid @RequestBody PaymentPasswordRequest request,
                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         memberService.registerSimplePassword(customUserDetails.getUserId(), request);
         return ResponseDto.ok(null,"결제 비밀번호 등록 완료");
@@ -67,7 +68,7 @@ public class MemberController {
     @Transactional
     @Operation(summary = "회원의 간편 결제 비밀번호 수정")
     @PutMapping("/simplepassword")
-    public ResponseDto<?> updateSimplePassword(@RequestBody PaymentPasswordRequest request,
+    public ResponseDto<?> updateSimplePassword(@Valid @RequestBody PaymentPasswordRequest request,
                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         memberService.updateSimplePassword(customUserDetails.getUserId(), request);
         return ResponseDto.ok(null,"결제 비밀번호 수정 완료");

@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.cart.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.cart.dto.CartProductDeleteRequest;
 import kr.or.kosa.ubun2_be.domain.cart.dto.CartProductUpdateRequest;
 import kr.or.kosa.ubun2_be.domain.cart.dto.CartRequest;
@@ -23,7 +24,7 @@ public class CartController {
 
     @Operation(summary = "장바구니 생성")
     @PostMapping("/carts")
-    public ResponseDto<?> registerCarts(@RequestBody List<CartRequest> cartRequests,
+    public ResponseDto<?> registerCarts(@Valid  @RequestBody List<CartRequest> cartRequests,
                                         @AuthenticationPrincipal CustomUserDetails customerUserDetails) {
         cartService.createCarts(customerUserDetails.getUserId(), cartRequests);
         return ResponseDto.ok(null, "정상출력 데이터");
@@ -38,7 +39,7 @@ public class CartController {
 
     @Operation(summary = "장바구니 수량 업데이트")
     @PutMapping("/carts")
-    public ResponseDto<?> updateCartProductQuantities(@RequestBody List<CartProductUpdateRequest> cartProductUpdateRequests,
+    public ResponseDto<?> updateCartProductQuantities(@Valid @RequestBody List<CartProductUpdateRequest> cartProductUpdateRequests,
                                                       @AuthenticationPrincipal CustomUserDetails customerUserDetails) {
         cartService.updateCartProductQuantities(customerUserDetails.getUserId(), cartProductUpdateRequests);
         return ResponseDto.ok(null, "정상출력 데이터");
@@ -46,7 +47,7 @@ public class CartController {
 
     @Operation(summary = "장바구니 제품 삭제")
     @DeleteMapping("/carts")
-    public ResponseDto<?> deleteCartProducts(@RequestBody List<CartProductDeleteRequest> cartProductDeleteRequests,
+    public ResponseDto<?> deleteCartProducts(@Valid @RequestBody List<CartProductDeleteRequest> cartProductDeleteRequests,
                                              @AuthenticationPrincipal CustomUserDetails customerUserDetails) {
         cartService.deleteCartProducts(customerUserDetails.getUserId(), cartProductDeleteRequests);
         return ResponseDto.ok(null, "정상출력 데이터");
