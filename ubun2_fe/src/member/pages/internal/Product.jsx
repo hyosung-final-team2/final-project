@@ -17,6 +17,7 @@ function Product() {
 
   const { data: productData } = useGetProductDetail(parseInt(productId));
   const product = productData?.data?.data;
+  console.log(product)
   const discountedPrice = Math.round((product?.productPrice * (1 - product?.productDiscount / 100)) / 10) * 10;
 
   const orderOptionFunc = orderOption => {
@@ -110,12 +111,15 @@ function Product() {
         </div>
         <div className='mb-3'>
           <div className='text-2xl font-bold' style={{ letterSpacing: '1px' }}>
-            <span className='text-red-500 mr-1.5'>{product?.productDiscount}%</span>
+            {product?.productDiscount !== 0 ? <span className='text-red-500 mr-1.5'>{product?.productDiscount}%</span> : null }
             <span>{discountedPrice?.toLocaleString()}원</span>
           </div>
-          <div className='text-xl text-gray-300 line-through' style={{ letterSpacing: '1px' }}>
-            {product?.productPrice?.toLocaleString()}원
-          </div>
+          {product?.productDiscount !== 0 ?
+              <div className='text-xl text-gray-300 line-through' style={{letterSpacing: '1px'}}>
+                {product?.productPrice?.toLocaleString()}원
+              </div> : null
+          }
+
         </div>
         <div className='mb-2'>{orderOptionFunc(product?.orderOption)}</div>
         <div className='text-gray-500'>배송비 무료, 이 상품 배송은 평균 2~7일 걸려요</div>

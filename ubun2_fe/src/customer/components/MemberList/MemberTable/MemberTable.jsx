@@ -116,19 +116,23 @@ const MemberTable = () => {
   }
 
   useEffect(() => {
-    return resetData()
+    return () => {
+      resetData()
+    }
   },[])
 
   // isLoading 시, skeletonTable
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore()
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore()
 
   useEffect(() => {
     if (!isLoading) {
       setSkeletonData(memberList);
       setSkeletonTotalPage(totalPages)
       setSkeletonSortData(sort)
+      setSkeletonSearchCategory(searchCategory);
+      setSkeletonSearchKeyword(searchKeyword);
     }
-  }, [memberList, totalPages,sort, setSkeletonTotalPage, setSkeletonData, isLoading]);
+  }, [memberList, totalPages,sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
 
   if (isLoading) {
     // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작

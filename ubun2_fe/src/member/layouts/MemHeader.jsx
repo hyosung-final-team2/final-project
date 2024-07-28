@@ -14,11 +14,12 @@ import {messaging} from "../../../initFirebase.js";
 import {toast} from "react-hot-toast";
 import {errorToastStyle, successToastStyle} from "../api/toastStyle.js";
 
-function MemHeader({setIsAlarmOpen}) {
+const MemHeader = ({setIsAlarmOpen, showBackBtn}) => {
   const [currentTheme, setCurrentTheme] = useState(localStorage.getItem('theme'));
   const navigate = useNavigate();
   const location = useLocation();
   const isStore = location.pathname.split('/').some(item => item === 'store');
+  const isHome = location.pathname.split('/').some(item => item === 'home');
 
   const { currentStoreName } = useStoreStore(state => ({
     currentStoreName: state.currentStoreName,
@@ -77,13 +78,20 @@ function MemHeader({setIsAlarmOpen}) {
     <>
       <div className='navbar sticky top-0 bg-base-100  z-10 shadow-md '>
         <div className='flex-1'>
-          <BackButton className='h-7 inline-block w-7' onClick={() => navigate(-1)} />
+          {showBackBtn && <BackButton className='h-7 inline-block w-7' onClick={() => navigate(-1)} /> }
+          {isHome &&
+              <div className="w-full flex justify-start items-center gap-1">
+                <img src='/fms_logo.png' alt='logo' className='w-7'/>
+                <img src="/text_logo.png" className="w-1/3"/>
+              </div>
+          }
         </div>
 
         {isStore ? (
-          <div className='font-bold	' style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)' }}>
-            {currentStoreName}
-          </div>
+            <div className='font-bold	'
+                 style={{position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)'}}>
+              {currentStoreName}
+            </div>
         ) : null}
 
         <div className='flex-none'>

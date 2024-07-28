@@ -17,7 +17,7 @@ function StoreList() {
           <div style={{flex: 0.7}} className='w-full px-3 py-2 text-xl font-bold bg-white flex items-center'>
               <div>등록된 상점({storeList?.data?.data?.length})</div>
           </div>
-          <div style={{flex: 9.3}} className='w-full'>
+          <div style={{flex: 9.3}} className='w-full overflow-y-scroll'>
               {storeList?.data?.data?.map(item => {
                   return (
                       <StoreListItem key={item.customerId} customerId={item.customerId} storeName={item.businessName}

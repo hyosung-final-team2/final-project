@@ -8,8 +8,6 @@ function ProductItem({ productId, productName, productPrice, productDiscountPerc
 
   const discountedPrice = Math.round((productPrice * (1 - productDiscountPercent / 100)) / 10) * 10;
 
-
-  console.log(productImage)
   const orderOptionFunc = (orderOption) => {
       if (orderOption === "SINGLE") {
           return (
@@ -52,7 +50,7 @@ function ProductItem({ productId, productName, productPrice, productDiscountPerc
 
     return (
         <div style={{width: "50%"}} onClick={() => navigate(`product/${productId}`)}>
-          <div className={`p-3 w-full h-full flex flex-col gap-0.5 ${!isOdd ? "pl-2 pr-4" : "pl-4 pr-2"}`}>
+          <div className={`p-3 w-full h-full flex flex-col gap-1 ${!isOdd ? "pl-2 pr-4" : "pl-4 pr-2"}`}>
               <div style={{width: "100%", aspectRatio: "1/1", position: "relative"}} className=" rounded-xl">
                   <img src={productImage} style={{aspectRatio:1}} className="w-full h-full object-cover rounded-xl" alt="상품사진"/>
                   <div className="absolute top-1 left-1">
@@ -64,8 +62,9 @@ function ProductItem({ productId, productName, productPrice, productDiscountPerc
                   </div>
               </div>
               <p>{productName}</p>
-              <p className="font-bold"><span
-                  className="text-red-500 mr-0.5">{productDiscountPercent}%</span> {discountedPrice.toLocaleString()}원</p>
+              <p className="font-bold">
+                  {productDiscountPercent !== 0 ? <span className="text-red-500 mr-0.5">{productDiscountPercent}%</span> : null} {discountedPrice.toLocaleString()}원
+              </p>
               <div>{orderOptionFunc(orderOption)}</div>
           </div>
       </div>

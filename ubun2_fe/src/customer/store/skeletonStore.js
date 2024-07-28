@@ -7,9 +7,13 @@ const useSkeletonStore = create(
             skeletonData: [],
             skeletonSortData:[],
             skeletonTotalPage: null,
+            skeletonSearchCategory: null,
+            skeletonSearchKeyword: null,
             setSkeletonData: (data) => set({ skeletonData: data }),
             setSkeletonSortData: (data) => set({ skeletonSortData: data }),
             setSkeletonTotalPage: (data) => set({ skeletonTotalPage: data }),
+            setSkeletonSearchCategory: (data) => set({ skeletonSearchCategory: data }),
+            setSkeletonSearchKeyword: (data) => set({ skeletonSearchKeyword: data }),
             resetSkeletonData: () => set({ skeletonData: [] }),
         }),
         {
