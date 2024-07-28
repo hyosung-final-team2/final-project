@@ -40,7 +40,7 @@ const MemberTable = () => {
   const PAGE_SIZE = 8
   const { data: members,refetch: refetchMembers , isLoading } = useGetMembers(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
-  const totalPages = members?.data?.data?.totalPages ?? 5;
+  const totalPages = members?.data?.data?.totalPages;
   const memberList = members?.data?.data?.content || [];
 
   const { data, refetch } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
@@ -162,7 +162,7 @@ const MemberTable = () => {
         </Table>
       </div>
       {/* 페이지네이션 */}
-      <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+      {isLoading === false ? <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' /> : null}
 
       {/* 엑셀 조회 모달 */}
       {openExcelModal && <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} /> }

@@ -21,9 +21,9 @@ const OrderTable = () => {
   const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
 
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: orders } = useGetOrders(currentPage);
+  const { data: orders, isLoading } = useGetOrders(currentPage);
 
-  const totalPages = orders?.data?.data?.totalPages ?? 5;
+  const totalPages = orders?.data?.data?.totalPages;
   const orderList = orders?.data?.data?.content || [];
 
   const { data, refetch } = useGetOrderDetail(selectedOrderDetail.orderId, selectedOrderDetail.subscription);
@@ -98,7 +98,7 @@ const OrderTable = () => {
         </Table>
       </div>
       {/* 페이지네이션 */}
-      <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+      {isLoading === false ? <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' /> : null}
       {/* 모달 */}
       <OrderDetailModal
         isOpen={openOrderDetailModal}

@@ -43,7 +43,6 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
                 .limit(pageable.getPageSize())
                 .orderBy(productSort(pageable).stream().toArray(OrderSpecifier[]::new))
                 .fetchResults();
-
         List<Product> content = results.getResults();
         long total = results.getTotal();
         return new PageImpl<>(content, pageable, total);
@@ -110,6 +109,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
 
     private ComparableExpressionBase<?> getPath(String property) {
         return switch (property) {
+            case "productId" -> product.productId;
             case "productCategoryName" -> category.categoryName;
             case "productName" -> product.productName;
             case "stockQuantity" -> product.stockQuantity;

@@ -36,9 +36,9 @@ const ProductTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8
 
-  const { data: products, refetch: refetchProducts,isLoading } = useGetProducts(currentPage,PAGE_SIZE,sort,searchCategory,searchKeyword);
+  const { data: products, refetch: refetchProducts, isLoading } = useGetProducts(currentPage,PAGE_SIZE,sort,searchCategory,searchKeyword);
 
-  const totalPages = products?.data?.data?.totalPages ?? 5;
+  const totalPages = products?.data?.data?.totalPages;
   const productList = products?.data?.data?.content || [];
 
   const { data, refetch } = useGetProductDetail(selectedProductDetail.productId);
@@ -133,7 +133,7 @@ const ProductTable = () => {
             currentPage={currentPage}
           />
         </Table>
-        <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+        {isLoading === false ? <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' /> : null}
         {/* modal */}
         <ProductDetailModal
           isOpen={openProductDetailModal}
