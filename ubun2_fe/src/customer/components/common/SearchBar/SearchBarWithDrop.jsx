@@ -42,12 +42,12 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
     onSearch(searchTerm, selectedCategory);
   };
 
-  const {skeletonSearchCategory, skeletonSearchKeyword} = useSkeletonStore()
-  const {isReset} = useMemberTableStore()
-
   const getKeyByValue = (object, value) => {
     return Object.keys(object).find(key => object[key] === value);
   };
+
+  const {skeletonSearchCategory, skeletonSearchKeyword} = useSkeletonStore()
+  const {isReset} = useMemberTableStore()
 
   const dropdownCategoryScreen = () => {
     if (showCategory !== '카테고리') {
@@ -122,7 +122,6 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
             required
             value={dropdownKeywordScreen()}
             onChange={handleSearchChange}
-            disabled={showCategory==="카테고리"}
           />
           <button
             type='submit'
