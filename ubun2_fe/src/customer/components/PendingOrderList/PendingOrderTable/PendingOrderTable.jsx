@@ -199,7 +199,9 @@ const PendingOrderTable = () => {
         </Table>
       </div>
       {/* 페이지네이션 */}
-      <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+      {isLoading === false ? (
+        <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+      ) : null}
       {/* 모달 */}
       <OrderDetailModal
         isOpen={openPendingOrderDetailModal}
