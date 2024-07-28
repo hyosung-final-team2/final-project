@@ -27,10 +27,12 @@ export const useSendPersonalAlarm = (targetMemberId, orderId, isSubscription) =>
 
 export const useSendGroupAlarmProduct = (productName) => {
     const {customerId, businessName}= useCustomerStore()
+    const BASE_URL = import.meta.env.VITE_PUSH_LINK
     const groupData = {
         customerId : customerId,
         title:businessName,
-        content: `새상품(${productName})이 추가되었습니다.`
+        content: `새상품(${productName})이 추가되었습니다.`,
+        link: `${BASE_URL}/member/app/store/product/62` // TODO : onSuccess
     }
     return useMutation({
         mutationFn:() => sendGroupAlarm(groupData)
