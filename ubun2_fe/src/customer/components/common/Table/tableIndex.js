@@ -11,8 +11,8 @@ export const tableColumn = {
     detail: ['결제수단', '카드사(은행)', '카드/계좌번호', '만료일'],
     nonSearch: ['주소(시,군,구)', '상세주소', '우편번호'],
   },
-  orders: ['정기 주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '결제수단', '승인 상태'],
-  pendingOrders: ['정기 주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '결제수단', '승인 처리'],
+  orders: ['정기 주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '주문결제수단', '승인 상태'],
+  pendingOrders: ['정기 주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '주문결제수단', '승인 상태'],
   product: ['분류', '상품명', '수량', '상품가격', '할인율', '상품게시 상태', '배송 종류'],
 };
 
@@ -31,10 +31,14 @@ export const columnMapping = {
   분류: 'productCategoryName',
   상품명: 'productName',
   수량: 'stockQuantity',
-  "상품가격": 'productPrice',
+  상품가격: 'productPrice',
   할인율: 'productDiscount',
- "상품게시 상태": 'productStatus',
-  "배송 종류":'orderOption',
-
-
+  '상품게시 상태': 'productStatus',
+  '배송 종류': 'orderOption',
+  '정기 주문 상태': 'isSubscription',
+  '주문 일자': 'createdAt',
+  '주문자(구매자)': 'memberName',
+  '총 주문금액': 'totalCost',
+  주문결제수단: 'paymentType',
+  '승인 상태': 'orderStatus',
 };

@@ -176,6 +176,39 @@ public class OrderServiceImpl implements OrderService {
         combinedList.addAll(orderResponseLists);
         combinedList.addAll(subscriptionOrderResponseList);
 
+        // totalCost 필터링
+        if (searchRequest != null && "totalCost".equals(searchRequest.getSearchCategory())) {
+            String[] range = searchRequest.getSearchKeyword().split(",");
+            if (range.length == 2) {
+                long start = Long.parseLong(range[0].trim());
+                long end = Long.parseLong(range[1].trim());
+                combinedList = combinedList.stream()
+                        .filter(order -> order.getTotalOrderPrice() >= start && order.getTotalOrderPrice() <= end)
+                        .collect(Collectors.toList());
+            }
+        }
+
+        // isSubscription 필터링
+        if (searchRequest != null && "isSubscription".equals(searchRequest.getSearchCategory())) {
+            boolean isSubscription = Boolean.parseBoolean(searchRequest.getSearchKeyword());
+            combinedList = combinedList.stream()
+                    .filter(order -> order.isSubscription() == isSubscription)
+                    .collect(Collectors.toList());
+        }
+
+        List<Sort.Order> sortOrders = pageable.getSort().get().collect(Collectors.toList());
+        if (!sortOrders.isEmpty()) {
+            combinedList.sort((m1, m2) -> {
+                for (Sort.Order order : sortOrders) {
+                    int comparison = compareOrders(m1, m2, order.getProperty());
+                    if (comparison != 0) {
+                        return order.isAscending() ? comparison : -comparison;
+                    }
+                }
+                return 0;
+            });
+        }
+
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
         List<UnifiedOrderResponse> paginatedList = combinedList.subList(start, end);
