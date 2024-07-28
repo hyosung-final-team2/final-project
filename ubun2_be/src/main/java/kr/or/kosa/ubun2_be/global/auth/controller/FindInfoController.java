@@ -1,10 +1,7 @@
 package kr.or.kosa.ubun2_be.global.auth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import kr.or.kosa.ubun2_be.global.auth.dto.FindIdRequest;
-import kr.or.kosa.ubun2_be.global.auth.dto.FindIdResponse;
-import kr.or.kosa.ubun2_be.global.auth.dto.FindPasswordRequest;
-import kr.or.kosa.ubun2_be.global.auth.dto.ResetPasswordRequest;
+import kr.or.kosa.ubun2_be.global.auth.dto.*;
 import kr.or.kosa.ubun2_be.global.auth.service.FindInfoService;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +33,12 @@ public class FindInfoController {
     public ResponseDto<?> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
         findInfoService.resetPassword(resetPasswordRequest.getUserEmail(),resetPasswordRequest.getNewPassword(), resetPasswordRequest.getRole());
         return ResponseDto.ok(null,"비밀번호 재설정 완료");
+    }
+
+    @Operation(summary = "고객&회원 id 중복 체크")
+    @PostMapping("/checkId")
+    public ResponseDto<?> checkLoginId(@RequestBody CheckLoginIdRequest checkLoginIdRequest) {
+         findInfoService.checkLoginId(checkLoginIdRequest);
+        return ResponseDto.ok(null, "고객 ID 중복체크 완료");
     }
 }
