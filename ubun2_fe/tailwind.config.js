@@ -69,6 +69,10 @@ module.exports = {
         'custom-dashboard-orders-hover': '#05b97b',
         'custom-dashboard-members-hover': '#2aa7e2',
         'custom-dashboard-products-hover': '#a89ed6',
+
+        // mypage custom color
+        'custom-mypage-bg': '#748AFF',
+        'custom-mypage-back-bg': '#F4F4F7',
       },
       animation: {
         'move-sideways': 'moveSideways 1s infinite alternate',
