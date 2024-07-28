@@ -39,6 +39,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
+    console.log(searchTerm)
     onSearch(searchTerm, selectedCategory);
   };
 

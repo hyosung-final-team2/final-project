@@ -13,6 +13,14 @@ import { getProducts } from '../../../api/Product/ProductList/ProductList/produc
 import { useGetProductDetail } from '../../../api/Product/ProductList/ProductDetailModal/queris.js';
 import DynamicTableBody from "../../common/Table/DynamicTableBody.jsx";
 import TableBody from "../../common/Table/TableBody.jsx";
+import useMemberTableStore from "../../../store/MemberTable/memberTableStore.js";
+import useProductTableStore from "../../../store/ProductTable/productTableStore.js";
+import useSkeletonStore from "../../../store/skeletonStore.js";
+import SkeletonTable from "../../Skeleton/SkeletonTable.jsx";
+import SkeletonMemberTableFeature from "../../MemberList/Skeleton/SkeletonMemberTableFeature.jsx";
+import SkeletonMemberTableRow from "../../MemberList/Skeleton/SkeletonMemberTableRow.jsx";
+import SkeletonProductTableFeature from "../Skeleton/SkeletonProductTableFeature.jsx";
+import SkeletonProductTableRow from "../Skeleton/SkeletonProductTableRow.jsx";
 
 const ProductTable = () => {
   const [openProductDetailModal, setOpenProductDetailModal] = useState(false);
@@ -20,14 +28,19 @@ const ProductTable = () => {
   const [selectedProducts, setSelectedProducts] = useState([]); // 체크된 상품 ID
   const [selectedProductDetail, setSelectedProductDetail] = useState({ productId: null }); // 선택된 멤버 ID - 모달 오픈 시
 
-  const [searchTerm, setSearchTerm] = useState(''); // 검색된 단어
-  const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
+  const { sort, updateSort } = useProductTableStore()
+  const {searchKeyword, setSearchKeyword} = useProductTableStore(); // 검색된 단어
+  const {searchCategory, setSearchCategory} = useProductTableStore(); // 검색할 카테고리 (드롭다운)
+  const { resetData } = useProductTableStore()
 
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: products } = useGetProducts(currentPage);
+  const PAGE_SIZE = 8
+
+  const { data: products, refetch: refetchProducts,isLoading } = useGetProducts(currentPage,PAGE_SIZE,sort,searchCategory,searchKeyword);
 
   const totalPages = products?.data?.data?.totalPages ?? 5;
   const productList = products?.data?.data?.content || [];
+
   const { data, refetch } = useGetProductDetail(selectedProductDetail.productId);
 
   const queryClient = useQueryClient();
@@ -36,11 +49,11 @@ const ProductTable = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['product', nextPage],
-        queryFn: () => getProducts(nextPage),
+        queryKey: ['product', nextPage, sort, searchCategory, searchKeyword],
+        queryFn: () => getProducts(nextPage,PAGE_SIZE),
       });
     }
-  }, [currentPage, queryClient, totalPages]);
+  }, [currentPage, queryClient,searchCategory, searchKeyword, sort, totalPages]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -49,6 +62,7 @@ const ProductTable = () => {
       setSelectedProducts([]);
     }
   };
+
   const handleRowChecked = id => {
     setSelectedProducts(prev => (prev.includes(id) ? prev.filter(id => id !== id) : [...prev, id]));
   };
@@ -58,22 +72,57 @@ const ProductTable = () => {
     await refetch();
     await setOpenProductDetailModal(true);
   };
-  const handleSearch = (term, category) => {
-    setSearchTerm(term);
+  const handleSearch = (keyword, category) => {
+    setSearchKeyword(keyword);
     setSearchCategory(category);
-    if (term.trim() === '' || category === '카테고리') return;
+    if (keyword.trim() === '' || category === '카테고리') return;
 
-    // TODO: 검색 API 호출
-    console.log(`${category} : ${term}`);
+    refetchProducts()
+    setCurrentPage(1)
   };
+
+  const handleSort = async (column,sortType) => {
+    await updateSort(column,sortType);
+    refetchProducts()
+    setCurrentPage(1)
+  }
+
+
+  const {toggleIsReset} = useProductTableStore();
+  const handleDataReset = async () => {
+    await toggleIsReset()
+    await resetData()
+    await refetchProducts()
+    await setCurrentPage(1)
+  }
+
+  useEffect(() => {
+    return resetData()
+  },[])
+
+  // isLoading 시, skeletonTable
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore()
+
+  useEffect(() => {
+    if (!isLoading) {
+      setSkeletonData(productList);
+      setSkeletonTotalPage(totalPages)
+      setSkeletonSortData(sort)
+    }
+  }, [productList, totalPages,sort, setSkeletonTotalPage, setSkeletonData, isLoading]);
+
+  if (isLoading) {
+    // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
+    return <SkeletonTable SkeletonTableFeature={SkeletonProductTableFeature} TableRowComponent={SkeletonProductTableRow} tableColumns={tableColumn.product}/>
+  }
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      <ProductTableFeature tableColumns={tableColumn.product} onSearch={handleSearch} currentPage={currentPage} />
+      <ProductTableFeature tableColumns={tableColumn.product} onSearch={handleSearch} currentPage={currentPage} handleDataReset={handleDataReset}/>
 
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.product} allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} />
+          <TableHead tableColumns={tableColumn.product} allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
           <TableBody
             dataList={productList}
             TableRowComponent={ProductTableRow}
