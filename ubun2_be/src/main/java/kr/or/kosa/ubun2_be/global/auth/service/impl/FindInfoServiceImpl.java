@@ -85,9 +85,9 @@ public class FindInfoServiceImpl implements FindInfoService {
         }
     }
     public void checkLoginId(CheckLoginIdRequest checkLoginIdRequest) {
-        if(customerRepository.existsByCustomerLoginId(checkLoginIdRequest.getLoginId())&&UserRole.ROLE_CUSTOMER.toString().equals(checkLoginIdRequest.getUserType())){
+        if (checkLoginIdRequest.getUserType().equals(UserRole.ROLE_CUSTOMER.toString()) && customerRepository.existsByCustomerLoginId(checkLoginIdRequest.getLoginId())) { // Customer
             throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER_LOGIN_ID);
-        }else if(memberRepository.existsByMemberLoginId(checkLoginIdRequest.getLoginId())&&UserRole.ROLE_MEMBER.toString().equals(checkLoginIdRequest.getUserType())){
+        } else if (checkLoginIdRequest.getUserType().equals(UserRole.ROLE_MEMBER.toString()) && memberRepository.existsByMemberLoginId(checkLoginIdRequest.getLoginId())) {
             throw new MemberException(MemberExceptionType.DUPLICATE_MEMBER);
         }
     }
