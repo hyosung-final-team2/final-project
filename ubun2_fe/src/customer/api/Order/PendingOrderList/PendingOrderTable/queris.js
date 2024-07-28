@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 // 대기 주문 목록 불러오기
 export const useGetPendingOrders = (page, size, sort, searchCategory, searchKeyword) => {
-  console.log(page, size, sort, searchCategory, searchKeyword);
   return useQuery({
     queryKey: ['pendingOrder', page, sort, searchCategory, searchKeyword],
     queryFn: () => getPendingOrders(page, size, sort, searchCategory, searchKeyword),
