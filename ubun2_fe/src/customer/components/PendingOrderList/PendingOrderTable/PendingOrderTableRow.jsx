@@ -4,6 +4,7 @@ import OrderOptionBadge from '../../common/Badge/OrderOptionBadge';
 import PaymentMethodBadge from '../../common/Badge/PaymentMethodBadge';
 import { formatDate } from '../../../utils/dateFormat';
 import { formatCurrency } from '../../../utils/currencyFormat';
+import {useSendPersonalAlarm} from "../../../api/notification/queris.js";
 
 const commonButtonStyles = {
   APPROVED:
@@ -25,6 +26,9 @@ const PendingOrderTableRow = ({
   handleOrderUpdate,
   currentPage,
 }) => {
+
+  const { mutate:sendPersonalAlarmMutate } = useSendPersonalAlarm()
+
   const handleApprove = e => {
     e.stopPropagation();
     handleOrderUpdate([{ orderId, subscription }], 'APPROVED');

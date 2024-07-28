@@ -12,23 +12,16 @@ import {getAlarmList, readCustomerAlarm, sendGroupAlarm, sendPersonalAlarm} from
 import useCustomerStore from "../../store/customerStore.js";
 import useNotificationStore from "../../store/Notification/notificationStore.js";
 
-// 주문 승인, 주문 거절 시 회원에게 갈 메시지
-export const useSendPersonalAlarm = (targetMemberId, orderId, orderType, isApproved) => {
+export const useSendPersonalAlarm = (targetMemberId, orderId, orderType) => {
     const {businessName} = useCustomerStore()
-    const content = `${isApproved ? "주문 승인" : "주문 거절"} : ${orderType === "SINGLE" ? "단건주문 " : "정기주문 "} BC-${orderId}`
     const BASE_URL = import.meta.env.VITE_PUSH_LINK
     const link = `${BASE_URL}/member/app/mypage/${orderType === "SINGLE" ? "single-order" : "subscription-order"}/${orderId}`
 
-    const alarmData = {
-        targetMemberId : targetMemberId,
-        title: businessName,
-        content: content,
-        link: link
-    }
     return useMutation({
-        mutationFn: () => sendPersonalAlarm(alarmData),
+        mutationFn: (isApproved) => sendPersonalAlarm(isApproved,businessName,targetMemberId,orderType,link),
     })
 }
+
 
 
 export const useSendGroupAlarmProduct = (productName) => {
