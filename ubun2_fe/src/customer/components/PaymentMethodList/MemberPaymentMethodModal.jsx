@@ -12,7 +12,7 @@ import { formatCardNumber } from '../../utils/cardFormat';
 import PaymentMethodAccount from './PaymentMethodAccount';
 import { getCardColor } from '../../../member/components/PaymentMethod/CardList';
 
-const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId, setPaymentMethodId, currentPage, clickedPayment }) => {
+const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId, currentPage, clickedPayment }) => {
   const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -56,7 +56,7 @@ const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId
           <div className='space-y-4 flex-2'>
             {/* {children} */}
             <div>
-              <MemberInfo member={member} searchable={true} title='회원정보' />
+              <MemberInfo member={member} title='회원정보' />
             </div>
             <div>
               {isUpdate && <PaymentInfo isUpdate={isUpdate} />}

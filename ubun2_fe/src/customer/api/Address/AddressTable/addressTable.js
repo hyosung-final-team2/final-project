@@ -18,7 +18,6 @@ export const getAddresses = async (page, size, sort, searchCategory, searchKeywo
 };
 
 export const searchMember = async searchKeyword => {
-  console.log('Calling API with:', { searchKeyword });
   return await privateFetch.get('/customers/addresses/search-member', {
     params: {
       page: 0,

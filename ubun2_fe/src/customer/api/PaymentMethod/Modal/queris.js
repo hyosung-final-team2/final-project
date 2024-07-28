@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPaymentMethodDetail, registerPayment, deletePayment } from './paymentMethodModal.js';
+import { getPaymentMethodDetail, registerPayment, deletePayment, searchMember, getMemberPayments } from './paymentMethodModal.js';
 import { toast } from 'react-hot-toast';
 
 export const useGetPaymentDetail = paymentMethodId => {
@@ -40,5 +40,23 @@ export const useDeletePaymentMethod = currentPage => {
       console.log('error', error);
       toast.error(`Failed to delete PaymentMethod: ${error.message}`);
     },
+  });
+};
+
+export const useSearchMember = (page, size, sort, searchKeyword) => {
+  return useQuery({
+    queryKey: ['searchMember', page, size, sort, searchKeyword],
+    queryFn: () => {
+      return searchMember(searchKeyword);
+    },
+    enabled: searchKeyword?.trim() !== '', // searchKeyword가 비어있지 않을 때만 쿼리 실행
+  });
+};
+
+export const useGetMemberPayments = memberId => {
+  return useQuery({
+    queryKey: ['payment', { memberId }],
+    queryFn: () => getMemberPayments(memberId),
+    enabled: !!memberId,
   });
 };

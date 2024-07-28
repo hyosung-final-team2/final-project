@@ -17,9 +17,10 @@ import { getAccountPayments } from '../../api/PaymentMethod/Table/accountPayment
 import { useGetCardPayments, useGetAccountPayments } from '../../api/PaymentMethod/Table/queris';
 import { useGetPaymentDetail } from '../../api/PaymentMethod/Modal/queris';
 import usePaymentMethodTableStore from '../../store/PaymentMethod/paymentMethodTableStore';
+import PaymentMethodRegistrationModal from './PaymentMethodRegistrationModal';
 
 const PaymentMethodTable = () => {
-  // const [openModal, setOpenModal] = useState(false);
+  const [openRegistrationModal, setOpenRegistrationModal] = useState(false);
   const [checkedMembers, setCheckedMembers] = useState([]);
   const { setSelectedMemberId, paymentMethodType, openModal, setOpenModal } = paymentMethodStore();
   const [paymentMethodId, setPaymentMethodId] = useState(null);
@@ -101,14 +102,13 @@ const PaymentMethodTable = () => {
   };
 
   useEffect(() => {
-    console.log();
     return resetData();
   }, []);
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       <PaymentMethodTableFeature
-        setOpenModal={setOpenModal}
+        setOpenModal={setOpenRegistrationModal}
         setCurrentPage={setCurrentPage}
         handleDataReset={handleDataReset}
         onSearch={handleSearch}
@@ -145,6 +145,7 @@ const PaymentMethodTable = () => {
           setPaymentMethodId={setPaymentMethodId}
           clickedPayment={clickedPayment}
         />
+        <PaymentMethodRegistrationModal isOpen={openRegistrationModal} setOpenModal={setOpenRegistrationModal} />
       </div>
     </div>
   );

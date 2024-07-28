@@ -64,7 +64,7 @@ const SearchableDropdown = ({ onSelect }) => {
         <div className='absolute z-10 right-0 w-auto min-w-full mt-2 bg-white rounded-lg shadow-lg p-2 border-gray-700'>
           <ul className='py-1 overflow-auto max-h-60'>
             {members.map(member => {
-              const selecteMember = {
+              const selectedMember = {
                 memberId: member.memberId,
                 name: member.memberName,
                 email: member.memberEmail,
@@ -72,7 +72,7 @@ const SearchableDropdown = ({ onSelect }) => {
                 createdAt: member.createdAt,
               };
               return (
-                <li key={member.memberId} className='px-4 py-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap' onClick={() => handleSelect(selecteMember)}>
+                <li key={member.memberId} className='px-4 py-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap' onClick={() => handleSelect(selectedMember)}>
                   <div className='flex items-center space-x-4'>
                     <span className='w-24 truncate'>{member.memberName}</span>
                     <span className='w-48 truncate'>{member.memberEmail}</span>

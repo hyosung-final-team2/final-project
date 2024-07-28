@@ -2,7 +2,7 @@ import { Radio } from 'flowbite-react';
 import { useState } from 'react';
 import Select from '../common/Select/Select';
 import { useRegisterPayment } from '../../api/PaymentMethod/Modal/queris';
-import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
+import useAddressStore from '../../store/Address/useAddressStore';
 import { cardPayments, bankPayments } from './paymentOptions';
 
 const PaymentInfo = ({}) => {
@@ -14,7 +14,7 @@ const PaymentInfo = ({}) => {
   const [bankName, setBankName] = useState('');
   const { mutate } = useRegisterPayment();
 
-  const { selectedMemberId } = paymentMethodStore();
+  const { selectedMemberId } = useAddressStore();
 
   const handleOnClick = () => {
     let allFieldsFilled = false;
@@ -41,7 +41,6 @@ const PaymentInfo = ({}) => {
       accountNumber: paymentMethod === 'CMS 결제' ? accountNumber : null,
       bankName: paymentMethod === 'CMS 결제' ? bankName : null,
     };
-
     mutate(apiData);
   };
 
