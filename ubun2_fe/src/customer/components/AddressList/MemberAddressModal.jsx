@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { customModalTheme } from '../common/Modal/ModalStyle';
 import MemberInfo from '../common/Info/MemberInfo';
 import MemberAddressTable from './MemberAddressTable/MemberAddressTable';
-import MemberAddressEditModal from './MemberAddressEditModal';
 import AddressInput from '../common/Input/AddressInput';
 import useAddressStore from '../../store/Address/useAddressStore';
 import { useGetAddressDetail, useDeleteAddress } from '../../api/Address/AddressModal/queris';
@@ -57,10 +56,6 @@ const MemberAddressModal = ({ isOpen, setOpenModal, addressId, address, setAddre
     }
   }, [isOpen, setIsEditMode, setAddressId]);
 
-  useEffect(() => {
-    console.log('memberInfo', memberInfo);
-  }, [memberInfo]);
-
   const handleOnDelete = () => {
     deleteMutate(addressId);
     setIsUpdate(false);
@@ -77,26 +72,20 @@ const MemberAddressModal = ({ isOpen, setOpenModal, addressId, address, setAddre
         size='5xl'
         theme={customModalTheme}
       >
-        {!isEditMode ? (
-          <>
-            <Modal.Header>
-              <div className='text-3xl font-bold'>{isUpdate ? '주소지 수정' : '주소지 상세'}</div>
-            </Modal.Header>
-            <Modal.Body>
-              <div className='space-y-4 flex-2'>
-                <MemberInfo member={member} searchable={true} title='회원정보' isUpdate={isUpdate} />
-                {isUpdate && <AddressInput infos={initialInfos} title='주소 추가' isUpdate={isUpdate} />}
-                {isUpdate ? (
-                  <MemberAddressTable memberAddresses={memberInfo?.addresses} title={`${member.name}님의 주소 목록`} />
-                ) : (
-                  <MemberAddressMap address={address} />
-                )}
-              </div>
-            </Modal.Body>
-          </>
-        ) : (
-          <MemberAddressEditModal />
-        )}
+        <Modal.Header>
+          <div className='text-3xl font-bold'>{isUpdate ? '주소지 수정' : '주소지 상세'}</div>
+        </Modal.Header>
+        <Modal.Body>
+          <div className='space-y-4 flex-2'>
+            <MemberInfo member={member} searchable={false} title='회원정보' isUpdate={isUpdate} />
+            {isUpdate && <AddressInput infos={initialInfos} title='주소 추가' isUpdate={isUpdate} />}
+            {isUpdate ? (
+              <MemberAddressTable memberAddresses={memberInfo?.addresses} title={`${member.name}님의 주소 목록`} />
+            ) : (
+              <MemberAddressMap address={address} />
+            )}
+          </div>
+        </Modal.Body>
 
         <Modal.Footer>
           {!isUpdate ? (

@@ -1,10 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useSearchMember } from '../../../api/Address/AddressTable/queris';
+import useAddressModalStore from '../../../store/Address/addressModalStore';
+import { debounce } from 'lodash';
 
-const SearchableDropdown = ({ options, onSelect }) => {
+const SearchableDropdown = ({ onSelect }) => {
+  const PAGE_SIZE = 5;
+
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredOptions, setFilteredOptions] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const { setSearchKeyword } = useAddressModalStore();
+  const { data: membersData, refetch: refetchMembers } = useSearchMember(1, PAGE_SIZE, 'memberName', searchTerm);
 
   useEffect(() => {
     const handleClickOutside = event => {
@@ -19,23 +25,28 @@ const SearchableDropdown = ({ options, onSelect }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if (searchTerm.length > 0) {
-      const filtered = options.filter(option => option.name.toLowerCase().includes(searchTerm.toLowerCase()));
-      setFilteredOptions(filtered);
-      setIsOpen(filtered.length > 0);
-    } else {
-      setFilteredOptions([]);
-      setIsOpen(false);
-    }
-  }, [searchTerm, options]);
+  const members = membersData?.data?.data?.content;
+
+  // 디바운스된 검색 함수
+  const debouncedSearch = useCallback(
+    debounce(term => {
+      setSearchKeyword(term);
+      if (term.trim() !== '') {
+        refetchMembers();
+      }
+    }, 1000),
+    [setSearchKeyword, refetchMembers]
+  );
 
   const handleSearchChange = e => {
-    setSearchTerm(e.target.value);
+    const term = e.target.value;
+    setSearchTerm(term);
+    setIsOpen(term.length > 0);
+    debouncedSearch(term);
   };
 
-  const handleSelect = option => {
-    onSelect(option);
+  const handleSelect = member => {
+    onSelect(member);
     setSearchTerm('');
     setIsOpen(false);
   };
@@ -49,20 +60,28 @@ const SearchableDropdown = ({ options, onSelect }) => {
         value={searchTerm}
         onChange={handleSearchChange}
       />
-
-      {isOpen && filteredOptions.length > 0 && (
+      {isOpen && members?.length > 0 && (
         <div className='absolute z-10 right-0 w-auto min-w-full mt-2 bg-white rounded-lg shadow-lg p-2 border-gray-700'>
           <ul className='py-1 overflow-auto max-h-60'>
-            {filteredOptions.map(option => (
-              <li key={option.id} className='px-4 py-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap' onClick={() => handleSelect(option)}>
-                <div className='flex items-center space-x-4'>
-                  <span className='w-24 truncate'>{option.name}</span>
-                  <span className='w-48 truncate'>{option.email}</span>
-                  <span className='w-32'>{option.phone}</span>
-                  <span className='w-24 truncate'>{option.createdAt}</span>
-                </div>
-              </li>
-            ))}
+            {members.map(member => {
+              const selectedMember = {
+                memberId: member.memberId,
+                name: member.memberName,
+                email: member.memberEmail,
+                phone: member.memberPhone,
+                createdAt: member.createdAt,
+              };
+              return (
+                <li key={member.memberId} className='px-4 py-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap' onClick={() => handleSelect(selectedMember)}>
+                  <div className='flex items-center space-x-4'>
+                    <span className='w-24 truncate'>{member.memberName}</span>
+                    <span className='w-48 truncate'>{member.memberEmail}</span>
+                    <span className='w-32'>{member.memberPhone}</span>
+                    <span className='w-24 truncate'>{member.createdAt}</span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

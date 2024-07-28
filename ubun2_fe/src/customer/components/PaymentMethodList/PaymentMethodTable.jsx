@@ -16,23 +16,26 @@ import { getCardPayments } from '../../api/PaymentMethod/Table/cardPaymentTable'
 import { getAccountPayments } from '../../api/PaymentMethod/Table/accountPaymentTable';
 import { useGetCardPayments, useGetAccountPayments } from '../../api/PaymentMethod/Table/queris';
 import { useGetPaymentDetail } from '../../api/PaymentMethod/Modal/queris';
+import usePaymentMethodTableStore from '../../store/PaymentMethod/paymentMethodTableStore';
+import PaymentMethodRegistrationModal from './PaymentMethodRegistrationModal';
 
 const PaymentMethodTable = () => {
-  const [openModal, setOpenModal] = useState(false);
+  const [openRegistrationModal, setOpenRegistrationModal] = useState(false);
   const [checkedMembers, setCheckedMembers] = useState([]);
-  const { setSelectedMemberId, paymentMethodType } = paymentMethodStore();
+  const { setSelectedMemberId, paymentMethodType, openModal, setOpenModal } = paymentMethodStore();
   const [paymentMethodId, setPaymentMethodId] = useState(null);
+  const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset } = usePaymentMethodTableStore();
+  const PAGE_SIZE = 8;
 
   const [currentPage, setCurrentPage] = useState(1);
   const [clickedPayment, setClickedPayment] = useState(null);
-  const { data: cards } = useGetCardPayments(currentPage);
-  const { data: accounts } = useGetAccountPayments(currentPage);
+  const { data: cards, refetch: refetchCards } = useGetCardPayments(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
+  const { data: accounts, refetch: refetchAccounts } = useGetAccountPayments(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
   const cardList = cards?.data?.data?.content || [];
   const accountList = accounts?.data?.data?.content || [];
 
   const isAccount = paymentMethodType === 'ACCOUNT';
-
   const totalPages = (isAccount ? accounts : cards)?.data?.data?.totalPages ?? 5;
 
   const queryClient = useQueryClient();
@@ -42,15 +45,15 @@ const PaymentMethodTable = () => {
       const nextPage = currentPage + 1;
       isAccount
         ? queryClient.prefetchQuery({
-            queryKey: ['payment', { type: 'ACCOUNT', page: nextPage }],
+            queryKey: ['payment', { type: 'ACCOUNT', page: nextPage, sort, searchCategory, searchKeyword }],
             queryFn: () => getAccountPayments(nextPage),
           })
         : queryClient.prefetchQuery({
-            queryKey: ['payment', { type: 'CARD', page: nextPage }],
+            queryKey: ['payment', { type: 'CARD', page: nextPage, sort, searchCategory, searchKeyword }],
             queryFn: () => getCardPayments(nextPage),
           });
     }
-  }, [currentPage, queryClient, totalPages]);
+  }, [currentPage, queryClient, totalPages, sort, searchCategory, searchKeyword]);
 
   const { refetch } = useGetPaymentDetail(paymentMethodId);
 
@@ -69,14 +72,48 @@ const PaymentMethodTable = () => {
   const handleRowClick = async (paymentMethodId, memberId, payment) => {
     await setPaymentMethodId(paymentMethodId);
     await refetch();
-    await setOpenModal(true);
+    setOpenModal(true);
     setClickedPayment(payment);
     setSelectedMemberId(memberId);
   };
 
+  const handleSearch = (term, category) => {
+    setSearchKeyword(term);
+    setSearchCategory(category);
+    if (term.trim() === '' || category === '카테고리') return;
+    refetchCards();
+    refetchAccounts();
+    setCurrentPage(1);
+  };
+
+  const handleSort = async (column, sortType) => {
+    await updateSort(column, sortType);
+    refetchCards();
+    refetchAccounts();
+    setCurrentPage(1);
+  };
+
+  const handleDataReset = async () => {
+    await toggleIsReset();
+    await resetData();
+    await refetchCards();
+    await refetchAccounts();
+    setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    return resetData();
+  }, []);
+
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      <PaymentMethodTableFeature setOpenModal={setOpenModal} setCurrentPage={setCurrentPage} />
+      <PaymentMethodTableFeature
+        setOpenModal={setOpenRegistrationModal}
+        setCurrentPage={setCurrentPage}
+        handleDataReset={handleDataReset}
+        onSearch={handleSearch}
+        tableColumns={tableColumn.paymentMethod}
+      />
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           {
@@ -85,6 +122,7 @@ const PaymentMethodTable = () => {
                 tableColumns={isAccount ? tableColumn.paymentMethod.accountList : tableColumn.paymentMethod.cardList}
                 allChecked={isAccount ? checkedMembers.length === accountList.length : checkedMembers.length === cardList.length}
                 setAllChecked={handleAllChecked}
+                handleSort={handleSort}
               />
               <DynamicTableBody
                 dataList={isAccount ? accountList : cardList}
@@ -107,6 +145,7 @@ const PaymentMethodTable = () => {
           setPaymentMethodId={setPaymentMethodId}
           clickedPayment={clickedPayment}
         />
+        <PaymentMethodRegistrationModal isOpen={openRegistrationModal} setOpenModal={setOpenRegistrationModal} />
       </div>
     </div>
   );

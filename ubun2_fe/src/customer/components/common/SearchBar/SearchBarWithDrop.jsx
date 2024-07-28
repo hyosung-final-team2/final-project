@@ -33,7 +33,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
   const handleCategorySelect = category => {
     const mappedCategory = columnMapping[category] || category;
     setSelectedCategory(mappedCategory);
-    setShowCategory(category)
+    setShowCategory(category);
     dropdownRef.current.click();
   };
 

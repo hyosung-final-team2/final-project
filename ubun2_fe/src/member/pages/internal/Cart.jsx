@@ -12,6 +12,7 @@ import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
 import ModalBottomButton from '../../components/common/button/ModalBottomButton';
+import BottomButton from '../../components/common/button/BottomButton';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -42,8 +43,9 @@ const Cart = () => {
   }, [location, refetch]);
 
   useEffect(() => {
-    if (fetchedCartData?.data?.data?.content) {
-      const filteredData = fetchedCartData.data.data.content.filter(store => store.cartProducts.length > 0);
+    console.log('fetchedCartData:', fetchedCartData && fetchedCartData?.data?.data);
+    if (fetchedCartData?.data?.data) {
+      const filteredData = fetchedCartData.data.data.filter(store => store.cartProducts.length > 0);
       setCartData(filteredData);
     }
   }, [fetchedCartData, setCartData]);
@@ -64,7 +66,6 @@ const Cart = () => {
   const handlePeriodSelection = period => {
     setSubscriptionPeriod(selectedStore, period);
     setModalState(false);
-    console.log(`Store ${selectedStore}의 구독 주기가 ${period}로 설정되었습니다.`);
   };
 
   const handleDeleteProduct = async (customerId, cartProductId) => {
@@ -78,7 +79,7 @@ const Cart = () => {
       {
         cartId: product.cartId,
         customerId: store.customerId,
-        cartProducts: [{ productId: product.productId }],
+        cartProducts: [{ cartProductId: product.cartProductId }],
       },
     ];
 
@@ -114,21 +115,20 @@ const Cart = () => {
     if (isOrderButtonDisabled) {
       if (selectedItems.length === 0 || selectedItems.every(store => store.cartProducts.length === 0)) {
         toast.error('주문할 상품이 없습니다.', errorToastStyle);
-      } else if (unsetSubscriptions.length > 0) {
+      } else if (selectedItems.some(store => store.intervalDays === 0)) {
         toast.error('모든 정기주문 상품의 배송 주기를 선택해주세요.', errorToastStyle);
       }
       return;
     }
 
     const selectedOrderData = selectedItems
+      .filter(store => store.cartProducts.length > 0)
       .map(store => ({
         customerId: store.customerId,
-        cartProducts: store.cartProducts.map(product => ({
-          ...product,
-          intervalDays: store.intervalDays || 0,
-        })),
-      }))
-      .filter(store => store.cartProducts.length > 0);
+        businessName: store.businessName,
+        intervalDays: store.intervalDays,
+        cartProducts: store.cartProducts,
+      }));
 
     console.log('선택된 items들:', selectedOrderData);
 
@@ -197,12 +197,13 @@ const Cart = () => {
                     <span className='text-sm font-semibold'>{`${totals.selectedCount}개 선택`}</span>
                     <span className='font-bold text-main'>{`${totals.totalAmount?.toLocaleString()}원`}</span>
                   </div>
-                  <ModalBottomButton
+                  {/* <ModalBottomButton
                     buttonText='구매하기'
                     buttonStyle={`${isOrderButtonDisabled ? 'bg-gray-400' : 'bg-main'} text-white`}
                     buttonFunc={handleProceedToPayment}
                     disabled={isOrderButtonDisabled}
-                  />
+                  /> */}
+                  <BottomButton buttonText='구매하기' buttonFunc={handleProceedToPayment} disabled={isOrderButtonDisabled} />
                 </div>
               </div>
             </>

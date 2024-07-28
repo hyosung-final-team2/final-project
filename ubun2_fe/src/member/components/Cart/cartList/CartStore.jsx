@@ -26,7 +26,7 @@ const CartStore = ({ store, onSubscriptionPeriodSelect, onDeleteProduct }) => {
         {
           cartId: productToUpdate.cartId,
           customerId: customerId,
-          cartProducts: [{ productId: productToUpdate.productId, quantity: newQuantity }],
+          cartProducts: [{ cartProductId: productToUpdate.cartProductId, quantity: newQuantity }],
         },
       ]);
     } catch (error) {
@@ -35,29 +35,33 @@ const CartStore = ({ store, onSubscriptionPeriodSelect, onDeleteProduct }) => {
   };
 
   const isAllSelected = isStoreAllSelected(store.customerId);
-  const storeSelectedItems = selectedItems.find(s => s.customerId === store.customerId);
+  const storeSelectedItems = selectedItems.filter(s => s.customerId === store.customerId);
+  const allProductsSelected = store.cartProducts.every(product =>
+    storeSelectedItems.some(s => s.cartProducts.some(p => p.cartProductId === product.cartProductId))
+  );
 
   return (
     <Card className='my-4 bg-white' theme={cardCustomTheme}>
       <div className='flex items-center w-full gap-3 px-4'>
-        <Checkbox color='purple' checked={isAllSelected} onChange={e => handleSelectAllStore(store.customerId, e.target.checked)} />
+        <Checkbox color='purple' checked={allProductsSelected} onChange={e => handleSelectAllStore(store.customerId, e.target.checked)} />
         <h2 className='text-xl font-semibold text-main'>{store.businessName}</h2>
       </div>
       <div className='flex flex-col w-full gap-8'>
         <CartSingleOrder
           singleOrderProducts={store.cartProducts.filter(product => product.orderOption === 'SINGLE')}
-          selectedItems={storeSelectedItems?.cartProducts || []}
+          selectedItems={storeSelectedItems.flatMap(s => s.cartProducts)}
           onSelectProduct={(product, checked) => handleSelectProduct(store.customerId, product, checked)}
           onQuantityChange={handleQuantityChange}
           onDelete={cartProductId => onDeleteProduct(store.customerId, cartProductId)}
         />
         <CartSubscriptionOrder
           regularOrderProducts={store.cartProducts.filter(product => product.orderOption === 'SUBSCRIPTION')}
-          selectedItems={storeSelectedItems?.cartProducts || []}
+          selectedItems={storeSelectedItems.flatMap(s => s.cartProducts)}
           onSelectProduct={(product, checked) => handleSelectProduct(store.customerId, product, checked)}
           onQuantityChange={handleQuantityChange}
           onDelete={cartProductId => onDeleteProduct(store.customerId, cartProductId)}
           onSubscriptionPeriodSelect={() => onSubscriptionPeriodSelect(store.customerId)}
+          intervalDays={storeSelectedItems.find(s => s.intervalDays !== undefined)?.intervalDays}
         />
       </div>
     </Card>

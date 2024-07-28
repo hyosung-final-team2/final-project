@@ -82,7 +82,6 @@ const AddressTable = () => {
     await updateSort(column, sortType);
     refetchAddresses();
     setCurrentPage(1);
-    console.log(addressList);
   };
 
   const handleDataReset = async () => {

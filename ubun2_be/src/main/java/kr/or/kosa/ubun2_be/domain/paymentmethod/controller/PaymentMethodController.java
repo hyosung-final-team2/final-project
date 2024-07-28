@@ -3,6 +3,7 @@ package kr.or.kosa.ubun2_be.domain.paymentmethod.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentResponse;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberPaymentMethodsResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDeleteRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodRequest;
@@ -41,7 +42,7 @@ public class PaymentMethodController {
         return ResponseDto.ok(paymentMethods, "계좌 목록을 성공적으로 조회했습니다.");
     }
 
-    @Operation(summary = "결제수단 아이디로 회원 상세 조회")
+    @Operation(summary = "결제수단 상세 조회")
     @GetMapping("/{payment_method_id}")
     public ResponseDto<?> getPaymentMethodDetailByMemberId(@PathVariable("payment_method_id") Long paymentMethodId, @AuthenticationPrincipal CustomUserDetails userDetails) {
         PaymentMethodDetailResponse response = paymentMethodService.getPaymentMethodDetailByMemberId(paymentMethodId, userDetails.getUserId());
@@ -62,6 +63,13 @@ public class PaymentMethodController {
         return ResponseDto.ok(null, "주소가 성공적으로 삭제되었습니다.");
     }
 
+    @Operation(summary = "회원 아이디로 회원의 결제수단 목록 조회")
+    @GetMapping("/member/{member_id}")
+    public ResponseDto<?> getMyPaymentMethods(@PathVariable("member_id") Long memberId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<MemberPaymentMethodsResponse> memberPaymentMethods = paymentMethodService.getMemberPaymentMethods(memberId, userDetails.getUserId());
+        return ResponseDto.ok(memberPaymentMethods, "회원의 결제수단 목록을 성공적으로 조회했습니다.");
+    }
+  
     @Operation(summary = "회원의 결제수단 삭제")
     @DeleteMapping( "/selected")
     public ResponseDto<?> deleteSelectedPayment(@RequestBody List<PaymentMethodDeleteRequest> paymentMethodDeleteRequestList, @AuthenticationPrincipal CustomUserDetails userDetails) {

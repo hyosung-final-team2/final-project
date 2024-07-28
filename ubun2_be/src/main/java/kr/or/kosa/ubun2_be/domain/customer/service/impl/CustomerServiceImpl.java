@@ -37,6 +37,7 @@ import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.AccountPaymentReposit
 import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.CardPaymentRepository;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.PaymentMethodRepository;
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
+import kr.or.kosa.ubun2_be.domain.product.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -45,6 +46,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +69,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
     private final AlarmService alarmService;
+    private final ImageService imageService;
 
     @Override
     public Customer findById(Long customerId) {
@@ -331,4 +334,26 @@ public class CustomerServiceImpl implements CustomerService {
             deleteMember(customerId,memberDeleteRequest.getId(),memberDeleteRequest.getIsPending());
         }
     }
+
+    @Transactional
+    @Override
+    public void updateMyPage(MultipartFile image, Long customerId, MyPageUpdateRequest myPageUpdateRequest) {
+        Customer findCustomer = findById(customerId);
+        String existingImageUrl = findCustomer.getLogoImagePath();
+
+        if (existingImageUrl != null) {
+            imageService.deleteImage(existingImageUrl);
+        }
+
+        if (image != null && !image.isEmpty()) { //새로운 이미지 있을때
+            String newImageUrl = imageService.uploadImage(image);
+            findCustomer.saveImage(image.getOriginalFilename(),newImageUrl);
+        } else {
+            findCustomer.saveImage(null,null);
+        }
+
+        findCustomer.updateCustomer(myPageUpdateRequest);
+
+    }
+
 }
