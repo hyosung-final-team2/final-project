@@ -19,7 +19,6 @@ export const useSearchMember = (page, size, sort, searchKeyword) => {
 };
 
 export const useGetMemberAddresses = memberId => {
-  console.log('Calling useGetMemberAddresses with:', { memberId });
   return useQuery({
     queryKey: ['address', { memberId }],
     queryFn: () => getMemberAddresses(memberId),
