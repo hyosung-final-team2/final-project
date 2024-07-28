@@ -99,10 +99,7 @@ const AddressTable = () => {
   const { resetSkeletonData, setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore();
 
   useEffect(() => {
-    return async () => {
-      await resetSkeletonData();
-      await resetData();
-    };
+    return resetData();
   }, []);
 
   useEffect(() => {
