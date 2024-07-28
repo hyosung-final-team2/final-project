@@ -16,6 +16,7 @@ const commonButtonStyles = {
 const PendingOrderTableRow = ({
   orderId,
   createdAt,
+  memberId,
   memberName,
   paymentType,
   subscription,
@@ -27,16 +28,18 @@ const PendingOrderTableRow = ({
   currentPage,
 }) => {
 
-  const { mutate:sendPersonalAlarmMutate } = useSendPersonalAlarm()
+  const { mutate:sendPersonalAlarmMutate } = useSendPersonalAlarm(memberId,orderId,subscription)
 
   const handleApprove = e => {
     e.stopPropagation();
     handleOrderUpdate([{ orderId, subscription }], 'APPROVED');
+    sendPersonalAlarmMutate(true)
   };
 
   const handleCancel = e => {
     e.stopPropagation();
     handleOrderUpdate([{ orderId, subscription }], 'DENIED');
+    sendPersonalAlarmMutate(false)
   };
 
   return (

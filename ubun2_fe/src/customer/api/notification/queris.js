@@ -12,13 +12,14 @@ import {getAlarmList, readCustomerAlarm, sendGroupAlarm, sendPersonalAlarm} from
 import useCustomerStore from "../../store/customerStore.js";
 import useNotificationStore from "../../store/Notification/notificationStore.js";
 
-export const useSendPersonalAlarm = (targetMemberId, orderId, orderType) => {
+export const useSendPersonalAlarm = (targetMemberId, orderId, isSubscription) => {
     const {businessName} = useCustomerStore()
     const BASE_URL = import.meta.env.VITE_PUSH_LINK
-    const link = `${BASE_URL}/member/app/mypage/${orderType === "SINGLE" ? "single-order" : "subscription-order"}/${orderId}`
+    const link = `${BASE_URL}/member/app/mypage/${!isSubscription ? "single-order" : "subscription-order"}/${orderId}`
 
     return useMutation({
-        mutationFn: (isApproved) => sendPersonalAlarm(isApproved,businessName,targetMemberId,orderType,link),
+        mutationFn: (isApproved) => sendPersonalAlarm(isApproved,businessName,targetMemberId,isSubscription,link,orderId),
+        onSuccess: () => {}
     })
 }
 
