@@ -25,7 +25,7 @@ import SlideUpModal from '../components/common/SlideUpModal.jsx';
 import Notification from '../components/notification/Notification.jsx';
 import MyAddressList from '../pages/internal/MyAddressList.jsx';
 
-function PageContent({ hasFootNav }) {
+function PageContent({ hasFootNav, showBackBtn }) {
   const { memberId } = useMemberStore(state => ({ memberId: state.memberId }));
   const [isAlarmOpen, setIsAlarmOpen] = useState(false);
 
@@ -33,7 +33,7 @@ function PageContent({ hasFootNav }) {
 
   return (
     <div className='flex flex-col flex-1 overflow-auto'>
-      <MemHeader setIsAlarmOpen={setIsAlarmOpen} />
+      <MemHeader setIsAlarmOpen={setIsAlarmOpen} showBackBtn={showBackBtn}/>
       <main className={` flex-1 overflow-y-auto ${hasFootNav ? 'mb-[10dvh]' : ''} bg-base-100`}>
         <Routes>
           <Route path='mypage' element={<MyPage />} />
