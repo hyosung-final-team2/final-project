@@ -1,7 +1,12 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAuthEmail, useSendEmail} from "../../../customer/api/Register/queris.js";
-import {authNumRegex, emailRegex, loginIdRegex} from "../../../customer/components/common/Regex/registerRegex.js";
+import {
+    authNumRegex, authNumRegexMessage,
+    emailRegex, emailRegexMessage,
+    loginIdRegex, loginIdRegexMessage,
+    nameRegex, nameRegexMessage
+} from "../../../customer/components/common/Regex/registerRegex.js";
 import { useFindPassword} from "../../api/FindInfo/queris.js";
 import InputText from "../../../customer/components/common/Input/InputText.jsx";
 import InputTextWithBtn from "../../../customer/components/common/Input/InputTextWithBtn.jsx";
@@ -135,13 +140,21 @@ const ForgotPassword = () => {
                            containerStyle='mt-4'
                            labelTitle='이름'
                            updateFormValue={updateFormValue}
-                           placeholder='이름을 입력해주세요.'/>
+                           placeholder='이름을 입력해주세요.'
+                           isRegexInput={true}
+                           regex={nameRegex}
+                           regexMessage={nameRegexMessage}
+                />
                 <InputText defaultValue={passwordObj.memberLoginId}
                            updateType='memberLoginId'
                            containerStyle='mt-4'
                            labelTitle='아이디'
                            updateFormValue={updateFormValue}
-                           placeholder='아이디를 입력해주세요.'/>
+                           placeholder='아이디를 입력해주세요.'
+                           isRegexInput={true}
+                           regex={loginIdRegex}
+                           regexMessage={loginIdRegexMessage}
+                />
                 <InputTextWithBtn defaultValue={passwordObj.memberEmail}
                                   updateType='memberEmail'
                                   containerStyle='mt-1'
@@ -151,7 +164,9 @@ const ForgotPassword = () => {
                                   buttonText={!isSendEmail ? '전송하기' : '재전송하기'}
                                   clickPossibleWithoutData={false}
                                   buttonFunc={buttonFuncSendEmail}
-                                  regex={emailRegex}/>
+                                  regex={emailRegex}
+                                  regexMessage={emailRegexMessage}
+                />
                 {!isSendEmail ? <p onClick={() => forgotLoginIdFunc()} className='mt-2 text-gray-400 underline text-end'>아이디를
                     잊어버렸어요</p> : null}
                 {isSendEmail && (
@@ -165,8 +180,10 @@ const ForgotPassword = () => {
                         buttonText='인증하기'
                         buttonFunc={buttonFuncAuthEmail}
                         regex={authNumRegex}
+                        regexMessage={authNumRegexMessage}
                         showTimer={true}
                         timerValue={timerValue}
+                        isAuthInput={true}
                         isAuthSuccess={isAuthSuccess}
                     />
                 )}
