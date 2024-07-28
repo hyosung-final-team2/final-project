@@ -16,6 +16,7 @@ import useAddressStore from '../../store/Address/useAddressStore.js';
 import DynamicTableBody from '../common/Table/DynamicTableBody.jsx';
 import AddressRegistrationModal from './AddressRegistrationModal.jsx';
 import useAddressTableStore from '../../store/Address/addressTableStore.js';
+import useSkeletonStore from "../../store/skeletonStore.js";
 
 const AddressTable = () => {
   // const [openMemberAddressModal, setOpenMemberAddressModal] = useState(false);
@@ -29,7 +30,7 @@ const AddressTable = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8;
-  const { data: addresses, refetch: refetchAddresses } = useGetAddresses(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
+  const { data: addresses, refetch: refetchAddresses, isLoading } = useGetAddresses(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
   const totalPages = addresses?.data?.data?.totalPages ?? 5;
   const addressList = addresses?.data?.data?.content || [];
@@ -94,6 +95,15 @@ const AddressTable = () => {
   useEffect(() => {
     return resetData();
   }, []);
+
+  const {setSkeletonData, setSkeletonTotalPage,setSkeletonSortData } = useSkeletonStore()
+  useEffect(() => {
+    if (!isLoading) {
+      setSkeletonData(addressList)
+      setSkeletonTotalPage(totalPages)
+      setSkeletonSortData(sort)
+    }
+  }, [isLoading, totalPages, sort, addressList]);
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>

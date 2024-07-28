@@ -64,6 +64,7 @@ const Login = () => {
                   containerStyle='mt-4'
                   labelTitle='아이디'
                   updateFormValue={updateFormValue}
+                  isError={isError}
                 />
 
                 <InputText
@@ -73,6 +74,7 @@ const Login = () => {
                   containerStyle='mt-4'
                   labelTitle='비밀번호'
                   updateFormValue={updateFormValue}
+                  isError={isError}
                 />
               </div>
 
