@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberPaymentMethodsResponse;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDeleteRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.service.PaymentMethodService;
@@ -68,4 +69,12 @@ public class PaymentMethodController {
         List<MemberPaymentMethodsResponse> memberPaymentMethods = paymentMethodService.getMemberPaymentMethods(memberId, userDetails.getUserId());
         return ResponseDto.ok(memberPaymentMethods, "회원의 결제수단 목록을 성공적으로 조회했습니다.");
     }
+  
+    @Operation(summary = "회원의 결제수단 삭제")
+    @DeleteMapping( "/selected")
+    public ResponseDto<?> deleteSelectedPayment(@RequestBody List<PaymentMethodDeleteRequest> paymentMethodDeleteRequestList, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        paymentMethodService.deleteSelectedPaymentMethod(paymentMethodDeleteRequestList, userDetails.getUserId());
+        return ResponseDto.ok(null, "주소가 성공적으로 삭제되었습니다.");
+    }
+
 }

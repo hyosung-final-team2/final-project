@@ -2,6 +2,9 @@ package kr.or.kosa.ubun2_be.domain.order.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
@@ -9,7 +12,11 @@ import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,6 +32,10 @@ import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QPaymentMethod.pay
 import static kr.or.kosa.ubun2_be.domain.product.entity.QProduct.product;
 
 public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport implements SubscriptionOrderRepositoryCustom {
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
+    private static final List<String> STRING_SEARCH_FIELDS = List.of("orderStatus","memberName");
+    private static final List<String> DATE_SEARCH_FIELDS = List.of("createdAt");
 
     public SubscriptionOrderRepositoryImpl() {
         super(SubscriptionOrder.class);
@@ -86,20 +97,53 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
 
 
     private BooleanBuilder searchCondition(SearchRequest searchRequest) {
-        BooleanBuilder builder = new BooleanBuilder();
-        if (searchRequest != null && searchRequest.getSearchKeyword() != null) {
-            String category = searchRequest.getSearchCategory().toLowerCase();
-            String keyword = searchRequest.getSearchKeyword().toLowerCase();
-            switch (category) {
-                case "membername":
-                    builder.and(subscriptionOrder.member.memberName.toLowerCase().contains(keyword));
-                    break;
-                case "orderstatus":
-                    builder.and(subscriptionOrder.orderStatus.stringValue().toLowerCase().contains(keyword));
-                    break;
-            }
+        if (searchRequest == null || searchRequest.getSearchCategory() == null || searchRequest.getSearchKeyword() == null) {
+            return null;
         }
-        return builder;
+        String category = searchRequest.getSearchCategory();
+        String keyword = searchRequest.getSearchKeyword();
+
+        ComparableExpressionBase<?> path = getPath(category);
+        if (path == null) {
+            return new BooleanBuilder();
+        }
+
+        if (STRING_SEARCH_FIELDS.contains(category)) {
+            return new BooleanBuilder().and(((StringPath) path).containsIgnoreCase(keyword));
+        } else if (DATE_SEARCH_FIELDS.contains(category)) {
+            return dateTimeSearch((DateTimePath<LocalDateTime>) path, keyword);
+        }
+
+        return new BooleanBuilder();
+    }
+
+    private ComparableExpressionBase<?> getPath(String property) {
+        return switch (property) {
+            case "orderStatus" -> subscriptionOrder.orderStatus;
+            case "createdAt" -> subscriptionOrder.createdAt;
+            case "memberName" -> member.memberName;
+            case "paymentType" -> subscriptionOrder.paymentMethod.paymentType;
+            default -> null;
+        };
+    }
+
+    private BooleanBuilder dateTimeSearch(DateTimePath<LocalDateTime> path, String keyword) {
+        String[] range = keyword.split(",");
+        if (range.length != 2) return new BooleanBuilder();
+
+        try {
+            LocalDate startDate = LocalDate.parse(range[0].trim(), DATE_FORMATTER);
+            LocalDate endDate = LocalDate.parse(range[1].trim(), DATE_FORMATTER);
+
+            LocalDateTime startDateTime = startDate.atStartOfDay();
+            LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+
+            return new BooleanBuilder()
+                    .and(path.goe(startDateTime))
+                    .and(path.lt(endDateTime.plusDays(1))); // 다음 날의 시작 직전까지
+        } catch (DateTimeParseException e) {
+            return new BooleanBuilder();
+        }
     }
 
   public List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {

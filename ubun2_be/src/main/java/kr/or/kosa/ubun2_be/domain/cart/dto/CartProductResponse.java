@@ -29,7 +29,7 @@ public class CartProductResponse {
         this.productPrice = cartProduct.getProduct().getProductPrice();
         this.stockQuantity = cartProduct.getProduct().getStockQuantity();
         this.productDiscount = cartProduct.getProduct().getProductDiscount();
-        this.orderOption = cartProduct.getProduct().getOrderOption();
+        this.orderOption = cartProduct.getOrderOption();
         this.productImageOriginalName = cartProduct.getProduct().getProductImageOriginalName();
         this.productImagePath = cartProduct.getProduct().getProductImagePath();
     }

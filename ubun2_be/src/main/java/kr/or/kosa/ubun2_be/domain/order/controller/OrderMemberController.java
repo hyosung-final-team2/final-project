@@ -20,6 +20,20 @@ public class OrderMemberController {
     private final SubscriptionOrderService subscriptionOrderService;
     private final OrderService orderService;
 
+    @Operation(summary = "정기 주문 및 단건 주문 유효성 검사 및 결제 확인")
+    @PostMapping("/orders/validate")
+    public ResponseDto<?> validateOrders(@RequestBody List<SubscriptionOrderRequest> orderRequests,
+                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        for (SubscriptionOrderRequest orderRequest : orderRequests) {
+            if (orderRequest.getIntervalDays() == 0) {
+                orderService.validateAndPrepareOrder(customUserDetails.getUserId(), orderRequest);
+            } else {
+                subscriptionOrderService.validateAndPrepareSubscriptionOrder(customUserDetails.getUserId(), List.of(orderRequest));
+            }
+        }
+        return ResponseDto.ok(null, "유효성 검사 및 결제 확인 완료");
+    }
+
     @Operation(summary = "정기 주문 및 단건 주문 생성")
     @PostMapping("/orders")
     public ResponseDto<?> registerOrders(@RequestBody List<SubscriptionOrderRequest> subscriptionOrderRequests,

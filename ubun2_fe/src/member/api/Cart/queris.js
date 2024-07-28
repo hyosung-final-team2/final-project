@@ -10,6 +10,7 @@ export const useCreateCart = cartAddProduct => {
   const { customerId } = useStoreStore();
   const queryClient = useQueryClient();
   const cartProducts = [cartAddProduct];
+  console.log('cartAddProduct:', cartAddProduct);
 
   const cartData = [
     {

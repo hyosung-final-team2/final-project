@@ -1,5 +1,11 @@
 import privateFetch from '../../../customer/api/common/privateFetch';
 
+export const validateOrder = async orderData => {
+  console.log('orderData:', orderData);
+  const res = await privateFetch.post('/members/orders/validate', orderData);
+  return res.data;
+};
+
 export const createOrder = async orderData => {
   const res = await privateFetch.post('/members/orders', orderData);
   return res;

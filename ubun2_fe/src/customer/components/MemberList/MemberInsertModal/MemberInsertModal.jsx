@@ -29,7 +29,6 @@ const MemberInsertModal = ({isOpen, setOpenModal, selectedMemberDetail, currentP
 
     const {data: memberDetail} = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
     const member = memberDetail?.data?.data;
-
     // ============================================================
 
     // 회원 정보 수정
@@ -148,8 +147,6 @@ const MemberInsertModal = ({isOpen, setOpenModal, selectedMemberDetail, currentP
         }
     }, [isOpen, selectedMemberDetail, member]);
 
-
-    console.log(pendingMemberData)
 
     // =============================================================
 

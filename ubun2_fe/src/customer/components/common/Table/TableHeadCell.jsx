@@ -20,10 +20,20 @@ const TableHeadCell = ({ colunmName, handleSort }) => {
     }, [isDesc]);
 
 
-    const {isReset} = useMemberTableStore()
+    const { sort ,isReset} = useMemberTableStore()
     useEffect(() => {
         setIsDesc(null)
     }, [isReset]);
+
+    useEffect(() => {
+        const columnName = columnMapping[colunmName];
+        const sortItem = sort.find(item => item.startsWith(`${columnName},`));
+        if (sortItem) {
+            setIsDesc(sortItem.endsWith('DESC'));
+        } else {
+            setIsDesc(null);
+        }
+    }, [sort, colunmName]);
 
   return (
     <Table.HeadCell className='bg-gray-100 text-main text-sm' onClick={() => setIsDesc(!isDesc)}>
