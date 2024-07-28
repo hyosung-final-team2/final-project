@@ -16,6 +16,7 @@ import useAddressStore from '../../store/Address/useAddressStore.js';
 import DynamicTableBody from '../common/Table/DynamicTableBody.jsx';
 import AddressRegistrationModal from './AddressRegistrationModal.jsx';
 import useAddressTableStore from '../../store/Address/addressTableStore.js';
+import useSkeletonStore from "../../store/skeletonStore.js";
 
 import SkeletonTable from '../Skeleton/SkeletonTable.jsx';
 import SkeletonAddressTableFeature from './Skeleton/SkeletonAddressTableFeature.jsx';
@@ -103,9 +104,7 @@ const AddressTable = () => {
   }, []);
 
   useEffect(() => {
-    console.log('useEffect' + isLoading);
     if (!isLoading) {
-      console.log('useEffect if inside' + isLoading);
       setSkeletonData(addressList);
       setSkeletonTotalPage(totalPages);
       setSkeletonSortData(sort);
@@ -113,7 +112,6 @@ const AddressTable = () => {
   }, [isLoading, totalPages, addressList, sort]);
 
   if (isLoading) {
-    console.log('skeleton loading' + isLoading);
     return (
       <SkeletonTable SkeletonTableFeature={SkeletonAddressTableFeature} TableRowComponent={SkeletonAddressTableRow} tableColumns={tableColumn.address.list} />
     );
