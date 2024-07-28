@@ -9,7 +9,8 @@ public enum CustomerExceptionType implements CustomExceptionType {
     INVALID_REGISTER_FORMAT(-403, HttpStatus.BAD_REQUEST, "필수 입력 사항을 기입해야합니다."),
     INVALID_EXCEL_EMAIL_FORMAT(-404, HttpStatus.BAD_REQUEST, "엑셀 EMAIL 양식이 맞지않습니다."),
     INVALID_EXCEL_NAME_FORMAT(-405, HttpStatus.BAD_REQUEST, "엑셀 이름 양식이 맞지않습니다"),
-    INVALID_EXCEL_PHONE_FORMAT(-406, HttpStatus.BAD_REQUEST, "엑셀 휴대폰번호 양식이 맞지않습니다");
+    INVALID_EXCEL_PHONE_FORMAT(-406, HttpStatus.BAD_REQUEST, "엑셀 휴대폰번호 양식이 맞지않습니다"),
+    DUPLICATE_CUSTOMER(-407, HttpStatus.BAD_REQUEST, "이미 존재하는 판매자입니다.");
 
     private int errorCode;
     private HttpStatus httpStatus;

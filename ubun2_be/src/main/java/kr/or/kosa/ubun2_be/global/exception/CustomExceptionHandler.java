@@ -4,6 +4,8 @@ import kr.or.kosa.ubun2_be.domain.address.exception.AddressException;
 import kr.or.kosa.ubun2_be.domain.cart.exception.CartException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 
+import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
+import kr.or.kosa.ubun2_be.domain.member.exception.pendingmember.PendingMemberException;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodException;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderException;
 import kr.or.kosa.ubun2_be.domain.product.exception.category.CategoryException;
@@ -130,6 +132,27 @@ public class CustomExceptionHandler implements ErrorController {
                 .build();
 
         return new ResponseEntity(error, cartException.getExceptionType().getHttpStatus());
+    }
+    @ExceptionHandler(value = MemberException.class)
+    public ResponseEntity handleGlobalException(MemberException memberException) {
+        ErrorDto error = ErrorDto.builder()
+                .errorCode(memberException.getExceptionType().getErrorCode())
+                .errorMessage(memberException.getExceptionType().getMessage())
+                .httpStatus(memberException.getExceptionType().getHttpStatus())
+                .build();
+
+        return new ResponseEntity(error, memberException.getExceptionType().getHttpStatus());
+    }
+
+    @ExceptionHandler(value = PendingMemberException.class)
+    public ResponseEntity handleGlobalException(PendingMemberException pendingMemberException) {
+        ErrorDto error = ErrorDto.builder()
+                .errorCode(pendingMemberException.getExceptionType().getErrorCode())
+                .errorMessage(pendingMemberException.getExceptionType().getMessage())
+                .httpStatus(pendingMemberException.getExceptionType().getHttpStatus())
+                .build();
+
+        return new ResponseEntity(error, pendingMemberException.getExceptionType().getHttpStatus());
     }
 
 }
