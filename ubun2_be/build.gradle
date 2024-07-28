@@ -75,6 +75,9 @@ dependencies {
 	//aop
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+	//validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 	tasks.named('test') {
 		useJUnitPlatform()
 	}
