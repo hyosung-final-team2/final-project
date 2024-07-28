@@ -19,4 +19,7 @@ public interface MemberRepository extends JpaRepository<Member,Long>,MemberRepos
             "LEFT JOIN FETCH m.paymentMethods pm " +
             "WHERE m.memberId = :memberId")
     Optional<Member> findMemberWithPaymentMethodsById(@Param("memberId") Long memberId);
+
+    boolean existsByMemberLoginId(String memberLoginId);
+
 }
