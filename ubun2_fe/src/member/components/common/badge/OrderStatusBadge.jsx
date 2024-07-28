@@ -1,6 +1,6 @@
 const BADGE_STYLES = {
-  SINGLE: { bgColor: 'bg-custom-alert-bg-purple', txtColor: 'text-custom-alert-check', text: '단건 주문' },
-  SUBSCRIPTION: { bgColor: 'bg-main', txtColor: 'text-main', text: '정기 주문' },
+  SINGLE: { bgColor: 'bg-blue-200', txtColor: 'text-blue-500', text: '단건 주문' },
+  SUBSCRIPTION: { bgColor: 'bg-orange-200', txtColor: 'text-orange-500', text: '정기 주문' },
   APPROVED: { bgColor: 'bg-badge-green', txtColor: 'text-badge-green', text: '승인' },
   PENDING: { bgColor: 'bg-badge-orange', txtColor: 'text-badge-orange', text: '대기' },
   REJECTED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '거절' },

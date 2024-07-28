@@ -116,14 +116,14 @@ const Order = () => {
 
         <PaymentSummaryPre productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} isOrder={true} />
       </div>
-      <div className='sticky bottom-0 left-0 right-0 p-4 bg-white'>
-        <BottomButton
-          buttonText='결제하기'
-          buttonStyle={`${isOrderButtonDisabled ? 'bg-gray-400' : 'bg-main'} text-white`}
-          buttonFunc={handleProceedToPayment}
-          disabled={isOrderButtonDisabled}
-        />
-      </div>
+
+      <BottomButton
+        buttonText='결제하기'
+        buttonStyle={`${isOrderButtonDisabled ? 'bg-gray-400' : 'bg-main'} text-white`}
+        buttonFunc={handleProceedToPayment}
+        disabled={isOrderButtonDisabled}
+      />
+
       <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='배송 주기 선택' isButton={false}>
         <DeliveryModalContent deliveryContent={deliveryItems} handleDeliverySelection={handleDeliverySelection} />
       </SlideUpModal>
