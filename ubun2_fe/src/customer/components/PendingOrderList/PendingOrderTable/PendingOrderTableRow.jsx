@@ -43,10 +43,10 @@ const PendingOrderTableRow = ({
       <Table.Cell style={{ width: '10%' }}>
         <OrderOptionBadge subscription={subscription} />
       </Table.Cell>
-      <Table.Cell style={{ width: '20%' }}>{createdAt ? formatDate(createdAt) : null}</Table.Cell>
+      <Table.Cell style={{ width: '15%' }}>{createdAt ? formatDate(createdAt) : null}</Table.Cell>
       <Table.Cell style={{ width: '15%' }}>{memberName}</Table.Cell>
       <Table.Cell style={{ width: '20%' }}>{`${totalOrderPrice ? formatCurrency(totalOrderPrice) : '-'} 원`}</Table.Cell>
-      <Table.Cell style={{ width: '10%' }}>
+      <Table.Cell style={{ width: '15%' }}>
         <PaymentMethodBadge paymentType={paymentType} />
       </Table.Cell>
       <Table.Cell style={{ width: '20%' }}>
