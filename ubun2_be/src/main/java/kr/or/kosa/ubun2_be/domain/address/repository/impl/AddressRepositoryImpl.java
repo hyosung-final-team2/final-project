@@ -115,8 +115,6 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
 
     @Override
     public boolean checkIsMyMember(Long customerId, Long memberId) {
-        System.out.println("customerId = " + customerId);
-        System.out.println("memberId = " + memberId);
         Long count = from(memberCustomer)
                 .where(memberCustomer.customer.customerId.eq(customerId)
                         .and(memberCustomer.member.memberId.eq(memberId)))
