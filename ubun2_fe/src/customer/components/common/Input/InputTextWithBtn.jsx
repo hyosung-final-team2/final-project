@@ -58,14 +58,6 @@ const InputTextWithBtn = ({
   const isButtonDisabled = !clickPossibleWithoutData && (!value || !isValid);
   const buttonClasses = `btn ${!isButtonDisabled ? 'bg-main text-white btn-primary' : 'bg-gray-300 text-gray-600 cursor-not-allowed'} w-1/4`;
 
-  // useEffect(() => {
-  //   if (regex && !regex.test(value)) {
-  //     setError(regexMessage);
-  //   } else {
-  //     setError('');
-  //   }
-  // }, [value, regex]);
-
   useEffect(() => {
     if (isDuplicateInput && duplicateMessage) {
       setError(duplicateMessage);
@@ -75,7 +67,6 @@ const InputTextWithBtn = ({
       setError('');
     }
   }, [value, regex, duplicateMessage, isDuplicateInput]);
-
 
 
   return (

@@ -16,7 +16,6 @@ import useAddressStore from '../../store/Address/useAddressStore.js';
 import DynamicTableBody from '../common/Table/DynamicTableBody.jsx';
 import AddressRegistrationModal from './AddressRegistrationModal.jsx';
 import useAddressTableStore from '../../store/Address/addressTableStore.js';
-import useSkeletonStore from "../../store/skeletonStore.js";
 
 import SkeletonTable from '../Skeleton/SkeletonTable.jsx';
 import SkeletonAddressTableFeature from './Skeleton/SkeletonAddressTableFeature.jsx';
