@@ -13,6 +13,5 @@ export const updateAddress = async (addressId, requestData) => {
   const requestPayload = {
     request: requestData,
   };
-  console.log(requestPayload);
   const res = await privateFetch.put(`/customers/addresses/${addressId}`, requestPayload);
 };

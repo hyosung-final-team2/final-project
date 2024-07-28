@@ -2,6 +2,11 @@ import InputText from '../common/Input/InputText';
 import InputTextWithBtn from '../common/Input/InputTextWithBtn';
 import { useState, useEffect } from 'react';
 import {useSignup} from "../../api/Customer/Register/queris.js";
+import {
+   businessStoreNameRegex, businessStoreNameRegexMessage,
+  phoneRegex,
+  phoneRegexMessage
+} from "../common/Regex/registerRegex.js";
 
 const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
   const INITIAL_REGISTER_OBJ = {
@@ -27,9 +32,9 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
       customerPhone.trim() !== '' &&
       businessAddressNumber.trim() !== '' &&
       businessAddressDefault.trim() !== '' &&
-      businessAddressDetail.trim() !== ''
-
-      // TODO: 값이 차있는지뿐만 아니라 값이 유효한 인증된 값인지 여부도 판단해야함
+      businessAddressDetail.trim() !== '' &&
+      businessStoreNameRegex.test(businessName.trim()) &&
+      phoneRegex.test(customerPhone.trim())
     ) {
       setIsAllValuePossible(true);
     } else {
@@ -37,8 +42,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
     }
   }, [thirdRegisterObj]);
 
-  const submitForm = e => {
-    e.preventDefault();
+  const submitForm = () => {
     setErrorMessage('');
 
     if (thirdRegisterObj.businessName.trim() === '') return setErrorMessage('상호명을 입력해주세요');
@@ -63,7 +67,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
   return (
     <>
       <h2 className='text-3xl font-bold mb-2 text-left text-main'>상점 정보를 입력해주세요.</h2>
-      <form onSubmit={e => submitForm(e)}>
+      <div>
         <div className='mb-4'>
           <InputText
             defaultValue={thirdRegisterObj.businessName}
@@ -72,6 +76,9 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
             labelTitle='상호명'
             updateFormValue={updateFormValue}
             placeholder='상호명을 입력해주세요.'
+            isRegexInput={true}
+            regex={businessStoreNameRegex}
+            regexMessage={businessStoreNameRegexMessage}
           />
           <InputText
             defaultValue={thirdRegisterObj.customerPhone}
@@ -80,6 +87,9 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
             labelTitle='전화번호'
             updateFormValue={updateFormValue}
             placeholder='전화번호를 입력해주세요.'
+            isRegexInput={true}
+            regex={phoneRegex}
+            regexMessage={phoneRegexMessage}
           />
 
           <InputTextWithBtn
@@ -91,6 +101,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
             placeholder='우편 번호'
             buttonText='검색하기'
             clickPossibleWithoutData={true}
+            isAuthInput={true}
           />
           <InputText
             defaultValue={thirdRegisterObj.businessAddressDefault}
@@ -109,7 +120,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
         </div>
 
         <button
-          type='submit'
+          onClick={() => submitForm()}
           className={
             `btn mt-2 w-full ${isAllValuePossible ? 'bg-main text-white btn-primary' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}` +
             (loading ? ' loading' : '')
@@ -118,7 +129,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
         >
           다음
         </button>
-      </form>
+      </div>
     </>
   );
 };

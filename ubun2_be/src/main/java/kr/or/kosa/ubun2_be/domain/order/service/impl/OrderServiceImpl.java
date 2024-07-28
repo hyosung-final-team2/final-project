@@ -41,6 +41,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,18 +80,75 @@ public class OrderServiceImpl implements OrderService {
         combinedList.addAll(orderResponseLists);
         combinedList.addAll(subscriptionOrderResponseList);
 
+        // totalCost 필터링
+        if (searchRequest != null && "totalCost".equals(searchRequest.getSearchCategory())) {
+            String[] range = searchRequest.getSearchKeyword().split(",");
+            if (range.length == 2) {
+                long start = Long.parseLong(range[0].trim());
+                long end = Long.parseLong(range[1].trim());
+                combinedList = combinedList.stream()
+                        .filter(order -> order.getTotalOrderPrice() >= start && order.getTotalOrderPrice() <= end)
+                        .collect(Collectors.toList());
+            }
+        }
+
+        // isSubscription 필터링
+        if (searchRequest != null && "isSubscription".equals(searchRequest.getSearchCategory())) {
+            boolean isSubscription = Boolean.parseBoolean(searchRequest.getSearchKeyword());
+            combinedList = combinedList.stream()
+                    .filter(order -> order.isSubscription() == isSubscription)
+                    .collect(Collectors.toList());
+        }
+
+        List<Sort.Order> sortOrders = pageable.getSort().get().collect(Collectors.toList());
+        if (!sortOrders.isEmpty()) {
+            combinedList.sort((m1, m2) -> {
+                for (Sort.Order order : sortOrders) {
+                    int comparison = compareOrders(m1, m2, order.getProperty());
+                    if (comparison != 0) {
+                        return order.isAscending() ? comparison : -comparison;
+                    }
+                }
+                return 0;
+            });
+        }
+
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
         List<UnifiedOrderResponse> paginatedList = combinedList.subList(start, end);
 
         return new PageImpl<>(paginatedList, pageable, combinedList.size());
     }
+    private int compareOrders(UnifiedOrderResponse o1, UnifiedOrderResponse o2, String property) {
+        return switch (property) {
+            case "totalCost" -> compareNullable(o1.getTotalOrderPrice(), o2.getTotalOrderPrice());
+            case "createdAt" -> compareNullable(o1.getCreatedAt(), o2.getCreatedAt());
+            case "memberName" -> compareNullable(o1.getMemberName(), o2.getMemberName());
+            case "orderStatus" -> compareNullable(o1.getOrderStatus(), o2.getOrderStatus());
+            case "paymentType" -> compareNullable(o1.getPaymentType(), o2.getPaymentType());
+            case "isSubscription" -> Boolean.compare(o1.isSubscription(), o2.isSubscription());
+            default -> 0;
+        };
+    }
+
+    private <T extends Comparable<T>> int compareNullable(T t1, T t2) {
+        if (t1 == null && t2 == null) return 0;
+        if (t1 == null) return -1;
+        if (t2 == null) return 1;
+        return t1.compareTo(t2);
+    }
 
     @Override
     public OrderDetailResponse getOrderByCustomerIdAndOrderId(Long orderId, Long customerId) {
         Order findOrder = orderRepository.findOrderByIdAndCustomerId(orderId, customerId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
-        return new OrderDetailResponse(findOrder);
+
+        PaymentMethod paymentMethod = findOrder.getPaymentMethod();
+        if (paymentMethod == null) {
+            return new OrderDetailResponse(findOrder);
+        }
+
+        return createOrderDetailResponseWithPayment(findOrder, paymentMethod);
     }
 
     @Override
@@ -118,6 +176,39 @@ public class OrderServiceImpl implements OrderService {
         combinedList.addAll(orderResponseLists);
         combinedList.addAll(subscriptionOrderResponseList);
 
+        // totalCost 필터링
+        if (searchRequest != null && "totalCost".equals(searchRequest.getSearchCategory())) {
+            String[] range = searchRequest.getSearchKeyword().split(",");
+            if (range.length == 2) {
+                long start = Long.parseLong(range[0].trim());
+                long end = Long.parseLong(range[1].trim());
+                combinedList = combinedList.stream()
+                        .filter(order -> order.getTotalOrderPrice() >= start && order.getTotalOrderPrice() <= end)
+                        .collect(Collectors.toList());
+            }
+        }
+
+        // isSubscription 필터링
+        if (searchRequest != null && "isSubscription".equals(searchRequest.getSearchCategory())) {
+            boolean isSubscription = Boolean.parseBoolean(searchRequest.getSearchKeyword());
+            combinedList = combinedList.stream()
+                    .filter(order -> order.isSubscription() == isSubscription)
+                    .collect(Collectors.toList());
+        }
+
+        List<Sort.Order> sortOrders = pageable.getSort().get().collect(Collectors.toList());
+        if (!sortOrders.isEmpty()) {
+            combinedList.sort((m1, m2) -> {
+                for (Sort.Order order : sortOrders) {
+                    int comparison = compareOrders(m1, m2, order.getProperty());
+                    if (comparison != 0) {
+                        return order.isAscending() ? comparison : -comparison;
+                    }
+                }
+                return 0;
+            });
+        }
+
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
         List<UnifiedOrderResponse> paginatedList = combinedList.subList(start, end);
@@ -129,18 +220,26 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void updateOrderStatus(Long customerId, List<OrderApproveRequest> orderApproveRequests) {
         for (OrderApproveRequest request : orderApproveRequests) {
+            // 1. PENDING 상태인 주문 조회
             Order findPendingOrder = orderRepository.findPendingOrderByIdAndCustomerId(request.getOrderId(), customerId)
                     .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
+            // 2. 새로운 주문 상태 검증 & 설정
             OrderStatus newStatus = validateAndGetOrderStatus(request.getOrderStatus());
             findPendingOrder.changeOrderStatus(newStatus);
 
+            // 3. 주문 상품 상태 변경
             for (OrderProduct orderProduct : findPendingOrder.getOrderProducts()) {
                 if (newStatus.equals(OrderStatus.APPROVED)) {
                     orderProduct.changeOrderProductStatus(OrderProductStatus.APPROVED);
                 } else {
                     orderProduct.changeOrderProductStatus(OrderProductStatus.DENIED);
                 }
+            }
+
+            // 4. 주문 상태가 DENIED 인 경우 재고 복구
+            if (newStatus.equals(OrderStatus.DENIED)) {
+                restoreInventory(findPendingOrder.getOrderProducts());
             }
             orderRepository.save(findPendingOrder);
         }
@@ -150,19 +249,26 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void updateSubscriptionOrderStatus(Long customerId, List<SubscriptionApproveRequest> subscriptionApproveRequests) {
         for (SubscriptionApproveRequest request : subscriptionApproveRequests) {
+            // 1. PENDING 상태인 주문 조회
             SubscriptionOrder findSubscriptionPendingOrder = subscriptionOrderRepository
                     .findPendingSubscriptionOrderByIdAndCustomerId(request.getSubscriptionOrderId(), customerId)
                     .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
+            // 2. 새로운 주문 상태 검증 & 설정
             OrderStatus newOrderStatus = validateAndGetOrderStatus(request.getOrderStatus());
             findSubscriptionPendingOrder.changeOrderStatus(newOrderStatus);
 
+            // 3. 주문 상품 상태 변경
             for (SubscriptionOrderProduct subscriptionOrderProduct : findSubscriptionPendingOrder.getSubscriptionOrderProducts()) {
                 if (newOrderStatus.equals(OrderStatus.APPROVED)) {
                     subscriptionOrderProduct.changeSubscriptionOrderProductStatus(OrderProductStatus.APPROVED);
                 } else {
                     subscriptionOrderProduct.changeSubscriptionOrderProductStatus(OrderProductStatus.DENIED);
                 }
+            }
+
+            if(newOrderStatus.equals(OrderStatus.DENIED)) {
+                restoreInventoryForSubscription(findSubscriptionPendingOrder.getSubscriptionOrderProducts());
             }
             subscriptionOrderRepository.save(findSubscriptionPendingOrder);
         }
@@ -176,9 +282,10 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    // 회원의 주문 유효성 검사
     @Override
     @Transactional
-    public void createSingleOrder(Long memberId, SubscriptionOrderRequest orderRequest) {
+    public void validateAndPrepareOrder(Long memberId, SubscriptionOrderRequest orderRequest) {
         // 1. 회원 및 결제 수단 확인
         Member member = memberService.findById(memberId);
         PaymentMethod paymentMethod = paymentMethodService.findById(orderRequest.getPaymentMethodId());
@@ -191,17 +298,25 @@ public class OrderServiceImpl implements OrderService {
 
         // 4. 결제 확인
         checkPayment(orderRequest, paymentMethod, member.getMemberName());
+    }
 
-        // 5. 주문 생성
-        Order order = createOrder(paymentMethod, member, orderRequest);
+    // 단건 주문 생성
+    @Override
+    @Transactional
+    public void createSingleOrder(Long memberId, SubscriptionOrderRequest orderRequest) {
+        // 1. 주문 생성 전 유효성 검사
+        validateAndPrepareOrder(memberId, orderRequest);
 
-        // 6. 재고 감소
+        // 2. 주문 생성
+        Order order = createOrder(paymentMethodService.findById(orderRequest.getPaymentMethodId()), memberService.findById(memberId), orderRequest);
+
+        // 3. 재고 감소
         decreaseInventory(order.getOrderProducts());
 
-        // 7. 장바구니 상품 삭제
+        // 4. 장바구니 상품 삭제
         deleteCartProducts(memberId, orderRequest.getSubscriptionOrderProducts());
 
-        // 7. 고객에게 push notification (단건주문)
+        // 5. 고객에게 push notification (단건주문)
         alarmService.sendMessageToCustomer(orderRequest);
     }
 
@@ -283,7 +398,7 @@ public class OrderServiceImpl implements OrderService {
 
     private Order createOrder(PaymentMethod paymentMethod, Member member, SubscriptionOrderRequest request) {
         Address address = addressService.findByAddressIdAndMemberId(request.getAddressId(), member.getMemberId());
-        Cart cart = cartService.findByMemberId(member.getMemberId()); // Cart 객체를 가져오는 로직 추가
+        Cart cart = cartService.findByMemberIdAndCustomerId(member.getMemberId(), request.getCustomerId()); // Cart 객체를 가져오는 로직 추가
 
 
         Order order = Order.builder()
@@ -331,7 +446,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long orderId) {
-
         Order findOrder = orderRepository.findByOrderIdAndMemberMemberId(orderId, memberId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
@@ -340,22 +454,7 @@ public class OrderServiceImpl implements OrderService {
             return new OrderDetailResponse(findOrder);
         }
 
-        Long paymentMethodId = paymentMethod.getPaymentMethodId();
-        String paymentMethodType = paymentMethod.getPaymentType();
-
-        switch (paymentMethodType) {
-            case "CARD" -> {
-                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
-                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
-                return new OrderDetailResponse(findOrder, cardPayment);
-            }
-            case "ACCOUNT" -> {
-                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
-                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
-                return new OrderDetailResponse(findOrder, accountPayment);
-            }
-            default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
-        }
+        return createOrderDetailResponseWithPayment(findOrder, paymentMethod);
     }
 
     @Override
@@ -376,4 +475,30 @@ public class OrderServiceImpl implements OrderService {
             inventoryService.increaseStock(orderProduct.getProduct().getProductId(), orderProduct.getQuantity());
         }
     }
+
+    private void restoreInventoryForSubscription(List<SubscriptionOrderProduct> subscriptionOrderProducts) {
+        for (SubscriptionOrderProduct subscriptionOrderProduct : subscriptionOrderProducts) {
+            inventoryService.increaseStock(subscriptionOrderProduct.getProduct().getProductId(), subscriptionOrderProduct.getQuantity());
+        }
+    }
+
+    private OrderDetailResponse createOrderDetailResponseWithPayment(Order findOrder, PaymentMethod paymentMethod) {
+        Long paymentMethodId = paymentMethod.getPaymentMethodId();
+        String paymentMethodType = paymentMethod.getPaymentType();
+
+        switch (paymentMethodType) {
+            case "CARD" -> {
+                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new OrderDetailResponse(findOrder, cardPayment);
+            }
+            case "ACCOUNT" -> {
+                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new OrderDetailResponse(findOrder, accountPayment);
+            }
+            default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
+        }
+    }
+
 }

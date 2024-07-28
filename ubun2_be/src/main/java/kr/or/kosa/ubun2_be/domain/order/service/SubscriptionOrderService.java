@@ -19,4 +19,6 @@ public interface SubscriptionOrderService {
     SubscriptionOrderDetailResponse getSubscriptionOrderByMemberIdAndOrderId(Long memberId, Long orderId);
 
     void removeSubscriptionOrderProducts(Long memberId, RemoveSubscriptionOrderProductRequest request);
+
+    void validateAndPrepareSubscriptionOrder(Long memberId, List<SubscriptionOrderRequest> orderRequest);
 }

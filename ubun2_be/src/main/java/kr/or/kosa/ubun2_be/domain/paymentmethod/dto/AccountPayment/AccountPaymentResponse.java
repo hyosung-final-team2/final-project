@@ -12,6 +12,7 @@ public class AccountPaymentResponse {
     private String paymentType;
     private String bankName;
     private String accountNumber;
+    private String createdAt;
 
     public AccountPaymentResponse(AccountPayment accountPayment) {
         this.memberId = accountPayment.getMember().getMemberId();
@@ -21,5 +22,6 @@ public class AccountPaymentResponse {
         this.paymentType = accountPayment.getPaymentType();
         this.bankName = accountPayment.getBankName();
         this.accountNumber = accountPayment.getAccountNumber();
+        this.createdAt = accountPayment.getCreatedAt().toString();
     }
 }

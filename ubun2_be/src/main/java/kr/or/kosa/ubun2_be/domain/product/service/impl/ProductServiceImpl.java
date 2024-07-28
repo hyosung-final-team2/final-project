@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -151,6 +150,14 @@ public class ProductServiceImpl implements ProductService {
         return categories.stream()
                 .map(CategoryResponse::new)
                 .toList();
+    }
+
+    @Transactional
+    @Override
+    public void removeSelectedProducts(ProductDeleteSelectedRequest productDeleteSelectedRequest, Long customerId) {
+        for (Long productId : productDeleteSelectedRequest.getProductIdList()) {
+            removeProduct(customerId, productId);
+        }
     }
 
 }

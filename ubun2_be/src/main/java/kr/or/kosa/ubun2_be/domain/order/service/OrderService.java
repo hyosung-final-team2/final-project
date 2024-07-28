@@ -16,7 +16,10 @@ public interface OrderService {
     Page<UnifiedOrderResponse> getPendingOrders(Long customerId, SearchRequest searchRequest, Pageable pageable);
 
     void updateOrderStatus(Long customerId, List<OrderApproveRequest> orderApproveRequests);
+
     void updateSubscriptionOrderStatus(Long customerId, List<SubscriptionApproveRequest> subscriptionApproveRequests);
+
+    void validateAndPrepareOrder(Long userId, SubscriptionOrderRequest orderRequest);
 
     void createSingleOrder(Long memberId, SubscriptionOrderRequest orderRequest);
 
@@ -25,4 +28,5 @@ public interface OrderService {
     OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long orderId);
 
     void cancelOrder(Long memberId, CancelOrderRequest cancelOrderRequest);
+
 }

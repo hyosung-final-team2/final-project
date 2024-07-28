@@ -1,13 +1,20 @@
 import privateFetch from '../../../common/privateFetch.js';
 import privateFileFetch from '../../../common/privateFileFetch.js';
+import qs from "qs";
 
 // 전체 상품 리스트 조회
-export const getProducts = async (page, size) =>
+export const getProducts = async (page, size, sort, searchCategory, searchKeyword) =>
   await privateFetch.get('/customers/products', {
     params: {
       page: page - 1,
       size: size,
+      sort: sort, //["productCategoryName","productName","stockQuantity","productPrice","productDiscount","productStatus","orderOption"]
+      searchCategory: searchCategory,
+      searchKeyword: searchKeyword
     },
+      paramsSerializer: params => {
+        return qs.stringify(params, { arrayFormat: 'repeat' });
+      }
   });
 
 export const registerProduct = async (productRequest, imageFile) => {

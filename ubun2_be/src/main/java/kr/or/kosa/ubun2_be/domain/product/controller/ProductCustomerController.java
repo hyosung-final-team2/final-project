@@ -2,7 +2,6 @@ package kr.or.kosa.ubun2_be.domain.product.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import kr.or.kosa.ubun2_be.domain.product.dto.*;
-import kr.or.kosa.ubun2_be.domain.product.entity.Category;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
@@ -25,7 +24,7 @@ import java.util.List;
 public class ProductCustomerController {
 
     private final ProductService productService;
-    private static final int PAGE_SIZE = 9;
+    private static final int PAGE_SIZE = 8;
     private static final String SORT_DEFAULT = "productId";
 
     @Operation(summary = "전체 상품 목록 및 정렬,검색을 통한 상품 목록 조회")
@@ -68,6 +67,13 @@ public class ProductCustomerController {
     public ResponseDto<?> getProductCategory() {
         List<CategoryResponse> categories= productService.getProductCategory();
         return ResponseDto.ok(categories,"정상출력 데이터");
+    }
+
+    @Operation(summary = "상품 리스트 삭제")
+    @DeleteMapping("/selected")
+    public ResponseDto<?> removeSelectedProducts(@RequestBody ProductDeleteSelectedRequest productDeleteSelectedRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        productService.removeSelectedProducts(productDeleteSelectedRequest,customUserDetails.getUserId());
+        return ResponseDto.ok(null, "정상출력 데이터");
     }
 
 }

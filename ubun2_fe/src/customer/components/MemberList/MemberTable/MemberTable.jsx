@@ -16,10 +16,13 @@ import {useGetMemberDetail} from '../../../api/Customer/MemberList/MemberModal/q
 import MemberInsertModal from "../MemberInsertModal/MemberInsertModal.jsx";
 import MemberRegisterModal from "../MemberRegisterModal/MemberRegisterModal.jsx";
 import useMemberTableStore from "../../../store/MemberTable/memberTableStore.js";
+import SkeletonTable from "../../Skeleton/SkeletonTable.jsx";
+import useSkeletonStore from "../../../store/skeletonStore.js";
+import SkeletonMemberTableFeature from "../Skeleton/SkeletonMemberTableFeature.jsx";
+import SkeletonMemberTableRow from "../Skeleton/SkeletonMemberTableRow.jsx";
 
 const MemberTable = () => {
 
-  // const [openMemberDetailModal, setOpenMemberDetailModal] = useState(false);
   const [openExcelModal, setOpenExcelModal] = useState(false);
   const [openInsertModal, setOpenInsertModal] = useState(false);
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
@@ -35,9 +38,9 @@ const MemberTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const PAGE_SIZE = 8
-  const { data: members,refetch: refetchMembers } = useGetMembers(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
+  const { data: members,refetch: refetchMembers , isLoading } = useGetMembers(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
-  const totalPages = members?.data?.data?.totalPages ?? 5;
+  const totalPages = members?.data?.data?.totalPages;
   const memberList = members?.data?.data?.content || [];
 
   const { data, refetch } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
@@ -113,8 +116,28 @@ const MemberTable = () => {
   }
 
   useEffect(() => {
-    return resetData()
+    return () => {
+      resetData()
+    }
   },[])
+
+  // isLoading 시, skeletonTable
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore()
+
+  useEffect(() => {
+    if (!isLoading) {
+      setSkeletonData(memberList);
+      setSkeletonTotalPage(totalPages)
+      setSkeletonSortData(sort)
+      setSkeletonSearchCategory(searchCategory);
+      setSkeletonSearchKeyword(searchKeyword);
+    }
+  }, [memberList, totalPages,sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
+
+  if (isLoading) {
+    // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
+    return <SkeletonTable SkeletonTableFeature={SkeletonMemberTableFeature} TableRowComponent={SkeletonMemberTableRow} tableColumns={tableColumn.member}/>
+  }
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
@@ -133,23 +156,22 @@ const MemberTable = () => {
             dynamicId='memberId'
             selectedMembers={selectedMembers}
             handleRowChecked={handleRowChecked}
-            // setOpenModal={setOpenMemberDetailModal}
             setOpenModal={handleRowClick}
             currentPage={currentPage}
           />
         </Table>
       </div>
       {/* 페이지네이션 */}
-      <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+      {isLoading === false ? <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' /> : null}
 
       {/* 엑셀 조회 모달 */}
-      <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} />
+      {openExcelModal && <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} /> }
 
     {/* 회원 조회 & 수정 모달 */}
-      <MemberInsertModal isOpen={openInsertModal} setOpenModal={setOpenInsertModal} selectedMemberDetail={selectedMemberDetail} setCurrentPage={setCurrentPage} currentPage={currentPage} setSelectedMemberDetail={setSelectedMemberDetail}/>
+      {openInsertModal && <MemberInsertModal isOpen={openInsertModal} setOpenModal={setOpenInsertModal} selectedMemberDetail={selectedMemberDetail} setCurrentPage={setCurrentPage} currentPage={currentPage} setSelectedMemberDetail={setSelectedMemberDetail}/>}
 
     {/*  회원 등록 모달*/}
-      <MemberRegisterModal isOpen={openRegisterModal} setOpenModal={setOpenRegisterModal} handleRegisterSuccess={handleRegisterSuccess}/>
+      {openRegisterModal && <MemberRegisterModal isOpen={openRegisterModal} setOpenModal={setOpenRegisterModal} handleRegisterSuccess={handleRegisterSuccess}/>}
     </div>
   );
 };

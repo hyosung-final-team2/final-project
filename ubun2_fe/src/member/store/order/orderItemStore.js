@@ -21,13 +21,12 @@ const useOrderItemsStore = create(
       // 스토어의 모든 제품이 선택되었는지 확인하는 함수
       isStoreAllSelected: customerId => {
         const { selectedItems, cartData } = get();
-        const selectedStore = selectedItems.find(s => s.customerId === customerId);
         const cartStore = cartData.find(s => s.customerId === customerId);
+        if (!cartStore) return false;
 
-        if (!selectedStore || !cartStore) return false;
+        const selectedProducts = selectedItems.filter(s => s.customerId === customerId).flatMap(s => s.cartProducts);
 
-        // cartStore의 모든 제품이 selectedStore에 있는지 확인
-        return cartStore.cartProducts.every(product => selectedStore.cartProducts.some(p => p.cartProductId === product.cartProductId));
+        return cartStore.cartProducts.every(product => selectedProducts.some(p => p.cartProductId === product.cartProductId));
       },
 
       // 특정 제품이 선택되었는지 확인하는 함수
@@ -46,24 +45,28 @@ const useOrderItemsStore = create(
           const store = state.cartData.find(s => s.customerId === customerId);
           if (!store) return state;
 
-          let newSelectedItems = [...state.selectedItems];
-          const storeIndex = newSelectedItems.findIndex(s => s.customerId === customerId);
+          let newSelectedItems = state.selectedItems.filter(s => s.customerId !== customerId);
 
           if (checked) {
-            if (storeIndex === -1) {
+            const singleProducts = store.cartProducts.filter(p => p.orderOption === 'SINGLE');
+            const subscriptionProducts = store.cartProducts.filter(p => p.orderOption === 'SUBSCRIPTION');
+
+            if (singleProducts.length > 0) {
               newSelectedItems.push({
-                ...store,
-                cartProducts: [...store.cartProducts],
+                customerId,
+                businessName: store.businessName,
+                intervalDays: undefined,
+                cartProducts: singleProducts,
               });
-            } else {
-              newSelectedItems[storeIndex] = {
-                ...store,
-                cartProducts: [...store.cartProducts],
-              };
             }
-          } else {
-            if (storeIndex !== -1) {
-              newSelectedItems.splice(storeIndex, 1);
+
+            if (subscriptionProducts.length > 0) {
+              newSelectedItems.push({
+                customerId,
+                businessName: store.businessName,
+                intervalDays: 0,
+                cartProducts: subscriptionProducts,
+              });
             }
           }
 
@@ -76,20 +79,22 @@ const useOrderItemsStore = create(
       handleSelectProduct: (customerId, product, checked) => {
         set(state => {
           let newSelectedItems = [...state.selectedItems];
-          const storeIndex = newSelectedItems.findIndex(store => store.customerId === customerId);
+          const storeIndex = newSelectedItems.findIndex(
+            store => store.customerId === customerId && store.intervalDays === (product.orderOption === 'SUBSCRIPTION' ? 0 : undefined)
+          );
 
           if (checked) {
             if (storeIndex === -1) {
-              const store = state.cartData.find(store => store.customerId === customerId);
-              const newStore = {
-                ...store,
-                cartProducts: [product],
-              };
-              newSelectedItems.push(newStore);
+              newSelectedItems.push({
+                customerId,
+                businessName: state.cartData.find(s => s.customerId === customerId)?.businessName,
+                intervalDays: product.orderOption === 'SUBSCRIPTION' ? 0 : undefined,
+                cartProducts: [{ ...product, intervalDays: product.orderOption === 'SUBSCRIPTION' ? 0 : undefined }],
+              });
             } else {
               newSelectedItems[storeIndex] = {
                 ...newSelectedItems[storeIndex],
-                cartProducts: [...newSelectedItems[storeIndex].cartProducts, product],
+                cartProducts: [...newSelectedItems[storeIndex].cartProducts, { ...product, intervalDays: newSelectedItems[storeIndex].intervalDays }],
               };
             }
           } else {
@@ -218,7 +223,7 @@ const useOrderItemsStore = create(
       setSubscriptionPeriod: (customerId, intervalDays) => {
         set(state => {
           const newSelectedItems = state.selectedItems.map(store => {
-            if (store.customerId === customerId) {
+            if (store.customerId === customerId && store.intervalDays !== undefined) {
               return {
                 ...store,
                 intervalDays: intervalDays,

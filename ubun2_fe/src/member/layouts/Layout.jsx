@@ -6,15 +6,18 @@ import useModalStore from '../store/modalStore';
 function Layout() {
   const location = useLocation();
   const pathList = location.pathname.split('/');
-  const noNavPage = ['wegwe', 'a', 'cart', 'addresses', 'payments', 'order', 'password', 'order-complete', 'payment-list'];
+  const noNavPage = ['cart', 'addresses', 'payments', 'order', 'password', 'order-complete'];
+  const noBackBtnPage = ['home']
   const { modalState } = useModalStore();
 
   const showFootNav = !pathList.some(path => noNavPage.includes(path));
+  const showBackBtn = !pathList.some(path => noBackBtnPage.includes(path));
+
   const isModalOpen = modalState ? 'overflow-y-hidden' : 'overflow-y-scroll';
 
   return (
-    <div className={`relative flex flex-col h-dvh mx-auto my-0 ${isModalOpen} `} style={{ minWidth: '320px', maxWidth: '480px' }}>
-      <PageContent hasFootNav={showFootNav} pathList={pathList} />
+    <div className={`relative flex flex-col h-dvh mx-auto my-0 ${isModalOpen} `} style={{ minWidth:'320px', maxWidth: '480px' }}>
+      <PageContent hasFootNav={showFootNav} pathList={pathList} showBackBtn={showBackBtn}/>
       {showFootNav && <FootNav pathList={pathList} />}
     </div>
   );

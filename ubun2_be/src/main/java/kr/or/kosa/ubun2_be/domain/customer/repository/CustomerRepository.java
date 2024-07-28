@@ -8,9 +8,9 @@ import java.util.Optional;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long>, CustomerRepositoryCustom {
 
-    boolean existsByCustomerLoginId(String CustomerLoginId);
+    boolean existsByCustomerLoginId(String customerLoginId);
 
-    Optional<Customer> findByCustomerLoginId(String CustomerLoginId);
+    Optional<Customer> findByCustomerLoginId(String customerLoginId);
 
     Optional<Customer> findByCustomerEmail(String customerEmail);
 
@@ -19,4 +19,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long>, Custo
 
     @Query("SELECT c.announcement FROM Customer c WHERE c.customerId = :customerId")
     Optional<String> findAnnouncementByCustomerId(Long customerId);
+
+    boolean existsByCustomerEmail(String customerEmail);
 }

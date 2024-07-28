@@ -1,8 +1,8 @@
 import { Table, Checkbox } from 'flowbite-react';
-import { CreditCardIcon, CurrencyDollarIcon } from '@heroicons/react/16/solid';
 import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
 import PaymentMethodBadge from '../common/Badge/PaymentMethodBadge';
-import { formatCardNumber, maskCardNumber } from '../../utils/cardFormat';
+import { maskCardNumber } from '../../utils/cardFormat';
+import { maskAccountNumber } from '../../utils/accountFormat';
 
 const PaymentMethodTableRow = ({
   paymentMethodId,
@@ -13,6 +13,7 @@ const PaymentMethodTableRow = ({
   cardCompanyName,
   cardNumber,
   accountNumber,
+  createdAt,
   setOpenModal,
   isChecked,
   handleRowChecked,
@@ -26,21 +27,22 @@ const PaymentMethodTableRow = ({
     cardNumber,
     bankName,
     accountNumber,
+    createdAt,
   };
 
   return (
     <>
       <Table.Row className='bg-white' onClick={() => setOpenModal(paymentMethodId, memberId, payment)}>
-        <Table.Cell>
+        <Table.Cell style={{ width: '5%' }}>
           <Checkbox checked={isChecked} onChange={() => handleRowChecked(id)} onClick={e => e.stopPropagation()} />
         </Table.Cell>
-        <Table.Cell>{memberEmail}</Table.Cell>
-        <Table.Cell>{memberName}</Table.Cell>
-        <Table.Cell>
-          {isAccount ? <PaymentMethodBadge icon={CurrencyDollarIcon} paymentText='계좌' /> : <PaymentMethodBadge icon={CreditCardIcon} paymentText='카드' />}
+        <Table.Cell style={{ width: '25%' }}>{memberEmail}</Table.Cell>
+        <Table.Cell style={{ width: '15%' }}>{memberName}</Table.Cell>
+        <Table.Cell style={{ width: '15%' }}>
+          {isAccount ? <PaymentMethodBadge paymentType={paymentMethodType} /> : <PaymentMethodBadge paymentType={paymentMethodType} />}
         </Table.Cell>
-        <Table.Cell>{isAccount ? bankName : cardCompanyName}</Table.Cell>
-        <Table.Cell>{isAccount ? accountNumber : maskCardNumber(cardNumber)}</Table.Cell>
+        <Table.Cell style={{ width: '20%' }}>{isAccount ? bankName : cardCompanyName}</Table.Cell>
+        <Table.Cell style={{ width: '20%' }}>{isAccount ? maskAccountNumber(accountNumber) : maskCardNumber(cardNumber)}</Table.Cell>
       </Table.Row>
     </>
   );

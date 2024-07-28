@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deleteProduct, getProducts, modifyProduct, registerProduct } from './productTable.js';
 
-export const useGetProducts = (page, size) => {
+export const useGetProducts = (page, size, sort, searchCategory, searchKeyword) => {
   return useQuery({
-    queryKey: ['product', { page: page }],
-    queryFn: () => getProducts(page, size),
+    queryKey: ['product', page, sort, searchCategory, searchKeyword],
+    queryFn: () => getProducts(page, size, sort, searchCategory,searchKeyword),
   });
 };
 

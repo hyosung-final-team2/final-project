@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useKakaoLoader, Map, MapMarker, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import { useKakaoAddressSearch } from '../../../api/Address/AddressModal/kakaoAddressSearch';
 
@@ -8,14 +8,10 @@ const MemberAddressMap = ({ address }) => {
     appkey: APIKEY,
   });
 
-  console.log('address:', address);
-  const [zipNo, ...rest] = address.split(',');
+  const [zipNo, ...rest] = address?.split(',');
   const query = rest.join(' ');
 
   const { data, isLoading: isAddressLoading, error: addressError } = useKakaoAddressSearch(query);
-
-  console.log('query:', query);
-  console.log('address data:', data?.documents[0]);
 
   if (loading || isAddressLoading) return <div>Loading...</div>;
   if (error || addressError) return <div>Error loading map or address data...</div>;
@@ -25,7 +21,6 @@ const MemberAddressMap = ({ address }) => {
   }
 
   const { y, x } = data?.documents[0];
-  console.log('address y:', y);
 
   return (
     <>

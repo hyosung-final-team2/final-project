@@ -15,6 +15,7 @@ const createNonPersistedStore = set => ({
   addressData: {
     name: '',
     recipientName: '',
+    zipNo: '',
     address: '',
     detailAddress: '',
     phoneNumber: '',
@@ -28,6 +29,7 @@ const createNonPersistedStore = set => ({
       addressData: {
         name: '',
         recipientName: '',
+        zipNo: '',
         address: '',
         detailAddress: '',
         phoneNumber: '',

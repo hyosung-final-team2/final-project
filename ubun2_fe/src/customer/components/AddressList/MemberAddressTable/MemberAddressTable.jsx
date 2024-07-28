@@ -11,12 +11,12 @@ const MemberAddressTable = ({ memberAddresses, title }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [paginatedData, setPaginatedData] = useState([]);
   const itemsPerPage = 3;
-  const totalPages = Math.ceil(memberAddresses.length / itemsPerPage);
+  const totalPages = Math.ceil(memberAddresses?.length / itemsPerPage);
 
   useEffect(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const currentData = memberAddresses.slice(startIndex, endIndex).map((item, index) => {
+    const currentData = memberAddresses?.slice(startIndex, endIndex).map((item, index) => {
       const [addressNum, addressFirst, addressSecond, ...addressThird] = item.address.split(',');
 
       return {

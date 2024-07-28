@@ -23,6 +23,7 @@
     "flowbite": "^2.4.1",
     "flowbite-react": "^0.10.1",
     "framer-motion": "^11.3.2",
+    "html2canvas-pro": "^1.5.8",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "qs": "^6.12.3",

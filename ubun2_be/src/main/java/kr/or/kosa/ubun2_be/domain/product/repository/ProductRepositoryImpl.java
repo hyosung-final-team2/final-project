@@ -21,12 +21,13 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import static kr.or.kosa.ubun2_be.domain.product.entity.QCategory.category;
 import static kr.or.kosa.ubun2_be.domain.product.entity.QProduct.product;
 
 @Repository
 public class ProductRepositoryImpl extends QuerydslRepositorySupport implements ProductRepositoryCustom {
 
-    private static final List<String> STRING_SEARCH_FIELDS = List.of("productName");
+    private static final List<String> STRING_SEARCH_FIELDS = List.of("productName","productCategoryName");
     private static final List<String> NUMERIC_SEARCH_FIELDS = List.of("stockQuantity", "productPrice", "productDiscount");
 
     public ProductRepositoryImpl() {
@@ -36,12 +37,12 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
     @Override
     public Page<Product> findProducts(Long customerId, SearchRequest searchRequest, Pageable pageable, boolean isMember) {
         QueryResults<Product> results = from(product)
+                .join(product.category,category)
                 .where(product.customer.customerId.eq(customerId), productSearch(searchRequest), productStatusForMember(isMember))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(productSort(pageable).stream().toArray(OrderSpecifier[]::new))
                 .fetchResults();
-
         List<Product> content = results.getResults();
         long total = results.getTotal();
         return new PageImpl<>(content, pageable, total);
@@ -109,11 +110,11 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
     private ComparableExpressionBase<?> getPath(String property) {
         return switch (property) {
             case "productId" -> product.productId;
+            case "productCategoryName" -> category.categoryName;
             case "productName" -> product.productName;
             case "stockQuantity" -> product.stockQuantity;
             case "productPrice" -> product.productPrice;
             case "productDiscount" -> product.productDiscount;
-            case "createdAt" -> product.createdAt;
             case "productStatus" -> product.productStatus;
             case "orderOption" -> product.orderOption;
             default -> null;

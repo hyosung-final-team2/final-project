@@ -1,6 +1,7 @@
+import { ArrowPathIcon } from '@heroicons/react/16/solid';
 import SearchBarWithDrop from '../../common/SearchBar/SearchBarWithDrop';
 
-const PendingOrderTableFeature = ({ tableColumns, onSearch, handleOrderUpdate, selectedPendingOrders }) => {
+const PendingOrderTableFeature = ({ tableColumns, onSearch, handleOrderUpdate, selectedPendingOrders, handleDataReset }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const isButtonDisabled = selectedPendingOrders.length === 0;
 
@@ -20,6 +21,10 @@ const PendingOrderTableFeature = ({ tableColumns, onSearch, handleOrderUpdate, s
         <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} />
       </div>
       <div className='flex gap-2'>
+        <button className='normal-case btn btn-ghost btn-sm' onClick={() => handleDataReset()}>
+          <ArrowPathIcon className='w-4 mr-2' />
+          Reset
+        </button>
         <button
           onClick={handleApprove}
           className={`${commonButtonStyles} ${

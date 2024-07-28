@@ -4,12 +4,16 @@ import useAddressStore from '../../store/address/AddressStore';
 import useOrderDataStore from '../../store/order/orderDataStore';
 import AddressItem from '../../components/Address/AddressItem';
 import BottomButton from '../../components/common/button/BottomButton';
+import { useLocation } from 'react-router-dom';
 
 const ChooseAddress = ({ title }) => {
   const navigate = useNavigate();
   const { memberId } = useAddressStore(state => ({ memberId: state.memberId }));
+  const { resetAddressData } = useAddressStore();
   const { data: addresses } = useGetMyAddresses(memberId);
   const { updateOrderData } = useOrderDataStore();
+  const location = useLocation();
+  const isFromMyPage = location.state?.isFromMyPage;
 
   const addressList = addresses?.data?.data || [];
   const buttonStyle = 'bg-main text-white';
@@ -24,7 +28,8 @@ const ChooseAddress = ({ title }) => {
   };
 
   const handleEdit = address => {
-    navigate('register', {
+    resetAddressData();
+    navigate(`/member/app/addresses/register`, {
       state: {
         isRegister: false,
         recipientName: address.recipientName,
@@ -33,12 +38,35 @@ const ChooseAddress = ({ title }) => {
         addressNickname: address.addressNickname,
         defaultStatus: address.defaultStatus,
         addressId: address.addressId,
+        isFromMyPage: isFromMyPage,
       },
     });
   };
 
   const handleRegister = () => {
-    navigate('register', { state: { isRegister: true } });
+    resetAddressData();
+    navigate('/member/app/addresses/register', {
+      state: {
+        isRegister: true,
+        recipientName: '',
+        address: '',
+        recipientPhone: '',
+        addressNickname: '',
+        defaultStatus: '',
+        addressId: '',
+        isFromMyPage: isFromMyPage,
+      },
+    });
+  };
+
+  const handleOnclickBottomButton = () => {
+    console.log('handleOnclickBottomButton');
+    navigate('/member/app/addresses/register', {
+      state: {
+        isRegister: true,
+        isFromMyPage: isFromMyPage,
+      },
+    });
   };
 
   return (
@@ -67,7 +95,7 @@ const ChooseAddress = ({ title }) => {
         </div>
 
         {isAddressEmpty ? (
-          <BottomButton buttonText='주소 등록하기' buttonStyle={buttonStyle} />
+          <BottomButton buttonText='주소 등록하기' buttonStyle={buttonStyle} buttonFunc={handleOnclickBottomButton} />
         ) : (
           <div className='flex justify-center pt-4 pb-4 mt-4 border-t'>
             <button className='font-bold text-purple-600' onClick={handleRegister}>

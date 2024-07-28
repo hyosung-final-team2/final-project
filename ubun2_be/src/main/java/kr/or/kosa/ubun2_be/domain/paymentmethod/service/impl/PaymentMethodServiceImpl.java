@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -216,6 +217,16 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
                 .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
     }
 
+    @Override
+    public List<MemberPaymentMethodsResponse> getMemberPaymentMethods(Long memberId, Long customerId) {
+        validateMyMember(customerId, memberId);
+
+        List<PaymentMethod> paymentMethods = paymentMethodRepository.findByMemberMemberId(memberId);
+        return paymentMethods.stream()
+                .map(MemberPaymentMethodsResponse::from)
+                .toList();
+    }
+
     public boolean existsByPaymentMethodIdAndMemberMemberId(Long paymentMethodId, Long memberId) {
         return paymentMethodRepository.existsByPaymentMethodIdAndMemberMemberId(paymentMethodId, memberId);
     }
@@ -233,6 +244,8 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     private void validateMyMember(Long customerId, Long memberId) {
+        System.out.println("customerId: " + customerId);
+        System.out.println("memberId: " + memberId);
         if (!paymentMethodRepository.checkIsMyMember(customerId, memberId)) {
             throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
         }
@@ -248,5 +261,12 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     public boolean hasPaymentPassword(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
         return member.getPaymentPassword() != null;
+    }
+    @Transactional
+    @Override
+    public void deleteSelectedPaymentMethod(List<PaymentMethodDeleteRequest> paymentMethodDeleteRequestList, Long customerId) {
+        for (PaymentMethodDeleteRequest paymentMethodDeleteRequest : paymentMethodDeleteRequestList) {
+            deletePaymentMethod(paymentMethodDeleteRequest.getPaymentMethodId(), customerId);
+        }
     }
 }

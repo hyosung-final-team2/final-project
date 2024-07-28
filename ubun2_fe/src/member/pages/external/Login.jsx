@@ -59,12 +59,12 @@ const Login = () => {
 
   return (
     <div className='p-4 mobile_container'>
-      {/*<h1 className='text-3xl font-bold text-center text-main'>로그인</h1>*/}
-        <div className="w-full flex justify-center">
+        <div className="w-full flex justify-center items-center gap-1">
+            <img src='/fms_logo.png' alt='logo' className='w-12'/>
             <img src="/text_logo.png" className="w-1/2"/>
         </div>
-      <InputText
-        defaultValue={loginObj.loginId}
+        <InputText
+            defaultValue={loginObj.loginId}
         updateType='loginId'
         containerStyle='mt-4'
         updateFormValue={updateFormValue}

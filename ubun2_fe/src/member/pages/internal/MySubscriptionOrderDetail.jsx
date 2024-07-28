@@ -4,7 +4,7 @@ import { Select } from 'flowbite-react';
 import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
 import { formatAccountNumber } from '../../../customer/utils/accountFormat';
 import { formatCardNumber } from '../../../customer/utils/cardFormat';
-import { useGetSubscriptionOrderDetail, useUpdateSuscriptionCancelOrder } from '../../api/Order/queris';
+import { useGetSubscriptionOrderDetail, useUpdateSubscriptionCancelOrder } from '../../api/Order/queris';
 import OrderStatusBadge from '../../components/common/badge/OrderStatusBadge';
 import DoubleBottomButton from '../../components/common/button/DoubleBottomButton';
 import PaymentSummaryCompleted from '../../components/common/paymentSummary/PaymentSummaryCompleted';
@@ -20,10 +20,11 @@ const MySubscriptionOrderDetail = () => {
   const [selectedCycle, setSelectedCycle] = useState(1);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-  const updateCancelSubscriptionOrderMutation = useUpdateSuscriptionCancelOrder();
+  const updateCancelSubscriptionOrderMutation = useUpdateSubscriptionCancelOrder();
   const { modalState, setModalState } = useModalStore();
 
-  const modalButtonStyle = 'bg-main text-white';
+  const modalButtonStyle = 'bg-gray-600 text-white';
+  const secondModalButtonStyle = 'bg-red-700 text-white';
 
   useEffect(() => {
     if (orderResponse?.data?.data) {
@@ -125,7 +126,7 @@ const MySubscriptionOrderDetail = () => {
   };
 
   return (
-    <div className='bg-gray-100'>
+    <div className='min-h-full bg-custom-mypage-back-bg'>
       <div className='flex flex-col p-4'>
         <div className='flex items-center justify-between py-4 text-main'>
           <h1 className='text-2xl font-bold'>주문번호 {orderId}</h1>
@@ -200,6 +201,7 @@ const MySubscriptionOrderDetail = () => {
           secondButtonText='삭제'
           firstButtonFunc={handleCloseModal}
           secondButtonFunc={handleRemoveProducts}
+          secondButtonStyle={secondModalButtonStyle}
           disabled={updateCancelSubscriptionOrderMutation.isLoading}
         />
       </SlideUpModal>

@@ -61,33 +61,41 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
 
     @Override
     @Transactional
-    public void createSubscriptionOrders(Long memberId, List<SubscriptionOrderRequest> subscriptionOrderRequests) {
-
+    public void validateAndPrepareSubscriptionOrder(Long memberId, List<SubscriptionOrderRequest> subscriptionOrderRequests) {
         Member member = memberService.findById(memberId);
         PaymentMethod paymentMethod = paymentMethodService.findById(subscriptionOrderRequests.get(0).getPaymentMethodId());
 
-        //1. 모든 상품에 대한 customer 체크
+        // 1. 모든 상품에 대한 customer 체크
         validateAllCustomerProducts(subscriptionOrderRequests);
 
         // 2. 전체 재고 확인
         checkInventoryForAllOrders(subscriptionOrderRequests);
 
-        //3. payment 확인
+        // 3. payment 확인
         checkPayment(subscriptionOrderRequests, paymentMethod, member.getMemberName());
+    }
+
+    @Override
+    @Transactional
+    public void createSubscriptionOrders(Long memberId, List<SubscriptionOrderRequest> subscriptionOrderRequests) {
+        // 0. 주문 생성 전 유효성 검사 및 준비
+        validateAndPrepareSubscriptionOrder(memberId, subscriptionOrderRequests);
+
+        Member member = memberService.findById(memberId);
+        PaymentMethod paymentMethod = paymentMethodService.findById(subscriptionOrderRequests.get(0).getPaymentMethodId());
 
         for (SubscriptionOrderRequest request : subscriptionOrderRequests) {
-            // 4. 주문 생성
+            // 1. 주문 생성
             SubscriptionOrder subscriptionOrder = createSubscriptionOrder(paymentMethod, member, request);
 
-            // 5. 재고 감소
+            // 2. 재고 감소
             decreaseInventory(subscriptionOrder.getSubscriptionOrderProducts());
 
-            // 6. cartProduct 삭제
+            // 3. 장바구니 상품 삭제
             deleteCartProducts(memberId, request.getSubscriptionOrderProducts());
 
-            // 7. 고객에게 push notification (정기주문)
+            // 4. 고객에게 push notification (정기주문)
             alarmService.sendMessageToCustomer(request);
-
         }
     }
 

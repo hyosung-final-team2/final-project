@@ -11,13 +11,17 @@ import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
+import kr.or.kosa.ubun2_be.domain.member.repository.PendingMemberRepository;
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,6 +32,8 @@ public class AddressServiceImpl implements AddressService {
     private final AddressRepository addressRepository;
 
     private final MemberRepository memberRepository;
+
+    private final PendingMemberRepository pendingMemberRepository;
 
     @Override
     public Page<AddressResponse> getAllAddresses(Pageable pageable, SearchRequest searchRequest, Long customerId) {
@@ -101,6 +107,7 @@ public class AddressServiceImpl implements AddressService {
                 .toList();
     }
 
+    @Transactional
     @Override
     public void addMemberAddress(AddressRequest addressRequest, Long memberId) {
         Member member = memberRepository.findById(memberId)
@@ -140,10 +147,43 @@ public class AddressServiceImpl implements AddressService {
         addressRepository.delete(address);
     }
 
+    @Transactional
+    @Override
+    public void deleteSelectedAddress(List<AddressDeleteRequest> addressDeleteRequestList, Long customerId) {
+        for (AddressDeleteRequest addressDeleteRequest : addressDeleteRequestList) {
+            deleteAddress(addressDeleteRequest.getAddressId(), customerId);
+        }
+    }
+
 
     @Override
     public Address findByAddressIdAndMemberId(Long addressId, Long memberId) {
         return addressRepository.findByAddressIdAndMemberMemberId(addressId, memberId).orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
+    }
+
+    @Override
+    @Transactional
+    public Page<SearchMemberListResponse> searchMemberList(Pageable pageable, SearchRequest searchRequest, Long customerId) {
+        List<SearchMemberListResponse> memberListResponses = new ArrayList<>(memberRepository.findMembersByCustomerIdAndSearchRequest(customerId, searchRequest).stream().map(SearchMemberListResponse::new).toList());
+
+        // 이름으로 정렬
+        memberListResponses.sort(Comparator.comparing(SearchMemberListResponse::getMemberName));
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), memberListResponses.size());
+        List<SearchMemberListResponse> paginatedList = memberListResponses.subList(start, end);
+
+        return new PageImpl<>(paginatedList, pageable, memberListResponses.size());
+    }
+
+    @Override
+    public List<MemberAddressListResponse> getMemberAddressList(Long memberId, Long customerId) {
+        validateMyMember(customerId, memberId);
+
+        List<Address> addresses = addressRepository.findByMemberMemberId(memberId);
+        return addresses.stream()
+                .map(MemberAddressListResponse::new)
+                .toList();
     }
 
     private void validateMyMember(Long customerId, Long memberId) {

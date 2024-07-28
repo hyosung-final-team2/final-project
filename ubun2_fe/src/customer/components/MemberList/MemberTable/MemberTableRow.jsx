@@ -7,14 +7,14 @@ const MemberTableRow = ({ memberId, memberEmail, memberName, memberPhone, create
   return (
     <>
       <Table.Row className='bg-white' onClick={() => setOpenModal(memberId, pending, currentPage)}>
-        <Table.Cell>
+        <Table.Cell style={{width:"5%"}}>
           <Checkbox checked={isChecked} onChange={() => handleRowChecked(memberId, pending, memberName, memberPhone)} onClick={e => e.stopPropagation()} />
         </Table.Cell>
-        <Table.Cell>{memberEmail}</Table.Cell>
-        <Table.Cell>{memberName}</Table.Cell>
-        <Table.Cell>{memberPhone}</Table.Cell>
-        <Table.Cell>{createdAt ? formatDate(createdAt) : null}</Table.Cell>
-        <Table.Cell>{!pending ? <StatusBadge status={'COMPLETED'} /> : <StatusBadge status={'PENDING'} />}</Table.Cell>
+        <Table.Cell style={{width:"20%"}}>{memberEmail}</Table.Cell>
+        <Table.Cell style={{width:"15%"}}>{memberName}</Table.Cell>
+        <Table.Cell style={{width:"20%"}}>{memberPhone}</Table.Cell>
+        <Table.Cell style={{width:"20%"}}>{createdAt ? formatDate(createdAt) : null}</Table.Cell>
+        <Table.Cell style={{width:"20%"}}>{!pending ? <StatusBadge status={'COMPLETED'} /> : <StatusBadge status={'PENDING'} />}</Table.Cell>
       </Table.Row>
     </>
   );
