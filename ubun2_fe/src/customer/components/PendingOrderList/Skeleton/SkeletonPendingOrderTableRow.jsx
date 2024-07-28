@@ -1,9 +1,9 @@
-import { CheckIcon, XMarkIcon } from '@heroicons/react/16/solid';
 import { Checkbox, Table } from 'flowbite-react';
-import OrderOptionBadge from '../../common/Badge/OrderOptionBadge';
-import PaymentMethodBadge from '../../common/Badge/PaymentMethodBadge';
-import { formatDate } from '../../../utils/dateFormat';
-import { formatCurrency } from '../../../utils/currencyFormat';
+import { formatDate } from '../../../utils/dateFormat.js';
+import OrderOptionBadge from '../../common/Badge/OrderOptionBadge.jsx';
+import PaymentMethodBadge from '../../common/Badge/PaymentMethodBadge.jsx';
+import { formatCurrency } from '../../../utils/currencyFormat.js';
+import { CheckIcon, XMarkIcon } from '@heroicons/react/16/solid';
 
 const commonButtonStyles = {
   APPROVED:
@@ -12,33 +12,11 @@ const commonButtonStyles = {
     'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md bg-badge-red bg-opacity-30 text-badge-red hover:text-white hover:bg-badge-red',
 };
 
-const PendingOrderTableRow = ({
-  orderId,
-  createdAt,
-  memberName,
-  paymentType,
-  subscription,
-  totalOrderPrice,
-  setOpenModal,
-  isChecked,
-  handleRowChecked,
-  handleOrderUpdate,
-  currentPage,
-}) => {
-  const handleApprove = e => {
-    e.stopPropagation();
-    handleOrderUpdate([{ orderId, subscription }], 'APPROVED');
-  };
-
-  const handleCancel = e => {
-    e.stopPropagation();
-    handleOrderUpdate([{ orderId, subscription }], 'DENIED');
-  };
-
+const SkeletonPendingOrderTableRow = ({ orderId, createdAt, memberName, orderStatus, paymentType, subscription, totalOrderPrice }) => {
   return (
-    <Table.Row className='bg-white' onClick={() => setOpenModal(orderId, subscription, currentPage)}>
+    <Table.Row className='bg-white'>
       <Table.Cell style={{ width: '5%' }}>
-        <Checkbox checked={isChecked} onChange={() => handleRowChecked(orderId, subscription)} onClick={e => e.stopPropagation()} />
+        <Checkbox />
       </Table.Cell>
       <Table.Cell style={{ width: '10%' }}>
         <OrderOptionBadge subscription={subscription} />
@@ -51,10 +29,10 @@ const PendingOrderTableRow = ({
       </Table.Cell>
       <Table.Cell style={{ width: '20%' }}>
         <div className='flex gap-2'>
-          <button onClick={handleApprove} className={`${commonButtonStyles.APPROVED}`}>
+          <button className={`${commonButtonStyles.APPROVED}`}>
             <CheckIcon className='w-4' />
           </button>
-          <button onClick={handleCancel} className={`${commonButtonStyles.DENIED}`}>
+          <button className={`${commonButtonStyles.DENIED}`}>
             <XMarkIcon className='w-4' />
           </button>
         </div>
@@ -62,5 +40,4 @@ const PendingOrderTableRow = ({
     </Table.Row>
   );
 };
-
-export default PendingOrderTableRow;
+export default SkeletonPendingOrderTableRow;
