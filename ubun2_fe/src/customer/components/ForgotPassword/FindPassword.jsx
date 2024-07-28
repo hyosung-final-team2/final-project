@@ -1,6 +1,12 @@
 import InputText from "../common/Input/InputText.jsx";
 import InputTextWithBtn from "../common/Input/InputTextWithBtn.jsx";
-import {authNumRegex, emailRegex, loginIdRegex} from "../common/Regex/registerRegex.js";
+import {
+    authNumRegex,
+    authNumRegexMessage,
+    emailRegex,
+    emailRegexMessage,
+    loginIdRegex, loginIdRegexMessage, nameRegex, nameRegexMessage
+} from "../common/Regex/registerRegex.js";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {useAuthEmail, useSendEmail} from "../../api/Register/queris.js";
@@ -110,13 +116,21 @@ const FindPassword = ({setIsSuccess}) => {
                            containerStyle='mt-4'
                            labelTitle='이름'
                            updateFormValue={updateFormValue}
-                           placeholder='이름을 입력해주세요.'/>
+                           placeholder='이름을 입력해주세요.'
+                           isRegexInput={true}
+                           regex={nameRegex}
+                           regexMessage={nameRegexMessage}
+                />
                 <InputText defaultValue={passwordObj.memberLoginId}
                            updateType='memberLoginId'
                            containerStyle='mt-4'
                            labelTitle='아이디'
                            updateFormValue={updateFormValue}
-                           placeholder='아이디를 입력해주세요.'/>
+                           placeholder='아이디를 입력해주세요.'
+                           isRegexInput={true}
+                           regex={loginIdRegex}
+                           regexMessage={loginIdRegexMessage}
+                />
                 <InputTextWithBtn defaultValue={passwordObj.memberEmail}
                                   updateType='memberEmail'
                                   containerStyle='mt-1'
@@ -126,7 +140,9 @@ const FindPassword = ({setIsSuccess}) => {
                                   buttonText={!isSendEmail ? '전송하기' : '재전송하기'}
                                   clickPossibleWithoutData={false}
                                   buttonFunc={buttonFuncSendEmail}
-                                  regex={emailRegex}/>
+                                  regex={emailRegex}
+                                  regexMessage={emailRegexMessage}
+                />
                 {!isSendEmail ?
                     <p onClick={() => forgotLoginIdFunc()} className='mt-2 text-gray-400 underline text-end'>아이디를
                         잊어버렸어요</p> : null}
@@ -141,8 +157,10 @@ const FindPassword = ({setIsSuccess}) => {
                         buttonText='인증하기'
                         buttonFunc={buttonFuncAuthEmail}
                         regex={authNumRegex}
+                        regexMessage={authNumRegexMessage}
                         showTimer={true}
                         timerValue={timerValue}
+                        isAuthInput={true}
                         isAuthSuccess={isAuthSuccess}
                     />
                 )}
