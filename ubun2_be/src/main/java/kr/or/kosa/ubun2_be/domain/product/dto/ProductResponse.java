@@ -8,6 +8,7 @@ import lombok.Getter;
 public class ProductResponse {
     private Long productId;
     private String productName;
+    private String productCategoryName;
     private int stockQuantity;
     private int productPrice;
     private int productDiscount;
@@ -19,6 +20,7 @@ public class ProductResponse {
     public ProductResponse(Product product) {
         this.productId = product.getProductId();
         this.productName = product.getProductName();
+        this.productCategoryName = product.getCategory().getCategoryName();
         this.productPrice = product.getProductPrice();
         this.productDiscount = product.getProductDiscount();
         this.orderOption = product.getOrderOption();

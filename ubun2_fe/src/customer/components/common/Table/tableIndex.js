@@ -11,7 +11,7 @@ export const tableColumn = {
   },
   orders: ['정기 주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '결제수단', '승인 상태'],
   pendingOrders: ['정기 주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '결제수단', '승인 처리'],
-  product: ['상품 아이디', '상품명', '수량', '상품가격(등록가)', '상품 할인율', '상품게시 상태', '배송 종류'],
+  product: ['분류', '상품명', '수량', '상품가격', '할인율', '상품게시 상태', '배송 종류'],
 };
 
 export const columnMapping = {
@@ -26,4 +26,13 @@ export const columnMapping = {
   카드사명: 'cardCompany',
   '주소(시, 도)': 'address',
   카드번호: 'cardNumber',
+  분류: 'productCategoryName',
+  상품명: 'productName',
+  수량: 'stockQuantity',
+  "상품가격": 'productPrice',
+  할인율: 'productDiscount',
+ "상품게시 상태": 'productStatus',
+  "배송 종류":'orderOption',
+
+
 };
