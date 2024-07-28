@@ -92,19 +92,6 @@ const AddressTable = () => {
     setCurrentPage(1);
   };
 
-  useEffect(() => {
-    return resetData();
-  }, []);
-
-  const {setSkeletonData, setSkeletonTotalPage,setSkeletonSortData } = useSkeletonStore()
-  useEffect(() => {
-    if (!isLoading) {
-      setSkeletonData(addressList)
-      setSkeletonTotalPage(totalPages)
-      setSkeletonSortData(sort)
-    }
-  }, [isLoading, totalPages, sort, addressList]);
-
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       <AddressTableFeature

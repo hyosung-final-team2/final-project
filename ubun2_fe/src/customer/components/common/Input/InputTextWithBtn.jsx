@@ -19,7 +19,9 @@ const InputTextWithBtn = ({
   isAuthSuccess,
   isAuthInput=false,
   regex = /.*/,
-  regexMessage
+  regexMessage,
+  isDuplicateInput=false,
+  duplicateMessage
 }) => {
   const [value, setValue] = useState(defaultValue);
   const [error, setError] = useState(null);
@@ -56,13 +58,24 @@ const InputTextWithBtn = ({
   const isButtonDisabled = !clickPossibleWithoutData && (!value || !isValid);
   const buttonClasses = `btn ${!isButtonDisabled ? 'bg-main text-white btn-primary' : 'bg-gray-300 text-gray-600 cursor-not-allowed'} w-1/4`;
 
+  // useEffect(() => {
+  //   if (regex && !regex.test(value)) {
+  //     setError(regexMessage);
+  //   } else {
+  //     setError('');
+  //   }
+  // }, [value, regex]);
+
   useEffect(() => {
-    if (regex && !regex.test(value)) {
+    if (isDuplicateInput && duplicateMessage) {
+      setError(duplicateMessage);
+    } else if (regex && !regex.test(value)) {
       setError(regexMessage);
     } else {
       setError('');
     }
-  }, [value, regex]);
+  }, [value, regex, duplicateMessage, isDuplicateInput]);
+
 
 
   return (
@@ -88,6 +101,12 @@ const InputTextWithBtn = ({
                 {showTimer && isAuthSuccess === null &&
                     <div className='absolute top-2 right-3 mt-2 text-sm text-red-500'>{formatTime(timeLeft)}</div>}
                 {showTimer && isAuthSuccess !== null && (
+                    <div className={`absolute top-1 right-3 mt-2 text-sm`}>
+                      {isAuthSuccess ? <CheckIcon className='text-badge-green h-7 w-7'/> :
+                          <XIcon className='text-badge-red h-7 w-7'/>}
+                    </div>
+                )}
+                {isDuplicateInput && isAuthSuccess !== null && (
                     <div className={`absolute top-1 right-3 mt-2 text-sm`}>
                       {isAuthSuccess ? <CheckIcon className='text-badge-green h-7 w-7'/> :
                           <XIcon className='text-badge-red h-7 w-7'/>}

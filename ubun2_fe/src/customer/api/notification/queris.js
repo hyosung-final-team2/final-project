@@ -17,7 +17,7 @@ export const useSendPersonalAlarm = (targetMemberId, orderId, orderType, isAppro
     const {businessName} = useCustomerStore()
     const content = `${isApproved ? "주문 승인" : "주문 거절"} : ${orderType === "SINGLE" ? "단건주문 " : "정기주문 "} BC-${orderId}`
     const BASE_URL = import.meta.env.VITE_PUSH_LINK
-    const link = `${BASE_URL}/mypage/${orderType === "SINGLE" ? "single-order" : "subscription-order"}/${orderId}`
+    const link = `${BASE_URL}/member/app/mypage/${orderType === "SINGLE" ? "single-order" : "subscription-order"}/${orderId}`
 
     const alarmData = {
         targetMemberId : targetMemberId,
