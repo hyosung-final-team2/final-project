@@ -24,7 +24,7 @@ import java.util.List;
 public class ProductCustomerController {
 
     private final ProductService productService;
-    private static final int PAGE_SIZE = 9;
+    private static final int PAGE_SIZE = 8;
     private static final String SORT_DEFAULT = "productId";
 
     @Operation(summary = "전체 상품 목록 및 정렬,검색을 통한 상품 목록 조회")
