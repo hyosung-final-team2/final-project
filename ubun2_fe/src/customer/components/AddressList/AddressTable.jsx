@@ -18,8 +18,13 @@ import AddressRegistrationModal from './AddressRegistrationModal.jsx';
 import useAddressTableStore from '../../store/Address/addressTableStore.js';
 import useSkeletonStore from "../../store/skeletonStore.js";
 
+import SkeletonTable from '../Skeleton/SkeletonTable.jsx';
+import SkeletonAddressTableFeature from './Skeleton/SkeletonAddressTableFeature.jsx';
+import SkeletonAddressTableRow from './Skeleton/SkeletonAddressTableRow.jsx';
+
+import useSkeletonStore from '../../store/skeletonStore.js';
+
 const AddressTable = () => {
-  // const [openMemberAddressModal, setOpenMemberAddressModal] = useState(false);
   const [openAddressRegistration, setOpenAddressRegistration] = useState(false);
   const [selectedAddresses, setSelectedAddresses] = useState([]); // 체크된 멤버 ID
   const [addressId, setAddressId] = useState(null);
@@ -32,8 +37,8 @@ const AddressTable = () => {
   const PAGE_SIZE = 8;
   const { data: addresses, refetch: refetchAddresses, isLoading } = useGetAddresses(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
-  const totalPages = addresses?.data?.data?.totalPages ?? 5;
-  const addressList = addresses?.data?.data?.content || [];
+  const totalPages = addresses?.data?.data?.totalPages;
+  const addressList = addresses?.data?.data?.content;
 
   const queryClient = useQueryClient();
 
@@ -92,6 +97,29 @@ const AddressTable = () => {
     setCurrentPage(1);
   };
 
+  const { resetSkeletonData, setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore();
+
+  useEffect(() => {
+    return async () => {
+      await resetSkeletonData();
+      await resetData();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setSkeletonData(addressList);
+      setSkeletonTotalPage(totalPages);
+      setSkeletonSortData(sort);
+    }
+  }, [isLoading, totalPages, addressList, sort]);
+
+  if (isLoading) {
+    return (
+      <SkeletonTable SkeletonTableFeature={SkeletonAddressTableFeature} TableRowComponent={SkeletonAddressTableRow} tableColumns={tableColumn.address.list} />
+    );
+  }
+
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       <AddressTableFeature
@@ -120,7 +148,10 @@ const AddressTable = () => {
             currentPage={currentPage}
           />
         </Table>
-        <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+        {isLoading === false ? (
+          <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+        ) : null}
+
         <MemberAddressModal
           isOpen={openMemberAddressModal}
           setOpenModal={setOpenMemberAddressModal}
