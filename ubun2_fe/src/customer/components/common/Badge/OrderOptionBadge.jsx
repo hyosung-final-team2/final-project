@@ -10,7 +10,7 @@ const OrderOptionBadge = ({ subscription }) => {
   ) : (
     <div className='flex items-center space-x-2'>
       <SingleIcon className='w-6 h-6' />
-      <span>단기</span>
+      <span>단건</span>
     </div>
   );
 };

@@ -2,6 +2,7 @@ import { Card } from 'flowbite-react';
 import { formatCurrency } from '../../../utils/currencyFormat';
 import OrderPaymentAccount from './OrderPaymentAccount';
 import OrderPaymentCard from './OrderPaymentCard';
+import { HomeIcon } from '@heroicons/react/16/solid';
 
 const customTheme = {
   root: {
@@ -37,7 +38,10 @@ const OrderDetailInfo = ({ orderInfo, selectedCycle, isSubscription }) => {
       <div className='space-y-4'>
         <h5 className='text-xl font-bold tracking-tight text-gray-900'>배송지</h5>
         <Card className='bg-gray-50' theme={customTheme}>
-          <p className='font-normal text-gray-700'>{orderInfo?.addressNickname}</p>
+          <div className='flex items-center gap-1'>
+            <HomeIcon className='w-6 h-6 mr-2' />
+            <p className='text-xl font-normal text-gray-700'>{orderInfo?.addressNickname}</p>
+          </div>
           <p className='font-normal text-gray-700'>{orderInfo?.address}</p>
         </Card>
       </div>
@@ -67,7 +71,7 @@ const OrderDetailInfo = ({ orderInfo, selectedCycle, isSubscription }) => {
                 </div>
                 <div className='flex items-center justify-between'>
                   <span className='font-bold text-red-500'>총 할인</span>
-                  <span className='text-red-500'>{`- ${formatCurrency(discountAmount)} 원`}</span>
+                  <span className='text-red-500'>{discountAmount > 0 ? `- ${formatCurrency(discountAmount)} 원` : '-'}</span>
                 </div>
                 <div className='flex items-center justify-between'>
                   <span className='text-xl font-bold text-custom-primary'>결제 금액</span>

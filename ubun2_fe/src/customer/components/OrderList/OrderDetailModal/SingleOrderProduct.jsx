@@ -14,15 +14,9 @@ const SingleOrderProduct = ({ orderInfo }) => {
       </div>
       <List unstyled className='px-8 py-6 divide-y divide-gray-200 rounded-md dark:divide-gray-700 bg-custom-alert-bg-gray'>
         {orderInfo.orderProducts?.map(orderProduct => (
-          <List.Item key={orderProduct.productId} className='flex items-start gap-6 py-4'>
-            <div className='w-2/12 relativecd'>
-              <div className='relative' style={{ paddingBottom: '100%' }}>
-                <img
-                  src={orderProduct.productImagePath || '/image.jpg'}
-                  alt={orderProduct.productImageOriginalName}
-                  className='absolute inset-0 object-cover w-full h-full rounded-md'
-                />
-              </div>
+          <List.Item key={orderProduct.productId} className='flex items-center gap-6 py-4'>
+            <div className='w-32 h-32'>
+              <img src={orderProduct.productImagePath || '/image.jpg'} alt={orderProduct.productImageOriginalName} className='w-full h-full rounded-md' />
             </div>
             <div className='flex flex-col flex-1 min-w-0 gap-2 ml-4'>
               <div className='flex gap-3'>
