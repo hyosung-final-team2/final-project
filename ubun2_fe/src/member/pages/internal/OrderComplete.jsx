@@ -14,6 +14,8 @@ import OrderCompleteStore from '../../components/OrderComplete/OrderCompleteStor
 import useModalStore from '../../store/modalStore';
 import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
+import { maskCardNumber } from '../../../customer/utils/cardFormat';
+import { maskAccountNumber } from '../../../customer/utils/accountFormat';
 
 const OrderComplete = () => {
   const { selectedItems, totals, clearCart } = useOrderItemsStore();
@@ -25,17 +27,18 @@ const OrderComplete = () => {
   const { data: account, isLoading: accountLoading, isError: accountError } = useGetAccount(selectedPaymentMethodId);
   const addressInfo = addresses?.data?.data.find(address => address.addressId === selectedAddressId);
   const { modalState, setModalState } = useModalStore();
-  const modalButtonStyle = 'bg-main text-white';
+  const modalButtonStyle = 'bg-gray-600 text-white';
+  const secondModalButtonStyle = 'bg-red-700 text-white';
 
   const paymentInfo =
     selectedPaymentMethodType === 'CARD'
       ? {
-          paymentName: card?.cardName,
-          paymentContent: card?.cardNumber,
+          paymentName: card?.data?.data?.paymentMethodNickname,
+          paymentContent: maskCardNumber(card?.data?.data?.cardNumber),
         }
       : {
-          paymentName: account?.accountName,
-          paymentContent: account?.accountNumber,
+          paymentName: account?.data?.data?.paymentMethodNickname,
+          paymentContent: maskAccountNumber(account?.data?.data?.accountNumber),
         };
 
   const handleConfirmOrder = async () => {
@@ -125,19 +128,21 @@ const OrderComplete = () => {
                 <p className='text-sm text-gray-500'>주문승인 이후에는 결제를 취소할 수 없어요.</p>
               </div>
             </span>
-            <ChevronRightIcon className='w-5' />
+            <ChevronRightIcon className='w-5 mb' />
           </div>
         </div>
       </div>
 
-      <PaymentSummaryCompleted productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} paymentInfo={paymentInfo} />
+      <PaymentSummaryCompleted
+        productAmount={totals.productAmount}
+        discount={totals.discount}
+        totalAmount={totals.totalAmount}
+        paymentInfo={paymentInfo}
+        style={'mb-20'}
+      />
 
-      <div
-        className='sticky bottom-0 left-0 right-0 flex flex-col w-full p-4 px-3 py-4'
-        style={{ background: 'linear-gradient(to top, white, white 65%, transparent)' }}
-      >
-        <BottomButton buttonText='확인했어요' buttonStyle='bg-main text-white' buttonFunc={handleConfirmOrder} />
-      </div>
+      <BottomButton buttonText='확인했어요' buttonStyle='bg-main text-white' buttonFunc={handleConfirmOrder} />
+
       <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='주문을 취소하시겠습니까?' isButton={false}>
         <DoubleBottomButton
           buttonStyle={modalButtonStyle}
@@ -145,6 +150,7 @@ const OrderComplete = () => {
           secondButtonText='삭제'
           firstButtonFunc={handleCloseModal}
           secondButtonFunc={handleCancel}
+          secondButtonStyle={secondModalButtonStyle}
         />
       </SlideUpModal>
     </div>

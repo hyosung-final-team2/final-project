@@ -23,7 +23,8 @@ const MySubscriptionOrderDetail = () => {
   const updateCancelSubscriptionOrderMutation = useUpdateSubscriptionCancelOrder();
   const { modalState, setModalState } = useModalStore();
 
-  const modalButtonStyle = 'bg-main text-white';
+  const modalButtonStyle = 'bg-gray-600 text-white';
+  const secondModalButtonStyle = 'bg-red-700 text-white';
 
   useEffect(() => {
     if (orderResponse?.data?.data) {
@@ -200,6 +201,7 @@ const MySubscriptionOrderDetail = () => {
           secondButtonText='삭제'
           firstButtonFunc={handleCloseModal}
           secondButtonFunc={handleRemoveProducts}
+          secondButtonStyle={secondModalButtonStyle}
           disabled={updateCancelSubscriptionOrderMutation.isLoading}
         />
       </SlideUpModal>
