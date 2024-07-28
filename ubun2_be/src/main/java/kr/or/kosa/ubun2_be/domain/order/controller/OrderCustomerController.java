@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.order.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.order.dto.*;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
@@ -60,7 +61,7 @@ public class OrderCustomerController {
 
     @Operation(summary = "대기 단건 주문 리스트 승인, 취소")
     @PutMapping("/approve")
-    public ResponseDto<?> updateOrderStatus(@RequestBody List<OrderApproveRequest> orderApproveRequests,
+    public ResponseDto<?> updateOrderStatus(@Valid @RequestBody List<OrderApproveRequest> orderApproveRequests,
                                              @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         orderService.updateOrderStatus(customUserDetails.getUserId(), orderApproveRequests);
         return ResponseDto.ok(null, "정상출력 데이터");
@@ -68,7 +69,7 @@ public class OrderCustomerController {
 
     @Operation(summary = "대기 정기 주문(최초 정기주문만) 리스트 승인, 취소")
     @PutMapping("/subscription/approve")
-    public ResponseDto<?> updateSubscriptionOrderStatus(@RequestBody List<SubscriptionApproveRequest> subscriptionApproveRequests,
+    public ResponseDto<?> updateSubscriptionOrderStatus(@Valid @RequestBody List<SubscriptionApproveRequest> subscriptionApproveRequests,
                                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         orderService.updateSubscriptionOrderStatus(customUserDetails.getUserId(), subscriptionApproveRequests);
         return ResponseDto.ok(null, "정상출력 데이터");

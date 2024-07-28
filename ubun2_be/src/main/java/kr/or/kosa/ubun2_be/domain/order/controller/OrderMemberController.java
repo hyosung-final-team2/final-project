@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.order.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.order.dto.*;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
 import kr.or.kosa.ubun2_be.domain.order.service.SubscriptionOrderService;
@@ -22,7 +23,7 @@ public class OrderMemberController {
 
     @Operation(summary = "정기 주문 및 단건 주문 유효성 검사 및 결제 확인")
     @PostMapping("/orders/validate")
-    public ResponseDto<?> validateOrders(@RequestBody List<SubscriptionOrderRequest> orderRequests,
+    public ResponseDto<?> validateOrders(@Valid @RequestBody List<SubscriptionOrderRequest> orderRequests,
                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         for (SubscriptionOrderRequest orderRequest : orderRequests) {
             if (orderRequest.getIntervalDays() == 0) {
@@ -36,7 +37,7 @@ public class OrderMemberController {
 
     @Operation(summary = "정기 주문 및 단건 주문 생성")
     @PostMapping("/orders")
-    public ResponseDto<?> registerOrders(@RequestBody List<SubscriptionOrderRequest> subscriptionOrderRequests,
+    public ResponseDto<?> registerOrders(@Valid @RequestBody List<SubscriptionOrderRequest> subscriptionOrderRequests,
                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         for (SubscriptionOrderRequest orderRequest : subscriptionOrderRequests) {
             if (orderRequest.getIntervalDays() == 0) {
@@ -73,7 +74,7 @@ public class OrderMemberController {
 
     @Operation(summary = "현재 로그인한 회원의 단건 주문 취소")
     @PostMapping("/orders/cancel")
-    public ResponseDto<?> cancelOrder(@RequestBody CancelOrderRequest cancelOrderRequest,
+    public ResponseDto<?> cancelOrder(@Valid @RequestBody CancelOrderRequest cancelOrderRequest,
                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         orderService.cancelOrder(customUserDetails.getUserId(), cancelOrderRequest);
         return ResponseDto.ok(null, "정상출력 데이터.");
@@ -81,7 +82,7 @@ public class OrderMemberController {
 
     @Operation(summary = "정기 주문에서 특정 상품 제거")
     @PostMapping("/orders/subscription/remove")
-    public ResponseDto<?> removeSubscriptionOrderProduct(@RequestBody RemoveSubscriptionOrderProductRequest request,
+    public ResponseDto<?> removeSubscriptionOrderProduct(@Valid @RequestBody RemoveSubscriptionOrderProductRequest request,
                                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         System.out.println(customUserDetails.getUserId());
         System.out.println(request.getSubscriptionOrderProductIds());

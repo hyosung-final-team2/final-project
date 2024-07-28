@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.customer.controller;
 
+import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.SmsRequest;
 import kr.or.kosa.ubun2_be.domain.customer.service.SmsService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
@@ -18,7 +19,7 @@ public class SmsController {
     private final SmsService smsService;
 
     @PostMapping("/sms")
-    public ResponseEntity<String> sendSms(@RequestBody List<SmsRequest> nameAndPhoneNumbers,
+    public ResponseEntity<String> sendSms(@Valid @RequestBody List<SmsRequest> nameAndPhoneNumbers,
                                           @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         return smsService.sendSms(nameAndPhoneNumbers, customUserDetails.getUserId());
     }
