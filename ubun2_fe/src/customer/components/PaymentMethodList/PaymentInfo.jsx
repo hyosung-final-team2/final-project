@@ -2,8 +2,8 @@ import { Radio } from 'flowbite-react';
 import { useState } from 'react';
 import Select from '../common/Select/Select';
 import { useRegisterPayment } from '../../api/PaymentMethod/Modal/queris';
-import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
-import { formatCardNumber } from '../../utils/cardFormat';
+import useAddressStore from '../../store/Address/useAddressStore';
+import { cardPayments, bankPayments } from './paymentOptions';
 
 const PaymentInfo = ({}) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md ';
@@ -14,21 +14,7 @@ const PaymentInfo = ({}) => {
   const [bankName, setBankName] = useState('');
   const { mutate } = useRegisterPayment();
 
-  const { selectedMemberId } = paymentMethodStore();
-
-  const cardOptions = [
-    { value: 'US', label: '국민카드' },
-    { value: 'CA', label: '우리카드' },
-    { value: 'FR', label: '신한카드' },
-    { value: 'DE', label: '삼성카드' },
-  ];
-
-  const bankOptions = [
-    { value: '국민은행', label: '국민은행' },
-    { value: '신한은행', label: '신한은행' },
-    { value: '우리은행', label: '우리은행' },
-    { value: '토스뱅크', label: '토스뱅크' },
-  ];
+  const { selectedMemberId } = useAddressStore();
 
   const handleOnClick = () => {
     let allFieldsFilled = false;
@@ -55,7 +41,6 @@ const PaymentInfo = ({}) => {
       accountNumber: paymentMethod === 'CMS 결제' ? accountNumber : null,
       bankName: paymentMethod === 'CMS 결제' ? bankName : null,
     };
-
     mutate(apiData);
   };
 
@@ -67,8 +52,7 @@ const PaymentInfo = ({}) => {
   };
 
   const handleCardNumberChange = e => {
-    const formatted = formatCardNumber(e.target.value);
-    setCardNumber(formatted);
+    setCardNumber(e.target.value);
   };
 
   return (
@@ -109,7 +93,7 @@ const PaymentInfo = ({}) => {
             <Select
               id='card-company'
               defaultOption='카드사를 선택해주세요'
-              options={cardOptions}
+              options={cardPayments}
               onChange={e => {
                 setCardCompany(e);
               }}
@@ -132,7 +116,7 @@ const PaymentInfo = ({}) => {
               />
               <label className='absolute text-xs text-gray-500 left-3 -top-2 bg-white px-1'>계좌 번호</label>
             </div>
-            <Select id='bank' defaultOption='은행사를 선택해주세요' options={bankOptions} onChange={e => setBankName(e)} />
+            <Select id='bank' defaultOption='은행사를 선택해주세요' options={bankPayments} onChange={e => setBankName(e)} />
             <button
               className={`${commonButtonStyles} bg-custom-button-purple text-custom-font-purple hover:text-white hover:bg-custom-font-purple`}
               onClick={handleOnClick}

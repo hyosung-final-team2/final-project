@@ -5,10 +5,15 @@ import { maskCardNumber } from '../../../utils/cardFormat';
 
 const MemberPaymentTableRow = ({ paymentMethodId, paymentType, cardCompanyName, bankName, cardNumber, accountNumber, currentPage }) => {
   const isAccount = paymentType === 'ACCOUNT';
-  const { isUpdate } = paymentMethodStore();
+  const { isUpdate, modalPaymentId, setOpenModal } = paymentMethodStore();
   const { mutate: deleteMutate } = useDeletePaymentMethod();
 
   const handlePaymentDelete = paymentMethodId => {
+    if (paymentMethodId === modalPaymentId) {
+      deleteMutate(paymentMethodId);
+      setOpenModal(false);
+      return;
+    }
     deleteMutate(paymentMethodId);
   };
 

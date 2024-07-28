@@ -1,48 +1,30 @@
 import { Modal } from 'flowbite-react';
 import { customModalTheme } from '../common/Modal/ModalStyle';
-import { useRegisterAddress } from '../../api/Address/AddressModal/queris';
+import { useRegisterPayment } from '../../api/PaymentMethod/Modal/queris';
 import MemberInfo from '../common/Info/MemberInfo';
-import AddressInput from '../common/Input/AddressInput';
-import MemberAddressTable from './MemberAddressTable/MemberAddressTable';
-import { useGetMemberAddresses } from '../../api/Address/AddressTable/queris';
+import { useGetMemberPayments } from '../../api/PaymentMethod/Modal/queris';
 import useAddressModalStore from '../../store/Address/addressModalStore';
 import { useEffect } from 'react';
+import PaymentInfo from './PaymentInfo';
+import MemberPaymentTable from './MemberPaymentTable/MemberPaymentTable';
 
-const AddressRegistrationModal = ({ isOpen, setOpenModal }) => {
+const PaymentMethodRegistrationModal = ({ isOpen, setOpenModal }) => {
   const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const { selectedMember, setSelectedMember } = useAddressModalStore();
 
-  const { mutate: registerMutate } = useRegisterAddress();
-  const { data: memberAddresses, refetch: refetchAddresses } = useGetMemberAddresses(selectedMember?.memberId);
+  const { mutate: registerMutate } = useRegisterPayment();
+  const { data: memberPayments, refetch: refetchPayments } = useGetMemberPayments(selectedMember?.memberId);
 
   useEffect(() => {
     if (selectedMember?.memberId) {
-      refetchAddresses();
+      refetchPayments();
     }
-  }, [selectedMember, refetchAddresses]);
+  }, [selectedMember, refetchPayments]);
 
-  const addressList = memberAddresses?.data?.data || [];
+  const paymentLists = memberPayments?.data?.data || [];
 
-  const initialInfos = [
-    {
-      placeholder: '우편번호',
-      value: '',
-      label: '우편번호',
-    },
-    {
-      placeholder: '도로명주소',
-      value: '',
-      label: '도로명주소',
-    },
-    {
-      placeholder: '상세주소',
-      value: '',
-      label: '상세주소',
-    },
-  ];
-
-  const handleSubmit = addressData => {
-    registerMutate(addressData);
+  const handleSubmit = data => {
+    registerMutate(data);
     setOpenModal(false);
   };
 
@@ -58,8 +40,8 @@ const AddressRegistrationModal = ({ isOpen, setOpenModal }) => {
       </Modal.Header>
       <Modal.Body>
         <MemberInfo title='회원정보' searchable={true} />
-        {selectedMember && <AddressInput infos={initialInfos} title='주소 추가' />}
-        {selectedMember && <MemberAddressTable memberAddresses={addressList} title={`${selectedMember.name}님의 주소 목록`} />}
+        {selectedMember && <PaymentInfo />}
+        {selectedMember && <MemberPaymentTable payments={paymentLists} title={`${selectedMember.name}님의 결제수단`} />}
       </Modal.Body>
       <Modal.Footer>
         <button onClick={handleSubmit} className={`${commonButtonStyles} bg-green-300 text-green-600 hover:text-white hover:bg-green-600`}>
@@ -73,4 +55,4 @@ const AddressRegistrationModal = ({ isOpen, setOpenModal }) => {
   );
 };
 
-export default AddressRegistrationModal;
+export default PaymentMethodRegistrationModal;
