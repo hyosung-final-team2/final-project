@@ -34,7 +34,6 @@ const CartStore = ({ store, onSubscriptionPeriodSelect, onDeleteProduct }) => {
     }
   };
 
-  const isAllSelected = isStoreAllSelected(store.customerId);
   const storeSelectedItems = selectedItems.filter(s => s.customerId === store.customerId);
   const allProductsSelected = store.cartProducts.every(product =>
     storeSelectedItems.some(s => s.cartProducts.some(p => p.cartProductId === product.cartProductId))

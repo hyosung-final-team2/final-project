@@ -9,12 +9,22 @@ const OrderCompleteStore = ({ store }) => {
     <div className='flex flex-col gap-2 px-4 py-3 mb-3 bg-white'>
       <div className='flex justify-between w-full py-2 mt-2'>
         <h2 className='pb-2 text-2xl font-semibold text-main'>{businessName}</h2>
-        <div className='flex items-center p-2 border-b rounded-3xl bg-slate-200'>
-          {orderType === '정기 주문' ? <Subscription className='w-5 mr-2' /> : <Single className='w-5 mr-2' />}
-          <h2 className='text-sm font-semibold'>{orderType}</h2>
-        </div>
+        {orderType === '정기 주문' ? (
+          <div className='flex'>
+            <div className='flex items-center gap-1 p-1 px-2 text-xs bg-orange-200 rounded-3xl'>
+              <Subscription />
+              <span>정기 주문</span>
+            </div>
+          </div>
+        ) : (
+          <div className='flex'>
+            <div className='flex items-center gap-1 p-1 px-2 text-xs bg-blue-200 rounded-3xl'>
+              <Single />
+              <span>단건 주문</span>
+            </div>
+          </div>
+        )}
       </div>
-
       <div className='flex flex-col w-full gap-8 '>
         <div className='flex flex-col w-full gap-3 bg-white'>
           <div className='flex items-center pb-2 border-b'>

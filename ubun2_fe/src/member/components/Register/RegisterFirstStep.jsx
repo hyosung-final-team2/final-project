@@ -3,7 +3,7 @@ import InputText from "../../../customer/components/common/Input/InputText.jsx";
 import InputTextWithBtn from "../../../customer/components/common/Input/InputTextWithBtn.jsx";
 import {
     emailRegex,
-    authNumRegex,
+    authNumRegex, nameRegex, nameRegexMessage, emailRegexMessage, authNumRegexMessage,
 } from "../../../customer/components/common/Regex/registerRegex.js";
 import {useAuthEmail, useSendEmail} from "../../../customer/api/Register/queris.js";
 
@@ -49,6 +49,7 @@ const RegisterFirstStep = ({setRegisterStep, setMemberName, setMemberEmail}) => 
             memberName.trim() !== '' &&
             memberEmail.trim() !== '' &&
             emailAuthentication.trim() !== '' &&
+            nameRegex.test(memberEmail.trim()) &&
             emailRegex.test(memberEmail.trim()) &&
             authNumRegex.test(emailAuthentication.trim()) &&
             isAuthSuccess
@@ -103,8 +104,12 @@ const RegisterFirstStep = ({setRegisterStep, setMemberName, setMemberEmail}) => 
             email: firstRegisterObj.memberEmail,
             authenticationNumber: firstRegisterObj.emailAuthentication
         }, {
-            onSuccess: () => {
-                setIsAuthSuccess(true)
+            onSuccess: (res) => {
+                if (res.data) {
+                    setIsAuthSuccess(true)
+                }  else {
+                    setIsAuthSuccess(false)
+                }
             },
             onError: () => {
                 setIsAuthSuccess(false)
@@ -122,17 +127,23 @@ const RegisterFirstStep = ({setRegisterStep, setMemberName, setMemberEmail}) => 
                            containerStyle='mt-4'
                            labelTitle='이름'
                            updateFormValue={updateFormValue}
-                           placeholder='이름을 입력해주세요.'/>
+                           placeholder='이름을 입력해주세요.'
+                           isRegexInput={true}
+                           regex={nameRegex}
+                           regexMessage={nameRegexMessage}
+                />
                 <InputTextWithBtn defaultValue={firstRegisterObj.memberEmail}
                                   updateType='memberEmail'
                                   containerStyle='mt-1'
                                   labelTitle='이메일'
                                   updateFormValue={updateFormValue}
                                   placeholder='이메일을 입력해주세요.'
-                                  buttonText='전송하기'
+                                  buttonText={!isSendEmail ? '전송하기' : '재전송하기'}
                                   clickPossibleWithoutData={false}
                                   buttonFunc={buttonFuncSendEmail}
-                                  regex={emailRegex}/>
+                                  regex={emailRegex}
+                                  regexMessage={emailRegexMessage}
+                />
                 {isSendEmail && (
                     <InputTextWithBtn
                         defaultValue={firstRegisterObj.emailAuthentication}
@@ -144,8 +155,10 @@ const RegisterFirstStep = ({setRegisterStep, setMemberName, setMemberEmail}) => 
                         buttonText='인증하기'
                         buttonFunc={buttonFuncAuthEmail}
                         regex={authNumRegex}
+                        regexMessage={authNumRegexMessage}
                         showTimer ={true}
                         timerValue={timerValue}
+                        isAuthInput={true}
                         isAuthSuccess={isAuthSuccess}
                     />
                 )}
