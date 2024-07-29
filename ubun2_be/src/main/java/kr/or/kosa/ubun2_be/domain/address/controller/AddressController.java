@@ -1,9 +1,10 @@
 package kr.or.kosa.ubun2_be.domain.address.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.address.dto.*;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
-import kr.or.kosa.ubun2_be.domain.member.dto.MyAddressResponse;
+import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 
 import java.util.List;
 
@@ -42,14 +42,14 @@ public class AddressController {
 
     @Operation(summary = "주소 등록")
     @PostMapping(value = "/")
-    public ResponseDto<?> addAddress(@RequestBody AddressRequest addressRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseDto<?> addAddress(@Valid @RequestBody AddressRequest addressRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
         addressService.addAddress(addressRequest,userDetails.getUserId());
         return ResponseDto.ok(null, "주소가 성공적으로 등록되었습니다.");
     }
 
     @Operation(summary = "회원의 주소 수정")
     @PutMapping(value = "/{address_id}")
-    public ResponseDto<?> updateAddress(@PathVariable("address_id") Long addressId, @RequestBody AddressRequest addressRequest,@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseDto<?> updateAddress(@PathVariable("address_id") Long addressId,@Valid @RequestBody AddressRequest addressRequest,@AuthenticationPrincipal CustomUserDetails userDetails) {
         addressService.updateAddress(addressId, addressRequest,userDetails.getUserId());
         return ResponseDto.ok(null, "주소가 성공적으로 수정되었습니다.");
     }
@@ -63,7 +63,7 @@ public class AddressController {
 
     @Operation(summary = "주소 리스트 삭제")
     @DeleteMapping("/selected")
-    public ResponseDto<?> deleteSelectedAddress(@RequestBody List<AddressDeleteRequest> addressDeleteRequestList, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseDto<?> deleteSelectedAddress(@Valid @RequestBody List<AddressDeleteRequest> addressDeleteRequestList, @AuthenticationPrincipal CustomUserDetails userDetails) {
         addressService.deleteSelectedAddress(addressDeleteRequestList,userDetails.getUserId());
         return ResponseDto.ok(null, "주소가 성공적으로 삭제되었습니다.");
     }

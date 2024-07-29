@@ -142,7 +142,13 @@ public class OrderServiceImpl implements OrderService {
     public OrderDetailResponse getOrderByCustomerIdAndOrderId(Long orderId, Long customerId) {
         Order findOrder = orderRepository.findOrderByIdAndCustomerId(orderId, customerId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
-        return new OrderDetailResponse(findOrder);
+
+        PaymentMethod paymentMethod = findOrder.getPaymentMethod();
+        if (paymentMethod == null) {
+            return new OrderDetailResponse(findOrder);
+        }
+
+        return createOrderDetailResponseWithPayment(findOrder, paymentMethod);
     }
 
     @Override
@@ -169,6 +175,39 @@ public class OrderServiceImpl implements OrderService {
         List<UnifiedOrderResponse> combinedList = new ArrayList<>();
         combinedList.addAll(orderResponseLists);
         combinedList.addAll(subscriptionOrderResponseList);
+
+        // totalCost 필터링
+        if (searchRequest != null && "totalCost".equals(searchRequest.getSearchCategory())) {
+            String[] range = searchRequest.getSearchKeyword().split(",");
+            if (range.length == 2) {
+                long start = Long.parseLong(range[0].trim());
+                long end = Long.parseLong(range[1].trim());
+                combinedList = combinedList.stream()
+                        .filter(order -> order.getTotalOrderPrice() >= start && order.getTotalOrderPrice() <= end)
+                        .collect(Collectors.toList());
+            }
+        }
+
+        // isSubscription 필터링
+        if (searchRequest != null && "isSubscription".equals(searchRequest.getSearchCategory())) {
+            boolean isSubscription = Boolean.parseBoolean(searchRequest.getSearchKeyword());
+            combinedList = combinedList.stream()
+                    .filter(order -> order.isSubscription() == isSubscription)
+                    .collect(Collectors.toList());
+        }
+
+        List<Sort.Order> sortOrders = pageable.getSort().get().collect(Collectors.toList());
+        if (!sortOrders.isEmpty()) {
+            combinedList.sort((m1, m2) -> {
+                for (Sort.Order order : sortOrders) {
+                    int comparison = compareOrders(m1, m2, order.getProperty());
+                    if (comparison != 0) {
+                        return order.isAscending() ? comparison : -comparison;
+                    }
+                }
+                return 0;
+            });
+        }
 
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
@@ -407,7 +446,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long orderId) {
-
         Order findOrder = orderRepository.findByOrderIdAndMemberMemberId(orderId, memberId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
@@ -416,22 +454,7 @@ public class OrderServiceImpl implements OrderService {
             return new OrderDetailResponse(findOrder);
         }
 
-        Long paymentMethodId = paymentMethod.getPaymentMethodId();
-        String paymentMethodType = paymentMethod.getPaymentType();
-
-        switch (paymentMethodType) {
-            case "CARD" -> {
-                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
-                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
-                return new OrderDetailResponse(findOrder, cardPayment);
-            }
-            case "ACCOUNT" -> {
-                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
-                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
-                return new OrderDetailResponse(findOrder, accountPayment);
-            }
-            default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
-        }
+        return createOrderDetailResponseWithPayment(findOrder, paymentMethod);
     }
 
     @Override
@@ -458,4 +481,24 @@ public class OrderServiceImpl implements OrderService {
             inventoryService.increaseStock(subscriptionOrderProduct.getProduct().getProductId(), subscriptionOrderProduct.getQuantity());
         }
     }
+
+    private OrderDetailResponse createOrderDetailResponseWithPayment(Order findOrder, PaymentMethod paymentMethod) {
+        Long paymentMethodId = paymentMethod.getPaymentMethodId();
+        String paymentMethodType = paymentMethod.getPaymentType();
+
+        switch (paymentMethodType) {
+            case "CARD" -> {
+                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new OrderDetailResponse(findOrder, cardPayment);
+            }
+            case "ACCOUNT" -> {
+                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new OrderDetailResponse(findOrder, accountPayment);
+            }
+            default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
+        }
+    }
+
 }

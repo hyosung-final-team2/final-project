@@ -39,7 +39,8 @@ const InputPassword = () => {
           setPassword('');
           setErrorCount(prevCount => prevCount + 1);
           if (errorCount >= 4) {
-            navigate('/member/app/home');
+            localStorage.removeItem('order-data-storage');
+            navigate('/member/app/home', { replace: true });
           }
         }
       } catch (error) {

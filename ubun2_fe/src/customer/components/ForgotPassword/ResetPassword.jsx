@@ -1,6 +1,6 @@
 import InputText from "../common/Input/InputText.jsx";
 import {useEffect, useState} from "react";
-import {passwordRegex} from "../common/Regex/registerRegex.js";
+import {passwordCheckRegexMessage, passwordRegex, passwordRegexMessage} from "../common/Regex/registerRegex.js";
 import {useResetPassword} from "../../../member/api/FindInfo/queris.js";
 import useCustomerStore from "../../store/customerStore.js";
 
@@ -61,14 +61,23 @@ const ResetPassword = ({setIsResetSuccess}) => {
                            containerStyle='mt-4'
                            labelTitle='비밀번호'
                            updateFormValue={updateFormValue}
-                           placeholder='알파벳, 숫자, 특수문자를 포함한 8자리 이상'/>
+                           placeholder='알파벳, 숫자, 특수문자를 포함한 8자리 이상'
+                           isRegexInput={true}
+                           regex={passwordRegex}
+                           regexMessage={passwordRegexMessage}
+
+                />
                 <InputText defaultValue={resetPasswordObj.memberPasswordCheck}
                            type="password"
                            updateType='memberPasswordCheck'
                            containerStyle='mt-4'
                            labelTitle='비밀번호 확인'
                            updateFormValue={updateFormValue}
-                           placeholder='비밀번호를 다시 입력해주세요'/>
+                           placeholder='비밀번호를 다시 입력해주세요'
+                           isRegexInput={true}
+                           regex={passwordRegex}
+                           regexMessage={passwordCheckRegexMessage}
+                />
             </div>
 
             <button type='submit' onClick={() => submitForm()}

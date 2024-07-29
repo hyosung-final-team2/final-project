@@ -99,16 +99,11 @@ const AddressTable = () => {
   const { resetSkeletonData, setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore();
 
   useEffect(() => {
-    return async () => {
-      await resetSkeletonData();
-      await resetData();
-    };
+    return resetData();
   }, []);
 
   useEffect(() => {
-    console.log('useEffect' + isLoading);
     if (!isLoading) {
-      console.log('useEffect if inside' + isLoading);
       setSkeletonData(addressList);
       setSkeletonTotalPage(totalPages);
       setSkeletonSortData(sort);
@@ -116,7 +111,6 @@ const AddressTable = () => {
   }, [isLoading, totalPages, addressList, sort]);
 
   if (isLoading) {
-    console.log('skeleton loading' + isLoading);
     return (
       <SkeletonTable SkeletonTableFeature={SkeletonAddressTableFeature} TableRowComponent={SkeletonAddressTableRow} tableColumns={tableColumn.address.list} />
     );

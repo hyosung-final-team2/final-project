@@ -7,7 +7,9 @@ import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
+import kr.or.kosa.ubun2_be.global.auth.dto.CheckLoginIdRequest;
 import kr.or.kosa.ubun2_be.global.auth.dto.FindIdResponse;
+import kr.or.kosa.ubun2_be.global.auth.enums.UserRole;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthExceptionType;
 import kr.or.kosa.ubun2_be.global.auth.service.FindInfoService;
@@ -80,6 +82,13 @@ public class FindInfoServiceImpl implements FindInfoService {
             });
         } else {
             throw new AuthException(AuthExceptionType.INVALID_LOGIN_ROLE);
+        }
+    }
+    public void checkLoginId(CheckLoginIdRequest checkLoginIdRequest) {
+        if (checkLoginIdRequest.getUserType().equals(UserRole.ROLE_CUSTOMER.toString()) && customerRepository.existsByCustomerLoginId(checkLoginIdRequest.getLoginId())) { // Customer
+            throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER_LOGIN_ID);
+        } else if (checkLoginIdRequest.getUserType().equals(UserRole.ROLE_MEMBER.toString()) && memberRepository.existsByMemberLoginId(checkLoginIdRequest.getLoginId())) {
+            throw new MemberException(MemberExceptionType.DUPLICATE_MEMBER);
         }
     }
 }

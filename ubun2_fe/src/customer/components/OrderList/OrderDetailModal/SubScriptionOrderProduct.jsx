@@ -40,13 +40,9 @@ const SubscriptionOrderProduct = ({ orderInfo, selectedCycle, onCycleChange }) =
 
       <List unstyled className='px-8 py-6 divide-y divide-gray-200 rounded-md dark:divide-gray-700 bg-custom-alert-bg-gray'>
         {filteredProducts.map(product => (
-          <List.Item key={product.productId} className='flex items-start gap-6 py-4'>
-            <div className='relative w-2/12' style={{ paddingBottom: '20%' }}>
-              <img
-                src={product.productImagePath || '/image.jpg'}
-                alt={product.productImageOriginalName}
-                className='absolute inset-0 object-cover w-full h-full rounded-md'
-              />
+          <List.Item key={product.productId} className='flex items-center gap-6 py-4'>
+            <div className='w-32 h-32'>
+              <img src={product.productImagePath || '/image.jpg'} alt={product.productImageOriginalName} className='w-full h-full rounded-md' />
             </div>
             <div className='flex flex-col flex-1 min-w-0 gap-2 ml-4'>
               <div className='flex gap-3'>

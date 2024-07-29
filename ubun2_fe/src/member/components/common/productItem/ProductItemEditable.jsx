@@ -21,9 +21,9 @@ const ProductItemEditable = ({
   const discountedPrice = Math.round((productPrice * (1 - productDiscount / 100)) / 10) * 10 * quantity;
 
   return (
-    <div className='flex items-start justify-between px-4 mb-4'>
+    <div className='flex items-center justify-between px-4 mb-4'>
       <Checkbox color='purple' checked={isSelected} onChange={e => onSelect(e.target.checked)} className='self-start mr-2' />
-      <img src={productImagePath} alt={productImageOriginalName} className='object-cover w-24 h-24 mr-4 rounded-md' />
+      <img src={productImagePath} alt={productImageOriginalName} className='object-cover mr-4 rounded-md w-28 h-28' />
       <div className='flex items-start flex-grow'>
         <div className='flex-grow'>
           <div className='flex flex-col'>

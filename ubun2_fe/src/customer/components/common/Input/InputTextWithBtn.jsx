@@ -17,9 +17,14 @@ const InputTextWithBtn = ({
   showTimer = false, // 타이머 표시 여부
   timerValue,
   isAuthSuccess,
-  regex = /.*/
+  isAuthInput=false,
+  regex = /.*/,
+  regexMessage,
+  isDuplicateInput=false,
+  duplicateMessage
 }) => {
   const [value, setValue] = useState(defaultValue);
+  const [error, setError] = useState(null);
 
   const updateInputValue = val => {
     setValue(val);
@@ -53,11 +58,23 @@ const InputTextWithBtn = ({
   const isButtonDisabled = !clickPossibleWithoutData && (!value || !isValid);
   const buttonClasses = `btn ${!isButtonDisabled ? 'bg-main text-white btn-primary' : 'bg-gray-300 text-gray-600 cursor-not-allowed'} w-1/4`;
 
+  useEffect(() => {
+    if (isDuplicateInput && duplicateMessage) {
+      setError(duplicateMessage);
+    } else if (regex && !regex.test(value)) {
+      setError(regexMessage);
+    } else {
+      setError('');
+    }
+  }, [value, regex, duplicateMessage, isDuplicateInput]);
+
+
   return (
         <div className='flex w-full items-center'>
           <div className={`form-control w-full ${containerStyle}`}>
             <label className='label'>
               <span className={'label-text text-base-content ' + labelStyle}>{labelTitle}</span>
+              <span className={'label-text text-red-500 ' + labelStyle}>{error}</span>
             </label>
             <div className='flex'>
               <div className="w-full relative">
@@ -68,9 +85,19 @@ const InputTextWithBtn = ({
                     onChange={e => updateInputValue(e.target.value)}
                     className='input input-bordered w-full'
                 />
+                {!isAuthInput && <div className={`absolute top-1 right-3 mt-2 text-sm`}>
+                  {error === '' ? <CheckIcon className='text-badge-green h-7 w-7'/> :
+                      <XIcon className='text-badge-red h-7 w-7'/>}
+                </div>}
                 {showTimer && isAuthSuccess === null &&
                     <div className='absolute top-2 right-3 mt-2 text-sm text-red-500'>{formatTime(timeLeft)}</div>}
                 {showTimer && isAuthSuccess !== null && (
+                    <div className={`absolute top-1 right-3 mt-2 text-sm`}>
+                      {isAuthSuccess ? <CheckIcon className='text-badge-green h-7 w-7'/> :
+                          <XIcon className='text-badge-red h-7 w-7'/>}
+                    </div>
+                )}
+                {isDuplicateInput && isAuthSuccess !== null && (
                     <div className={`absolute top-1 right-3 mt-2 text-sm`}>
                       {isAuthSuccess ? <CheckIcon className='text-badge-green h-7 w-7'/> :
                           <XIcon className='text-badge-red h-7 w-7'/>}

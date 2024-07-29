@@ -12,11 +12,12 @@ import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
 
 const MySingleOrderDetail = () => {
-  const { customerId, orderId } = useParams();
-  const { data: orderResponse, isLoading, isError } = useGetOrderDetail(customerId, orderId);
-  const updateCancelOrderMutation = useUpdateCancelOrder(customerId, orderId);
+  const { orderId } = useParams();
+  const { data: orderResponse, isLoading, isError } = useGetOrderDetail(orderId);
+  const updateCancelOrderMutation = useUpdateCancelOrder();
   const { modalState, setModalState } = useModalStore();
-  const modalButtonStyle = 'bg-main text-white';
+  const modalButtonStyle = 'bg-gray-600 text-white';
+  const secondModalButtonStyle = 'bg-red-700 text-white';
 
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>Error occurred while fetching order details.</div>;
@@ -41,21 +42,24 @@ const MySingleOrderDetail = () => {
   };
 
   const handleCancel = () => {
-    updateCancelOrderMutation.mutate(
-      {
-        customerId: Number(customerId),
-        orderId: Number(orderId),
-      },
-      {
-        onSuccess: () => {
-          closeCancelModal();
+    const customerId = orderData?.orderProducts?.[0]?.customerId;
+    if (customerId) {
+      updateCancelOrderMutation.mutate(
+        {
+          customerId: Number(customerId),
+          orderId: Number(orderId),
         },
-      }
-    );
+        {
+          onSuccess: () => {
+            closeCancelModal();
+          },
+        }
+      );
+    }
   };
 
   return (
-    <div className='bg-gray-100'>
+    <div className='min-h-full bg-custom-mypage-back-bg'>
       <div className='flex flex-col p-4'>
         <div className='flex items-center justify-between py-4 text-main'>
           <h1 className='text-2xl font-bold'>주문번호 {orderId}</h1>
@@ -119,6 +123,7 @@ const MySingleOrderDetail = () => {
             secondButtonText='삭제'
             firstButtonFunc={closeCancelModal}
             secondButtonFunc={handleCancel}
+            secondButtonStyle={secondModalButtonStyle}
           />
         </SlideUpModal>
       )}

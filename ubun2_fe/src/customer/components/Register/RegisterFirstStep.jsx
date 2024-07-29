@@ -3,6 +3,13 @@ import { Link } from 'react-router-dom';
 import InputText from '../common/Input/InputText';
 import InputTextWithBtn from '../common/Input/InputTextWithBtn';
 import { Datepicker } from 'flowbite-react';
+import {
+  businessNumRegex,
+  businessNumRegexMessage,
+  businessOwnerRegexMessage,
+  datePickMessage,
+  nameRegex
+} from "../common/Regex/registerRegex.js";
 
 const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
   const INITIAL_REGISTER_OBJ = {
@@ -16,25 +23,27 @@ const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [registerObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ);
+  const [isAuthSuccess, setIsAuthSuccess] = useState(false);
 
   useEffect(() => {
     const { businessRegistrationNumber, businessOpenDate, businessOwner } = registerObj;
     console.log(registerObj);
     console.log(isAllValuePossible);
+    console.log(isAuthSuccess)
     if (
       businessRegistrationNumber.trim() !== '' &&
       businessOpenDate.trim() !== '' &&
-        businessOwner.trim() !== ''
-      // TODO: 값이 차있는지뿐만 아니라 값이 유효한 인증된 값인지 여부도 판단해야함
+      businessOwner.trim() !== '' &&
+      isAuthSuccess
+
     ) {
       setIsAllValuePossible(true);
     } else {
       setIsAllValuePossible(false);
     }
-  }, [registerObj]);
+  }, [registerObj,isAuthSuccess]);
 
-  const submitForm = e => {
-    e.preventDefault();
+  const submitForm = () => {
     setErrorMessage('');
 
     if (registerObj.businessRegistrationNumber.trim() === '') return setErrorMessage('사업자 등록 번호를 인증해주세요');
@@ -62,10 +71,15 @@ const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
     setRegisterObj({ ...registerObj, businessOpenDate: formattedDate });
   };
 
+  const handleBusinessAuth = () => {
+    setIsAuthSuccess(true);
+  }
+
   return (
     <>
       <h2 className='text-3xl font-bold mb-2 text-left text-main'>사업자인증을 진행해주세요</h2>
-      <form onSubmit={e => submitForm(e)}>
+
+      <div>
         <div className='mb-4'>
           <InputText
             defaultValue={registerObj.businessRegistrationNumber}
@@ -74,11 +88,15 @@ const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
             labelTitle='사업자 등록번호'
             updateFormValue={updateFormValue}
             placeholder='사업자 등록번호를 입력해주세요.'
+            isRegexInput={true}
+            regex={businessNumRegex}
+            regexMessage={businessNumRegexMessage}
           />
 
           <div className='w-full mt-4'>
             <label className='label'>
               <span className={'label-text text-base-content '}>개업일자</span>
+              { !registerObj.businessOpenDate && <span className={'label-text text-red-500 '}>{datePickMessage}</span>}
             </label>
             <Datepicker onSelectedDateChanged={handleDateChange} language='ko' labelTodayButton='오늘' labelClearButton='지우기' />
           </div>
@@ -91,11 +109,18 @@ const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
             updateFormValue={updateFormValue}
             placeholder='대표자 명을 입력해주세요.'
             buttonText='인증하기'
+            buttonFunc={handleBusinessAuth}
+            regex={nameRegex}
+            regexMessage={businessOwnerRegexMessage}
+            isAuthInput={true}
+            clickPossibleWithoutData={false}
+            // isAuthSuccess={isAuthSuccess}
           />
         </div>
 
         <button
-          type='submit'
+          // type='submit'
+          onClick={() => submitForm()}
           className={
             `btn mt-2 w-full ${isAllValuePossible ? 'bg-main text-white btn-primary' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}` +
             (loading ? ' loading' : '')
@@ -111,7 +136,7 @@ const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
             <span className='  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200'>Login</span>
           </Link>
         </div>
-      </form>
+      </div>
     </>
   );
 };

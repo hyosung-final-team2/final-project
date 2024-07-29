@@ -1,7 +1,14 @@
 package kr.or.kosa.ubun2_be.global.auth.service.impl;
 
+import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
+import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
+import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
+import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
+import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
+import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
 import kr.or.kosa.ubun2_be.global.auth.dto.EmailAuthenticationRequest;
 import kr.or.kosa.ubun2_be.global.auth.dto.EmailRequest;
+import kr.or.kosa.ubun2_be.global.auth.enums.UserRole;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
 import kr.or.kosa.ubun2_be.global.auth.exception.AuthExceptionType;
 import kr.or.kosa.ubun2_be.global.auth.service.EmailService;
@@ -23,13 +30,24 @@ public class EmailServiceImpl implements EmailService {
     private static final long TIME_OUT = 3;
     private final RedisTemplate<String, Object> redisTemplate;
     private final JavaMailSender javaMailSender;
+    private final MemberRepository memberRepository;
+    private final CustomerRepository customerRepository;
 
     @Transactional
     @Override
     public void sendEmail(EmailRequest emailRequest) {
-        String authenticationNumber = generateAuthenticationNumber();
         String email = emailRequest.getEmail();
+        System.out.println("email = " + email);
+        System.out.println("emailRequest = " + emailRequest.getUserType());
+        //이메일 중복체크
+        if(customerRepository.existsByCustomerEmail(email)&&UserRole.ROLE_CUSTOMER.toString().equals(emailRequest.getUserType())){
+            throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER);
+        }else if(memberRepository.existsByMemberEmail(email)&&UserRole.ROLE_MEMBER.toString().equals(emailRequest.getUserType())) {
+            System.out.println("yes");
+            throw new MemberException(MemberExceptionType.DUPLICATE_MEMBER);
+        }
 
+        String authenticationNumber = generateAuthenticationNumber();
         saveAuthenticationNumber(email,authenticationNumber);
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();

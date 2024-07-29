@@ -12,18 +12,33 @@ import UnifiedOrderTableBody from '../../common/Table/UnifiedOrderTableBody';
 import OrderDetailModal from '../../OrderList/OrderDetailModal/OrderDetailModal';
 import PendingOrderTableFeature from './PendingOrderTableFeature';
 import PendingOrderTableRow from './PendingOrderTableRow';
+import useSkeletonStore from '../../../store/skeletonStore';
+import SkeletonTable from '../../Skeleton/SkeletonTable';
+import SkeletonPendingOrderTableRow from '../Skeleton/SkeletonPendingOrderTableRow';
+import SkeletonPendingOrderTableFeature from '../Skeleton/SkeletonPendingOrderTableFeature';
+import usePendingOrderTableStore from '../../../store/PendingOrderTable/pendingOrderTableStore';
 
 const PendingOrderTable = () => {
   const [openPendingOrderDetailModal, setOpenPendingOrderDetailModal] = useState(false);
+
   const [selectedPendingOrders, setSelectedPendingOrders] = useState([]); // 체크된 ID
-  const [selectedPendingOrderDetail, setSelectedPendingOrderDetail] = useState({ orderId: null, subscription: false });
-  const [searchTerm, setSearchTerm] = useState(''); // 검색된 단어
-  const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
+  const [selectedPendingOrderDetail, setSelectedPendingOrderDetail] = useState({ orderId: null, subscription: false, currentPage: null }); // 선택된 주문 ID - 모달 오픈 시
+
+  const { sort, updateSort } = usePendingOrderTableStore();
+  const { searchCategory, setSearchCategory } = usePendingOrderTableStore(); // 검색할 카테고리 (드롭다운)
+  const { searchKeyword, setSearchKeyword } = usePendingOrderTableStore(); // 검색된 단어
+  const { resetData } = usePendingOrderTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: pendingOrders } = useGetPendingOrders(currentPage);
 
-  const totalPages = pendingOrders?.data?.data?.totalPages ?? 5;
+  const PAGE_SIZE = 8;
+  const {
+    data: pendingOrders,
+    refetch: refetchPendingOrders,
+    isLoading,
+  } = useGetPendingOrders(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword, searchKeyword);
+
+  const totalPages = pendingOrders?.data?.data?.totalPages;
   const pendingOrderList = pendingOrders?.data?.data?.content || [];
 
   const { data, refetch } = useGetOrderDetail(selectedPendingOrderDetail.orderId, selectedPendingOrderDetail.subscription); // 테이블 데이터 가져오기
@@ -35,11 +50,11 @@ const PendingOrderTable = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['pendingOrder', nextPage],
-        queryFn: () => getPendingOrders(nextPage),
+        queryKey: ['pendingOrder', nextPage, sort, searchCategory, searchKeyword],
+        queryFn: () => getPendingOrders(nextPage, PAGE_SIZE),
       });
     }
-  }, [currentPage, queryClient, totalPages]);
+  }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -65,8 +80,8 @@ const PendingOrderTable = () => {
     });
   };
 
-  const handleRowClick = async (orderId, subscription) => {
-    await setSelectedPendingOrderDetail({ orderId, subscription });
+  const handleRowClick = async (orderId, subscription, page) => {
+    await setSelectedPendingOrderDetail({ orderId: orderId, subscription: subscription, currentPage: page });
     await refetch();
     setOpenPendingOrderDetailModal(true);
   };
@@ -77,13 +92,34 @@ const PendingOrderTable = () => {
   };
 
   const handleSearch = (term, category) => {
-    setSearchTerm(term);
+    setSearchKeyword(term);
     setSearchCategory(category);
     if (term.trim() === '' || category === '카테고리') return;
 
-    // TODO: 검색 API 호출
-    console.log(`${category} : ${term}`);
+    refetchPendingOrders();
+    setCurrentPage(1);
   };
+
+  const handleSort = async (column, sortType) => {
+    await updateSort(column, sortType);
+    console.log(column, sortType);
+    refetchPendingOrders();
+    setCurrentPage(1);
+  };
+
+  const { toggleIsReset } = usePendingOrderTableStore();
+  const handleDataReset = async () => {
+    await toggleIsReset();
+    await resetData();
+    await refetchPendingOrders();
+    await setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    return () => {
+      resetData();
+    };
+  }, []);
 
   const handleOrderUpdate = (orders, newStatus) => {
     const requestData = orders.map(order => ({
@@ -96,6 +132,42 @@ const PendingOrderTable = () => {
     updatePendingOrderMutation({ requestData });
   };
 
+  // isLoading 시, skeletonTable
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore();
+
+  useEffect(() => {
+    if (!isLoading) {
+      setSkeletonData(pendingOrderList);
+      setSkeletonTotalPage(totalPages);
+      setSkeletonSortData(sort);
+      setSkeletonSearchCategory(searchCategory);
+      setSkeletonSearchKeyword(searchKeyword);
+    }
+  }, [
+    pendingOrderList,
+    totalPages,
+    sort,
+    searchKeyword,
+    searchCategory,
+    setSkeletonTotalPage,
+    setSkeletonSortData,
+    setSkeletonData,
+    setSkeletonSearchCategory,
+    setSkeletonSearchKeyword,
+    isLoading,
+  ]);
+
+  if (isLoading) {
+    // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
+    return (
+      <SkeletonTable
+        SkeletonTableFeature={SkeletonPendingOrderTableFeature}
+        TableRowComponent={SkeletonPendingOrderTableRow}
+        tableColumns={tableColumn.pendingOrders}
+      />
+    );
+  }
+
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
@@ -104,6 +176,7 @@ const PendingOrderTable = () => {
         onSearch={handleSearch}
         handleOrderUpdate={handleOrderUpdate}
         selectedPendingOrders={selectedPendingOrders}
+        handleDataReset={handleDataReset}
       />
 
       {/* 테이블 */}
@@ -113,6 +186,7 @@ const PendingOrderTable = () => {
             tableColumns={tableColumn.pendingOrders}
             allChecked={selectedPendingOrders.length === pendingOrderList.length}
             setAllChecked={handleAllChecked}
+            handleSort={handleSort}
           />
           <UnifiedOrderTableBody
             dataList={pendingOrderList}
@@ -120,11 +194,14 @@ const PendingOrderTable = () => {
             setOpenModal={handleRowClick}
             selectedOrders={selectedPendingOrders}
             handleRowChecked={handleRowChecked}
+            currentPage={currentPage}
           />
         </Table>
       </div>
       {/* 페이지네이션 */}
-      <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+      {isLoading === false ? (
+        <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+      ) : null}
       {/* 모달 */}
       <OrderDetailModal
         isOpen={openPendingOrderDetailModal}

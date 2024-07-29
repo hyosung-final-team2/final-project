@@ -1,8 +1,20 @@
 import InputText from '../common/Input/InputText';
 import InputTextWithBtn from '../common/Input/InputTextWithBtn';
 import { useState, useEffect } from 'react';
-import {emailRegex, loginIdRegex, passwordRegex ,authNumRegex} from "../common/Regex/registerRegex.js";
-import {useAuthEmail, useSendEmail} from "../../api/Register/queris.js";
+import {
+  emailRegex,
+  loginIdRegex,
+  passwordRegex,
+  authNumRegex,
+  nameRegex,
+  nameRegexMessage,
+  emailRegexMessage,
+  authNumRegexMessage,
+  loginIdRegexMessage,
+  passwordRegexMessage,
+  passwordCheckRegexMessage
+} from "../common/Regex/registerRegex.js";
+import {useAuthEmail, useCheckDuplicateId, useSendEmail} from "../../api/Register/queris.js";
 
 const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
   const INITIAL_REGISTER_OBJ = {
@@ -24,6 +36,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
 
   const {mutate:sendEmailMutate} = useSendEmail(secondRegisterObj.customerEmail)
   const {mutate:authEmailMutate} = useAuthEmail();
+  const {mutate:checkDuplicateIdMutate} = useCheckDuplicateId()
 
   useEffect(() => {
     setIsSendEmail(false);
@@ -51,8 +64,8 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
     }
   }, [secondRegisterObj]);
 
-  const submitForm = e => {
-    e.preventDefault();
+  const submitForm = () => {
+    // e.preventDefault();
     setErrorMessage('');
 
     if (secondRegisterObj.customerName.trim() === '') return setErrorMessage('이름을 입력해주세요');
@@ -74,15 +87,13 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
     setRegisterObj({ ...secondRegisterObj, [updateType]: value });
   };
 
-  const buttonFuncSendEmail = (e) => {
-    //e.preventDefault();
+  const buttonFuncSendEmail = () => {
     sendEmailMutate()
     setIsSendEmail(true);
     setTimerValue(300);
   };
 
-  const buttonFuncAuthEmail = (e) => {
-   // e.preventDefault();
+  const buttonFuncAuthEmail = () => {
     authEmailMutate({
       email: secondRegisterObj.customerEmail,
       authenticationNumber: secondRegisterObj.emailAuthentication
@@ -96,11 +107,31 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
     });
   };
 
+  const [isCheckPass, setIsCheckPass] = useState(null);
+  const [duplicateMessage, setDuplicateMessage] = useState(null);
+
+  const buttonFuncCheckDuplicateId = () => {
+    checkDuplicateIdMutate({
+      loginId: secondRegisterObj.customerLoginId,
+      userType:'ROLE_CUSTOMER'
+    },{
+      onSuccess: () => {
+        setIsCheckPass(true)
+        setDuplicateMessage(null);
+      },
+      onError: (err) => {
+        setIsCheckPass(false)
+        setDuplicateMessage(err.response.data.errorMessage)
+      }
+    })
+  }
+
 
   return (
     <>
       <h2 className='text-3xl font-bold mb-2 text-left text-main'>정보를 입력해주세요.</h2>
-      <form onSubmit={e => submitForm(e)}>
+      {/*<form onSubmit={e => submitForm(e)}>*/}
+      <div>
         <div className='mb-4'>
           <InputText
             defaultValue={secondRegisterObj.customerName}
@@ -109,6 +140,9 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
             labelTitle='이름'
             updateFormValue={updateFormValue}
             placeholder='이름을 입력해주세요.'
+            isRegexInput={true}
+            regex={nameRegex}
+            regexMessage={nameRegexMessage}
           />
           <InputTextWithBtn
             defaultValue={secondRegisterObj.customerEmail}
@@ -117,10 +151,11 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
             labelTitle='이메일'
             updateFormValue={updateFormValue}
             placeholder='이메일을 입력해주세요.'
-            buttonText='전송하기'
+            buttonText={!isSendEmail ? '전송하기' : '재전송하기'}
             clickPossibleWithoutData={false}
             buttonFunc={buttonFuncSendEmail}
             regex={emailRegex}
+            regexMessage={emailRegexMessage}
           />
 
           {isSendEmail && (
@@ -134,21 +169,32 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
               buttonText='인증하기'
               buttonFunc={buttonFuncAuthEmail}
               regex={authNumRegex}
+              regexMessage={authNumRegexMessage}
               showTimer ={true}
               timerValue={timerValue}
+              isAuthInput={true}
               isAuthSuccess={isAuthSuccess}
             />
           )}
 
-          <InputText
-            defaultValue={secondRegisterObj.customerLoginId}
-            updateType='customerLoginId'
-            containerStyle='mt-1'
-            labelTitle='아이디'
-            updateFormValue={updateFormValue}
-            placeholder='아이디를 입력해주세요.'
-            regex={loginIdRegex}
+          <InputTextWithBtn
+              defaultValue={secondRegisterObj.customerLoginId}
+              updateType='customerLoginId'
+              containerStyle='mt-1'
+              labelTitle='아이디'
+              updateFormValue={updateFormValue}
+              placeholder='아이디를 입력해주세요.'
+              buttonText="중복 확인"
+              clickPossibleWithoutData={false}
+              buttonFunc={buttonFuncCheckDuplicateId}
+              regex={loginIdRegex}
+              regexMessage={loginIdRegexMessage}
+              isAuthInput={true}
+              isAuthSuccess={isCheckPass}
+              isDuplicateInput={true}
+              duplicateMessage={duplicateMessage}
           />
+
           <div className='w-full flex'>
             <InputText
               defaultValue={secondRegisterObj.customerPassword}
@@ -159,6 +205,9 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
               updateFormValue={updateFormValue}
               placeholder='비밀번호'
               password={passwordRegex}
+              isRegexInput={true}
+              regex={passwordRegex}
+              regexMessage={passwordRegexMessage}
             />
             <div className='w-4/100'></div>
             <InputText
@@ -170,13 +219,16 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
               updateFormValue={updateFormValue}
               placeholder='비밀번호 확인'
               password={passwordRegex}
+              isRegexInput={true}
+              regex={passwordRegex}
+              regexMessage={passwordCheckRegexMessage}
             />
           </div>
         </div>
 
         {/* <ErrorText styleClass='mt-8'>{errorMessage}</ErrorText> */}
         <button
-          type='submit'
+          onClick={() => submitForm()}
           className={
             `btn mt-2 w-full ${isAllValuePossible ? 'bg-main text-white btn-primary' : 'bg-gray-300 text-gray-600 cursor-not-allowed'}` +
             (loading ? ' loading' : '')
@@ -185,7 +237,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
         >
           다음
         </button>
-      </form>
+      </div>
     </>
   );
 };

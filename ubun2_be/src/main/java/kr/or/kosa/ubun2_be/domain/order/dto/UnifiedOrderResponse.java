@@ -19,6 +19,7 @@ public class UnifiedOrderResponse {
     private String orderStatus;
     private String createdAt;
     private String memberName;
+    private Long memberId;
     private String paymentType;
     private int totalOrderPrice;
     private boolean isSubscription;
@@ -30,6 +31,7 @@ public class UnifiedOrderResponse {
         this.orderStatus = order.getOrderStatus().name();
         this.createdAt = order.getCreatedAt().toString();
         this.memberName = order.getMember().getMemberName();
+        this.memberId = order.getMember().getMemberId();
         this.totalOrderPrice = calculateTotalOrderPrice(order);
         this.isSubscription = false;
         this.orderProducts = order.getOrderProducts().stream()
@@ -43,6 +45,7 @@ public class UnifiedOrderResponse {
         this.orderStatus = subscriptionOrder.getOrderStatus().name();
         this.createdAt = subscriptionOrder.getCreatedAt().toString();
         this.memberName = subscriptionOrder.getMember().getMemberName();
+        this.memberId = subscriptionOrder.getMember().getMemberId();
         this.totalOrderPrice = calculateTotalSubscriptionOrderPrice(subscriptionOrder);
         this.isSubscription = true;
         this.subscriptionOrderProducts = subscriptionOrder.getSubscriptionOrderProducts().stream()
@@ -53,13 +56,19 @@ public class UnifiedOrderResponse {
 
     private int calculateTotalOrderPrice(Order order) {
         return order.getOrderProducts().stream()
-                .mapToInt(op -> OrderProductResponse.of(op).getTotalPrice())
+                .mapToInt(op -> {
+                    int discountedPrice = op.getPrice() - (int) (op.getPrice() * (op.getDiscount() / 100.0));
+                    return discountedPrice * op.getQuantity();
+                })
                 .sum();
     }
 
     private int calculateTotalSubscriptionOrderPrice(SubscriptionOrder subscriptionOrder) {
         return subscriptionOrder.getSubscriptionOrderProducts().stream()
-                .mapToInt(op -> SubscriptionOrderProductResponse.of(op).getTotalPrice())
+                .mapToInt(op -> {
+                    int discountedPrice = op.getPrice() - (int) (op.getPrice() * (op.getDiscount() / 100.0));
+                    return discountedPrice * op.getQuantity();
+                })
                 .sum();
     }
 }
