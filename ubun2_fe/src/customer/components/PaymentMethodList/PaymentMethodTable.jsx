@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Table } from 'flowbite-react';
+
 import MemberPaymentMethodModal from './MemberPaymentMethodModal';
 import { tableColumn } from '../common/Table/tableIndex';
 import TableHead from '../common/Table/TableHead';
@@ -11,7 +12,9 @@ import PaymentMethodTableRow from './PaymentMethodTableRow';
 import { customTableTheme } from '../common/Table/tableStyle';
 
 import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
-import { useGetCardPayments, useGetAccountPayments } from '../../api/PaymentMethod/Table/queris';
+import useAddressStore from '../../store/Address/useAddressStore';
+
+import { useGetPayments } from '../../api/PaymentMethod/Table/queris';
 import { useGetPaymentDetail } from '../../api/PaymentMethod/Modal/queris';
 import usePaymentMethodTableStore from '../../store/PaymentMethod/paymentMethodTableStore';
 import PaymentMethodRegistrationModal from './PaymentMethodRegistrationModal';
@@ -25,32 +28,40 @@ import useSkeletonStore from '../../store/skeletonStore';
 const PaymentMethodTable = () => {
   const [openRegistrationModal, setOpenRegistrationModal] = useState(false);
   const [checkedMembers, setCheckedMembers] = useState([]);
-  const { setSelectedMemberId, paymentMethodType, openModal, setOpenModal } = paymentMethodStore();
+  const { paymentMethodType, openModal, setOpenModal } = paymentMethodStore();
   const [paymentMethodId, setPaymentMethodId] = useState(null);
   const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset } = usePaymentMethodTableStore();
   const PAGE_SIZE = 8;
+  const isAccount = paymentMethodType === 'ACCOUNT';
 
   const [currentPage, setCurrentPage] = useState(1);
   const [clickedPayment, setClickedPayment] = useState(null);
 
   const queryClient = useQueryClient();
 
-  const { data: cards, refetch: refetchCards } = useGetCardPayments(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
-  const { data: accounts, refetch: refetchAccounts, isLoading } = useGetAccountPayments(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
+  const { data: payments, refetch: refetchPayments, isLoading } = useGetPayments(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
-  const cardList = cards?.data?.data?.content;
-  const accountList = accounts?.data?.data?.content;
-
-  const isAccount = paymentMethodType === 'ACCOUNT';
-  const totalPages = (isAccount ? accounts : cards)?.data?.data?.totalPages;
+  const paymentList = payments?.data?.data?.content;
+  const totalPages = payments?.data?.data?.totalPages || 5;
 
   const { refetch: refetchPaymentDetail } = useGetPaymentDetail(paymentMethodId);
 
+  const { setSelectedMemberId } = useAddressStore();
+
+  useEffect(() => {
+    if (currentPage < totalPages) {
+      const nextPage = currentPage + 1;
+      const queryKey = ['payment', { type: isAccount ? 'ACCOUNT' : 'CARD', page: nextPage, sort, searchCategory, searchKeyword }];
+      const queryFn = () => getPayments(nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
+      queryClient.prefetchQuery({ queryKey, queryFn });
+    }
+  }, [currentPage, queryClient, totalPages, isAccount, sort, searchCategory, searchKeyword]);
+
   const handleAllChecked = useCallback(
     checked => {
-      setCheckedMembers(checked ? accountList.map(payment => payment.id) : []);
+      setCheckedMembers(checked ? paymentList.map(payment => payment.id) : []);
     },
-    [accountList]
+    [paymentList]
   );
 
   const handleRowChecked = useCallback(id => {
@@ -74,28 +85,25 @@ const PaymentMethodTable = () => {
       setSearchKeyword(term);
       setSearchCategory(category);
       setCurrentPage(1);
-      refetchCards();
-      refetchAccounts();
+      refetchPayments();
     },
-    [setSearchKeyword, setSearchCategory, refetchCards, refetchAccounts]
+    [setSearchKeyword, setSearchCategory, setCurrentPage, refetchPayments]
   );
 
   const handleSort = useCallback(
     async (column, sortType) => {
       await updateSort(column, sortType);
       setCurrentPage(1);
-      refetchCards();
-      refetchAccounts();
+      refetchPayments();
     },
-    [updateSort, refetchCards, refetchAccounts]
+    [updateSort, refetchPayments]
   );
 
-  const handleDataReset = useCallback(async () => {
+  const handleDataReset = async () => {
     await Promise.all([toggleIsReset(), resetData()]);
     setCurrentPage(1);
-    await Promise.all([refetchCards(), refetchAccounts()]);
-  }, [toggleIsReset, resetData, refetchCards, refetchAccounts]);
-
+    await refetchPayments();
+  };
   useEffect(() => {
     return () => resetData();
   }, [resetData]);
@@ -104,21 +112,11 @@ const PaymentMethodTable = () => {
 
   useEffect(() => {
     if (!isLoading) {
-      const list = isAccount ? accountList : cardList;
-      setSkeletonData(list);
+      setSkeletonData(paymentList);
       setSkeletonTotalPage(totalPages);
       setSkeletonSortData(sort);
     }
-  }, [isLoading, totalPages, sort, setSkeletonData, setSkeletonTotalPage, setSkeletonSortData]);
-
-  useEffect(() => {
-    if (currentPage < totalPages) {
-      const nextPage = currentPage + 1;
-      const queryKey = ['payment', { type: isAccount ? 'ACCOUNT' : 'CARD', page: nextPage, sort, searchCategory, searchKeyword }];
-      const queryFn = isAccount ? () => getAccountPayments(nextPage) : () => getCardPayments(nextPage);
-      queryClient.prefetchQuery({ queryKey, queryFn });
-    }
-  }, [currentPage, queryClient, totalPages, isAccount, sort, searchCategory, searchKeyword]);
+  }, [isLoading, paymentList, totalPages, sort, setSkeletonData, setSkeletonTotalPage, setSkeletonSortData]);
 
   if (isLoading) {
     return (
@@ -143,12 +141,12 @@ const PaymentMethodTable = () => {
         <Table hoverable theme={customTableTheme}>
           <TableHead
             tableColumns={isAccount ? tableColumn.paymentMethod.accountList : tableColumn.paymentMethod.cardList}
-            allChecked={isAccount ? checkedMembers.length === accountList.length : checkedMembers.length === cardList.length}
+            allChecked={checkedMembers?.length === paymentList?.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
           />
           <DynamicTableBody
-            dataList={isAccount ? accountList : cardList}
+            dataList={paymentList}
             TableRowComponent={PaymentMethodTableRow}
             dynamicKey='paymentMethodId'
             dynamicId='paymentMethodId'

@@ -4,6 +4,7 @@ import OrderOptionBadge from '../../common/Badge/OrderOptionBadge';
 import PaymentMethodBadge from '../../common/Badge/PaymentMethodBadge';
 import { formatDate } from '../../../utils/dateFormat';
 import { formatCurrency } from '../../../utils/currencyFormat';
+import {useSendPersonalAlarm} from "../../../api/notification/queris.js";
 
 const commonButtonStyles = {
   APPROVED:
@@ -15,6 +16,7 @@ const commonButtonStyles = {
 const PendingOrderTableRow = ({
   orderId,
   createdAt,
+  memberId,
   memberName,
   paymentType,
   subscription,
@@ -25,14 +27,19 @@ const PendingOrderTableRow = ({
   handleOrderUpdate,
   currentPage,
 }) => {
+
+  const { mutate:sendPersonalAlarmMutate } = useSendPersonalAlarm(memberId,orderId,subscription)
+
   const handleApprove = e => {
     e.stopPropagation();
     handleOrderUpdate([{ orderId, subscription }], 'APPROVED');
+    sendPersonalAlarmMutate(true)
   };
 
   const handleCancel = e => {
     e.stopPropagation();
     handleOrderUpdate([{ orderId, subscription }], 'DENIED');
+    sendPersonalAlarmMutate(false)
   };
 
   return (
@@ -43,10 +50,10 @@ const PendingOrderTableRow = ({
       <Table.Cell style={{ width: '10%' }}>
         <OrderOptionBadge subscription={subscription} />
       </Table.Cell>
-      <Table.Cell style={{ width: '20%' }}>{createdAt ? formatDate(createdAt) : null}</Table.Cell>
+      <Table.Cell style={{ width: '15%' }}>{createdAt ? formatDate(createdAt) : null}</Table.Cell>
       <Table.Cell style={{ width: '15%' }}>{memberName}</Table.Cell>
       <Table.Cell style={{ width: '20%' }}>{`${totalOrderPrice ? formatCurrency(totalOrderPrice) : '-'} 원`}</Table.Cell>
-      <Table.Cell style={{ width: '10%' }}>
+      <Table.Cell style={{ width: '15%' }}>
         <PaymentMethodBadge paymentType={paymentType} />
       </Table.Cell>
       <Table.Cell style={{ width: '20%' }}>

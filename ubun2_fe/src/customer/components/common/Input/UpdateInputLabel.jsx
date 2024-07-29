@@ -1,16 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-const UpdateInputLabel = ({ labelTitle, name, defaultValue, type, disabled = false, containerStyle = '', onChange }) => {
-  const [value, setValue] = useState(defaultValue);
+const UpdateInputLabel = ({ labelTitle, name, value, type, disabled = false, containerStyle = '', onChange }) => {
+  const [inputValue, setInputValue] = useState(value);
 
   useEffect(() => {
-    setValue(defaultValue);
-  }, [defaultValue]);
+    setInputValue(value);
+  }, [value]);
 
   const handleChange = e => {
-    setValue(e.target.value);
+    const newValue = e.target.value;
+    setInputValue(newValue);
     if (onChange) {
-      onChange(e);
+      onChange({ target: { name, value: newValue } });
     }
   };
 
@@ -23,7 +24,7 @@ const UpdateInputLabel = ({ labelTitle, name, defaultValue, type, disabled = fal
         <input
           type={type || 'text'}
           name={name}
-          value={value}
+          value={inputValue}
           onChange={handleChange}
           disabled={disabled}
           className='flex-grow w-full p-3 border-none rounded-lg input disabled:bg-custom-input-gray disabled:text-custom-font-gray'

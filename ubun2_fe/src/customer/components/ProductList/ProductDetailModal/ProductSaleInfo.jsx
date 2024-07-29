@@ -8,7 +8,7 @@ const ProductSaleInfo = ({ product, onlyInfo = false, title, handleInputChange }
           <input
             type='text'
             name='productPrice'
-            value={product?.productPrice}
+            value={onlyInfo? `${product?.productPrice.toLocaleString()}원`: product?.productPrice?.toLocaleString()}
             onChange={e => handleInputChange(e)}
             disabled={onlyInfo}
             className={`
@@ -24,7 +24,7 @@ const ProductSaleInfo = ({ product, onlyInfo = false, title, handleInputChange }
           <input
             type='text'
             name='stockQuantity'
-            value={product?.stockQuantity}
+            value={onlyInfo? `${product?.stockQuantity}원`: product?.stockQuantity}
             onChange={e => handleInputChange(e)}
             disabled={onlyInfo}
             className={`
@@ -40,7 +40,7 @@ const ProductSaleInfo = ({ product, onlyInfo = false, title, handleInputChange }
           <input
             type='text'
             name='productDiscount'
-            value={product?.productDiscount}
+            value={onlyInfo?`${product?.productDiscount}%`:product?.productDiscount}
             onChange={e => handleInputChange(e)}
             disabled={onlyInfo}
             className={`

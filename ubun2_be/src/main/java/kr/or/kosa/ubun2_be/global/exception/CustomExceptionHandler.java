@@ -3,11 +3,10 @@ package kr.or.kosa.ubun2_be.global.exception;
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressException;
 import kr.or.kosa.ubun2_be.domain.cart.exception.CartException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
-
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.pendingmember.PendingMemberException;
-import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodException;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderException;
+import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodException;
 import kr.or.kosa.ubun2_be.domain.product.exception.category.CategoryException;
 import kr.or.kosa.ubun2_be.domain.product.exception.image.ImageException;
 import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductException;
@@ -15,9 +14,14 @@ import kr.or.kosa.ubun2_be.global.auth.exception.AuthException;
 import kr.or.kosa.ubun2_be.global.dto.ErrorDto;
 import kr.or.kosa.ubun2_be.global.exception.base.CustomException;
 import org.springframework.boot.web.servlet.error.ErrorController;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class CustomExceptionHandler implements ErrorController {
@@ -153,6 +157,22 @@ public class CustomExceptionHandler implements ErrorController {
                 .build();
 
         return new ResponseEntity(error, pendingMemberException.getExceptionType().getHttpStatus());
+    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorDto> handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage())
+        );
+
+        ErrorDto errorDto = ErrorDto.builder()
+                .errorCode(HttpStatus.BAD_REQUEST.value())
+                .errorMessage("입력값 검증 실패")
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .data(errors)
+                .build();
+
+        return new ResponseEntity<>(errorDto, HttpStatus.BAD_REQUEST);
     }
 
 }

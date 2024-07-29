@@ -27,5 +27,9 @@ public interface SubscriptionOrderRepositoryCustom {
 
     List<Address> findAddressesByDateRange(Long customerId,LocalDateTime startDate, LocalDateTime endDate);
 
-    }
+    Long countSubscriptionOrdersByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+
+    Long sumSubscriptionOrderTotalByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+
+}
 

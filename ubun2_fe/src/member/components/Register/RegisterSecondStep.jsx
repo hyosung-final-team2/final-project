@@ -9,6 +9,8 @@ import {useEffect, useState} from "react";
 import SlideUpModal from "../common/SlideUpModal.jsx";
 import {useMemberSignup} from "../../api/Register/queris.js";
 import {useNavigate} from "react-router-dom";
+import InputTextWithBtn from "../../../customer/components/common/Input/InputTextWithBtn.jsx";
+import {useCheckDuplicateId} from "../../../customer/api/Register/queris.js";
 
 const RegisterSecondStep = () => {
     const SECOND_REGISTER_OBJ = {
@@ -100,21 +102,50 @@ const RegisterSecondStep = () => {
         navigate("/member/login")
     }
 
+    const {mutate:checkDuplicateIdMutate} = useCheckDuplicateId()
+
+    const [isCheckPass, setIsCheckPass] = useState(null);
+    const [duplicateMessage, setDuplicateMessage] = useState(null);
+
+    const buttonFuncCheckDuplicateId = () => {
+        checkDuplicateIdMutate({
+            loginId: secondRegisterObj.memberLoginId,
+            userType:'ROLE_MEMBER'
+        },{
+            onSuccess: () => {
+                setIsCheckPass(true)
+                setDuplicateMessage(null);
+            },
+            onError: (err) => {
+                setIsCheckPass(false)
+                setDuplicateMessage(err.response.data.errorMessage)
+            }
+        })
+    }
+
     return (
         <>
             <div className='relative max-w-[480px] mx-auto min-h-screen p-6 pb-20'>
                 <div className="mb-6">
                     <h1 className="text-indigo-900 text-2xl font-bold mb-6">인증을 진행해주세요.</h1>
-                    <InputText defaultValue={secondRegisterObj.memberLoginId}
-                               updateType='memberLoginId'
-                               containerStyle='mt-4'
-                               labelTitle='아이디'
-                               updateFormValue={updateFormValue}
-                               placeholder='6자리 이상의 아이디를 입력해주세요.'
-                               isRegexInput={true}
-                               regex={loginIdRegex}
-                               regexMessage={loginIdRegexMessage}
+                    <InputTextWithBtn
+                        defaultValue={secondRegisterObj.memberLoginId}
+                        updateType='memberLoginId'
+                        containerStyle='mt-1'
+                        labelTitle='아이디'
+                        updateFormValue={updateFormValue}
+                        placeholder='아이디를 입력해주세요.'
+                        buttonText="중복 확인"
+                        clickPossibleWithoutData={false}
+                        buttonFunc={buttonFuncCheckDuplicateId}
+                        regex={loginIdRegex}
+                        regexMessage={loginIdRegexMessage}
+                        isAuthInput={true}
+                        isAuthSuccess={isCheckPass}
+                        isDuplicateInput={true}
+                        duplicateMessage={duplicateMessage}
                     />
+
                     <InputText defaultValue={secondRegisterObj.memberPassword}
                                updateType='memberPassword'
                                type="password"

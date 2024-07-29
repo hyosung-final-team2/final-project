@@ -24,9 +24,9 @@ const ProductTableRow = ({
         </Table.Cell>
         <Table.Cell style={{width:"15%"}}>{productCategoryName}</Table.Cell>
         <Table.Cell style={{width:"15%"}}>{productName}</Table.Cell>
-        <Table.Cell style={{width:"10%"}}>{stockQuantity}</Table.Cell>
-        <Table.Cell style={{width:"15%"}}>{productPrice}</Table.Cell>
-        <Table.Cell style={{width:"10%"}}>{productDiscount}</Table.Cell>
+        <Table.Cell style={{width:"10%"}}>{stockQuantity}개</Table.Cell>
+        <Table.Cell style={{width:"15%"}}>{productPrice.toLocaleString()}원</Table.Cell>
+        <Table.Cell style={{width:"10%"}}>{productDiscount}%</Table.Cell>
         <Table.Cell style={{width:"15%"}}>{productStatus ? <StatusBadge status={'PUBLIC'} /> : <StatusBadge status={'PRIVATE'} />}</Table.Cell>
         <Table.Cell style={{width:"15%"}}>
           <ProductOptionBadge productOption={orderOption} />

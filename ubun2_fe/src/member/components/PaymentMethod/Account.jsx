@@ -1,7 +1,10 @@
 import React from 'react';
 import { getBankLogo, getCardColor } from './CardList';
+import { formatBankAccount } from '../../../customer/utils/accountFormat';
 
 const Account = ({ bankName, paymentMethodNickname, accountNumber }) => {
+  const formattedAccountNumber = formatBankAccount(bankName, accountNumber);
+
   return (
     <div className={`flex-1 bg-slate-600 ${getCardColor(bankName)} text-white mx-8 h-56 rounded-xl p-6 relative flex flex-col`}>
       <div className='h-8 flex items-center mb-2'>
@@ -21,7 +24,7 @@ const Account = ({ bankName, paymentMethodNickname, accountNumber }) => {
         </div>
         <div className='flex-1 flex flex-col'>
           <div className='text-xs mb-1'>계좌 번호</div>
-          <div className='text-md font-bold min-h-[1.5rem]'>{accountNumber || ''}</div>
+          <div className='text-md font-bold min-h-[1.5rem]'>{formattedAccountNumber || ''}</div>
         </div>
       </div>
     </div>

@@ -132,7 +132,7 @@ const MemberTable = () => {
       setSkeletonSearchCategory(searchCategory);
       setSkeletonSearchKeyword(searchKeyword);
     }
-  }, [memberList, totalPages,sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
+  }, [memberList, totalPages, sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
 
   if (isLoading) {
     // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작

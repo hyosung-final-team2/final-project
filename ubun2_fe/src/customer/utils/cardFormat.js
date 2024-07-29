@@ -3,9 +3,10 @@
  * @param {string} cardNumber
  * @returns {string}
  */
+
 export const formatCardNumber = cardNumber => {
   const cleaned = cardNumber?.replace(/\D/g, '');
-  const formatted = cleaned.replace(/(\d{4})(?=\d)/g, '$1-');
+  const formatted = cleaned?.replace(/(\d{4})(?=\d)/g, '$1-');
   return formatted;
 };
 
@@ -22,6 +23,7 @@ export const formatCardNumberWithSpace = cardNumber => {
  */
 export const maskCardNumber = cardNumber => {
   const cleaned = cardNumber?.replace(/\D/g, '');
-  const masked = cleaned?.replace(/(\d{6})(\d+)(\d{4})/, '$1-****-****-$3');
+
+  const masked = cleaned?.replace(/(\d{4})(\d{4})(\d{4})(\d{4})/, '$1-****-****-$4');
   return masked;
 };

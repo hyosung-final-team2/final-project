@@ -17,6 +17,7 @@ public class OrderDetailProductResponse {
     private double discount;
     private int totalPrice;
     private OrderProductStatus orderProductStatus;
+    private Long customerId;
 
 
     public OrderDetailProductResponse(OrderProduct orderProduct) {
@@ -31,5 +32,6 @@ public class OrderDetailProductResponse {
         this.discount = orderProduct.getDiscount();
         this.totalPrice = (int) (price * quantity * (100 - discount) / 100.0);
         this.orderProductStatus = orderProduct.getOrderProductStatus();
+        this.customerId = product.getCustomer().getCustomerId();
     }
 }

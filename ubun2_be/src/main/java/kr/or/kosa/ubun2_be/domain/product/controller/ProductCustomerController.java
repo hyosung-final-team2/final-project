@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.product.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.product.dto.*;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
@@ -43,14 +44,14 @@ public class ProductCustomerController {
 
     @Operation(summary = "상품 등록")
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseDto<?> registerProduct(@RequestPart(value = "image", required = false) MultipartFile image, @RequestPart ProductRequest productRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseDto<?> registerProduct(@RequestPart(value = "image", required = false) MultipartFile image, @Valid @RequestPart ProductRequest productRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         productService.registerProduct(image, customUserDetails.getUserId(), productRequest);
         return ResponseDto.ok(null, "정상출력 데이터");
     }
 
     @Operation(summary = "상품 수정")
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseDto<?> updateProduct(@RequestPart(value = "image", required = false) MultipartFile image, @RequestPart ProductRequest productRequest, Long customerId) {
+    public ResponseDto<?> updateProduct(@RequestPart(value = "image", required = false) MultipartFile image, @Valid @RequestPart ProductRequest productRequest, Long customerId) {
         productService.modifyProduct(image, customerId, productRequest);
         return ResponseDto.ok(null, "정상출력 데이터");
     }
@@ -71,7 +72,7 @@ public class ProductCustomerController {
 
     @Operation(summary = "상품 리스트 삭제")
     @DeleteMapping("/selected")
-    public ResponseDto<?> removeSelectedProducts(@RequestBody ProductDeleteSelectedRequest productDeleteSelectedRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseDto<?> removeSelectedProducts(@Valid @RequestBody ProductDeleteSelectedRequest productDeleteSelectedRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         productService.removeSelectedProducts(productDeleteSelectedRequest,customUserDetails.getUserId());
         return ResponseDto.ok(null, "정상출력 데이터");
     }

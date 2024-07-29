@@ -4,11 +4,13 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
+import kr.or.kosa.ubun2_be.domain.product.enums.OrderProductStatus;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
@@ -233,6 +235,39 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                         .and(subscriptionOrder.createdAt.between(startDate, endDate))
                         .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED)))
                 .fetch();
+    }
+
+    @Override
+    public Long countSubscriptionOrdersByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+
+        JPQLQuery<Long> query = from(subscriptionOrder)
+                .join(subscriptionOrder.member, member)
+                .join(member.memberCustomers, memberCustomer)
+                .join(memberCustomer.customer, customer)
+                .where(customer.customerId.eq(customerId)
+                        .and(subscriptionOrder.createdAt.between(startDate, endDate))
+                        .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED)))
+                .select(subscriptionOrder.countDistinct());
+
+        return query.fetchOne() != null ? query.fetchOne() : Long.valueOf(0L);
+    }
+
+    @Override
+    public Long sumSubscriptionOrderTotalByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+        JPQLQuery<Long> query = from(subscriptionOrder)
+                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
+                .join(subscriptionOrder.member, member)
+                .join(member.memberCustomers, memberCustomer)
+                .join(memberCustomer.customer, customer)
+                .where(customer.customerId.eq(customerId)
+                        .and(subscriptionOrder.createdAt.between(startDate, endDate))
+                        .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED))
+                        .and(subscriptionOrderProduct.orderProductStatus.eq(OrderProductStatus.APPROVED)))
+                .select(subscriptionOrderProduct.price.multiply(
+                                Expressions.asNumber(1).subtract(subscriptionOrderProduct.discount.divide(100.0)))
+                        .multiply(subscriptionOrderProduct.quantity).sum().longValue());
+
+        return query.fetchOne() != null ? query.fetchOne() : Long.valueOf(0L);
     }
 
 }

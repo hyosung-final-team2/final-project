@@ -2,6 +2,7 @@ package kr.or.kosa.ubun2_be.domain.address.controller;
 
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
 import kr.or.kosa.ubun2_be.domain.member.dto.MyAddressResponse;
@@ -28,14 +29,14 @@ public class MemberAddressController {
 
     @Operation(summary = "회원 주소지 추가")
     @PostMapping("/")
-    public ResponseDto<?> addAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody AddressRequest addressRequest) {
+    public ResponseDto<?> addAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails,@Valid @RequestBody AddressRequest addressRequest) {
         addressService.addMemberAddress(addressRequest, customUserDetails.getUserId());
         return ResponseDto.ok(null, "주소를 성공적으로 추가했습니다.");
     }
 
     @Operation(summary = "회원 주소지 수정")
     @PutMapping("/{addressId}")
-    public ResponseDto<?> updateAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long addressId, @RequestBody AddressRequest addressRequest) {
+    public ResponseDto<?> updateAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long addressId, @Valid @RequestBody AddressRequest addressRequest) {
         addressService.updateMemberAddress(addressId, addressRequest, customUserDetails.getUserId());
         return ResponseDto.ok(null, "주소를 성공적으로 수정했습니다.");
     }
