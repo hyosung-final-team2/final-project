@@ -7,6 +7,7 @@ export const useValidateOrder = () => {
   return useMutation({
     mutationFn: data => validateOrder(data),
     onError: error => {
+      console.log(error);
       const errorMessage = error.response?.data?.errorMessage || '유효성 검사에 실패했습니다. 다시 시도해주세요.';
       toast.error(errorMessage, errorToastStyle);
     },
