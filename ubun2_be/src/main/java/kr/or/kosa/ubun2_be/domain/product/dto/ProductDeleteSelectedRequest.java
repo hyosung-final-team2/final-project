@@ -4,9 +4,11 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 @Getter
+@Setter
 public class ProductDeleteSelectedRequest {
 
     @NotEmpty(message = "삭제 상품 ID 목록은 비어있을 수 없습니다.")
