@@ -51,10 +51,12 @@ const MyPaymentsList = () => {
   };
 
   const handleOnButtonClick = () => {
-    navigate('/member/app/payments/edit');
+    activeTab === 'creditCard'
+      ? navigate('/member/app/payments/edit', { state: { type: 'creditCard' } })
+      : navigate('/member/app/payments/edit', { state: { type: 'bankAccount' } });
   };
 
-  const handleOnBottomButtonClick = () => {
+  const handleOnModalBottomButtonClick = () => {
     if (isEdit) {
       if (newTitle.trim() !== '' && newTitle !== selectedItem?.paymentMethodNickname) {
         updatePayment(
@@ -135,7 +137,7 @@ const MyPaymentsList = () => {
           headerText={`${activeTab === 'creditCard' ? '카드' : '계좌'} 별칭을 지어주세요`}
           buttonStyle={buttonStyleConfirm}
           buttonText='확인'
-          buttonFunc={handleOnBottomButtonClick}
+          buttonFunc={handleOnModalBottomButtonClick}
         >
           <PaymentItem
             icon={getIcon(selectedItem?.paymentType === 'CARD' ? selectedItem?.cardCompanyName : selectedItem?.bankName)}
@@ -156,7 +158,7 @@ const MyPaymentsList = () => {
           headerText={`${activeTab === 'creditCard' ? '카드' : '계좌'}를 삭제할까요?`}
           buttonStyle={buttonStyleDanger}
           buttonText='삭제하기'
-          buttonFunc={handleOnBottomButtonClick}
+          buttonFunc={handleOnModalBottomButtonClick}
         >
           <PaymentItem
             icon={getIcon(selectedItem?.paymentType === 'CARD' ? selectedItem?.cardCompanyName : selectedItem?.bankName)}

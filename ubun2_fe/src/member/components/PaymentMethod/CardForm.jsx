@@ -78,6 +78,7 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
           labelStyle={labelStyle}
           onChange={handleInputChange('cardPassword')}
           value={formData.cardPassword}
+          type='password'
         />
         <div className='flex'>
           <div className='flex-1 -mr-4'>

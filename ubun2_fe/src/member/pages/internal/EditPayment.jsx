@@ -4,12 +4,19 @@ import CreditCardForm from '../../components/PaymentMethod/CardForm';
 import BankAccountForm from '../../components/PaymentMethod/AccountForm';
 import { useRegisterPayment } from '../../api/Payment/queries';
 import { useNavigate } from 'react-router-dom';
-import useDetectKeyboardOpen from 'use-detect-keyboard-open';
+import { useLocation } from 'react-router-dom';
 
 const PaymentMethodRegistration = () => {
   const [activeTab, setActiveTab] = useState('creditCard');
   const [formData, setFormData] = useState({});
   const { mutate: registerPayment } = useRegisterPayment();
+  const { state } = useLocation();
+
+  useEffect(() => {
+    if (state?.type) {
+      setActiveTab(state.type);
+    }
+  }, [state]);
 
   const navigate = useNavigate();
   const inputStyle = 'bg-white border border-gray-300 text-gray-900';
@@ -23,10 +30,10 @@ const PaymentMethodRegistration = () => {
   const handleSubmit = () => {
     const paymentData = {
       paymentType: activeTab === 'creditCard' ? 'CARD' : 'ACCOUNT',
-      cardCompanyName: `${formData.cardCompanyName}카드` ?? null,
+      cardCompanyName: formData.cardCompanyName ? `${formData.cardCompanyName}카드` : null,
       cardNumber: formData.cardNumber ?? null,
       paymentMethodNickname: formData.paymentMethodNickname,
-      bankName: `${formData.bankName}은행` ?? null,
+      bankName: formData.bankName ? `${formData.bankName}은행` : null,
       accountNumber: formData.accountNumber ?? null,
     };
     registerPayment(paymentData, {

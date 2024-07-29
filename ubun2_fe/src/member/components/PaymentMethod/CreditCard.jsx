@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { getCardColor, getCardLogo, getIcon } from './CardList';
 import { formatCardNumberWithSpace } from '../../../customer/utils/cardFormat';
+import { formatDateFromNumbers } from '../../../customer/utils/dateFormat';
 
 const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, handleClick, owner, cardCompany }) => {
+  const errorStyle = 'text-red-500 border-red-500';
+
   return (
     <div className='flex items-center justify-center'>
       <div className='bg-white px-8 w-full max-w-md'>
@@ -35,7 +38,7 @@ const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, 
                   </div>
                   <div>
                     <div className='text-xs uppercase'>유효기간</div>
-                    <div>{expirationDate || '**/**'}</div>
+                    <div>{formatDateFromNumbers(expirationDate) || '**/**'}</div>
                   </div>
                 </div>
               </div>
