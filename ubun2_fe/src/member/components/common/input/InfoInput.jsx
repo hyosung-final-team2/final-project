@@ -1,4 +1,4 @@
-const InfoItem = ({ label, value, inputStyle, labelStyle, placeholder, disabled = false, onChange, isSelectable, onFocus }) => (
+const InfoItem = ({ label, value, inputStyle, labelStyle, placeholder, disabled = false, onChange, isSelectable, onFocus, type }) => (
   <div className='mx-6'>
     <div className='mb-1'>
       <label htmlFor={label} className={`${labelStyle}`}>
@@ -13,6 +13,7 @@ const InfoItem = ({ label, value, inputStyle, labelStyle, placeholder, disabled 
       readOnly={isSelectable}
       onChange={onChange}
       onFocus={onFocus}
+      type={type}
     ></input>
   </div>
 );
