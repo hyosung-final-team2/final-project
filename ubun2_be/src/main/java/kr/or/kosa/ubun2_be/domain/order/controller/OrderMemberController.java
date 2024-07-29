@@ -84,10 +84,6 @@ public class OrderMemberController {
     @PostMapping("/orders/subscription/remove")
     public ResponseDto<?> removeSubscriptionOrderProduct(@Valid @RequestBody RemoveSubscriptionOrderProductRequest request,
                                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        System.out.println(customUserDetails.getUserId());
-        System.out.println(request.getSubscriptionOrderProductIds());
-        System.out.println(request.getCustomerId());
-        System.out.println(request.getOrderId());
         subscriptionOrderService.removeSubscriptionOrderProducts(customUserDetails.getUserId(), request);
         return ResponseDto.ok(null, "정상출력 데이터");
     }

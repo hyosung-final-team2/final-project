@@ -12,9 +12,9 @@ import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
 
 const MySingleOrderDetail = () => {
-  const { customerId, orderId } = useParams();
-  const { data: orderResponse, isLoading, isError } = useGetOrderDetail(customerId, orderId);
-  const updateCancelOrderMutation = useUpdateCancelOrder(customerId, orderId);
+  const { orderId } = useParams();
+  const { data: orderResponse, isLoading, isError } = useGetOrderDetail(orderId);
+  const updateCancelOrderMutation = useUpdateCancelOrder();
   const { modalState, setModalState } = useModalStore();
   const modalButtonStyle = 'bg-gray-600 text-white';
   const secondModalButtonStyle = 'bg-red-700 text-white';
@@ -42,17 +42,20 @@ const MySingleOrderDetail = () => {
   };
 
   const handleCancel = () => {
-    updateCancelOrderMutation.mutate(
-      {
-        customerId: Number(customerId),
-        orderId: Number(orderId),
-      },
-      {
-        onSuccess: () => {
-          closeCancelModal();
+    const customerId = orderData?.orderProducts?.[0]?.customerId;
+    if (customerId) {
+      updateCancelOrderMutation.mutate(
+        {
+          customerId: Number(customerId),
+          orderId: Number(orderId),
         },
-      }
-    );
+        {
+          onSuccess: () => {
+            closeCancelModal();
+          },
+        }
+      );
+    }
   };
 
   return (

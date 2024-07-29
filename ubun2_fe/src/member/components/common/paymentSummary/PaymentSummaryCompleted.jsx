@@ -5,7 +5,7 @@ const PaymentSummaryCompleted = ({ productAmount, discount, totalAmount, payment
       <div className='flex flex-col gap-5 mt-4 font-semibold'>
         <div className='flex justify-between'>
           <span>할인 금액</span>
-          <span>{`-${discount?.toLocaleString()}원`}</span>
+          <span>{discount > 0 ? `- ${discount?.toLocaleString()}원` : `${discount?.toLocaleString()}원`}</span>
         </div>
         <div className='flex justify-between text-main'>
           <span>총 결제 금액</span>

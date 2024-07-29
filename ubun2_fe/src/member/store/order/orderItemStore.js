@@ -252,9 +252,10 @@ const useOrderItemsStore = create(
 const calculateTotals = state => {
   let productAmount = 0;
   let discountedAmount = 0;
-  let selectedCount = 0;
+  let selectedCartProductsCount = 0;
 
   state.selectedItems.forEach(store => {
+    selectedCartProductsCount += store.cartProducts.length;
     store.cartProducts.forEach(product => {
       const price = product.productPrice || 0;
       const discountRate = (product.productDiscount || 0) / 100;
@@ -266,7 +267,6 @@ const calculateTotals = state => {
 
       productAmount += originalSubtotal;
       discountedAmount += discountedSubtotal;
-      selectedCount += quantity;
     });
   });
 
@@ -276,7 +276,7 @@ const calculateTotals = state => {
     productAmount: Math.round(productAmount),
     discount: Math.round(discount),
     totalAmount: Math.round(discountedAmount),
-    selectedCount,
+    selectedCartProductsCount,
   };
 };
 

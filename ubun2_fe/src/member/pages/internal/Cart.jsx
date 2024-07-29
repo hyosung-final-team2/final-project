@@ -12,7 +12,6 @@ import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
 import ModalBottomButton from '../../components/common/button/ModalBottomButton';
-import BottomButton from '../../components/common/button/BottomButton';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -139,7 +138,7 @@ const Cart = () => {
   if (isError) return <div>Error fetching cart data</div>;
 
   return (
-    <div className='relative flex flex-col h-full'>
+    <div className='flex flex-col h-full '>
       {cartData && cartData.length !== 0 && (
         <div className='flex items-center justify-between p-4 font-bold'>
           <span className='text-2xl text-main'>{'장바구니'}</span>
@@ -176,7 +175,7 @@ const Cart = () => {
             <>
               <PaymentSummaryPre productAmount={totals.productAmount} discount={totals.discount} totalAmount={totals.totalAmount} />
               {unsetSubscriptions.length > 0 && (
-                <div className='mb-2 text-red-500'>
+                <div className='px-4 py-2 mb-2 text-red-500'>
                   <span>다음 상점의 정기 주문 상품 배송 주기를 선택해주세요</span>
                   <ul>
                     {unsetSubscriptions.map(store => (
@@ -200,7 +199,7 @@ const Cart = () => {
         >
           <div className='flex items-end justify-between w-full'>
             <div className='flex items-end justify-between w-5/6 gap-2 py-4 mr-3 text-xl'>
-              <span className='text-sm font-semibold'>{`${totals.selectedCount}개 선택`}</span>
+              <span className='text-sm font-semibold'>{`${totals.selectedCartProductsCount}개 선택`}</span>
               <span className='font-bold text-main'>{`${totals.totalAmount?.toLocaleString()}원`}</span>
             </div>
             <ModalBottomButton
