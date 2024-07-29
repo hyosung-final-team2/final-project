@@ -3,6 +3,7 @@ import AddressInput from '../common/Input/AddressInput';
 import StoreInfoDetail from './StoreInfoDetail';
 import StoreDescriptionNotice from './StoreDescriptionNotice';
 import { storeInfoData, addressInfos } from './StoreInfoData';
+import { useGetMypage, useUpdateMypage } from '../../api/Customer/Mypage/queries';
 
 const StoreInfoDashBoard = () => {
   const commonButtonStyles =
@@ -15,6 +16,11 @@ const StoreInfoDashBoard = () => {
     profileImage: null,
   });
   const [isEditingName, setIsEditingName] = useState(false);
+
+  const { data: mypage } = useGetMypage();
+
+  const { mutate: updateMypage } = useUpdateMypage();
+  const mypageData = mypage?.data?.data;
 
   // storeInfoData가 변경될 때마다 formData를 업데이트
   useEffect(() => {
@@ -68,14 +74,7 @@ const StoreInfoDashBoard = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       <div className='flex flex-col gap-3 px-4 py-4'>
-        <StoreInfoDetail
-          storeName={formData.storeName}
-          isEditingName={isEditingName}
-          profileImage={formData.profileImage}
-          formData={formData}
-          handleNameEdit={handleNameEdit}
-          handleInputChange={handleInputChange}
-        />
+        <StoreInfoDetail isEditingName={isEditingName} formData={mypageData} handleNameEdit={handleNameEdit} handleInputChange={handleInputChange} />
         <AddressInput infos={addressInfos} title='주소 추가' />
         <StoreDescriptionNotice formData={formData} handleInputChange={handleInputChange} />
         <div className='flex justify-end px-4 mb-2'>
