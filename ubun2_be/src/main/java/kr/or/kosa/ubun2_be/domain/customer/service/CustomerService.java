@@ -3,6 +3,7 @@ package kr.or.kosa.ubun2_be.domain.customer.service;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.*;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
+import kr.or.kosa.ubun2_be.domain.customer.dto.response.MypageDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.StoreInfoResponse;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
@@ -37,4 +38,6 @@ public interface CustomerService {
     void deleteSelectedProducts(List<MemberDeleteRequest> memberDeleteRequestList, Long customerId);
 
     void updateMyPage(MultipartFile image, Long customerId, MyPageUpdateRequest myPageUpdateRequest) ;
+
+    MypageDetailResponse getMyPage(Long customerId);
 }

@@ -12,6 +12,7 @@ import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.*;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
+import kr.or.kosa.ubun2_be.domain.customer.dto.response.MypageDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.StoreInfoResponse;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
@@ -354,6 +355,12 @@ public class CustomerServiceImpl implements CustomerService {
 
         findCustomer.updateCustomer(myPageUpdateRequest);
 
+    }
+
+    @Override
+    public MypageDetailResponse getMyPage(Long customerId) {
+        Customer customer = findById(customerId);
+        return MypageDetailResponse.of(customer);
     }
 
 }
