@@ -80,3 +80,276 @@ html { overscroll-behavior: none; }
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255);
 }
+
+.bg {
+  animation:slide 3s ease-in-out infinite alternate;
+  background-image: linear-gradient(-60deg, #FFEFBA 50%, #FFFFFF 50%);
+  bottom:0;
+  left:-50%;
+  opacity:.5;
+  position:fixed;
+  right:-50%;
+  top:0;
+  z-index:-1;
+}
+
+.bg2 {
+  animation-direction:alternate-reverse;
+  animation-duration:4s;
+}
+
+.bg3 {
+  animation-duration:5s;
+}
+
+@keyframes slide {
+  0% {
+    transform:translateX(-25%);
+  }
+  100% {
+    transform:translateX(25%);
+  }
+}
+
+
+.main_left {
+  background: rgba( 0, 0, 0, 0.65 );
+  /*box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );*/
+  backdrop-filter: blur( 4px );
+  -webkit-backdrop-filter: blur( 4px );
+  /*border-radius: 10px;*/
+  border: 1px solid rgba( 255, 255, 255, 0.18 );
+}
+
+
+
+/* 메인 글귀*/
+.content {
+  height: 10%;
+  overflow: hidden;
+  font-family: 'Lato', sans-serif;
+  font-size: 35px;
+  line-height: 40px;
+  color: #ecf0f1;
+}
+
+.content__container {
+  font-weight: 600;
+  overflow: hidden;
+  height: 40px;
+  padding: 0 65px;
+  position: relative; /* for pseudo-elements positioning */
+}
+
+.content__container:before {
+  content: '[';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #16a085;
+  font-size: 42px;
+  line-height: 40px;
+  animation-name: opacity;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+
+.content__container:after {
+  content: ']';
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: #16a085;
+  font-size: 42px;
+  line-height: 40px;
+  animation-name: opacity;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+
+.content__container__text {
+  /*display: inline;*/
+  /*float: left;*/
+  float: right;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  right: 10%;
+}
+
+.content__container__list {
+  margin-top: 0;
+  text-align: left;
+  list-style: none;
+  animation-name: change;
+  animation-duration: 10s; /* 5 steps, 2s each */
+  animation-iteration-count: infinite;
+}
+
+.content__container__list__item {
+  line-height: 40px;
+  margin: 0;
+}
+
+@-webkit-keyframes opacity {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@-webkit-keyframes change {
+  0%, 20%, 100% { transform: translate3d(0, 0, 0); }
+  25%, 45% { transform: translate3d(0, -33.33%, 0); }
+  50%, 70% { transform: translate3d(0, -66.66%, 0); }
+  75%, 95% { transform: translate3d(0, -33.33%, 0); }
+}
+
+@-o-keyframes opacity {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@-o-keyframes change {
+  0%, 20%, 100% { transform: translate3d(0, 0, 0); }
+  25%, 45% { transform: translate3d(0, -33.33%, 0); }
+  50%, 70% { transform: translate3d(0, -66.66%, 0); }
+  75%, 95% { transform: translate3d(0, -33.33%, 0); }
+}
+
+@-moz-keyframes opacity {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@-moz-keyframes change {
+  0%, 20%, 100% { transform: translate3d(0, 0, 0); }
+  25%, 45% { transform: translate3d(0, -33.33%, 0); }
+  50%, 70% { transform: translate3d(0, -66.66%, 0); }
+  75%, 95% { transform: translate3d(0, -33.33%, 0); }
+}
+
+@keyframes opacity {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@keyframes change {
+  0%, 20%, 100% { transform: translate3d(0, 0, 0); }
+  25%, 45% { transform: translate3d(0, -33.33%, 0); }
+  50%, 70% { transform: translate3d(0, -66.66%, 0); }
+  75%, 95% { transform: translate3d(0, -33.33%, 0); }
+}
+
+
+/* 링크 호버 */
+
+.text {
+  font-size: 18px;
+  margin: 0;
+  color: #2B3044;
+}
+
+.text .link {
+  display: inline-block;
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  margin: 0 0px; /* 초기값이 0px이므로 변수 제거 */
+  transition: margin .25s;
+}
+
+.text .link .icon {
+  width: 76px;
+  height: 40px;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 7px) translateZ(0);
+  fill: none;
+  stroke: #BBC1E1; /* 초기값인 --line 사용 */
+  stroke-linecap: round;
+  stroke-width: 2px;
+  stroke-dasharray: 69px 278px; /* 초기값이 69px이므로 변수 제거 */
+  stroke-dashoffset: 361px;
+  transition: stroke .25s ease 0s, stroke-dasharray .35s; /* 초기값인 0s 사용 */
+}
+
+.text .link:hover {
+  margin: 0 4px; /* 변수 제거 후 명시적으로 4px 적용 */
+}
+
+.text .link:hover .icon {
+  stroke: #275EFE; /* --line-active 사용 */
+  stroke-dasharray: 180px 278px; /* --offset 사용 */
+}
+
+
+
+@media (max-width: 1024px) {
+  .hide_1024 {
+    display: none;
+  }
+
+  .outlet_container {
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+  }
+}
+
+.hero {
+  position: relative;
+  background-image: url('/main_left_back.png'); /* public 폴더 기준 경로 */
+  background-size: cover; /* 이미지가 요소를 덮도록 조정 */
+  background-position: center; /* 이미지가 중앙에 위치하도록 설정 */
+  background-repeat: no-repeat; /* 이미지가 반복되지 않도록 설정 */
+
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.55); /* 검은색 반투명 배경 */
+  backdrop-filter: blur(5px); /* 블러 효과 추가 */
+  z-index: 1; /* 다른 요소들 뒤에 배치 */
+  border-radius: 10px 0 0 10px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2; /* 앞쪽에 배치하여 배경 위에 표시 */
+}
+
+/* 밑줄 */
+
+strong {
+  position: relative;
+}
+
+strong::after {
+  content: '';
+  position: absolute;
+  bottom: -0.125rem;
+  left: -0.5rem;
+  right: -0.5rem;
+  height: 0.75rem;
+  z-index: -1;
+  background-image: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/664131/underline.svg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+p > strong {
+  font-weight: 400;
+}
+
+p > strong::after {
+  bottom: -0.2rem;
+  height: 0.5rem;
+  left: -0.25rem;
+  right: -0.25rem;
+}

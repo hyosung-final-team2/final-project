@@ -42,14 +42,7 @@ const Login = () => {
   };
 
   return (
-    <div className='min-h-screen bg-base-200 flex items-center'>
-      <div className='card mx-auto w-full max-w-5xl  shadow-xl'>
-        <div className='grid  md:grid-cols-2 grid-cols-1  bg-base-100 rounded-xl'>
-          {/* 로그인 페이지 좌측 */}
-          <div className=''>
-            <LandingIntro />
-          </div>
-          {/* 로그인 페이지 우측 */}
+
           <div className='py-24 px-10'>
             <div className="w-full flex justify-center items-center gap-1">
               <img src='/fms_logo.png' alt='logo' className='w-14'/>
@@ -91,16 +84,14 @@ const Login = () => {
               </button>
 
               <div className='text-center mt-4'>
-                Don't have an account yet?{' '}
+                아직 계정이 없으신가요?
                 <Link to='/customer/register'>
-                  <span className=' text-main inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200'>Register</span>
+                  <span className=' text-main inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200 ml-2'> 회원가입</span>
                 </Link>
               </div>
             </form>
           </div>
-        </div>
-      </div>
-    </div>
+
   );
 };
 
