@@ -187,6 +187,7 @@ const PendingOrderTable = () => {
             allChecked={selectedPendingOrders.length === pendingOrderList.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
+            headerType='pendingOrders'
           />
           <UnifiedOrderTableBody
             dataList={pendingOrderList}

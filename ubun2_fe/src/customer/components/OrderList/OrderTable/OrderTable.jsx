@@ -153,6 +153,7 @@ const OrderTable = () => {
             allChecked={selectedOrders.length === orderList?.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
+            headerType="orders"
           />
           <UnifiedOrderTableBody
             dataList={orderList}

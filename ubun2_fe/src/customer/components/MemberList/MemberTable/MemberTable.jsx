@@ -147,7 +147,7 @@ const MemberTable = () => {
       {/* 테이블 */}
       <div className='px-4 shadow-md'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.member} allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
+          <TableHead tableColumns={tableColumn.member} headerType="member" allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
 
           <DynamicTableBody
             dataList={memberList}
