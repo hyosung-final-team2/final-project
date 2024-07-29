@@ -9,12 +9,9 @@ const ForgotLoginId = () => {
 
     return (
         <>
-
-                        <div className='py-24 px-10'>
-                            {/*<div className={registerStep === 4 ? 'py-44 px-10' : 'py-24 px-10'}>*/}
-                            {!isSuccess ? <FindLoginId setIsSuccess={setIsSuccess} setFindId={setFindId}/> : <FindLoginIdResult findId={findId}/>}
-                        </div>
-
+            <div className='py-24 px-10'>
+                {!isSuccess ? <FindLoginId setIsSuccess={setIsSuccess} setFindId={setFindId}/> : <FindLoginIdResult findId={findId}/>}
+            </div>
         </>
     )
 }

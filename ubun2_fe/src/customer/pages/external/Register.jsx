@@ -1,4 +1,3 @@
-import LandingIntro from '../../components/Login/LandingIntro';
 import RegisterFirstStep from '../../components/Register/RegisterFirstStep';
 import RegisterSecondStep from '../../components/Register/RegisterSecondStep';
 import RegisterThirdStep from '../../components/Register/RegisterThirdStep';
@@ -33,12 +32,10 @@ const Register = () => {
 
   return (
     <>
-
-            <div className={registerStep === 4 ? 'py-44 px-10' : 'py-24 px-10'}>
-              {registerStep !== 4 && <RegisterStepBar registerStep={registerStep} />}
-              {renderStepComponent()}
-            </div>
-
+      <div className={registerStep === 4 ? 'py-44 px-10' : 'py-24 px-10'}>
+          {registerStep !== 4 && <RegisterStepBar registerStep={registerStep} />}
+          {renderStepComponent()}
+      </div>
     </>
   );
 };

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import LandingIntro from '../../components/Login/LandingIntro';
 import InputText from '../../components/common/Input/InputText';
 import { useLogin } from '../../api/common/Login/queris.js';
 import { useLocation, useNavigate } from 'react-router-dom';
