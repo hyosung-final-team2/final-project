@@ -4,11 +4,13 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
+import kr.or.kosa.ubun2_be.domain.product.enums.OrderProductStatus;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
@@ -206,5 +208,38 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                         .and(order.createdAt.between(startDate, endDate))
                         .and(order.orderStatus.eq(OrderStatus.APPROVED)))
                 .fetch();
+    }
+
+    @Override
+    public Long countOrdersByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+
+        JPQLQuery<Long> query = from(order)
+                .join(order.member, member)
+                .join(member.memberCustomers, memberCustomer)
+                .join(memberCustomer.customer, customer)
+                .where(customer.customerId.eq(customerId)
+                        .and(order.createdAt.between(startDate, endDate))
+                        .and(order.orderStatus.eq(OrderStatus.APPROVED)))
+                .select(order.countDistinct());
+
+        return query.fetchOne() != null ? query.fetchOne() : Long.valueOf(0L);
+    }
+
+    @Override
+    public Long sumOrderTotalByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+        JPQLQuery<Long> query = from(order)
+                .join(order.orderProducts, orderProduct)
+                .join(order.member, member)
+                .join(member.memberCustomers, memberCustomer)
+                .join(memberCustomer.customer, customer)
+                .where(customer.customerId.eq(customerId)
+                        .and(order.createdAt.between(startDate, endDate))
+                        .and(order.orderStatus.eq(OrderStatus.APPROVED))
+                        .and(orderProduct.orderProductStatus.eq(OrderProductStatus.APPROVED)))
+                .select(orderProduct.price.multiply(
+                                Expressions.asNumber(1).subtract(orderProduct.discount.divide(100.0)))
+                        .multiply(orderProduct.quantity).sum().longValue());
+
+        return query.fetchOne() != null ? query.fetchOne() : Long.valueOf(0L);
     }
 }
