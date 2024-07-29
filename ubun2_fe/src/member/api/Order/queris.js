@@ -37,10 +37,9 @@ export const useGetOrderList = () => {
   });
 };
 
-export const useGetOrderDetail = (customerId, orderId) => {
-  console.log(customerId, orderId);
+export const useGetOrderDetail = orderId => {
   return useQuery({
-    queryKey: ['orders', customerId, orderId],
+    queryKey: ['orderdetail', orderId],
     queryFn: () => getOrderDetail(orderId),
     enabled: !!orderId,
   });
@@ -57,10 +56,14 @@ export const useGetSubscriptionOrderDetail = subscriptionOrderId => {
 export const useUpdateCancelOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ customerId, orderId }) => updateOrderCancel({ customerId, orderId }),
-    onSuccess: ({ customerId, orderId }) => {
-      queryClient.invalidateQueries({ queryKey: ['orders', customerId, orderId] });
-      toast.success('주문이 성공적으로 취소되었습니다.', successToastStyle);
+    mutationFn: data => updateOrderCancel(data),
+    onSuccess: (_, variables) => {
+      // variables에서 orderId를 가져옴
+      const { orderId } = variables;
+      if (orderId) {
+        queryClient.invalidateQueries({ queryKey: ['orderdetail', String(orderId)] });
+        toast.success('주문이 성공적으로 취소되었습니다.', successToastStyle);
+      }
     },
     onError: error => {
       toast.error('주문 취소에 실패했습니다. 다시 시도해주세요.', errorToastStyle);
@@ -73,9 +76,13 @@ export const useUpdateSubscriptionCancelOrder = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: data => updateSubscriptionCancel(data),
-    onSuccess: ({ subscriptionOrderId }) => {
-      queryClient.invalidateQueries({ queryKey: ['subscriptionOrder', subscriptionOrderId] });
-      toast.success('정기주문 상품이 수정되었습니다.', successToastStyle);
+    onSuccess: (_, variables) => {
+      // variables에서 orderId를 가져옴
+      const { orderId } = variables;
+      if (orderId) {
+        queryClient.invalidateQueries({ queryKey: ['subscriptionOrder', String(orderId)] });
+        toast.success('정기주문 상품이 수정되었습니다.', successToastStyle);
+      }
     },
     onError: error => {
       toast.error('정기주문 상품 수정에 실패했습니다. 다시 시도해주세요.', successToastStyle);
