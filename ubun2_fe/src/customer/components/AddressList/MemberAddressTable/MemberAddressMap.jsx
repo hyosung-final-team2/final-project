@@ -2,14 +2,16 @@ import React from 'react';
 import { useKakaoLoader, Map, MapMarker, CustomOverlayMap } from 'react-kakao-maps-sdk';
 import { useKakaoAddressSearch } from '../../../api/Address/AddressModal/kakaoAddressSearch';
 
-const MemberAddressMap = ({ address }) => {
+const MemberAddressMap = ({ address = '' }) => {
   const APIKEY = import.meta.env.VITE_KAKAO_API_KEY;
   const [loading, error] = useKakaoLoader({
     appkey: APIKEY,
   });
 
-  const [zipNo, ...rest] = address?.split(',');
-  const query = rest.join(' ');
+  // address가 유효한 문자열인지 확인
+  const addressParts = address ? address.split(',') : [];
+  const zipNo = addressParts[0] || '';
+  const query = addressParts.slice(1).join(' ').trim();
 
   const { data, isLoading: isAddressLoading, error: addressError } = useKakaoAddressSearch(query);
 
