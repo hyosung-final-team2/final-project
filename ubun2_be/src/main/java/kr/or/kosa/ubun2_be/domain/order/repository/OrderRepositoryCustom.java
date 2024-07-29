@@ -23,5 +23,8 @@ public interface OrderRepositoryCustom {
 
     List<Address> findAddressesByDateRange(Long customerId, LocalDateTime startDate, LocalDateTime endDate);
 
+    Long countOrdersByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+
+    Long sumOrderTotalByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
 
 }
