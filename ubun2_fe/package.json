@@ -39,7 +39,7 @@
     "react-simple-maps": "^3.0.0",
     "react-tailwindcss-datepicker": "^1.6.0",
     "react-tooltip": "^5.27.1",
-    "recharts": "^2.12.7",
+    "recharts": "^2.13.0-alpha.4",
     "theme-change": "^2.2.0",
     "use-detect-keyboard-open": "^0.4.0",
     "vite-plugin-svgr": "^4.2.0",

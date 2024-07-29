@@ -32,7 +32,7 @@ import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QPaymentMethod.pay
 @Repository
 public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport implements PaymentMethodRepositoryCustom {
 
-    private static final List<String> CARD_SEARCH_FIELDS = List.of("memberEmail","memberName","paymentType","cardCompanyName","cardNumber");
+    private static final List<String> CARD_SEARCH_FIELDS = List.of("memberEmail","memberName","paymentType","cardCompany","cardNumber");
     private static final List<String> ACCOUNT_SEARCH_FIELDS = List.of("memberEmail","memberName","paymentType","bankName","accountNumber");
 
     public PaymentMethodRepositoryImpl() {
@@ -50,7 +50,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
                 .where(paymentMethod.paymentType.eq(String.valueOf(PaymentMethodOption.CARD)).and(memberCustomer.customer.customerId.eq(customerId)),paymentMethodSearch(searchRequest,PaymentMethodOption.CARD))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(paymentMethodSort(pageable).stream().toArray(OrderSpecifier[]::new))
+                .orderBy(paymentMethodSort(pageable).toArray(OrderSpecifier[]::new))
                 .fetchResults();
 
         long total = results.getTotal();
@@ -87,7 +87,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
                 .where(paymentMethod.paymentType.eq(String.valueOf(PaymentMethodOption.ACCOUNT)).and(memberCustomer.customer.customerId.eq(customerId)),paymentMethodSearch(searchRequest,PaymentMethodOption.ACCOUNT))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .orderBy(paymentMethodSort(pageable).stream().toArray(OrderSpecifier[]::new))
+                .orderBy(paymentMethodSort(pageable).toArray(OrderSpecifier[]::new))
                 .fetchResults();
 
         long total = results.getTotal();
@@ -104,7 +104,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
             case "bankName" -> accountPayment.bankName;
             case "accountNumber" -> accountPayment.accountNumber;
             case "cardNumber" -> cardPayment.cardNumber;
-            case "cardCompanyName" -> cardPayment.cardCompanyName;
+            case "cardCompany" -> cardPayment.cardCompanyName;
             default -> null;
         };
     }
