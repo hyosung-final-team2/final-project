@@ -23,11 +23,11 @@ public class SubscriptionOrderRequest {
     @Positive
     private Long addressId;
 
-    @NotNull(message = "배송주기를 입력해주세요")
+    @Min(value = 0, message = "배송주기는 0 이상이어야 합니다.")
     private int intervalDays;
 
     @NotEmpty(message = "주문 상품 ID 목록은 비어있을 수 없습니다.")
     @Size(min = 1, message = "최소 하나 이상의 상품 ID가 필요합니다.")
-    private List<@Positive(message = "상품 ID는 양수여야 합니다.")SubscriptionOrderProductRequest> subscriptionOrderProducts;
+    private List<SubscriptionOrderProductRequest> subscriptionOrderProducts;
 
 }
