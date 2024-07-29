@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getMypage, updateMypage } from './mypage';
 
 export const useGetMypage = () => {
@@ -12,7 +12,7 @@ export const useGetMypage = () => {
 export const useUpdateMypage = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: mypageData => updateMypage(mypageData),
+    mutationFn: ({ myPageUpdateRequest, imageFile }) => updateMypage(myPageUpdateRequest, imageFile),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mypage'] });
     },
