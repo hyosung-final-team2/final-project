@@ -7,15 +7,22 @@ import ToggleButton from '../../common/ToggleButon/ToggleButton.jsx';
 const SkeletonAddressTableFeature = () => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const paymentMethodType = paymentMethodStore(state => state.paymentMethodType);
+  const isAccount = paymentMethodType === 'ACCOUNT';
+
   const items = [
     { value: 'ACCOUNT', label: '계좌' },
     { value: 'CARD', label: '카드' },
   ];
+
+  const accountStyle = isAccount ? 'text-red-600 font-bold' : 'text-black';
+  const cardStyle = isAccount ? 'text-black' : 'text-red-600 font-bold';
   return (
     <div className='flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4 bg-white dark:bg-gray-900'>
       <div className='flex space-x-5 items-center'>
         <SearchBarWithDrop tableColumns={paymentMethodType === 'ACCOUNT' ? tableColumn.paymentMethod.accountList : tableColumn.paymentMethod.cardList} />
-        <ToggleButton label={paymentMethodType === 'ACCOUNT' ? '계좌' : '카드'} items={items} />
+        <div className={accountStyle}>계좌</div>
+        <ToggleButton items={items} />
+        <div className={cardStyle}>카드</div>
       </div>
       <div className='flex space-x-2 items-center'>
         <button className='btn btn-ghost btn-sm normal-case'>
