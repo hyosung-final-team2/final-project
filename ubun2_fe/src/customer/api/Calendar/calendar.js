@@ -6,3 +6,10 @@ export const getCalendarOrders = async (year,month) => await privateFetch.get("/
         month
     }
 })
+
+export const getMonthSummary = async (year,month) => await privateFetch.get("/calendar/summary", {
+    params : {
+        year,
+        month
+    }
+})

@@ -1,5 +1,4 @@
 import {useState} from "react";
-import LandingIntro from "../../components/Login/LandingIntro.jsx";
 import FindLoginId from "../../components/ForgotLoginId/FindLoginId.jsx";
 import FindLoginIdResult from "../../components/ForgotLoginId/FindLoginIdResult.jsx";
 
