@@ -168,12 +168,10 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         if ("CARD".equals(registerPaymentMethodRequest.getPaymentType())) {
             //결제수단 카드일때 검증
             if (registerPaymentMethodRequest.getCardNumber() == null || registerPaymentMethodRequest.getCardCompanyName() == null || registerPaymentMethodRequest.getCardPassword() == null || registerPaymentMethodRequest.getCvc() == null|| registerPaymentMethodRequest.getCardExpirationDate() == null) {
-                System.out.println("data sufficient");
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
             }
             //카드번호 16자리 숫자 정규식 검증
             if (!isValidCardNumber(registerPaymentMethodRequest.getCardNumber())) {
-                System.out.println("number exception");
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_NUMBER);
             }
 
@@ -184,19 +182,16 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
             // 카드사명 검증
             if(!registerPaymentMethodRequest.getCardCompanyName().equals(card.getCardCompanyName())) {
-                System.out.println("company exception");
                 throw new PaymentMethodException(PaymentMethodExceptionType.NO_MATCHING_CARD_COMPANY);
             }
 
             // 카드 비밀번호 검증
             if (!passwordEncoder.matches(registerPaymentMethodRequest.getCardPassword(), card.getCardPassword())) {
-                System.out.println("password exception");
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_PASSWORD);
             }
 
             // CVC 검증
             if(!passwordEncoder.matches(registerPaymentMethodRequest.getCvc(), card.getCvc())) {
-                System.out.println("cvc exception");
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CVC);
             }
 
@@ -205,13 +200,11 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             String formattedExpiryDate = card.getExpiryDate().format(formatter);
 
             if (!registerPaymentMethodRequest.getCardExpirationDate().equals(formattedExpiryDate)){
-                System.out.println("date exception"+ registerPaymentMethodRequest.getCardExpirationDate());
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
             }
 
             // 만료일 검증
             if( card.getExpiryDate().isBefore(LocalDateTime.now())) {
-                System.out.println("date exception2");
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
             }
 
@@ -227,7 +220,6 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         } else if ("ACCOUNT".equals(registerPaymentMethodRequest.getPaymentType())) {
             //결제수단 계좌일때 검증
             if (registerPaymentMethodRequest.getAccountNumber() == null || registerPaymentMethodRequest.getBankName() == null) {
-                System.out.println("data sufficient");
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_INFO);
             }
             //계좌번호 11~14자리 규식 검증
@@ -240,19 +232,16 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
             // 은행명 검증
             if(!registerPaymentMethodRequest.getBankName().equals(account.getBankName())) {
-                System.out.println("bank exception");
                 throw new PaymentMethodException(PaymentMethodExceptionType.NO_MATCHING_BANK);
             }
 
             // 계좌 비밀번호 검증
             if(!passwordEncoder.matches(registerPaymentMethodRequest.getAccountPassword(), account.getAccountPassword())) {
-                System.out.println("password exception");
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_PASSWORD);
             }
 
             // 계좌 상태 검증
             if(!account.isAccountStatus()) {
-                System.out.println("status exception");
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_STATUS);
             }
 
@@ -324,8 +313,6 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     private void validateMyMember(Long customerId, Long memberId) {
-        System.out.println("customerId: " + customerId);
-        System.out.println("memberId: " + memberId);
         if (!paymentMethodRepository.checkIsMyMember(customerId, memberId)) {
             throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
         }
@@ -340,7 +327,6 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     @Override
     public boolean hasPaymentPassword(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
-        System.out.println("member.getPaymentPassword() = " + member.getPaymentPassword());
         return member.getPaymentPassword() != null;
     }
 
