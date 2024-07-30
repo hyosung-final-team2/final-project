@@ -3,8 +3,10 @@ package kr.or.kosa.ubun2_be.domain.order.dto;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class CancelOrderRequest {
 
     @NotNull(message = "customerId는 필수값입니다.")
