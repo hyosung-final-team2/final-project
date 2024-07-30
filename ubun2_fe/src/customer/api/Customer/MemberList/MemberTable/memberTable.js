@@ -24,3 +24,5 @@ export const getMemberDetail = async (memberId,pending) => await privateFetch.ge
 })
 
 export const sendSms = async nameAndPhoneNumbers => await privateFetch.post(`/customers/sms`, nameAndPhoneNumbers)
+
+export const deleteSelectedMember = async selectedMemberList => await privateFetch.delete('/customers/members/selected', {data: selectedMemberList})

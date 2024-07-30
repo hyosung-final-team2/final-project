@@ -2,7 +2,7 @@ import SearchBarWithDrop from '../../common/SearchBar/SearchBarWithDrop';
 import {useSendSms} from "../../../api/Customer/MemberList/MemberTable/queris.js";
 import ArrowPathIcon from "@heroicons/react/24/outline/ArrowPathIcon.js";
 
-const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegisterModal,selectedMembers, handleDataReset }) => {
+const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegisterModal,selectedMembers, handleDataReset, selectedMemberDeleteMutate }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
   const {mutate: smsMutate} = useSendSms(selectedMembers)
@@ -57,7 +57,7 @@ const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegis
                 className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`}>
           회원 등록
         </button>
-        <button className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제
+        <button onClick={() => selectedMemberDeleteMutate()} className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제
         </button>
       </div>
     </div>

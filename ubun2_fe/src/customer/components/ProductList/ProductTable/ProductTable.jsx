@@ -45,7 +45,7 @@ const ProductTable = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['product', nextPage, sort, searchCategory, searchKeyword],
+        queryKey: ['product', {page:nextPage, sort, searchCategory, searchKeyword}],
         queryFn: () => getProducts(nextPage,PAGE_SIZE),
       });
     }

@@ -1,5 +1,3 @@
-// import MemberTableFeature from "../MemberTable/MemberTableFeature.jsx";
-import {tableColumn} from "../common/Table/tableIndex.js";
 import {Table} from "flowbite-react";
 import {customTableTheme} from "../common/Table/tableStyle.js";
 
@@ -11,7 +9,6 @@ import useSkeletonStore from "../../store/skeletonStore.js";
 const SkeletonTable = ({SkeletonTableFeature, TableRowComponent, tableColumns}) => {
 
     const {skeletonData, skeletonTotalPage} = useSkeletonStore()
-    console.log(skeletonData)
 
     return (
         <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
