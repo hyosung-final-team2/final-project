@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useSetDefaultPayment } from '../../api/Payment/queries';
 
-const PaymentItem = ({ icon, title, subtitle, selected = false, checkedIcon, isEdit, onClick, onTitleChange }) => {
+const PaymentItem = ({ icon, title, subtitle, selected = false, checkedIcon, isEdit, onClick, onTitleChange, paymentMethodId }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(title);
   const [isError, setIsError] = useState(false);
   const inputRef = useRef(null);
+  const { mutate: setDefaultPayment } = useSetDefaultPayment();
 
   useEffect(() => {
     setEditedTitle(title);
@@ -43,12 +45,17 @@ const PaymentItem = ({ icon, title, subtitle, selected = false, checkedIcon, isE
     }
   };
 
-  const handleFocus = () => {
+  const handleFocus = e => {
+    e.stopPropagation();
     setIsError(false);
   };
 
+  const handleMakeDefault = () => {
+    setDefaultPayment(paymentMethodId);
+  };
+
   return (
-    <div className='flex items-center p-4' onClick={onClick}>
+    <div className='flex items-center p-4 ' onClick={onClick}>
       <div className='mr-5 flex-shrink-0'>{icon}</div>
       <div>
         <div className='flex pb-1'>
@@ -64,7 +71,14 @@ const PaymentItem = ({ icon, title, subtitle, selected = false, checkedIcon, isE
               className={`text-xl font-bold border-none focus:text-gray-600 focus:ring-0 p-0 m-0 ${isError ? 'border-2 border-red-500 rounded' : ''}`}
             />
           ) : (
-            <p className='text-xl font-bold'>{editedTitle}</p>
+            <div>
+              <p className='text-xl font-bold'>{editedTitle}</p>
+              {isEdit && (
+                <div className='absolute border-b border-gray-300 text-gray-500 top-[17%] right-10 cursor-pointer' onClick={handleMakeDefault}>
+                  기본으로 설정
+                </div>
+              )}
+            </div>
           )}
           {isEdit && !isEditing && (
             <svg

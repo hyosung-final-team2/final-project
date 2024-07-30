@@ -16,6 +16,7 @@ import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
 import { maskCardNumber } from '../../../customer/utils/cardFormat';
 import { maskAccountNumber } from '../../../customer/utils/accountFormat';
+import { useSetDefaultAddressStatus } from '../../api/Address/queries';
 
 const OrderComplete = () => {
   const { selectedItems, totals, clearCart } = useOrderItemsStore();
@@ -29,6 +30,7 @@ const OrderComplete = () => {
   const { modalState, setModalState } = useModalStore();
   const modalButtonStyle = 'bg-gray-600 text-white';
   const secondModalButtonStyle = 'bg-red-700 text-white';
+  const { mutate: setDefaultAddress } = useSetDefaultAddressStatus();
 
   const paymentInfo =
     selectedPaymentMethodType === 'CARD'
@@ -48,6 +50,7 @@ const OrderComplete = () => {
     }));
 
     await createOrder(orderDataWithPayment);
+    setDefaultAddress(selectedAddressId);
     resetOrderData();
     clearCart();
   };

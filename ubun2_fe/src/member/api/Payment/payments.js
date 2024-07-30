@@ -9,7 +9,6 @@ export const getAccounts = async () => {
 };
 
 export const checkIfPasswordExists = async () => {
-  console.log('checkIfPasswordExists');
   return await privateFetch.get('/members/payments/password');
 };
 
@@ -40,4 +39,8 @@ export const checkPassword = async paymentPassword => {
 
 export const setNewPassword = async paymentPassword => {
   return await privateFetch.post('/members/simplepassword', { paymentPassword });
+};
+
+export const setDefaultPayment = async paymentId => {
+  return await privateFetch.put(`/members/payments/default/${paymentId}`);
 };

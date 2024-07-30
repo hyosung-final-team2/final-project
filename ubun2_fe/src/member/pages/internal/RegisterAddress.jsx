@@ -122,7 +122,7 @@ const RegisterAddress = () => {
         address: `${addressData.zipNo.trim()},${city},${town},${rest.join(' ')} ${addressData.detailAddress}`,
         recipientName: addressData.recipientName,
         recipientPhone: addressData.phoneNumber,
-        addressNickname: addressData.name,
+        addressNickname: addressData.name || `${addressData.recipientName}님의 배송지`,
       };
       if (isRegister) {
         registerAddress(data, {

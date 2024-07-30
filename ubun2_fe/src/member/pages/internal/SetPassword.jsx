@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCheckPassword, useSetNewPassword } from '../../api/Payment/queries';
 import SetPasswordKeypad from '../../components/PaymentMethod/SetPasswordKeypad';
 import usePaymentStore from '../../store/Payment/PaymentStore';
+import { useLocation } from 'react-router-dom';
 
 const SetPassword = () => {
   const [step, setStep] = useState('initial');
@@ -17,6 +18,8 @@ const SetPassword = () => {
   const { mutateAsync: checkPassword } = useCheckPassword();
   const { mutateAsync: setNewPasswordMutation } = useSetNewPassword();
   const { isEditPassword, resetEditPassword } = usePaymentStore();
+  const location = useLocation();
+  const { from } = location.state || { from: { pathname: '/member/app/mypage/payment-list' } };
 
   // 비밀번호 변경 페이지 진입 시, 현재 비밀번호 입력부터 시작
   // 비밀번호가 없을때 새 비밀번호 입력부터 시작
@@ -68,7 +71,9 @@ const SetPassword = () => {
           await setNewPasswordMutation(newPassword);
           resetEditPassword();
           resetErrorCount();
-          navigate('/member/app/mypage/payment-list');
+          navigate(from, { replace: true });
+
+          //여기 처리
         } catch (error) {
           console.error('Setting new password failed:', error);
           setErrorMessage('새 비밀번호 설정 중 오류가 발생했습니다.');

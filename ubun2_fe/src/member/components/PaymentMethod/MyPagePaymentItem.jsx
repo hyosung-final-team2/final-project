@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatBankAccount } from '../../../customer/utils/accountFormat';
 
 const MyPagePaymentItem = ({ payment, path, selected = false, setIsModalOpen, setIsEdit, setSelectedItem }) => {
   const handleOnButtonClick = e => {
@@ -16,9 +17,9 @@ const MyPagePaymentItem = ({ payment, path, selected = false, setIsModalOpen, se
 
   const getPaymentInfo = () => {
     if (payment?.paymentType === 'CARD') {
-      return `${payment?.cardCompanyName} ${payment?.cardNumber}`;
+      return `${payment?.cardCompanyName} ${payment?.cardNumber?.slice(-4).replace(/\d{2}$/, '**')}`;
     } else if (payment?.paymentType === 'ACCOUNT') {
-      return `${payment?.bankName} ${payment?.accountNumber}`;
+      return `${payment?.bankName} ${formatBankAccount(payment?.bankName.slice(0, -2), payment?.accountNumber)}`;
     }
     return '';
   };

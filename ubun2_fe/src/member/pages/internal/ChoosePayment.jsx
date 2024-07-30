@@ -31,7 +31,7 @@ const ChoosePayment = () => {
 
   const handleBottomButtonClick = () => {
     if (!isPasswordSet) {
-      navigate('/member/app/password');
+      navigate('/member/app/password/set', { state: { from: '/member/app/payments' } });
     }
   };
 
@@ -89,9 +89,15 @@ const ChoosePayment = () => {
     setIsModalOpen(false);
   }, [navigate]);
 
-  const handleOrder = useCallback(() => {
+  const handleOrder = () => {
     if (!selectedPaymentMethodId) {
       toast.error('결제 수단을 선택해주세요.', errorToastStyle);
+      return;
+    }
+
+    if (!isPasswordSet) {
+      toast.error('결제 비밀번호를 설정해주세요.', errorToastStyle);
+      navigate('/member/app/password/set', { state: { from: '/member/app/payments' } });
       return;
     }
 
@@ -106,7 +112,7 @@ const ChoosePayment = () => {
 
     // 비밀번호 입력 페이지로 이동
     navigate('/member/app/password');
-  }, [selectedPaymentMethodId, selectedPaymentMethod, orderData, setOrderData, navigate]);
+  };
 
   return (
     <div className='flex flex-col h-full bg-gray-100'>
@@ -125,7 +131,7 @@ const ChoosePayment = () => {
                   {selectedPaymentMethod
                     ? selectedPaymentMethod.type === 'ACCOUNT'
                       ? `${selectedPaymentMethod.bankName} ${selectedPaymentMethod.accountNumber}`
-                      : `${selectedPaymentMethod.cardCompanyName} ${selectedPaymentMethod.cardNumber}`
+                      : `${selectedPaymentMethod.cardCompanyName} ${selectedPaymentMethod.cardNumber.slice(-4).replace(/\d{2}$/, '**')}`
                     : '결제 수단이 없습니다'}
                 </p>
               </div>

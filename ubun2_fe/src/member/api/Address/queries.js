@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getMyAddresses, registerAddress, deleteAddress, updateAddress } from './addresses';
+import { getMyAddresses, registerAddress, deleteAddress, updateAddress, setDefaultAddress } from './addresses';
 
 export const useGetMyAddresses = memberId => {
   return useQuery({
@@ -39,6 +39,20 @@ export const useDeleteAddress = () => {
 
   return useMutation({
     mutationFn: addressId => deleteAddress(addressId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['myAddresses'] });
+    },
+    onError: error => {
+      console.log('error', error);
+    },
+  });
+};
+
+export const useSetDefaultAddressStatus = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: addressId => setDefaultAddress(addressId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myAddresses'] });
     },
