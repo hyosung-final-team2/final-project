@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.alarm.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.GroupAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.PersonalAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.entity.Alarm;
@@ -20,13 +21,14 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class AlarmControllerTest {
+class AlarmControllerTest extends CommonTestSetup {
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,6 +47,7 @@ class AlarmControllerTest {
         when(alarmService.sendMessageToPersonal(any(PersonalAlarmSendRequest.class))).thenReturn("messageId");
 
         mockMvc.perform(post("/api/customers/alarm/personal")
+                        .with(user(customer))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -60,6 +63,7 @@ class AlarmControllerTest {
         GroupAlarmSendRequest request = new GroupAlarmSendRequest(1L,"알림제목","알림내용","알림 링크");
 
         mockMvc.perform(post("/api/customers/alarm/group")
+                        .with(user(customer))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -76,7 +80,8 @@ class AlarmControllerTest {
 
         when(alarmService.getMemberPushMessages(memberId)).thenReturn(alarms);
 
-        mockMvc.perform(get("/api/members/alarm/{memberId}", memberId))
+        mockMvc.perform(get("/api/members/alarm/{memberId}", memberId)
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("메시지 조회 성공"))
@@ -91,7 +96,8 @@ class AlarmControllerTest {
         Long memberId = 1L;
         String alarmId = "member_alarm:"+memberId;
 
-        mockMvc.perform(delete("/api/members/alarm/{memberId}/{alarmId}", memberId, alarmId))
+        mockMvc.perform(delete("/api/members/alarm/{memberId}/{alarmId}", memberId, alarmId)
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("알림 읽음 처리 완료"));
@@ -107,7 +113,8 @@ class AlarmControllerTest {
 
         when(alarmService.getCustomerPushMessages(customerId)).thenReturn(alarms);
 
-        mockMvc.perform(get("/api/customers/alarm/{customerId}", customerId))
+        mockMvc.perform(get("/api/customers/alarm/{customerId}", customerId)
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("메시지 조회 성공"))
@@ -122,7 +129,8 @@ class AlarmControllerTest {
         Long customerId = 1L;
         String alarmId = "alarm:"+customerId;
 
-        mockMvc.perform(delete("/api/customers/alarm/{customerId}/{alarmId}", customerId, alarmId))
+        mockMvc.perform(delete("/api/customers/alarm/{customerId}/{alarmId}", customerId, alarmId)
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("고객 알림 읽음 처리 완료"));

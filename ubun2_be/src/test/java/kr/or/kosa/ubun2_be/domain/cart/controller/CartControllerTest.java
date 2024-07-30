@@ -57,14 +57,14 @@ class CartControllerTest extends CommonTestSetup {
         List<CartRequest> cartRequests = Arrays.asList(cartRequest);
 
         mockMvc.perform(post("/api/members/carts")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(cartRequests)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(cartService).createCarts(eq(customUserDetails.getUserId()), anyList());
+        verify(cartService).createCarts(eq(member.getUserId()), anyList());
     }
 
     @Test
@@ -73,13 +73,13 @@ class CartControllerTest extends CommonTestSetup {
         when(cartService.getCarts(anyLong())).thenReturn(cartResponses);
 
         mockMvc.perform(get("/api/members/carts")
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(cartService).getCarts(eq(customUserDetails.getUserId()));
+        verify(cartService).getCarts(eq(member.getUserId()));
     }
 
     @Test
@@ -100,14 +100,14 @@ class CartControllerTest extends CommonTestSetup {
         List<CartProductUpdateRequest> updateRequests = Arrays.asList(updateRequest);
 
         mockMvc.perform(put("/api/members/carts")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequests)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(cartService).updateCartProductQuantities(eq(customUserDetails.getUserId()), anyList());
+        verify(cartService).updateCartProductQuantities(eq(member.getUserId()), anyList());
     }
 
     @Test
@@ -129,13 +129,13 @@ class CartControllerTest extends CommonTestSetup {
         List<CartProductDeleteRequest> deleteRequests = Arrays.asList(deleteRequest);
 
         mockMvc.perform(delete("/api/members/carts")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(deleteRequests)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(cartService).deleteCartProducts(eq(customUserDetails.getUserId()), anyList());
+        verify(cartService).deleteCartProducts(eq(member.getUserId()), anyList());
     }
 }

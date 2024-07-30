@@ -66,7 +66,7 @@ class MemberAddressControllerTest extends CommonTestSetup {
         when(addressService.getAddressesByMemberId(anyLong())).thenReturn(myAddressResponses);
 
         mockMvc.perform(get("/api/members/addresses/")
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
@@ -75,7 +75,7 @@ class MemberAddressControllerTest extends CommonTestSetup {
                 .andExpect(jsonPath("$.data[0].address").value("서울시 강남구"))
                 .andExpect(jsonPath("$.message").value("주소 목록을 성공적으로 조회했습니다."));
 
-        verify(addressService).getAddressesByMemberId(eq(customUserDetails.getUserId()));
+        verify(addressService).getAddressesByMemberId(eq(member.getUserId()));
     }
 
     @Test
@@ -90,14 +90,14 @@ class MemberAddressControllerTest extends CommonTestSetup {
         doNothing().when(addressService).addMemberAddress(any(AddressRequest.class), anyLong());
 
         mockMvc.perform(post("/api/members/addresses/")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(addressRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("주소를 성공적으로 추가했습니다."));
 
-        verify(addressService).addMemberAddress(any(AddressRequest.class), eq(customUserDetails.getUserId()));
+        verify(addressService).addMemberAddress(any(AddressRequest.class), eq(member.getUserId()));
     }
 
     @Test
@@ -113,14 +113,14 @@ class MemberAddressControllerTest extends CommonTestSetup {
         doNothing().when(addressService).updateMemberAddress(anyLong(), any(AddressRequest.class), anyLong());
 
         mockMvc.perform(put("/api/members/addresses/{addressId}", addressId)
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(addressRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("주소를 성공적으로 수정했습니다."));
 
-        verify(addressService).updateMemberAddress(eq(addressId), any(AddressRequest.class), eq(customUserDetails.getUserId()));
+        verify(addressService).updateMemberAddress(eq(addressId), any(AddressRequest.class), eq(member.getUserId()));
     }
 
     @Test
@@ -130,11 +130,11 @@ class MemberAddressControllerTest extends CommonTestSetup {
         doNothing().when(addressService).deleteMemberAddress(anyLong(), anyLong());
 
         mockMvc.perform(delete("/api/members/addresses/{addressId}", addressId)
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("주소를 성공적으로 삭제했습니다."));
 
-        verify(addressService).deleteMemberAddress(eq(addressId), eq(customUserDetails.getUserId()));
+        verify(addressService).deleteMemberAddress(eq(addressId), eq(member.getUserId()));
     }
 }

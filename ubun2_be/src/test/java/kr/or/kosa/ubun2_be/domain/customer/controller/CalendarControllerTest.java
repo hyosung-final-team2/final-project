@@ -53,13 +53,14 @@ class CalendarControllerTest extends CommonTestSetup {
         mockMvc.perform(get("/api/calendar")
                         .param("year", "2024")
                         .param("month", "7")
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.message").value("주문 데이터 "));
 
-        verify(calendarService).getDailySalesForMonthAndCustomer(any(CalendarRequest.class), eq(customUserDetails.getUserId()));
+        verify(calendarService).getDailySalesForMonthAndCustomer(any(CalendarRequest.class), eq(customer.getUserId()));
+
     }
 
     @Test
@@ -72,12 +73,12 @@ class CalendarControllerTest extends CommonTestSetup {
         mockMvc.perform(get("/api/calendar/summary")
                         .param("year", "2024")
                         .param("month", "7")
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.message").value("월간 요약 데이터 "));
 
-        verify(calendarService).getMonthlySummary(any(CalendarRequest.class), eq(customUserDetails.getUserId()));
+        verify(calendarService).getMonthlySummary(any(CalendarRequest.class), eq(customer.getUserId()));
     }
 }

@@ -72,7 +72,7 @@ class ProductCustomerControllerTest extends CommonTestSetup {
                         .param("sort", "productName,desc")
                         .param("searchCategory", "상품명")
                         .param("searchKeyword", "복숭아")
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.content", hasSize(2)))
@@ -96,7 +96,7 @@ class ProductCustomerControllerTest extends CommonTestSetup {
 
         // when & then
         mockMvc.perform(get("/api/customers/products/" + productId)
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.productId").value(productId))
@@ -127,12 +127,12 @@ class ProductCustomerControllerTest extends CommonTestSetup {
         mockMvc.perform(multipart("/api/customers/products")
                         .file(image)
                         .file(productRequestPart)
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(productService).registerProduct(any(MultipartFile.class), eq(customUserDetails.getUserId()), any(ProductRequest.class));
+        verify(productService).registerProduct(any(MultipartFile.class), eq(customer.getUserId()), any(ProductRequest.class));
 
     }
 
@@ -157,7 +157,7 @@ class ProductCustomerControllerTest extends CommonTestSetup {
                             request.setMethod("PUT");
                             return request;
                         })
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -166,7 +166,7 @@ class ProductCustomerControllerTest extends CommonTestSetup {
     void removeProduct() throws Exception {
         // when & then
         mockMvc.perform(delete("/api/customers/products/1")
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -179,7 +179,7 @@ class ProductCustomerControllerTest extends CommonTestSetup {
 
         // when & then
         mockMvc.perform(get("/api/customers/products/category")
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -195,7 +195,7 @@ class ProductCustomerControllerTest extends CommonTestSetup {
         mockMvc.perform(delete("/api/customers/products/selected")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
