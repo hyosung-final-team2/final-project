@@ -55,7 +55,6 @@ const AddressInput = ({ disabled = false, infos, title }) => {
 
       try {
         const result = await waitForMessage();
-        console.log(result);
         setAddress(result);
         setFormData(prevFormData => ({
           ...prevFormData,
