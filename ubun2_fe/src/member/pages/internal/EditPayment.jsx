@@ -5,6 +5,8 @@ import BankAccountForm from '../../components/PaymentMethod/AccountForm';
 import { useRegisterPayment } from '../../api/Payment/queries';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { errorToastStyle } from '../../api/toastStyle';
 
 const PaymentMethodRegistration = () => {
   const [activeTab, setActiveTab] = useState('creditCard');
@@ -27,6 +29,20 @@ const PaymentMethodRegistration = () => {
     setFormData(data);
   };
 
+  const formatExpirationDate = value => {
+    if (!value) return ''; // 값이 없으면 빈 문자열 반환
+
+    // Remove any non-digit characters
+    const cleanValue = value.replace(/\D/g, '');
+
+    if (cleanValue.length >= 2) {
+      const month = cleanValue.slice(0, 2);
+      const year = cleanValue.slice(2, 4);
+      return `${month}/${year}`;
+    }
+
+    return cleanValue;
+  };
   const handleSubmit = () => {
     const paymentData = {
       paymentType: activeTab === 'creditCard' ? 'CARD' : 'ACCOUNT',
@@ -35,10 +51,23 @@ const PaymentMethodRegistration = () => {
       paymentMethodNickname: formData.paymentMethodNickname,
       bankName: formData.bankName ? `${formData.bankName}은행` : null,
       accountNumber: formData.accountNumber ?? null,
+      cvc: formData.cvc ?? null,
+      cardExpirationDate: formatExpirationDate(formData.expirationDate) ?? null,
+      cardPassword: formData.cardPassword ?? null,
+      accountPassword: formData.accountPassword ?? null,
     };
+
     registerPayment(paymentData, {
       onSuccess: () => {
         navigate(-1);
+      },
+      onError: e => {
+        const errorCode = e.response?.data?.errorCode;
+        if (errorCode !== 400 && errorCode !== 401 && errorCode !== 403) {
+          activeTab === 'creditCard'
+            ? toast.error('카드 정보를 다시 확인해주세요.', errorToastStyle)
+            : toast.error('계좌 정보를 다시 확인해주세요.', errorToastStyle);
+        }
       },
     });
   };

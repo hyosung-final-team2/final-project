@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 public class RegisterPaymentMethodRequest {
 
-
     private String cardCompanyName;
 
     @NotBlank(message = "결제수단 종류를 입력해주세요")
@@ -24,4 +23,12 @@ public class RegisterPaymentMethodRequest {
 
     @Pattern(regexp = "^\\d{3,6}-?\\d{2,6}-?\\d{3,6}$")
     private String accountNumber;
+
+    private String cardPassword;
+
+    private String accountPassword;
+
+    private String cardExpirationDate;
+
+    private String cvc;
 }

@@ -12,8 +12,8 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
     cardNumber: '',
     paymentMethodNickname: '',
     cardCompanyName: null,
-    // cardPassword: '',
-    // expirationDate: '',
+    cardPassword: '',
+    expirationDate: '',
   });
 
   const { modalState, setModalState } = useModalStore();
