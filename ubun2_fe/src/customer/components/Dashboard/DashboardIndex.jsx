@@ -9,7 +9,7 @@ import DashboardTopBar from './DashboardItem/DashboardTopBar';
 import DashboardLineChart from './DashboardItem/DashBoardLineChart';
 import DashboardPieChart from './DashboardItem/DashboardPieChart';
 import SidoMap from './DashboardItem/SidoMap';
-import DashboardAreaChart from './DashboardAreaChart';
+import DashboardAreaChart from './DashboardItem/DashboardAreaChart';
 import RecentOrdersTable from './DashboardItem/RecentOrdersTable/RecentOrders';
 import { useState, useCallback, useRef } from 'react';
 import {
@@ -87,7 +87,6 @@ const Dashboard = () => {
     if (!dashboardRef.current) return;
 
     try {
-      // oklch 색상을 사용하는 모든 요소를 임시로 변경
       const elementsWithOklch = dashboardRef.current.querySelectorAll('[style*="oklch"]');
       elementsWithOklch.forEach(el => {
         const style = window.getComputedStyle(el);
@@ -111,7 +110,6 @@ const Dashboard = () => {
         },
       });
 
-      // oklch 색상을 사용하는 요소들을 원래대로 복원
       elementsWithOklch.forEach(el => {
         el.style.backgroundColor = el.dataset.originalBg;
         delete el.dataset.originalBg;
