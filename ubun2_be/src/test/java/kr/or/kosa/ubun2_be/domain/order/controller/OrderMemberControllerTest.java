@@ -78,29 +78,29 @@ class OrderMemberControllerTest extends CommonTestSetup {
     @Test
     void validateOrders() throws Exception {
         mockMvc.perform(post("/api/members/orders/validate")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requests)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("유효성 검사 및 결제 확인 완료"));
 
-        verify(orderService).validateAndPrepareOrder(eq(customUserDetails.getUserId()), any(SubscriptionOrderRequest.class));
-        verify(subscriptionOrderService).validateAndPrepareSubscriptionOrder(eq(customUserDetails.getUserId()), anyList());
+        verify(orderService).validateAndPrepareOrder(eq(member.getUserId()), any(SubscriptionOrderRequest.class));
+        verify(subscriptionOrderService).validateAndPrepareSubscriptionOrder(eq(member.getUserId()), anyList());
     }
 
     @Test
     void registerOrders() throws Exception {
         mockMvc.perform(post("/api/members/orders")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requests)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).createSingleOrder(eq(customUserDetails.getUserId()), any(SubscriptionOrderRequest.class));
-        verify(subscriptionOrderService).createSubscriptionOrders(eq(customUserDetails.getUserId()), anyList());
+        verify(orderService).createSingleOrder(eq(member.getUserId()), any(SubscriptionOrderRequest.class));
+        verify(subscriptionOrderService).createSubscriptionOrders(eq(member.getUserId()), anyList());
 
     }
 
@@ -111,13 +111,13 @@ class OrderMemberControllerTest extends CommonTestSetup {
         when(orderService.getAllOrdersByMemberId(anyLong())).thenReturn(mockResponses);
 
         mockMvc.perform(get("/api/members/orders")
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).getAllOrdersByMemberId(eq(customUserDetails.getUserId()));
+        verify(orderService).getAllOrdersByMemberId(eq(member.getUserId()));
     }
 
     @Test
@@ -128,12 +128,12 @@ class OrderMemberControllerTest extends CommonTestSetup {
         when(orderService.getOrderByMemberIdAndOrderId(anyLong(), anyLong())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/members/orders/{order_id}", orderId)
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).getOrderByMemberIdAndOrderId(eq(customUserDetails.getUserId()), eq(orderId));
+        verify(orderService).getOrderByMemberIdAndOrderId(eq(member.getUserId()), eq(orderId));
     }
 
     @Test
@@ -144,12 +144,12 @@ class OrderMemberControllerTest extends CommonTestSetup {
         when(subscriptionOrderService.getSubscriptionOrderByMemberIdAndOrderId(anyLong(), anyLong())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/members/orders/subscription/{order_id}", orderId)
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(subscriptionOrderService).getSubscriptionOrderByMemberIdAndOrderId(eq(customUserDetails.getUserId()), eq(orderId));
+        verify(subscriptionOrderService).getSubscriptionOrderByMemberIdAndOrderId(eq(member.getUserId()), eq(orderId));
     }
 
     @Test
@@ -160,14 +160,14 @@ class OrderMemberControllerTest extends CommonTestSetup {
         cancelOrderRequest.setOrderId(2L);
 
         mockMvc.perform(post("/api/members/orders/cancel")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(cancelOrderRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터."));
 
-        verify(orderService).cancelOrder(eq(customUserDetails.getUserId()), any(CancelOrderRequest.class));
+        verify(orderService).cancelOrder(eq(member.getUserId()), any(CancelOrderRequest.class));
 
     }
 
@@ -179,13 +179,13 @@ class OrderMemberControllerTest extends CommonTestSetup {
         request.setSubscriptionOrderProductIds(Arrays.asList(1L, 2L));
 
         mockMvc.perform(post("/api/members/orders/subscription/remove")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(subscriptionOrderService).removeSubscriptionOrderProducts(eq(customUserDetails.getUserId()), any(RemoveSubscriptionOrderProductRequest.class));
+        verify(subscriptionOrderService).removeSubscriptionOrderProducts(eq(member.getUserId()), any(RemoveSubscriptionOrderProductRequest.class));
     }
 }

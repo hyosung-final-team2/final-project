@@ -2,9 +2,11 @@ package kr.or.kosa.ubun2_be.domain.customer.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class MemberDeleteRequest {
     @NotNull(message = "id는 필수값입니다.")
     @Positive

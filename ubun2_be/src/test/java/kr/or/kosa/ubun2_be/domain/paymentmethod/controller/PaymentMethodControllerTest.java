@@ -75,7 +75,7 @@ class PaymentMethodControllerTest extends CommonTestSetup {
                         .param("page", "0")
                         .param("size", "10")
                         .param("sort", "paymentMethodId,asc")
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.content").isArray())
@@ -122,7 +122,7 @@ class PaymentMethodControllerTest extends CommonTestSetup {
                         .param("page", "0")
                         .param("size", "10")
                         .param("sort", "paymentMethodId,asc")
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.content").isArray())
@@ -166,13 +166,13 @@ class PaymentMethodControllerTest extends CommonTestSetup {
                 ))
                 .build();
 
-        when(paymentMethodService.getPaymentMethodDetailByMemberId(eq(paymentMethodId), eq(customUserDetails.getUserId())))
+        when(paymentMethodService.getPaymentMethodDetailByMemberId(eq(paymentMethodId), eq(customer.getUserId())))
                 .thenReturn(response);
 
         // When & Then
         mockMvc.perform(get("/api/customers/payments/{payment_method_id}", paymentMethodId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.memberName").value("김철수"))
@@ -195,7 +195,7 @@ class PaymentMethodControllerTest extends CommonTestSetup {
                 .andExpect(jsonPath("$.message").value("결제수단 상세를 성공적으로 조회했습니다."));
 
         // Verify
-        verify(paymentMethodService).getPaymentMethodDetailByMemberId(eq(paymentMethodId), eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).getPaymentMethodDetailByMemberId(eq(paymentMethodId), eq(customer.getUserId()));
     }
 
     @Test
@@ -215,12 +215,12 @@ class PaymentMethodControllerTest extends CommonTestSetup {
         mockMvc.perform(post("/api/customers/payments/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("결제 수단이 성공적으로 등록되었습니다."));
 
-        verify(paymentMethodService).addPaymentMethod(any(PaymentMethodRequest.class),eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).addPaymentMethod(any(PaymentMethodRequest.class),eq(customer.getUserId()));
     }
 
 
@@ -234,12 +234,12 @@ class PaymentMethodControllerTest extends CommonTestSetup {
 
         // When & Then
         mockMvc.perform(delete("/api/customers/payments/{payment_method_id}", paymentMethodId)
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("주소가 성공적으로 삭제되었습니다."));
 
-        verify(paymentMethodService).deletePaymentMethod(eq(paymentMethodId), eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).deletePaymentMethod(eq(paymentMethodId), eq(customer.getUserId()));
     }
 
     @Test
@@ -262,12 +262,12 @@ class PaymentMethodControllerTest extends CommonTestSetup {
                         .build()
         );
 
-        when(paymentMethodService.getMemberPaymentMethods(eq(memberId), eq(customUserDetails.getUserId())))
+        when(paymentMethodService.getMemberPaymentMethods(eq(memberId), eq(customer.getUserId())))
                 .thenReturn(mockResponses);
 
         // When & Then
         mockMvc.perform(get("/api/customers/payments/member/{member_id}", memberId)
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
@@ -282,7 +282,7 @@ class PaymentMethodControllerTest extends CommonTestSetup {
                 .andExpect(jsonPath("$.data[1].accountNumber").value("987-654-32109"))
                 .andExpect(jsonPath("$.message").value("회원의 결제수단 목록을 성공적으로 조회했습니다."));
 
-        verify(paymentMethodService).getMemberPaymentMethods(eq(memberId), eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).getMemberPaymentMethods(eq(memberId), eq(customer.getUserId()));
     }
 
     @Test
@@ -294,18 +294,18 @@ class PaymentMethodControllerTest extends CommonTestSetup {
                 new PaymentMethodDeleteRequest(2L)
         );
 
-        doNothing().when(paymentMethodService).deleteSelectedPaymentMethod(anyList(), eq(customUserDetails.getUserId()));
+        doNothing().when(paymentMethodService).deleteSelectedPaymentMethod(anyList(), eq(customer.getUserId()));
 
         // When & Then
         mockMvc.perform(delete("/api/customers/payments/selected")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(deleteRequests))
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("주소가 성공적으로 삭제되었습니다."));
 
-        verify(paymentMethodService).deleteSelectedPaymentMethod(anyList(), eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).deleteSelectedPaymentMethod(anyList(), eq(customer.getUserId()));
     }
 
 }

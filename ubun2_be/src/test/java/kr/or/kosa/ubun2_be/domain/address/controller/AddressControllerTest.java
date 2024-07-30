@@ -85,7 +85,7 @@ class AddressControllerTest extends CommonTestSetup {
                         .param("page", "0")
                         .param("size", "10")
                         .param("sort", "addressId,desc")
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.content").isArray())
@@ -98,7 +98,7 @@ class AddressControllerTest extends CommonTestSetup {
                 .andExpect(jsonPath("$.data.totalPages").value(1))
                 .andExpect(jsonPath("$.message").value("주소 목록을 성공적으로 조회했습니다."));
 
-        verify(addressService).getAllAddresses(any(PageRequest.class),any(),eq(customUserDetails.getUserId()));
+        verify(addressService).getAllAddresses(any(PageRequest.class),any(),eq(customer.getUserId()));
     }
 
     @Test
@@ -123,7 +123,7 @@ class AddressControllerTest extends CommonTestSetup {
         // When & Then
         mockMvc.perform(get("/api/customers/addresses/{address_id}", request.getAddressId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.memberName").value("김철수"))
@@ -155,13 +155,13 @@ class AddressControllerTest extends CommonTestSetup {
         mockMvc.perform(post("/api/customers/addresses/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(addressRequest))
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").doesNotExist())
                 .andExpect(jsonPath("$.message").value("주소가 성공적으로 등록되었습니다."));
 
-        verify(addressService).addAddress(any(AddressRequest.class),eq(customUserDetails.getUserId()));
+        verify(addressService).addAddress(any(AddressRequest.class),eq(customer.getUserId()));
     }
 
     @Test
@@ -183,13 +183,13 @@ class AddressControllerTest extends CommonTestSetup {
         mockMvc.perform(put("/api/customers/addresses/{address_id}", addressId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(addressRequest))
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").doesNotExist())
                 .andExpect(jsonPath("$.message").value("주소가 성공적으로 수정되었습니다."));
 
-        verify(addressService).updateAddress(eq(addressId), any(AddressRequest.class),eq(customUserDetails.getUserId()));
+        verify(addressService).updateAddress(eq(addressId), any(AddressRequest.class),eq(customer.getUserId()));
     }
 
     @Test
@@ -201,12 +201,12 @@ class AddressControllerTest extends CommonTestSetup {
 
         // When & Then
         mockMvc.perform(delete("/api/customers/addresses/{address_id}", addressId)
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").doesNotExist())
                 .andExpect(jsonPath("$.message").value("주소가 성공적으로 삭제되었습니다."));
 
-        verify(addressService).deleteAddress(eq(addressId),eq(customUserDetails.getUserId()));
+        verify(addressService).deleteAddress(eq(addressId),eq(customer.getUserId()));
     }
 }

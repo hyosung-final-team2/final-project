@@ -9,11 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CommonTestSetup {
-    protected CustomUserDetails customUserDetails;
+    protected CustomUserDetails customer;
+    protected CustomUserDetails member;
 
     @BeforeEach
     void setUpCustomUserDetails() {
-        customUserDetails = new CustomUserDetails(
+        customer = new CustomUserDetails(
                 new UserType() {
                     @Override
                     public Long getId() {
@@ -22,7 +23,30 @@ public class CommonTestSetup {
 
                     @Override
                     public String getLoginId() {
-                        return "testuser";
+                        return "testCustomer";
+                    }
+
+                    @Override
+                    public String getPassword() {
+                        return "password";
+                    }
+
+                    @Override
+                    public String getRole() {
+                        return "ROLE_CUSTOMER";
+                    }
+                }
+        );
+        member = new CustomUserDetails(
+                new UserType() {
+                    @Override
+                    public Long getId() {
+                        return 1L;
+                    }
+
+                    @Override
+                    public String getLoginId() {
+                        return "testMember";
                     }
 
                     @Override

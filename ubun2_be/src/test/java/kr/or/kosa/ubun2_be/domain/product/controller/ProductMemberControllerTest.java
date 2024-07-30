@@ -52,7 +52,7 @@ class ProductMemberControllerTest extends CommonTestSetup {
 
         //when & then
         mockMvc.perform(get("/api/members/store/1/category")
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -68,7 +68,7 @@ class ProductMemberControllerTest extends CommonTestSetup {
                 .param("page","0")
                 .param("size","9")
                 .param("sort","productCategory,desc")
-                .with(user(customUserDetails)))
+                .with(user(member)))
             .andDo(print())
             .andExpect(status().isOk());
 
@@ -81,7 +81,7 @@ class ProductMemberControllerTest extends CommonTestSetup {
         when(productService.getProductByCustomerIdAndProductId(anyLong(),anyLong(),anyLong())).thenReturn(mockProductDetailResponse);
 
         //when & then
-        mockMvc.perform(get("/api/members/products/1/1").with(user(customUserDetails)))
+        mockMvc.perform(get("/api/members/products/1/1").with(user(member)))
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -95,7 +95,7 @@ class ProductMemberControllerTest extends CommonTestSetup {
 
         //when & then
         mockMvc.perform(get("/api/members/products/1/category")
-                    .with(user(customUserDetails)))
+                    .with(user(member)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
