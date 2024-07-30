@@ -36,7 +36,7 @@ const SkeletonProductTableRow = ({
           <Table.Cell className={getColorForColumn('productCategoryName')} style={{width:"15%"}}>{productCategoryName}</Table.Cell>
           <Table.Cell className={getColorForColumn('productName')} style={{width:"15%"}}>{productName}</Table.Cell>
           <Table.Cell className={getColorForColumn('stockQuantity')} style={{width:"10%"}}>{stockQuantity}개</Table.Cell>
-          <Table.Cell className={getColorForColumn('productPrice')} style={{width:"15%"}}>{productPrice.toLocaleString()}원</Table.Cell>
+          <Table.Cell className={getColorForColumn('productPrice')} style={{width:"15%"}}>{productPrice?.toLocaleString()}원</Table.Cell>
           <Table.Cell className={getColorForColumn('productDiscount')} style={{width:"10%"}}>{productDiscount}%</Table.Cell>
           <Table.Cell style={{width:"15%"}}>{productStatus ? <StatusBadge status={'PUBLIC'} /> : <StatusBadge status={'PRIVATE'} />}</Table.Cell>
           <Table.Cell style={{width:"15%"}}>
