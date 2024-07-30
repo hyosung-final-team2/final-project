@@ -140,7 +140,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
 
             return new BooleanBuilder()
                     .and(path.goe(startDateTime))
-                    .and(path.lt(endDateTime.plusDays(1))); // 다음 날의 시작 직전까지
+                    .and(path.lt(endDateTime.plusDays(0)));
         } catch (DateTimeParseException e) {
             return new BooleanBuilder();
         }
