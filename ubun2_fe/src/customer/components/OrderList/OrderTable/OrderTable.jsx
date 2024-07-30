@@ -143,7 +143,7 @@ const OrderTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
-      <OrderTableFeature tableColumns={tableColumn.orders} onSearch={handleSearch} handleDataReset={handleDataReset} />
+      <OrderTableFeature tableColumns={tableColumn.ordersSearch} onSearch={handleSearch} handleDataReset={handleDataReset} />
 
       {/* 테이블 */}
       <div className='px-4 shadow-md'>
@@ -153,7 +153,7 @@ const OrderTable = () => {
             allChecked={selectedOrders.length === orderList?.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
-            headerType="orders"
+            headerType='orders'
           />
           <UnifiedOrderTableBody
             dataList={orderList}

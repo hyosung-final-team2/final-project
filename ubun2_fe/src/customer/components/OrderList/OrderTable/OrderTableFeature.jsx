@@ -7,7 +7,7 @@ const OrderTableFeature = ({ tableColumns, onSearch, handleDataReset }) => {
       <div className='flex'>
         <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} />
       </div>
-      <div className='flex items-center gap-2'>
+      <div className='flex items-start gap-2'>
         <button className='normal-case btn btn-ghost btn-sm' onClick={() => handleDataReset()}>
           <ArrowPathIcon className='w-4 mr-2' />
           Reset

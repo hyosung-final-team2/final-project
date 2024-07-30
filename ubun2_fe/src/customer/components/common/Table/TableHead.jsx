@@ -13,7 +13,7 @@ const TableHead = ({ tableColumns, headerType, allChecked, setAllChecked, handle
       </Table.HeadCell>
       {/* tableindx에 본인이 개발하는 테이블의 컬럼 넣고 export */}
       {tableColumns.map((item, idx) => {
-        return <TableHeadCell key={idx} colunmName={item} handleSort={handleSort} headerType={headerType}/>;
+        return <TableHeadCell key={idx} colunmName={item} handleSort={handleSort} headerType={headerType} />;
       })}
     </Table.Head>
   ) : (
