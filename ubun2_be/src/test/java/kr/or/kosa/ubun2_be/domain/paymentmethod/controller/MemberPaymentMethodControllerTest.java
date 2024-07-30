@@ -1,14 +1,12 @@
 package kr.or.kosa.ubun2_be.domain.paymentmethod.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.MyAccountPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.MyCardPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.RegisterPaymentMethodRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.UpdatePaymentMethodRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.service.PaymentMethodService;
-import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
-import kr.or.kosa.ubun2_be.global.auth.model.UserType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class MemberPaymentMethodControllerTest {
+class MemberPaymentMethodControllerTest extends CommonTestSetup {
 
     @Autowired
     private MockMvc mockMvc;
@@ -41,35 +39,6 @@ class MemberPaymentMethodControllerTest {
 
     @MockBean
     private PaymentMethodService paymentMethodService;
-
-    private CustomUserDetails customUserDetails;
-
-    @BeforeEach
-    void setUp() {
-        customUserDetails = new CustomUserDetails(
-                new UserType() {
-                    @Override
-                    public Long getId() {
-                        return 1L;
-                    }
-
-                    @Override
-                    public String getLoginId() {
-                        return "testuser";
-                    }
-
-                    @Override
-                    public String getPassword() {
-                        return "password";
-                    }
-
-                    @Override
-                    public String getRole() {
-                        return "ROLE_MEMBER";
-                    }
-                }
-        );
-    }
 
     @Test
     @DisplayName(value = "전체 카드 목록 조회")

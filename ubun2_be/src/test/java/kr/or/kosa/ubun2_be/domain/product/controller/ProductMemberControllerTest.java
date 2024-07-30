@@ -1,14 +1,12 @@
 package kr.or.kosa.ubun2_be.domain.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.product.dto.CategoryResponse;
 import kr.or.kosa.ubun2_be.domain.product.dto.ProductDetailResponse;
 import kr.or.kosa.ubun2_be.domain.product.dto.ProductResponse;
 import kr.or.kosa.ubun2_be.domain.product.service.CategoryService;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
-import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
-import kr.or.kosa.ubun2_be.global.auth.model.UserType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ProductMemberControllerTest {
+class ProductMemberControllerTest extends CommonTestSetup {
 
     @Autowired
     private MockMvc mockMvc;
@@ -45,36 +43,6 @@ class ProductMemberControllerTest {
 
     @MockBean
     private CategoryService categoryService;
-
-    @MockBean
-    private CustomUserDetails customUserDetails;
-
-    @BeforeEach
-    void setUp() {
-        customUserDetails = new CustomUserDetails(
-                new UserType() {
-                    @Override
-                    public Long getId() {
-                        return 1L;
-                    }
-
-                    @Override
-                    public String getLoginId() {
-                        return "testmember";
-                    }
-
-                    @Override
-                    public String getPassword() {
-                        return "password";
-                    }
-
-                    @Override
-                    public String getRole() {
-                        return "ROLE_MEMBER";
-                    }
-                }
-        );
-    }
 
     @Test
     void getCategories() throws Exception {

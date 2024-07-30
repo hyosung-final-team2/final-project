@@ -2,6 +2,7 @@ package kr.or.kosa.ubun2_be.domain.paymentmethod.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.AccountPayment.AccountPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment.CardPaymentResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.MemberPaymentMethodsResponse;
@@ -9,9 +10,6 @@ import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDeleteRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodDetailResponse;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.dto.PaymentMethodRequest;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.service.PaymentMethodService;
-import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
-import kr.or.kosa.ubun2_be.global.auth.model.UserType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class PaymentMethodControllerTest {
+class PaymentMethodControllerTest extends CommonTestSetup {
     @Autowired
     private MockMvc mockMvc;
 
@@ -46,37 +44,6 @@ class PaymentMethodControllerTest {
 
     @MockBean
     private PaymentMethodService paymentMethodService;
-
-    @MockBean
-    private CustomUserDetails customUserDetails;
-
-    @BeforeEach
-    void setUp() {
-        customUserDetails = new CustomUserDetails(
-                new UserType() {
-                    @Override
-                    public Long getId() {
-                        return 1L;
-                    }
-
-                    @Override
-                    public String getLoginId() {
-                        return "testuser";
-                    }
-
-                    @Override
-                    public String getPassword() {
-                        return "password";
-                    }
-
-                    @Override
-                    public String getRole() {
-                        return "ROLE_CUSTOMER";
-                    }
-                }
-        );
-    }
-
 
     @Test
     @DisplayName("카드결제수단을 전체 조회한다")

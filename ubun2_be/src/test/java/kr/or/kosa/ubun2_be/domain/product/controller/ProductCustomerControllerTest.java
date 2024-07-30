@@ -1,12 +1,10 @@
 package kr.or.kosa.ubun2_be.domain.product.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.product.dto.*;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderOption;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
-import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
-import kr.or.kosa.ubun2_be.global.auth.model.UserType;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ProductCustomerControllerTest {
+class ProductCustomerControllerTest extends CommonTestSetup {
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,36 +44,6 @@ class ProductCustomerControllerTest {
 
     @MockBean
     private ProductService productService;
-
-    @MockBean
-    private CustomUserDetails customUserDetails;
-
-    @BeforeEach
-    void setUp() {
-        customUserDetails = new CustomUserDetails(
-                new UserType() {
-                    @Override
-                    public Long getId() {
-                        return 1L;
-                    }
-
-                    @Override
-                    public String getLoginId() {
-                        return "testuser";
-                    }
-
-                    @Override
-                    public String getPassword() {
-                        return "password";
-                    }
-
-                    @Override
-                    public String getRole() {
-                        return "ROLE_CUSTOMER";
-                    }
-                }
-        );
-    }
 
     @Test
     @DisplayName("전체 상품 목록 및 정렬,검색을 통한 상품 목록 조회")
