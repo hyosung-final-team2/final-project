@@ -2,9 +2,11 @@ package kr.or.kosa.ubun2_be.global.auth.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class FindPasswordRequest {
 
     @NotBlank(message = "이름을 입력해주세요")
