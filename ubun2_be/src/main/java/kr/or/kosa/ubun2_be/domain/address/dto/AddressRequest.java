@@ -1,5 +1,9 @@
 package kr.or.kosa.ubun2_be.domain.address.dto;
 
+
+import jakarta.validation.constraints.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -22,8 +26,8 @@ public class AddressRequest {
     @NotBlank(message = "주소를 입력해주세요")
     private String address;
 
-    @NotBlank(message = "받는 사람을 입력해주세요")
     private String recipientName;
+
 
     @NotBlank(message = "받는 사람 전화번호를 입력해주세요")
     @Pattern(regexp = "^(010|011|016|017|018|019)-\\d{3,4}-\\d{4}$", message = "ex) 010-1234-5678")
