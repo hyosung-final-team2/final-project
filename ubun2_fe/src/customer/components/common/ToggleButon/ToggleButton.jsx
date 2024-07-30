@@ -1,15 +1,18 @@
 import React from 'react';
 import paymentMethodStore from '../../../../customer/store/PaymentMethod/paymentMethodStore';
+import usePaymentMethodTableStore from '../../../store/PaymentMethod/paymentMethodTableStore';
 
 const ToggleButton = ({ onChange }) => {
   const setPaymentMethodType = paymentMethodStore(state => state.setPaymentMethodType);
   const paymentMethodType = paymentMethodStore(state => state.paymentMethodType);
   const isAccount = paymentMethodType === 'ACCOUNT';
+  const { resetData } = usePaymentMethodTableStore();
 
   const handleOnChange = () => {
     if (onChange) {
       paymentMethodType === 'ACCOUNT' ? setPaymentMethodType('CARD') : setPaymentMethodType('ACCOUNT');
       onChange();
+      resetData();
     }
   };
   return (
