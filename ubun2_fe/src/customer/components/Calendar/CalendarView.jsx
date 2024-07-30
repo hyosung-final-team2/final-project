@@ -26,10 +26,21 @@ const CalendarView = () => {
     const [events, setEvents] = useState([]);
     const [currMonth, setCurrMonth] = useState(() => moment(today).format("MMM-yyyy"));
     const [yearMonth, setYearMonth] = useState({ year: firstDayOfMonth.year(), month: firstDayOfMonth.month() + 1 });
+
+    const firstDayOfLastMonth = today.clone().subtract(1, 'months').startOf('month');
+    const [lastYearMonth, setLastYearMonth] = useState({year: firstDayOfLastMonth.year(), month: firstDayOfLastMonth.month() + 1});
+
+
     const [isSummaryOpen, setIsSummaryOpen] = useState(false);
 
     useEffect(() => {
         setYearMonth({ year: firstDayOfMonth.year(), month: firstDayOfMonth.month() + 1 });
+
+        const firstDayOfLastMonth = firstDayOfMonth.clone().subtract(1, 'months').startOf('month');
+        setLastYearMonth({
+            year: firstDayOfLastMonth.year(),
+            month: firstDayOfLastMonth.month() + 1,
+        });
     }, [firstDayOfMonth]);
 
     const {data:calendarData} = useGetCalendarOrders(yearMonth.year,yearMonth.month)
@@ -81,6 +92,8 @@ const CalendarView = () => {
 
     const isDifferentMonth = (date) => moment(date).month() !== firstDayOfMonth.month();
 
+    const isFutureMonth = firstDayOfMonth.isAfter(today, 'month'); // 현재 날짜보다 이후의 월인지 확인하는 변수
+
     const getPrevMonth = () => {
         const firstDayOfPrevMonth = moment(firstDayOfMonth).add(-1, 'M').startOf('month');
         setFirstDayOfMonth(firstDayOfPrevMonth);
@@ -118,7 +131,7 @@ const CalendarView = () => {
                     </button>
                 </div>
                 <div>
-                    <button className="btn btn-sm btn-ghost btn-outline normal-case" onClick={() => setIsSummaryOpen(true)}>
+                    <button className="btn btn-sm btn-ghost btn-outline normal-case" onClick={() => setIsSummaryOpen(true)} disabled={isFutureMonth}>
                         <ChartBarIcon className="w-5 h-5" />
                          월간 요약
                     </button>
@@ -148,7 +161,7 @@ const CalendarView = () => {
             </div>
         </div>
 
-    {isSummaryOpen && <MonthSummaryModal isOpen={isSummaryOpen} setOpenModal={setIsSummaryOpen} currentMonth={currentMonth} previousMonth={previousMonth}/>}
+    {isSummaryOpen && <MonthSummaryModal isOpen={isSummaryOpen} setOpenModal={setIsSummaryOpen} currentMonth={currentMonth} previousMonth={previousMonth} currentDate={yearMonth} previousDate={lastYearMonth}/>}
         </>
     );
 }

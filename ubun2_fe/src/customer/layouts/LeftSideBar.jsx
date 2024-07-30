@@ -15,8 +15,8 @@ const LeftSidebar = () => {
       <ul className='menu  pt-8 px-6 w-80 bg-base-100 min-h-full  gap-6 text-base-content main_bg_sidebar'>
         <li className='mb-4 font-semibold text-xl'>
           <Link to={'/customer/app/dashboard'}>
-            <img className='mask mask-squircle w-10' src='/profile.png' />
-            HYOSUNG
+            <img className='mask mask-squircle w-10' src='/fms_logo.png' />
+            <img src='/text_logo.png'/>
           </Link>{' '}
         </li>
         {routes.map((route, k) => {

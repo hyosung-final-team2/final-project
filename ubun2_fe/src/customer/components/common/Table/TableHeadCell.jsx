@@ -51,20 +51,6 @@ const TableHeadCell = ({ colunmName, handleSort, headerType="member" }) => {
     }, [sort, colunmName]);
 
 
-    // useEffect(() => {
-    //     setIsDesc(null)
-    // }, [isReset]);
-    //
-    // useEffect(() => {
-    //     const columnName = columnMapping[colunmName];
-    //     const sortItem = sort.find(item => item.startsWith(`${columnName},`));
-    //     if (sortItem) {
-    //         setIsDesc(sortItem.endsWith('DESC'));
-    //     } else {
-    //         setIsDesc(null);
-    //     }
-    // }, [sort, colunmName]);
-
   return (
     <Table.HeadCell className='bg-gray-100 text-main text-sm' onClick={() => setIsDesc(!isDesc)}>
       <div className='flex items-center gap-2'>
