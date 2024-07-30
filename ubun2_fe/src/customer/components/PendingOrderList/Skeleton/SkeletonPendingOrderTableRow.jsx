@@ -4,6 +4,7 @@ import OrderOptionBadge from '../../common/Badge/OrderOptionBadge.jsx';
 import PaymentMethodBadge from '../../common/Badge/PaymentMethodBadge.jsx';
 import { formatCurrency } from '../../../utils/currencyFormat.js';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/16/solid';
+import useOrderTableStore from "../../../store/OrderTable/orderTableStore.js";
 
 const commonButtonStyles = {
   APPROVED:
@@ -13,18 +14,31 @@ const commonButtonStyles = {
 };
 
 const SkeletonPendingOrderTableRow = ({ orderId, createdAt, memberName, orderStatus, paymentType, subscription, totalOrderPrice }) => {
-  return (
+    const { sort } = useOrderTableStore();
+
+    const getColorForColumn = (column) => {
+        if (column === 'orderStatus') {
+            return '';
+        }
+        const sortItem = sort.find(item => item.startsWith(`${column},`));
+        if (sortItem) {
+            return sortItem.endsWith('DESC') ? 'font-bold' : 'font-bold';
+        }
+        return '';
+    };
+
+    return (
     <Table.Row className='bg-white'>
       <Table.Cell style={{ width: '5%' }}>
         <Checkbox />
       </Table.Cell>
-      <Table.Cell style={{ width: '10%' }}>
+      <Table.Cell className={getColorForColumn('isSubscription')}  style={{ width: '10%' }}>
         <OrderOptionBadge subscription={subscription} />
       </Table.Cell>
-      <Table.Cell style={{ width: '15%' }}>{createdAt ? formatDate(createdAt) : null}</Table.Cell>
-      <Table.Cell style={{ width: '15%' }}>{memberName}</Table.Cell>
-      <Table.Cell style={{ width: '20%' }}>{`${totalOrderPrice ? formatCurrency(totalOrderPrice) : '-'} 원`}</Table.Cell>
-      <Table.Cell style={{ width: '15%' }}>
+      <Table.Cell className={getColorForColumn('createdAt')} style={{ width: '15%' }}>{createdAt ? formatDate(createdAt) : null}</Table.Cell>
+      <Table.Cell className={getColorForColumn('memberName')} style={{ width: '15%' }}>{memberName}</Table.Cell>
+      <Table.Cell className={getColorForColumn('totalCost')} style={{ width: '20%' }}>{`${totalOrderPrice ? formatCurrency(totalOrderPrice) : '-'} 원`}</Table.Cell>
+      <Table.Cell className={getColorForColumn('paymentType')} style={{ width: '15%' }}>
         <PaymentMethodBadge paymentType={paymentType} />
       </Table.Cell>
       <Table.Cell style={{ width: '20%' }}>
