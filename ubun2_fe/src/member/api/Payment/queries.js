@@ -1,4 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+import { successToastStyle } from '../toastStyle';
 import {
   getCards,
   getAccounts,
@@ -10,6 +12,7 @@ import {
   checkIfPasswordExists,
   checkPassword,
   setNewPassword,
+  setDefaultPayment,
 } from './payments';
 
 export const useGetCards = memberId => {
@@ -106,6 +109,21 @@ export const useSetNewPassword = () => {
     mutationFn: password => setNewPassword(password),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] });
+    },
+    onError: error => {
+      console.log('error', error);
+    },
+  });
+};
+
+export const useSetDefaultPayment = () => {
+  console.log('useSetDefaultPayment');
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: paymentMethodId => setDefaultPayment(paymentMethodId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['payments'] });
+      toast.success('기본 결제수단으로 설정되었습니다.', successToastStyle);
     },
     onError: error => {
       console.log('error', error);
