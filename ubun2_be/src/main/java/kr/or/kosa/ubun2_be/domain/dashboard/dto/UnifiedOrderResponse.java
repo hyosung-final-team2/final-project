@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 @Getter
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class UnifiedOrderResponse {
     private Long orderId;
