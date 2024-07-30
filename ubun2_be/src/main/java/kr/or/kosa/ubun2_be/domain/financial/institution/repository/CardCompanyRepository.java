@@ -8,4 +8,6 @@ import java.util.Optional;
 
 public interface CardCompanyRepository extends JpaRepository<CardCompany, Long> {
     Optional<CardCompany> findByCardNumberAndUserNameAndExpiryDateAfter(String cardNumber, String userName, LocalDateTime expiryDate);
+    Optional<CardCompany> findByCardNumber(String cardNumber);
+
 }

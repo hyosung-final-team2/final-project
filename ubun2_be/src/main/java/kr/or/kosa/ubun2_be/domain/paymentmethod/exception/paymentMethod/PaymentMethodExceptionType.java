@@ -11,8 +11,16 @@ public enum PaymentMethodExceptionType implements CustomExceptionType {
     INVALID_CARD_NUMBER(-905, HttpStatus.BAD_REQUEST, "잘못된 카드 번호 형식입니다."),
     INVALID_ACCOUNT_NUMBER(-906, HttpStatus.BAD_REQUEST, "잘못된 계좌 번호 형식입니다."),
     PAYMENT_NOT_MATCH(-907, HttpStatus.BAD_REQUEST, "해당 결제수단은 회원님의 결제수단이 아닙니다."),
-    INSUFFICIENT_ACCOUNT_BALANCE(-908, HttpStatus.BAD_REQUEST, "계좌 잔액이 부족합니다.");
-
+    INSUFFICIENT_ACCOUNT_BALANCE(-908, HttpStatus.BAD_REQUEST, "계좌 잔액이 부족합니다."),
+    NO_MATCHING_CARD_COMPANY(-909, HttpStatus.BAD_REQUEST, "일치하는 카드사가 없습니다."),
+    NO_MATCHING_BANK(-910, HttpStatus.BAD_REQUEST, "일치하는 은행이 없습니다."),
+    INVALID_CARD_EXPIRATION_DATE(-911, HttpStatus.BAD_REQUEST, "잘못된 카드 유효기간입니다."),
+    INVALID_CVC(-912, HttpStatus.BAD_REQUEST, "잘못된 CVC 번호입니다."),
+    INVALID_CARD_PASSWORD(-913, HttpStatus.BAD_REQUEST, "잘못된 카드 비밀번호입니다."),
+    INVALID_ACCOUNT_PASSWORD(-914, HttpStatus.BAD_REQUEST, "잘못된 계좌 비밀번호입니다."),
+    INVALID_ACCOUNT_STATUS(-915, HttpStatus.BAD_REQUEST, "계좌 상태가 유효하지 않습니다."),
+    NO_MATCHING_CARD_NUMBER(-916, HttpStatus.BAD_REQUEST, "일치하는 카드번호가 없습니다."),
+    NO_MATCHING_ACCOUNT_NUMBER(-917, HttpStatus.BAD_REQUEST, "일치하는 계좌번호가 없습니다.");
 
     private int errorCode;
     private HttpStatus httpStatus;
