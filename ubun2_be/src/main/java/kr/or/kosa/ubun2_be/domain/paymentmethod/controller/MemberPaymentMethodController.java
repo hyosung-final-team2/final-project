@@ -24,6 +24,7 @@ public class MemberPaymentMethodController {
     @GetMapping("/password")
     public ResponseDto<?> checkPaymentPassword(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boolean hasPaymentPassword = paymentMethodService.hasPaymentPassword(customUserDetails.getUserId());
+        System.out.println("hasPaymentPassword = " + hasPaymentPassword);
         return ResponseDto.ok(hasPaymentPassword, "결제비밀번호 존재 여부를 성공적으로 확인했습니다.");
     }
 
@@ -75,6 +76,13 @@ public class MemberPaymentMethodController {
     public ResponseDto<?> deletePaymentMethod(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long paymentMethodId) {
         paymentMethodService.deleteMyPaymentMethod(paymentMethodId, customUserDetails.getUserId());
         return ResponseDto.ok(null,"결제수단을 성공적으로 삭제했습니다.");
+    }
+
+    @Operation(summary = "회원의 대표 결제수단 설정")
+    @PutMapping("/default/{payment_method_id}")
+    public ResponseDto<?> setDefaultPaymentMethod(@PathVariable("payment_method_id") Long paymentMethodId, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        paymentMethodService.setDefaultPaymentMethod(paymentMethodId, userDetails.getUserId());
+        return ResponseDto.ok(null, "대표 결제수단이 성공적으로 설정되었습니다.");
     }
 
 }

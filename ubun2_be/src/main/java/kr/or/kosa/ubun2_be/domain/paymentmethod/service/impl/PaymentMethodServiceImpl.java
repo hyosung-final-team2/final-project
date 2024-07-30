@@ -153,6 +153,8 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     public void registerPaymentMethod(RegisterPaymentMethodRequest registerPaymentMethodRequest, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
 
+        boolean isFirstPaymentMethod = paymentMethodRepository.findByMemberMemberId(memberId).isEmpty();
+
         if ("CARD".equals(registerPaymentMethodRequest.getPaymentType())) {
             //결제수단 카드일때 검증
             if (registerPaymentMethodRequest.getCardNumber() == null || registerPaymentMethodRequest.getCardCompanyName() == null) {
@@ -167,6 +169,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
                     .cardNumber(registerPaymentMethodRequest.getCardNumber())
                     .cardCompanyName(registerPaymentMethodRequest.getCardCompanyName())
                     .paymentMethodNickname(registerPaymentMethodRequest.getPaymentMethodNickname())
+                    .defaultStatus(isFirstPaymentMethod) // 첫 번째 결제수단이면 기본값으로 설정
                     .build();
             paymentMethodRepository.save(cardPayment);
         } else if ("ACCOUNT".equals(registerPaymentMethodRequest.getPaymentType())) {
@@ -183,6 +186,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
                     .accountNumber(registerPaymentMethodRequest.getAccountNumber())
                     .bankName(registerPaymentMethodRequest.getBankName())
                     .paymentMethodNickname(registerPaymentMethodRequest.getPaymentMethodNickname())
+                    .defaultStatus(isFirstPaymentMethod) // 첫 번째 결제수단이면 기본값으로 설정
                     .build();
             paymentMethodRepository.save(accountPayment);
 
@@ -260,6 +264,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     @Override
     public boolean hasPaymentPassword(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+        System.out.println("member.getPaymentPassword() = " + member.getPaymentPassword());
         return member.getPaymentPassword() != null;
     }
     @Transactional
@@ -268,5 +273,17 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         for (PaymentMethodDeleteRequest paymentMethodDeleteRequest : paymentMethodDeleteRequestList) {
             deletePaymentMethod(paymentMethodDeleteRequest.getPaymentMethodId(), customerId);
         }
+    }
+
+    @Transactional
+    @Override
+    public void setDefaultPaymentMethod(Long paymentMethodId, Long userId) {
+        PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+        Member member = memberRepository.findById(userId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+        List<PaymentMethod> paymentMethods = member.getPaymentMethods();
+        for (PaymentMethod pm : paymentMethods) {
+            pm.updateDefaultStatus(false);
+        }
+        paymentMethod.updateDefaultStatus(true);
     }
 }
