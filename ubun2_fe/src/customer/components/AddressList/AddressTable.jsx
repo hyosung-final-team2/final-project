@@ -129,6 +129,7 @@ const AddressTable = () => {
         <Table hoverable>
           <TableHead
             tableColumns={tableColumn.address.list}
+            headerType="address"
             allChecked={selectedAddresses.length === addressList.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}

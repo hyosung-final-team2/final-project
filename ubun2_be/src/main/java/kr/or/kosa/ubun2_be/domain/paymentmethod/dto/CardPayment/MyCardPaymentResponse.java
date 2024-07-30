@@ -1,10 +1,13 @@
 package kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment;
 
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class MyCardPaymentResponse {
     private Long paymentMethodId;
     private String paymentType;

@@ -52,7 +52,6 @@ public class MemberPaymentMethodController {
     @Operation(summary = "계좌 상세 조회")
     @GetMapping("/accounts/{paymentMethodId}")
     public ResponseDto<?> getAccountPaymentMethod(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long paymentMethodId) {
-        System.out.println("paymentMethodId = " + paymentMethodId);
         MyAccountPaymentResponse accountPaymentResponse = paymentMethodService.getMyAccountPaymentMethod(paymentMethodId, customUserDetails.getUserId());
         return ResponseDto.ok(accountPaymentResponse, "계좌를 성공적으로 조회했습니다.");
     }

@@ -1,7 +1,9 @@
 import InputLabel from '../common/Input/InputLabel.jsx';
 import StatusBadge from '../common/Badge/StatusBadge.jsx';
+import {formatDate} from "../../utils/dateFormat.js";
 
 const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchable = false, isPending, handleInputChange }) => {
+    console.log(MemberInfoData)
   return (
     <div className='p-3'>
       <div className='flex items-center gap-4 mb-3'>
@@ -31,7 +33,7 @@ const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchab
             isUpdate={isUpdate}
             onChange={value => handleInputChange('memberPhone', value)}
           />
-          <InputLabel labelTitle='가입일' defaultValue={MemberInfoData.memberCreatedAt} disabled={onlyInfo} />
+          <InputLabel labelTitle='가입일' defaultValue={MemberInfoData.memberCreatedAt !== '-' ? formatDate(MemberInfoData.memberCreatedAt) : '-'} disabled={onlyInfo} />
         </div>
       ) : (
         <div className='grid grid-cols-2 gap-3'>

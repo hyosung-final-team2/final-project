@@ -3,7 +3,9 @@ import ChevronLeftIcon from "@heroicons/react/24/solid/ChevronLeftIcon";
 import ChevronRightIcon from "@heroicons/react/24/solid/ChevronRightIcon";
 import moment from "moment";
 import { CALENDAR_EVENT_STYLE } from "./util";
-import {useGetCalendarOrders} from "../../api/Calendar/queris.js";
+import {useGetCalendarOrders, useGetMonthSummary} from "../../api/Calendar/queris.js";
+import ChartBarIcon from "@heroicons/react/24/outline/esm/ChartBarIcon.js";
+import MonthSummaryModal from "./MonthSummaryModal.jsx";
 
 const THEME_BG = CALENDAR_EVENT_STYLE;
 
@@ -25,11 +27,26 @@ const CalendarView = () => {
     const [currMonth, setCurrMonth] = useState(() => moment(today).format("MMM-yyyy"));
     const [yearMonth, setYearMonth] = useState({ year: firstDayOfMonth.year(), month: firstDayOfMonth.month() + 1 });
 
+    const firstDayOfLastMonth = today.clone().subtract(1, 'months').startOf('month');
+    const [lastYearMonth, setLastYearMonth] = useState({year: firstDayOfLastMonth.year(), month: firstDayOfLastMonth.month() + 1});
+
+
+    const [isSummaryOpen, setIsSummaryOpen] = useState(false);
+
     useEffect(() => {
         setYearMonth({ year: firstDayOfMonth.year(), month: firstDayOfMonth.month() + 1 });
+
+        const firstDayOfLastMonth = firstDayOfMonth.clone().subtract(1, 'months').startOf('month');
+        setLastYearMonth({
+            year: firstDayOfLastMonth.year(),
+            month: firstDayOfLastMonth.month() + 1,
+        });
     }, [firstDayOfMonth]);
 
     const {data:calendarData} = useGetCalendarOrders(yearMonth.year,yearMonth.month)
+    const {data:summaryData} = useGetMonthSummary(yearMonth.year,yearMonth.month)
+    const currentMonth = summaryData?.data?.data?.currentMonth
+    const previousMonth = summaryData?.data?.data?.previousMonth
 
     useEffect(() => {
         const mappedEvents = calendarData?.data?.data?.map(event => ({
@@ -75,6 +92,8 @@ const CalendarView = () => {
 
     const isDifferentMonth = (date) => moment(date).month() !== firstDayOfMonth.month();
 
+    const isFutureMonth = firstDayOfMonth.isAfter(today, 'month'); // 현재 날짜보다 이후의 월인지 확인하는 변수
+
     const getPrevMonth = () => {
         const firstDayOfPrevMonth = moment(firstDayOfMonth).add(-1, 'M').startOf('month');
         setFirstDayOfMonth(firstDayOfPrevMonth);
@@ -94,6 +113,7 @@ const CalendarView = () => {
     };
 
     return (
+        <>
         <div className="w-full bg-base-100 p-4 rounded-lg" style={{ height: "95%" }}>
             <div className="flex items-center justify-between">
                 <div className="flex justify-normal gap-2 sm:gap-4">
@@ -111,7 +131,8 @@ const CalendarView = () => {
                     </button>
                 </div>
                 <div>
-                    <button className="btn btn-sm btn-ghost btn-outline normal-case">
+                    <button className="btn btn-sm btn-ghost btn-outline normal-case" onClick={() => setIsSummaryOpen(true)} disabled={isFutureMonth}>
+                        <ChartBarIcon className="w-5 h-5" />
                          월간 요약
                     </button>
                 </div>
@@ -139,6 +160,9 @@ const CalendarView = () => {
                 ))}
             </div>
         </div>
+
+    {isSummaryOpen && <MonthSummaryModal isOpen={isSummaryOpen} setOpenModal={setIsSummaryOpen} currentMonth={currentMonth} previousMonth={previousMonth} currentDate={yearMonth} previousDate={lastYearMonth}/>}
+        </>
     );
 }
 

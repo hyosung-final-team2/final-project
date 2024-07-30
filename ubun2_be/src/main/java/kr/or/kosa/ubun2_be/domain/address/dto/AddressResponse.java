@@ -2,8 +2,12 @@ package kr.or.kosa.ubun2_be.domain.address.dto;
 
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@NoArgsConstructor
 public class AddressResponse {
     private Long addressId;
     private String memberEmail;

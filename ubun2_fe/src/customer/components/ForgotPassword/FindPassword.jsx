@@ -103,7 +103,7 @@ const FindPassword = ({setIsSuccess}) => {
     };
 
     const forgotLoginIdFunc = () => {
-        navigate("/member/forgot-loginid");
+        navigate("/customer/forgot-loginid");
     };
 
 
