@@ -1,11 +1,18 @@
 import privateFetch from '../../../common/privateFetch.js';
+import qs from 'qs';
 
 // 전체 승인 대기 주문 리스트 조회
-export const getPendingOrders = async (page, size) => {
+export const getPendingOrders = async (page, size, sort, searchCategory, searchKeyword) => {
   return await privateFetch.get(`/customers/orders/pending`, {
     params: {
       page: page - 1,
       size: size,
+      sort: sort, // 무조건 콤마! ["memberEmail", "memberName", "memberPhone", "createdAt"]
+      searchCategory: searchCategory, //  null, "memberEmail", "memberName", "memberPhone", "createdAt"
+      searchKeyword: searchKeyword, // null
+    },
+    paramsSerializer: params => {
+      return qs.stringify(params, { arrayFormat: 'repeat' });
     },
   });
 };

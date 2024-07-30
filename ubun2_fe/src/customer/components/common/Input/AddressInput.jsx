@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRegisterAddress } from '../../../api/Address/AddressModal/queris';
 import useAddressStore from '../../../store/Address/useAddressStore';
 
-const POPUP_URL = '/customer/address-search';
+// const POPUP_URL = '/customer/address-search';
 const POPUP_WIDTH = 700;
 const POPUP_HEIGHT = 760;
 
@@ -19,9 +19,14 @@ const AddressInput = ({ disabled = false, infos, title }) => {
   const { selectedMemberId } = useAddressStore();
   const { mutate } = useRegisterAddress();
 
+  const getCurrentHost = () => {
+    return window.location.origin;
+  };
+
   const handleAddressSearch = async () => {
     if (!disabled && !popup) {
-      let url = POPUP_URL;
+      const currentHost = getCurrentHost();
+      let url = `${currentHost}/customer/address-search`;
       const width = POPUP_WIDTH;
       const height = POPUP_HEIGHT;
       const features = `width=${width},height=${height}`;
@@ -33,7 +38,7 @@ const AddressInput = ({ disabled = false, infos, title }) => {
       const waitForMessage = () => {
         return new Promise((resolve, reject) => {
           const messageHandler = event => {
-            if (event.origin !== 'http://localhost:5173' || event.data.type !== 'ADDRESS_SELECTED') {
+            if (event.origin !== currentHost || event.data.type !== 'ADDRESS_SELECTED') {
               return;
             }
 
@@ -70,7 +75,9 @@ const AddressInput = ({ disabled = false, infos, title }) => {
 
   useEffect(() => {
     const handleMessage = event => {
-      if (event.origin !== 'http://localhost:5173' || event.data.type !== 'ADDRESS_SELECTED') {
+      const currentHost = getCurrentHost();
+
+      if (event.origin !== currentHost || event.data.type !== 'ADDRESS_SELECTED') {
         return;
       }
 

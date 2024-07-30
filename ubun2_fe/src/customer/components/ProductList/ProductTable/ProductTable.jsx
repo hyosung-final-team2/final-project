@@ -11,14 +11,10 @@ import { useGetProducts } from '../../../api/Product/ProductList/ProductList/que
 import { useQueryClient } from '@tanstack/react-query';
 import { getProducts } from '../../../api/Product/ProductList/ProductList/productTable.js';
 import { useGetProductDetail } from '../../../api/Product/ProductList/ProductDetailModal/queris.js';
-import DynamicTableBody from "../../common/Table/DynamicTableBody.jsx";
 import TableBody from "../../common/Table/TableBody.jsx";
-import useMemberTableStore from "../../../store/MemberTable/memberTableStore.js";
 import useProductTableStore from "../../../store/ProductTable/productTableStore.js";
 import useSkeletonStore from "../../../store/skeletonStore.js";
 import SkeletonTable from "../../Skeleton/SkeletonTable.jsx";
-import SkeletonMemberTableFeature from "../../MemberList/Skeleton/SkeletonMemberTableFeature.jsx";
-import SkeletonMemberTableRow from "../../MemberList/Skeleton/SkeletonMemberTableRow.jsx";
 import SkeletonProductTableFeature from "../Skeleton/SkeletonProductTableFeature.jsx";
 import SkeletonProductTableRow from "../Skeleton/SkeletonProductTableRow.jsx";
 
@@ -122,7 +118,7 @@ const ProductTable = () => {
 
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.product} allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
+          <TableHead tableColumns={tableColumn.product} headerType="product" allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
           <TableBody
             dataList={productList}
             TableRowComponent={ProductTableRow}

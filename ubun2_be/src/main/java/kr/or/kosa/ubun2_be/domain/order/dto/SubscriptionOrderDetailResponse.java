@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 public class SubscriptionOrderDetailResponse {
+    private Long memberId;
     private String memberName;
     private String memberEmail;
     private String memberPhone;
@@ -36,6 +37,7 @@ public class SubscriptionOrderDetailResponse {
     private int latestCycleNumber;
 
     public SubscriptionOrderDetailResponse(SubscriptionOrder order, int latestCycleNumber) {
+        this.memberId = order.getMember().getMemberId();
         this.memberName = order.getMember().getMemberName();
         this.memberEmail = order.getMember().getMemberEmail();
         this.memberPhone = order.getMember().getMemberPhone();

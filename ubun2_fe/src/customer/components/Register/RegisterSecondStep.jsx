@@ -14,7 +14,7 @@ import {
   passwordRegexMessage,
   passwordCheckRegexMessage
 } from "../common/Regex/registerRegex.js";
-import {useAuthEmail, useSendEmail} from "../../api/Register/queris.js";
+import {useAuthEmail, useCheckDuplicateId, useSendEmail} from "../../api/Register/queris.js";
 
 const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
   const INITIAL_REGISTER_OBJ = {
@@ -36,6 +36,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
 
   const {mutate:sendEmailMutate} = useSendEmail(secondRegisterObj.customerEmail)
   const {mutate:authEmailMutate} = useAuthEmail();
+  const {mutate:checkDuplicateIdMutate} = useCheckDuplicateId()
 
   useEffect(() => {
     setIsSendEmail(false);
@@ -106,6 +107,25 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
     });
   };
 
+  const [isCheckPass, setIsCheckPass] = useState(null);
+  const [duplicateMessage, setDuplicateMessage] = useState(null);
+
+  const buttonFuncCheckDuplicateId = () => {
+    checkDuplicateIdMutate({
+      loginId: secondRegisterObj.customerLoginId,
+      userType:'ROLE_CUSTOMER'
+    },{
+      onSuccess: () => {
+        setIsCheckPass(true)
+        setDuplicateMessage(null);
+      },
+      onError: (err) => {
+        setIsCheckPass(false)
+        setDuplicateMessage(err.response.data.errorMessage)
+      }
+    })
+  }
+
 
   return (
     <>
@@ -157,17 +177,24 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
             />
           )}
 
-          <InputText
-            defaultValue={secondRegisterObj.customerLoginId}
-            updateType='customerLoginId'
-            containerStyle='mt-1'
-            labelTitle='아이디'
-            updateFormValue={updateFormValue}
-            placeholder='아이디를 입력해주세요.'
-            isRegexInput={true}
-            regex={loginIdRegex}
-            regexMessage={loginIdRegexMessage}
+          <InputTextWithBtn
+              defaultValue={secondRegisterObj.customerLoginId}
+              updateType='customerLoginId'
+              containerStyle='mt-1'
+              labelTitle='아이디'
+              updateFormValue={updateFormValue}
+              placeholder='아이디를 입력해주세요.'
+              buttonText="중복 확인"
+              clickPossibleWithoutData={false}
+              buttonFunc={buttonFuncCheckDuplicateId}
+              regex={loginIdRegex}
+              regexMessage={loginIdRegexMessage}
+              isAuthInput={true}
+              isAuthSuccess={isCheckPass}
+              isDuplicateInput={true}
+              duplicateMessage={duplicateMessage}
           />
+
           <div className='w-full flex'>
             <InputText
               defaultValue={secondRegisterObj.customerPassword}

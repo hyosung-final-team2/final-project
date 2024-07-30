@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDetailResponse {
+    private Long memberId;
     private String memberName;
     private String memberEmail;
     private String memberPhone;
@@ -34,6 +35,7 @@ public class OrderDetailResponse {
     private OrderStatus orderStatus;
 
     public OrderDetailResponse(Order order) {
+        this.memberId = order.getMember().getMemberId();
         this.memberName = order.getMember().getMemberName();
         this.memberEmail = order.getMember().getMemberEmail();
         this.memberPhone = order.getMember().getMemberPhone();

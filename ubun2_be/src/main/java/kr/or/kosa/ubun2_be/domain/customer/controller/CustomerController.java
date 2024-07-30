@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.*;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
+import kr.or.kosa.ubun2_be.domain.customer.dto.response.MypageDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.StoreInfoResponse;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
 import kr.or.kosa.ubun2_be.domain.member.dto.FcmTokenRequest;
@@ -112,6 +113,13 @@ public class CustomerController {
     public ResponseDto<?> updateMyPage(@RequestPart(value = "image", required = false) MultipartFile image, @Valid @RequestPart MyPageUpdateRequest myPageUpdateRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         customerService.updateMyPage(image, customUserDetails.getUserId(), myPageUpdateRequest);
         return ResponseDto.ok(null,"고객 마이페이지 수정 완료");
+    }
+
+    @Operation(summary = "고객 마이페이지 조회")
+    @GetMapping("/mypage")
+    public ResponseDto<?> getMyPage(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        MypageDetailResponse myPage = customerService.getMyPage(customUserDetails.getUserId());
+        return ResponseDto.ok(myPage,"고객 마이페이지 조회 완료");
     }
 
 }

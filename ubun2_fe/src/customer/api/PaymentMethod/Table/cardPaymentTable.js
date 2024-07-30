@@ -2,8 +2,8 @@ import privateFetch from '../../common/privateFetch.js';
 import qs from 'qs';
 
 // 전체 결제수단 리스트 조회
-export const getCardPayments = async (page, size, sort, searchCategory, searchKeyword) =>
-  await privateFetch.get('/customers/payments/cards', {
+export const getCardPayments = async (page, size, sort, searchCategory, searchKeyword) => {
+  return await privateFetch.get('/customers/payments/cards', {
     params: {
       page: page - 1,
       size: size,
@@ -15,3 +15,4 @@ export const getCardPayments = async (page, size, sort, searchCategory, searchKe
       return qs.stringify(params, { arrayFormat: 'repeat' });
     },
   });
+};

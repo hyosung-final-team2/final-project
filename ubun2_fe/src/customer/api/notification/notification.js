@@ -1,6 +1,17 @@
 import privateFetch from "../common/privateFetch.js";
 
-export const sendPersonalAlarm = async (alarmData) => await privateFetch.post("/customers/alarm/personal", alarmData);
+export const sendPersonalAlarm = async (isApproved,businessName,targetMemberId,isSubscription,link,orderId) => {
+    const content = `${isApproved ? "주문 승인" : "주문 거절"} : ${!isSubscription ? "단건주문 " : "정기주문 "} BC-${orderId}`
+
+    const alarmData = {
+        targetMemberId : targetMemberId,
+        title: businessName,
+        content: content,
+        link: link
+    }
+
+    await privateFetch.post("/customers/alarm/personal", alarmData);
+}
 
 export const sendGroupAlarm = async (groupData) => await privateFetch.post("/customers/alarm/group", groupData);
 

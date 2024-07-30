@@ -50,7 +50,7 @@ function PageContent({ hasFootNav, showBackBtn }) {
           <Route path='mypage/address-list' element={<MyAddressList />} />
           <Route path='password' element={<InputPassword />} />
           <Route path='password/set' element={<SetPassword />} />
-          {/* <Route path='password/update' element={<SetPassword />} /> */}
+          <Route path='password/update' element={<SetPassword />} />
           <Route path='order' element={<Order />} />
           <Route path='order-complete' element={<OrderComplete />} />
           <Route path='mypage/order-list' element={<MyOrdersList />} />

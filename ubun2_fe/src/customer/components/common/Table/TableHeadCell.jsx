@@ -2,8 +2,13 @@ import { Table } from 'flowbite-react';
 import {useEffect, useState} from 'react';
 import {columnMapping} from "./tableIndex.js";
 import useMemberTableStore from "../../../store/MemberTable/memberTableStore.js";
+import useAddressTableStore from "../../../store/Address/addressTableStore.js";
+import usePaymentMethodTableStore from "../../../store/PaymentMethod/paymentMethodTableStore.js";
+import useProductTableStore from "../../../store/ProductTable/productTableStore.js";
+import useOrderTableStore from "../../../store/OrderTable/orderTableStore.js";
+import usePendingOrderTableStore from "../../../store/PendingOrderTable/pendingOrderTableStore.js";
 
-const TableHeadCell = ({ colunmName, handleSort }) => {
+const TableHeadCell = ({ colunmName, handleSort, headerType="member" }) => {
   const [isDesc, setIsDesc] = useState(null);
 
   const sortToggle = () => {
@@ -20,7 +25,17 @@ const TableHeadCell = ({ colunmName, handleSort }) => {
     }, [isDesc]);
 
 
-    const { sort ,isReset} = useMemberTableStore()
+    const tableStores = {
+        member: useMemberTableStore(),
+        address: useAddressTableStore(),
+        paymentMethod: usePaymentMethodTableStore(),
+        product: useProductTableStore(),
+        orders: useOrderTableStore(),
+        pendingOrders: usePendingOrderTableStore(),
+    };
+
+    const { sort, isReset } = tableStores[headerType];
+
     useEffect(() => {
         setIsDesc(null)
     }, [isReset]);
@@ -34,6 +49,7 @@ const TableHeadCell = ({ colunmName, handleSort }) => {
             setIsDesc(null);
         }
     }, [sort, colunmName]);
+
 
   return (
     <Table.HeadCell className='bg-gray-100 text-main text-sm' onClick={() => setIsDesc(!isDesc)}>

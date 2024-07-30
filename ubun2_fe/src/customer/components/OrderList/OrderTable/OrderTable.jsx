@@ -12,16 +12,27 @@ import UnifiedOrderTableBody from '../../common/Table/UnifiedOrderTableBody.jsx'
 import OrderDetailModal from '../OrderDetailModal/OrderDetailModal.jsx';
 import OrderTableFeature from './OrderTableFeature.jsx';
 import OrderTableRow from './OrderTableRow.jsx';
+import useSkeletonStore from '../../../store/skeletonStore.js';
+import SkeletonTable from '../../Skeleton/SkeletonTable.jsx';
+import useOrderTableStore from '../../../store/OrderTable/orderTableStore.js';
+import SkeletonOrderTableFeature from '../Skeleton/SkeletonOrderTableFeature.jsx';
+import SkeletonOrderTableRow from '../Skeleton/SkeletonOrderTableRow.jsx';
 
 const OrderTable = () => {
   const [openOrderDetailModal, setOpenOrderDetailModal] = useState(false);
+
   const [selectedOrders, setSelectedOrders] = useState([]); // 체크된 멤버 ID
-  const [selectedOrderDetail, setSelectedOrderDetail] = useState({ orderId: null, subscription: false });
-  const [searchTerm, setSearchTerm] = useState(''); // 검색된 단어
-  const [searchCategory, setSearchCategory] = useState(''); // 검색할 카테고리 (드롭다운)
+  const [selectedOrderDetail, setSelectedOrderDetail] = useState({ orderId: null, subscription: false, currentPage: null }); // 선택된 주문 ID - 모달 오픈 시
+
+  const { sort, updateSort } = useOrderTableStore();
+  const { searchCategory, setSearchCategory } = useOrderTableStore(); // 검색할 카테고리 (드롭다운)
+  const { searchKeyword, setSearchKeyword } = useOrderTableStore(); // 검색된 단어
+  const { resetData } = useOrderTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: orders, isLoading } = useGetOrders(currentPage);
+
+  const PAGE_SIZE = 8;
+  const { data: orders, refetch: refetchOrders, isLoading } = useGetOrders(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword, searchKeyword);
 
   const totalPages = orders?.data?.data?.totalPages;
   const orderList = orders?.data?.data?.content || [];
@@ -34,11 +45,11 @@ const OrderTable = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['order', nextPage],
-        queryFn: () => getOrders(nextPage),
+        queryKey: ['order', nextPage, sort, searchCategory, searchKeyword],
+        queryFn: () => getOrders(nextPage, PAGE_SIZE),
       });
     }
-  }, [currentPage, queryClient, totalPages]);
+  }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -64,49 +75,110 @@ const OrderTable = () => {
     });
   };
 
-  const handleRowClick = async (orderId, subscription) => {
-    await setSelectedOrderDetail({ orderId, subscription });
+  const handleRowClick = async (orderId, subscription, page) => {
+    await setSelectedOrderDetail({ orderId: orderId, subscription: subscription, currentPage: page });
     await refetch();
     setOpenOrderDetailModal(true);
   };
 
   const handleSearch = (term, category) => {
-    setSearchTerm(term);
+    setSearchKeyword(term);
     setSearchCategory(category);
     if (term.trim() === '' || category === '카테고리') return;
 
-    // TODO: 검색 API 호출
-    console.log(`${category} : ${term}`);
+    refetchOrders();
+    setCurrentPage(1);
   };
+
+  const handleSort = async (column, sortType) => {
+    await updateSort(column, sortType);
+    refetchOrders();
+    setCurrentPage(1);
+  };
+
+  const { toggleIsReset } = useOrderTableStore();
+  const handleDataReset = async () => {
+    await toggleIsReset();
+    await resetData();
+    await refetchOrders();
+    await setCurrentPage(1);
+  };
+
+  useEffect(() => {
+    return () => {
+      resetData();
+    };
+  }, []);
+
+  // isLoading 시, skeletonTable
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore();
+
+  useEffect(() => {
+    if (!isLoading) {
+      setSkeletonData(orderList);
+      setSkeletonTotalPage(totalPages);
+      setSkeletonSortData(sort);
+      setSkeletonSearchCategory(searchCategory);
+      setSkeletonSearchKeyword(searchKeyword);
+    }
+  }, [
+    orderList,
+    totalPages,
+    sort,
+    searchKeyword,
+    searchCategory,
+    setSkeletonTotalPage,
+    setSkeletonSortData,
+    setSkeletonData,
+    setSkeletonSearchCategory,
+    setSkeletonSearchKeyword,
+    isLoading,
+  ]);
+
+  if (isLoading) {
+    // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
+    return <SkeletonTable SkeletonTableFeature={SkeletonOrderTableFeature} TableRowComponent={SkeletonOrderTableRow} tableColumns={tableColumn.orders} />;
+  }
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
-      <OrderTableFeature tableColumns={tableColumn.orders} onSearch={handleSearch} />
+      <OrderTableFeature tableColumns={tableColumn.orders} onSearch={handleSearch} handleDataReset={handleDataReset} />
 
       {/* 테이블 */}
       <div className='px-4 shadow-md'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.orders} allChecked={selectedOrders.length === orderList?.length} setAllChecked={handleAllChecked} />
+          <TableHead
+            tableColumns={tableColumn.orders}
+            allChecked={selectedOrders.length === orderList?.length}
+            setAllChecked={handleAllChecked}
+            handleSort={handleSort}
+            headerType="orders"
+          />
           <UnifiedOrderTableBody
             dataList={orderList}
             TableRowComponent={OrderTableRow}
             setOpenModal={handleRowClick}
             selectedOrders={selectedOrders}
             handleRowChecked={handleRowChecked}
+            currentPage={currentPage}
           />
         </Table>
       </div>
       {/* 페이지네이션 */}
-      {isLoading === false ? <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' /> : null}
+      {isLoading === false ? (
+        <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+      ) : null}
       {/* 모달 */}
-      <OrderDetailModal
-        isOpen={openOrderDetailModal}
-        setOpenModal={setOpenOrderDetailModal}
-        title='주문 상세'
-        primaryButtonText={'확인'}
-        selectedOrderDetail={selectedOrderDetail}
-      />
+      {openOrderDetailModal && (
+        <OrderDetailModal
+          isOpen={openOrderDetailModal}
+          setOpenModal={setOpenOrderDetailModal}
+          title='주문 상세'
+          primaryButtonText={'확인'}
+          selectedOrderDetail={selectedOrderDetail}
+        />
+      )}
     </div>
   );
 };

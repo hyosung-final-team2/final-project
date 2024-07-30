@@ -12,31 +12,27 @@ import {getAlarmList, readCustomerAlarm, sendGroupAlarm, sendPersonalAlarm} from
 import useCustomerStore from "../../store/customerStore.js";
 import useNotificationStore from "../../store/Notification/notificationStore.js";
 
-// 주문 승인, 주문 거절 시 회원에게 갈 메시지
-export const useSendPersonalAlarm = (targetMemberId, orderId, orderType, isApproved) => {
+export const useSendPersonalAlarm = (targetMemberId, orderId, isSubscription) => {
     const {businessName} = useCustomerStore()
-    const content = `${isApproved ? "주문 승인" : "주문 거절"} : ${orderType === "SINGLE" ? "단건주문 " : "정기주문 "} BC-${orderId}`
     const BASE_URL = import.meta.env.VITE_PUSH_LINK
-    const link = `${BASE_URL}/mypage/${orderType === "SINGLE" ? "single-order" : "subscription-order"}/${orderId}`
+    const link = `${BASE_URL}/member/app/mypage/${!isSubscription ? "single-order" : "subscription-order"}/${orderId}`
 
-    const alarmData = {
-        targetMemberId : targetMemberId,
-        title: businessName,
-        content: content,
-        link: link
-    }
     return useMutation({
-        mutationFn: () => sendPersonalAlarm(alarmData),
+        mutationFn: (isApproved) => sendPersonalAlarm(isApproved,businessName,targetMemberId,isSubscription,link,orderId),
+        onSuccess: () => {}
     })
 }
 
 
+
 export const useSendGroupAlarmProduct = (productName) => {
     const {customerId, businessName}= useCustomerStore()
+    const BASE_URL = import.meta.env.VITE_PUSH_LINK
     const groupData = {
         customerId : customerId,
         title:businessName,
-        content: `새상품(${productName})이 추가되었습니다.`
+        content: `새상품(${productName})이 추가되었습니다.`,
+        link: `${BASE_URL}/member/app/store/product/62` // TODO : onSuccess
     }
     return useMutation({
         mutationFn:() => sendGroupAlarm(groupData)

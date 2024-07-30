@@ -132,7 +132,7 @@ const MemberTable = () => {
       setSkeletonSearchCategory(searchCategory);
       setSkeletonSearchKeyword(searchKeyword);
     }
-  }, [memberList, totalPages,sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
+  }, [memberList, totalPages, sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
 
   if (isLoading) {
     // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
@@ -147,7 +147,7 @@ const MemberTable = () => {
       {/* 테이블 */}
       <div className='px-4 shadow-md'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.member} allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
+          <TableHead tableColumns={tableColumn.member} headerType="member" allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
 
           <DynamicTableBody
             dataList={memberList}

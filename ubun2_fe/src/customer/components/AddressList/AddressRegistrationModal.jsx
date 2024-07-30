@@ -1,18 +1,18 @@
 import { Modal } from 'flowbite-react';
 import { customModalTheme } from '../common/Modal/ModalStyle';
-import { useRegisterAddress } from '../../api/Address/AddressModal/queris';
 import MemberInfo from '../common/Info/MemberInfo';
 import AddressInput from '../common/Input/AddressInput';
 import MemberAddressTable from './MemberAddressTable/MemberAddressTable';
 import { useGetMemberAddresses } from '../../api/Address/AddressTable/queris';
 import useAddressModalStore from '../../store/Address/addressModalStore';
 import { useEffect } from 'react';
+import useAddressStore from '../../store/Address/useAddressStore';
 
 const AddressRegistrationModal = ({ isOpen, setOpenModal }) => {
   const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const { selectedMember, setSelectedMember } = useAddressModalStore();
+  const { setSelectedMemberId } = useAddressStore();
 
-  const { mutate: registerMutate } = useRegisterAddress();
   const { data: memberAddresses, refetch: refetchAddresses } = useGetMemberAddresses(selectedMember?.memberId);
 
   useEffect(() => {
@@ -41,14 +41,15 @@ const AddressRegistrationModal = ({ isOpen, setOpenModal }) => {
     },
   ];
 
-  const handleSubmit = addressData => {
-    registerMutate(addressData);
-    setOpenModal(false);
-  };
-
   const handleOnClose = () => {
     setOpenModal(false);
     setSelectedMember(null);
+  };
+
+  const handleOnConfirm = () => {
+    setOpenModal(false);
+    setSelectedMember(null);
+    setSelectedMemberId(null);
   };
 
   return (
@@ -62,11 +63,8 @@ const AddressRegistrationModal = ({ isOpen, setOpenModal }) => {
         {selectedMember && <MemberAddressTable memberAddresses={addressList} title={`${selectedMember.name}님의 주소 목록`} />}
       </Modal.Body>
       <Modal.Footer>
-        <button onClick={handleSubmit} className={`${commonButtonStyles} bg-green-300 text-green-600 hover:text-white hover:bg-green-600`}>
-          등록
-        </button>
-        <button onClick={() => setOpenModal(false)} className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 `}>
-          취소
+        <button onClick={handleOnConfirm} className={`${commonButtonStyles} bg-green-300 text-green-600 hover:text-white hover:bg-green-600`}>
+          확인
         </button>
       </Modal.Footer>
     </Modal>
