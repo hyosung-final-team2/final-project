@@ -74,6 +74,7 @@ class AlarmControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("회원별 알림 조회")
     void getMemberPushMessages() throws Exception {
         Long memberId = 1L;
         List<Alarm> alarms = Arrays.asList(new Alarm(), new Alarm());

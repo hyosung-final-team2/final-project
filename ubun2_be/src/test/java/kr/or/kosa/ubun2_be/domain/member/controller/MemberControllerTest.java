@@ -64,6 +64,7 @@ class MemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("등록 상점 조회")
     void getStores() throws Exception {
         List<CustomerResponse> mockResponse = Arrays.asList(new CustomerResponse(), new CustomerResponse());
         when(memberService.getCustomers(anyLong())).thenReturn(mockResponse);
@@ -79,6 +80,7 @@ class MemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("상점 공지사항 조회")
     void getAnnouncement() throws Exception {
         Long customerId = 1L;
         AnnouncementResponse mockResponse = new AnnouncementResponse();
@@ -95,6 +97,7 @@ class MemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("회원의 기기등록 FcmToken 전송 받기")
     void updateFcmToken() throws Exception {
         FcmTokenRequest request = new FcmTokenRequest();
         request.setFcmToken("feckjsldkf");
@@ -113,6 +116,7 @@ class MemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("회원의 간편 결제 비밀번호 체크")
     void simpleCheck() throws Exception {
         when(memberService.simpleCheck(anyLong(), any(PaymentPasswordRequest.class))).thenReturn(true);
 
@@ -129,6 +133,7 @@ class MemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("회원의 간편 결제 비밀번호 등록")
     void simplePassword() throws Exception {
         doNothing().when(memberService).registerSimplePassword(anyLong(), any(PaymentPasswordRequest.class));
 
@@ -144,6 +149,7 @@ class MemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("회원의 간편 결제 비밀번호 수정")
     void updateSimplePassword() throws Exception {
         doNothing().when(memberService).updateSimplePassword(anyLong(), any(PaymentPasswordRequest.class));
 
@@ -160,6 +166,7 @@ class MemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("로그인시 필요한 회원 정보")
     void memberInfo() throws Exception {
         MemberInfoResponse mockResponse = new MemberInfoResponse();
         when(memberService.memberInfo(anyLong())).thenReturn(mockResponse);

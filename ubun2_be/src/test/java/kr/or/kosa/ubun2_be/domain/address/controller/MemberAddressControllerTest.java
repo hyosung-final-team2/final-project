@@ -6,6 +6,7 @@ import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
 import kr.or.kosa.ubun2_be.domain.member.dto.MyAddressResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -62,6 +63,7 @@ class MemberAddressControllerTest extends CommonTestSetup {
 
 
     @Test
+    @DisplayName("회원 주소지 조회")
     void getAddresses() throws Exception {
         when(addressService.getAddressesByMemberId(anyLong())).thenReturn(myAddressResponses);
 
@@ -79,6 +81,7 @@ class MemberAddressControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("회원 주소지 추가")
     void addAddress() throws Exception {
         AddressRequest addressRequest = new AddressRequest();
         addressRequest.setMemberId(1L);
@@ -101,6 +104,7 @@ class MemberAddressControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("회원 주소지 수정")
     void updateAddress() throws Exception {
         Long addressId = 1L;
         AddressRequest addressRequest = new AddressRequest();
@@ -124,6 +128,7 @@ class MemberAddressControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("회원 주소지 삭제")
     void deleteAddress() throws Exception {
         Long addressId = 1L;
 

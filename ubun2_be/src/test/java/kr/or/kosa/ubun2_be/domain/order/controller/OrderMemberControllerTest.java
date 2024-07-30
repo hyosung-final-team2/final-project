@@ -76,6 +76,7 @@ class OrderMemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("정기 주문 및 단건 주문 유효성 검사")
     void validateOrders() throws Exception {
         mockMvc.perform(post("/api/members/orders/validate")
                         .with(user(member))
@@ -90,6 +91,7 @@ class OrderMemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("정기 주문 및 단건 주문 생성")
     void registerOrders() throws Exception {
         mockMvc.perform(post("/api/members/orders")
                         .with(user(member))
@@ -172,6 +174,7 @@ class OrderMemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("정기 주문에서 특정 상품 제거")
     void removeSubscriptionOrderProduct() throws Exception {
         RemoveSubscriptionOrderProductRequest request = new RemoveSubscriptionOrderProductRequest();
         request.setOrderId(1L);

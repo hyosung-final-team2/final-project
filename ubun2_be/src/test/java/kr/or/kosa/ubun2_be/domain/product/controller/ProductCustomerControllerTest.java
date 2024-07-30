@@ -83,6 +83,7 @@ class ProductCustomerControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("상품 상세 조회")
     void getProductByProductId() throws Exception {
         // given
         Long productId = 1L;
@@ -108,6 +109,7 @@ class ProductCustomerControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("상품 등록")
     void registerProduct() throws Exception {
         // given
         ProductRequest request = new ProductRequest();
@@ -137,6 +139,7 @@ class ProductCustomerControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("상품 수정")
     void updateProduct() throws Exception {
         // given
         ProductRequest productRequest = new ProductRequest();
@@ -163,6 +166,7 @@ class ProductCustomerControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("상품 삭제")
     void removeProduct() throws Exception {
         // when & then
         mockMvc.perform(delete("/api/customers/products/1")
@@ -172,6 +176,7 @@ class ProductCustomerControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("전체 카테고리 조회")
     void getProductCategory() throws Exception {
         // given
         List<CategoryResponse> mockCategories = Arrays.asList(new CategoryResponse(), new CategoryResponse());
