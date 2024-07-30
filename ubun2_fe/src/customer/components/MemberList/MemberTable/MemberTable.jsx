@@ -9,7 +9,7 @@ import ExcelModal from '../ExcelModal/ExcelModal';
 import DynamicTableBody from '../../common/Table/DynamicTableBody.jsx';
 
 import {useEffect, useState} from 'react';
-import { useGetMembers } from '../../../api/Customer/MemberList/MemberTable/queris.js';
+import {useDeleteSelectedMember, useGetMembers} from '../../../api/Customer/MemberList/MemberTable/queris.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { getMembers } from '../../../api/Customer/MemberList/MemberTable/memberTable.js';
 import {useGetMemberDetail} from '../../../api/Customer/MemberList/MemberModal/queris.js';
@@ -44,6 +44,7 @@ const MemberTable = () => {
   const memberList = members?.data?.data?.content || [];
 
   const { data, refetch } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
+  const { mutate:selectedMemberDeleteMutate } = useDeleteSelectedMember(selectedMembers, currentPage,sort, searchCategory, searchKeyword);
 
   const queryClient = useQueryClient();
 
@@ -56,6 +57,10 @@ const MemberTable = () => {
       });
     }
   }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
+
+  useEffect(() => {
+    setSelectedMembers([])
+  }, [currentPage,memberList]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -142,7 +147,7 @@ const MemberTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색  등 */}
-      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} selectedMembers={selectedMembers} handleDataReset={handleDataReset}/>
+      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} selectedMembers={selectedMembers} handleDataReset={handleDataReset} selectedMemberDeleteMutate={selectedMemberDeleteMutate}/>
 
       {/* 테이블 */}
       <div className='px-4 shadow-md'>

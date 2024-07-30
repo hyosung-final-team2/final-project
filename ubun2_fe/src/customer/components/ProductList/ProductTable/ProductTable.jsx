@@ -7,7 +7,7 @@ import { customTableTheme } from '../../common/Table/tableStyle';
 import TablePagination from '../../common/Pagination/TablePagination';
 import ProductTableRow from './ProductTableRow';
 import ProductDetailModal from '../ProductDetailModal/ProductDetailModal';
-import { useGetProducts } from '../../../api/Product/ProductList/ProductList/queris.js';
+import {useDeleteSelectedProducts, useGetProducts} from '../../../api/Product/ProductList/ProductList/queris.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { getProducts } from '../../../api/Product/ProductList/ProductList/productTable.js';
 import { useGetProductDetail } from '../../../api/Product/ProductList/ProductDetailModal/queris.js';
@@ -38,6 +38,7 @@ const ProductTable = () => {
   const productList = products?.data?.data?.content || [];
 
   const { data, refetch } = useGetProductDetail(selectedProductDetail.productId);
+  const { mutate: deleteSelectedProductsMutate } = useDeleteSelectedProducts(selectedProducts,currentPage)
 
   const queryClient = useQueryClient();
 
@@ -45,11 +46,15 @@ const ProductTable = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['product', nextPage, sort, searchCategory, searchKeyword],
+        queryKey: ['product', {page:nextPage, sort, searchCategory, searchKeyword}],
         queryFn: () => getProducts(nextPage,PAGE_SIZE),
       });
     }
   }, [currentPage, queryClient,searchCategory, searchKeyword, sort, totalPages]);
+
+  useEffect(() => {
+    setSelectedProducts([])
+  }, [currentPage,productList]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -114,7 +119,7 @@ const ProductTable = () => {
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      <ProductTableFeature tableColumns={tableColumn.product} onSearch={handleSearch} currentPage={currentPage} handleDataReset={handleDataReset}/>
+      <ProductTableFeature tableColumns={tableColumn.product} onSearch={handleSearch} currentPage={currentPage} handleDataReset={handleDataReset} deleteSelectedProductsMutate={deleteSelectedProductsMutate}/>
 
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
