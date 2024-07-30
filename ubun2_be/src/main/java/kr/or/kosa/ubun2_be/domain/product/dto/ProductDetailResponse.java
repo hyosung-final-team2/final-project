@@ -3,8 +3,12 @@ package kr.or.kosa.ubun2_be.domain.product.dto;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderOption;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@NoArgsConstructor
+@Setter
 public class ProductDetailResponse {
     private Long productId;
     private String productName;

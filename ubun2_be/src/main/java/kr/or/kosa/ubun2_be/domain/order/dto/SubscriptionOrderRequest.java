@@ -2,10 +2,12 @@ package kr.or.kosa.ubun2_be.domain.order.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
+@Setter
 public class SubscriptionOrderRequest {
 
     @NotNull(message = "customerId는 필수값입니다.")

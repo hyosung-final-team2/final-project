@@ -2,8 +2,12 @@ package kr.or.kosa.ubun2_be.domain.paymentmethod.dto.CardPayment;
 
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
+@NoArgsConstructor
 public class CardPaymentResponse {
     private Long memberId;
     private Long paymentMethodId;

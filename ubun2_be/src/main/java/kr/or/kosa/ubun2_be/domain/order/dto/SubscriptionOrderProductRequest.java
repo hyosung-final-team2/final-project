@@ -3,8 +3,10 @@ package kr.or.kosa.ubun2_be.domain.order.dto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class SubscriptionOrderProductRequest {
 
     @Min(value=1,message = "가격은 양수여야 합니다.")

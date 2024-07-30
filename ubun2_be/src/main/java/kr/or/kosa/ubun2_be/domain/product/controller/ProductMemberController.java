@@ -1,7 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.product.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.product.dto.*;
 import kr.or.kosa.ubun2_be.domain.product.service.CategoryService;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
@@ -54,7 +53,7 @@ public class ProductMemberController {
 
     @Operation(summary = "카테고리별 상품 목록")
     @GetMapping("/products/{customer_id}/category")
-    public ResponseDto<?> getProductsByCategory(@PathVariable("customer_id") Long customerId, @Valid CategoryRequest categoryRequest, @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseDto<?> getProductsByCategory(@PathVariable("customer_id") Long customerId, CategoryRequest categoryRequest, @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Page<ProductResponse> productResponseList = productService.getProductsByCategory(customerId, categoryRequest, pageable, customUserDetails.getUserId());
         return ResponseDto.ok(productResponseList, "정상출력 데이터");
     }
