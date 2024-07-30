@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import static kr.or.kosa.ubun2_be.domain.customer.entity.QCustomer.customer;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMember.member;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCustomer;
+import static kr.or.kosa.ubun2_be.domain.order.entity.QOrder.order;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QSubscriptionOrder.subscriptionOrder;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QSubscriptionOrderProduct.subscriptionOrderProduct;
 import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QAccountPayment.accountPayment;
@@ -142,7 +143,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
 
             return new BooleanBuilder()
                     .and(path.goe(startDateTime))
-                    .and(path.lt(endDateTime.plusDays(1))); // 다음 날의 시작 직전까지
+                    .and(path.lt(endDateTime.plusDays(0)));
         } catch (DateTimeParseException e) {
             return new BooleanBuilder();
         }
@@ -228,13 +229,16 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
 
     @Override
     public List<Address> findAddressesByDateRange(Long customerId, LocalDateTime startDate, LocalDateTime endDate) {
-        return from(subscriptionOrder)
-                .select(subscriptionOrder.address)
+        List<Tuple> results = from(subscriptionOrder)
+                .select(subscriptionOrder.address, subscriptionOrder.subscriptionOrderId)
                 .join(subscriptionOrder.member.memberCustomers, memberCustomer)
                 .where(memberCustomer.customer.customerId.eq(customerId)
-                        .and(subscriptionOrder.createdAt.between(startDate, endDate))
+                        .and(subscriptionOrder.createdAt.between(startDate,endDate))
                         .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED)))
                 .fetch();
+        return results.stream().map(tuple -> {
+            return tuple.get(subscriptionOrder.address);
+        }).toList();
     }
 
     @Override

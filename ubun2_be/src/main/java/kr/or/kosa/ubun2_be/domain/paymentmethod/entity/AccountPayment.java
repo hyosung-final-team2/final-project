@@ -20,8 +20,8 @@ public class AccountPayment extends PaymentMethod {
     private String bankName;
 
     @Builder
-    public AccountPayment(Member member, String paymentMethodNickname, String accountNumber, String bankName) {
-        super(member, paymentMethodNickname);
+    public AccountPayment(Member member, String paymentMethodNickname, String accountNumber, String bankName, boolean defaultStatus) {
+        super(member, paymentMethodNickname, defaultStatus);
         this.accountNumber = accountNumber;
         this.bankName = bankName;
     }

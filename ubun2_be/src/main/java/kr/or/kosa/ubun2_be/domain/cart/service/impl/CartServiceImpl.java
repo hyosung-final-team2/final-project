@@ -74,8 +74,6 @@ public class CartServiceImpl implements CartService {
                 .findFirst()
                 .orElse(null);
 
-        System.out.println("???cartOrderOption: " + cartProductRequest.getOrderOption());
-
         if (existCartProduct != null) {
             existCartProduct.updateQuantity(existCartProduct.getQuantity() + cartProductRequest.getQuantity());
             return;

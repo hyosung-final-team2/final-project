@@ -19,3 +19,7 @@ export const deleteAddress = async addressId => {
 export const updateAddress = async (addressId, data) => {
   return await privateFetch.put(`/members/addresses/${addressId}`, data);
 };
+
+export const setDefaultAddress = async addressId => {
+  return await privateFetch.put(`/members/addresses/default/${addressId}`);
+};

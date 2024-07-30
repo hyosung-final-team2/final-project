@@ -1,9 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.dashboard.dto;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,6 +8,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@NoArgsConstructor
 public class OrderSummaryResponse {
     private LocalDate date;
     private long orderCount;

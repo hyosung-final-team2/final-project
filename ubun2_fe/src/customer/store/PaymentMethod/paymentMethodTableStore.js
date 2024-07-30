@@ -42,4 +42,11 @@ const usePaymentMethodTableStore = create(
   )
 );
 
+// 스토어 초기화 함수
+export const resetPaymentMethodTableStore = () => {
+  usePaymentMethodTableStore.setState(initialState);
+  // 로컬 스토리지에서도 데이터 삭제
+  localStorage.removeItem('payment-method-table-storage');
+};
+
 export default usePaymentMethodTableStore;

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { deleteProduct, getProducts, modifyProduct, registerProduct } from './productTable.js';
+import {deleteProduct, deleteSelectedProducts, getProducts, modifyProduct, registerProduct} from './productTable.js';
 import useProductTableStore from "../../../../store/ProductTable/productTableStore.js";
+import {toast} from "react-hot-toast";
 
 export const useGetProducts = (page, size, sort, searchCategory, searchKeyword) => {
   return useQuery({
@@ -42,3 +43,18 @@ export const useDeleteProduct = (productId, currentPage) => {
     },
   });
 };
+
+export const useDeleteSelectedProducts = (selectedProducts, currentPage) => {
+  const queryClient = useQueryClient();
+  const {sort,searchCategory,searchKeyword} = useProductTableStore()
+  const size = selectedProducts?.length
+  console.log(selectedProducts)
+  return useMutation({
+    mutationFn: () => deleteSelectedProducts({productIdList:selectedProducts}),
+    onSuccess: () => {
+      toast.success(`${size}개의 상품이 정상적으로 삭제되었습니다.`)
+      queryClient.invalidateQueries({ queryKey: ['product', { page: currentPage,sort,searchCategory,searchKeyword }] });
+    },
+    onError: () => toast.error("상품 삭제에 실패하였습니다.")
+  })
+}

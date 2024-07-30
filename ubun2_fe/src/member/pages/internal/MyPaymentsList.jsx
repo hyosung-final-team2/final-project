@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useModalStore from '../../store/modalStore';
 import BottomButton from '../../components/common/button/BottomButton';
 import usePaymentStore from '../../store/Payment/PaymentStore';
+import { formatBankAccount } from '../../../customer/utils/accountFormat';
 
 const MyPaymentsList = () => {
   const [activeTab, setActiveTab] = useState('creditCard');
@@ -28,7 +29,7 @@ const MyPaymentsList = () => {
   const creditCards = cards?.data?.data || [];
   const bankAccounts = accounts?.data?.data || [];
   const checkPasswordExists = passwordExists?.data?.data || false;
-  const buttonStyle = 'text-gray-800 bg-gray-200 mb-3';
+  const buttonStyle = 'text-white bg-main mb-3';
 
   const renderPaymentItems = items => {
     if (items?.length === 0)
@@ -144,11 +145,12 @@ const MyPaymentsList = () => {
             title={selectedItem?.paymentMethodNickname}
             subtitle={
               selectedItem?.paymentType === 'CARD'
-                ? `${selectedItem?.cardCompanyName} ${selectedItem?.cardNumber}`
-                : `${selectedItem?.bankName} ${selectedItem?.accountNumber}`
+                ? `${selectedItem?.cardCompanyName} ${selectedItem?.cardNumber?.slice(-4).replace(/\d{2}$/, '**')}`
+                : `${selectedItem?.bankName} ${formatBankAccount(selectedItem?.bankName.slice(0, -2), selectedItem?.accountNumber)}`
             }
             isEdit={isEdit}
             onTitleChange={setNewTitle}
+            paymentMethodId={selectedItem?.paymentMethodId}
           />
         </SlideUpModal>
       ) : (
@@ -165,8 +167,8 @@ const MyPaymentsList = () => {
             title={selectedItem?.paymentMethodNickname}
             subtitle={
               selectedItem?.paymentType === 'CARD'
-                ? `${selectedItem?.cardCompanyName} ${selectedItem?.cardNumber}`
-                : `${selectedItem?.bankName} ${selectedItem?.accountNumber}`
+                ? `${selectedItem?.cardCompanyName} ${selectedItem?.cardNumber?.slice(-4).replace(/\d{2}$/, '**')}`
+                : `${selectedItem?.bankName} ${formatBankAccount(selectedItem?.bankName.slice(0, -2), selectedItem?.accountNumber)}`
             }
           />
         </SlideUpModal>

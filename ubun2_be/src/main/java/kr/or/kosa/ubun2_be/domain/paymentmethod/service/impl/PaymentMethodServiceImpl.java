@@ -1,5 +1,9 @@
 package kr.or.kosa.ubun2_be.domain.paymentmethod.service.impl;
 
+import kr.or.kosa.ubun2_be.domain.financial.institution.entity.Bank;
+import kr.or.kosa.ubun2_be.domain.financial.institution.entity.CardCompany;
+import kr.or.kosa.ubun2_be.domain.financial.institution.repository.BankRepository;
+import kr.or.kosa.ubun2_be.domain.financial.institution.repository.CardCompanyRepository;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
@@ -21,9 +25,12 @@ import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -34,16 +41,19 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     private final PaymentMethodRepository paymentMethodRepository;
     private final MemberRepository memberRepository;
+    private final BankRepository bankRepository;
+    private final CardCompanyRepository cardCompanyRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(Pageable pageable,SearchRequest searchRequest, Long customerId) {
-        return paymentMethodRepository.findAllCardPaymentMethodsByMemberId(pageable,searchRequest, customerId)
+    public Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(Pageable pageable, SearchRequest searchRequest, Long customerId) {
+        return paymentMethodRepository.findAllCardPaymentMethodsByMemberId(pageable, searchRequest, customerId)
                 .map(paymentMethod -> new CardPaymentResponse((CardPayment) paymentMethod));
     }
 
     @Override
-    public Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(Pageable pageable, SearchRequest searchRequest,Long customerId) {
-        return paymentMethodRepository.findAllAccountPaymentMethodsByMemberId(pageable, searchRequest,customerId)
+    public Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(Pageable pageable, SearchRequest searchRequest, Long customerId) {
+        return paymentMethodRepository.findAllAccountPaymentMethodsByMemberId(pageable, searchRequest, customerId)
                 .map(paymentMethod -> new AccountPaymentResponse((AccountPayment) paymentMethod));
     }
 
@@ -153,22 +163,60 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     public void registerPaymentMethod(RegisterPaymentMethodRequest registerPaymentMethodRequest, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
 
+        boolean isFirstPaymentMethod = paymentMethodRepository.findByMemberMemberId(memberId).isEmpty();
+
         if ("CARD".equals(registerPaymentMethodRequest.getPaymentType())) {
             //결제수단 카드일때 검증
-            if (registerPaymentMethodRequest.getCardNumber() == null || registerPaymentMethodRequest.getCardCompanyName() == null) {
+            if (registerPaymentMethodRequest.getCardNumber() == null || registerPaymentMethodRequest.getCardCompanyName() == null || registerPaymentMethodRequest.getCardPassword() == null || registerPaymentMethodRequest.getCvc() == null|| registerPaymentMethodRequest.getCardExpirationDate() == null) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
             }
             //카드번호 16자리 숫자 정규식 검증
             if (!isValidCardNumber(registerPaymentMethodRequest.getCardNumber())) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_NUMBER);
             }
+
+            // 카드 회사 엔티티에서 카드 정보 검증
+            CardCompany card = cardCompanyRepository.findByCardNumber(
+                            registerPaymentMethodRequest.getCardNumber())
+                    .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NO_MATCHING_CARD_NUMBER));
+
+            // 카드사명 검증
+            if(!registerPaymentMethodRequest.getCardCompanyName().equals(card.getCardCompanyName())) {
+                throw new PaymentMethodException(PaymentMethodExceptionType.NO_MATCHING_CARD_COMPANY);
+            }
+
+            // 카드 비밀번호 검증
+            if (!passwordEncoder.matches(registerPaymentMethodRequest.getCardPassword(), card.getCardPassword())) {
+                throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_PASSWORD);
+            }
+
+            // CVC 검증
+            if(!passwordEncoder.matches(registerPaymentMethodRequest.getCvc(), card.getCvc())) {
+                throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CVC);
+            }
+
+            // 만료일 형식 변환
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
+            String formattedExpiryDate = card.getExpiryDate().format(formatter);
+
+            if (!registerPaymentMethodRequest.getCardExpirationDate().equals(formattedExpiryDate)){
+                throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
+            }
+
+            // 만료일 검증
+            if( card.getExpiryDate().isBefore(LocalDateTime.now())) {
+                throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
+            }
+
             CardPayment cardPayment = CardPayment.builder()
                     .member(member)
                     .cardNumber(registerPaymentMethodRequest.getCardNumber())
                     .cardCompanyName(registerPaymentMethodRequest.getCardCompanyName())
                     .paymentMethodNickname(registerPaymentMethodRequest.getPaymentMethodNickname())
+                    .defaultStatus(isFirstPaymentMethod) // 첫 번째 결제수단이면 기본값으로 설정
                     .build();
             paymentMethodRepository.save(cardPayment);
+
         } else if ("ACCOUNT".equals(registerPaymentMethodRequest.getPaymentType())) {
             //결제수단 계좌일때 검증
             if (registerPaymentMethodRequest.getAccountNumber() == null || registerPaymentMethodRequest.getBankName() == null) {
@@ -178,11 +226,32 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             if (!isValidAccountNumber(registerPaymentMethodRequest.getAccountNumber())) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_NUMBER);
             }
+
+            Bank account = bankRepository.findByAccountNumber(registerPaymentMethodRequest.getAccountNumber())
+                    .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NO_MATCHING_ACCOUNT_NUMBER));
+
+            // 은행명 검증
+            if(!registerPaymentMethodRequest.getBankName().equals(account.getBankName())) {
+                throw new PaymentMethodException(PaymentMethodExceptionType.NO_MATCHING_BANK);
+            }
+
+            // 계좌 비밀번호 검증
+            if(!passwordEncoder.matches(registerPaymentMethodRequest.getAccountPassword(), account.getAccountPassword())) {
+                throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_PASSWORD);
+            }
+
+            // 계좌 상태 검증
+            if(!account.isAccountStatus()) {
+                throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_STATUS);
+            }
+
+
             AccountPayment accountPayment = AccountPayment.builder()
                     .member(member)
                     .accountNumber(registerPaymentMethodRequest.getAccountNumber())
                     .bankName(registerPaymentMethodRequest.getBankName())
                     .paymentMethodNickname(registerPaymentMethodRequest.getPaymentMethodNickname())
+                    .defaultStatus(isFirstPaymentMethod) // 첫 번째 결제수단이면 기본값으로 설정
                     .build();
             paymentMethodRepository.save(accountPayment);
 
@@ -244,14 +313,12 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     private void validateMyMember(Long customerId, Long memberId) {
-        System.out.println("customerId: " + customerId);
-        System.out.println("memberId: " + memberId);
         if (!paymentMethodRepository.checkIsMyMember(customerId, memberId)) {
             throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
         }
     }
 
-    private void validateMyPaymentMethod(PaymentMethod paymentMethod, Long memberId){
+    private void validateMyPaymentMethod(PaymentMethod paymentMethod, Long memberId) {
         if (!Objects.equals(paymentMethod.getMember().getMemberId(), memberId)) {
             throw new PaymentMethodException(PaymentMethodExceptionType.PAYMENT_NOT_MATCH);
         }
@@ -262,11 +329,24 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
         return member.getPaymentPassword() != null;
     }
+
     @Transactional
     @Override
     public void deleteSelectedPaymentMethod(List<PaymentMethodDeleteRequest> paymentMethodDeleteRequestList, Long customerId) {
         for (PaymentMethodDeleteRequest paymentMethodDeleteRequest : paymentMethodDeleteRequestList) {
             deletePaymentMethod(paymentMethodDeleteRequest.getPaymentMethodId(), customerId);
         }
+    }
+
+    @Transactional
+    @Override
+    public void setDefaultPaymentMethod(Long paymentMethodId, Long userId) {
+        PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+        Member member = memberRepository.findById(userId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+        List<PaymentMethod> paymentMethods = member.getPaymentMethods();
+        for (PaymentMethod pm : paymentMethods) {
+            pm.updateDefaultStatus(false);
+        }
+        paymentMethod.updateDefaultStatus(true);
     }
 }

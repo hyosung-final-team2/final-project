@@ -41,6 +41,8 @@ class ProductServiceImplTest {
     private CategoryService categoryService;
     @Mock
     private ImageService imageService;
+    @Mock
+    private InventoryService inventoryService;
 
     private Product testProduct;
     private Customer testCustomer;
@@ -75,11 +77,11 @@ class ProductServiceImplTest {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Product> mockPage = new PageImpl<>(Arrays.asList(testProduct));
 
-        when(productRepository.findProducts(anyLong(), any(SearchRequest.class), any(Pageable.class)))
+        when(productRepository.findProducts(anyLong(), any(SearchRequest.class), any(Pageable.class),anyBoolean()))
                 .thenReturn(mockPage);
 
         //when
-        Page<ProductResponse> result = productService.getProducts(1L, searchRequest, pageable);
+        Page<ProductResponse> result = productService.getProducts(1L, searchRequest, pageable,false);
 
         //then
         assertNotNull(result);
@@ -95,7 +97,7 @@ class ProductServiceImplTest {
                 .thenReturn(Optional.of(testProduct));
 
         //when
-        ProductDetailResponse result = productService.getProductByCustomerIdAndProductId(1L, 1L);
+        ProductDetailResponse result = productService.getProductByCustomerIdAndProductId(1L, 1L,false);
 
         //then
         assertNotNull(result);
@@ -124,6 +126,8 @@ class ProductServiceImplTest {
         //then
         verify(productRepository).save(any(Product.class));
         verify(imageService).uploadImage(any());
+        verify(inventoryService).saveStock(anyLong(), anyInt());
+
     }
 
     @Test
@@ -135,6 +139,8 @@ class ProductServiceImplTest {
         ProductRequest productRequest = new ProductRequest();
         productRequest.setProductId(1L);
         productRequest.setProductName("Updated Product");
+        productRequest.setStockQuantity(20);
+        productRequest.setProductStatus(true);
 
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(testProduct));
         when(productRepository.existsByProductName(anyString())).thenReturn(false);
@@ -146,6 +152,7 @@ class ProductServiceImplTest {
         //then
         verify(imageService).uploadImage(any());
         verify(imageService).deleteImage(anyString());
+        verify(inventoryService).saveStock(anyLong(), anyInt());
     }
 
     @Test
@@ -163,5 +170,6 @@ class ProductServiceImplTest {
         //then
         verify(imageService).deleteImage(anyString());
         verify(productRepository).delete(any(Product.class));
+        verify(inventoryService).removeStock(anyLong());
     }
 }

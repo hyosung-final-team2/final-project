@@ -109,7 +109,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Transactional
     @Override
-    public void addMemberAddress(AddressRequest addressRequest, Long memberId) {
+    public void addMemberAddress(MemberAddressRegisterRequest addressRequest, Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
 
@@ -127,7 +127,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Transactional
     @Override
-    public void updateMemberAddress(Long addressId, AddressRequest addressRequest, Long memberId) {
+    public void updateMemberAddress(Long addressId, MemberAddressRegisterRequest addressRequest, Long memberId) {
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
 
@@ -184,6 +184,24 @@ public class AddressServiceImpl implements AddressService {
         return addresses.stream()
                 .map(MemberAddressListResponse::new)
                 .toList();
+    }
+
+    @Transactional
+    @Override
+    public void setDefaultAddress(Long addressId, Long userId) {
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
+
+        Member member = address.getMember();
+        List<Address> addresses = member.getAddresses();
+
+        for (Address a : addresses) {
+            if (Objects.equals(a.getAddressId(), addressId)) {
+                a.updateDefaultStatus(true);
+            } else {
+                a.updateDefaultStatus(false);
+            }
+        }
     }
 
     private void validateMyMember(Long customerId, Long memberId) {

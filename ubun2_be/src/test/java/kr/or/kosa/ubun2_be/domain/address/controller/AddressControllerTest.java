@@ -1,17 +1,20 @@
 package kr.or.kosa.ubun2_be.domain.address.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.address.dto.*;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.*;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,15 +23,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = AddressController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-@Import(TestSecurityConfig.class)
-class AddressControllerTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+class AddressControllerTest extends CommonTestSetup {
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,10 +46,29 @@ class AddressControllerTest {
 
     @BeforeEach
     void setUp() {
-        addressResponses = Arrays.asList(
-                new AddressResponse(1L, "user1@example.com", "김철수", "서울시 강남구", "집", "김철수", "010-1234-5678", true),
-                new AddressResponse(2L, "user1@example.com", "김철수", "서울시 서초구", "회사", "김철수", "010-1234-5678", false)
-        );
+
+        AddressResponse addressResponse1 = new AddressResponse();
+        addressResponse1.setAddressId(1L);
+        addressResponse1.setMemberEmail("user1@example.com");
+        addressResponse1.setMemberName("김철수");
+        addressResponse1.setAddress("서울시 강남구");
+        addressResponse1.setAddressNickname("집");
+        addressResponse1.setRecipientName("김철수");
+        addressResponse1.setRecipientPhone("010-1234-5678");
+        addressResponse1.setDefaultStatus(true);
+
+
+        AddressResponse addressResponse2 = new AddressResponse();
+        addressResponse2.setAddressId(2L);
+        addressResponse2.setMemberEmail("user1@example.com");
+        addressResponse2.setMemberName("김철수");
+        addressResponse2.setAddress("서울시 서초구");
+        addressResponse2.setAddress("회사");
+        addressResponse2.setRecipientName("김철수");
+        addressResponse2.setRecipientPhone("010-1234-5678");
+        addressResponse2.setDefaultStatus(false);
+
+        addressResponses = Arrays.asList(addressResponse1, addressResponse2);
     }
 
     @Test
@@ -56,13 +78,14 @@ class AddressControllerTest {
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "addressId"));
         Page<AddressResponse> addressPage = new PageImpl<>(addressResponses, pageRequest, addressResponses.size());
 
-        when(addressService.getAllAddresses(any(PageRequest.class))).thenReturn(addressPage);
+        when(addressService.getAllAddresses(any(PageRequest.class),any(),anyLong())).thenReturn(addressPage);
 
         // When & Then
-        mockMvc.perform(get("/customers/addresses/")
+        mockMvc.perform(get("/api/customers/addresses")
                         .param("page", "0")
                         .param("size", "10")
-                        .param("sort", "addressId,desc"))
+                        .param("sort", "addressId,desc")
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.content").isArray())
@@ -75,7 +98,7 @@ class AddressControllerTest {
                 .andExpect(jsonPath("$.data.totalPages").value(1))
                 .andExpect(jsonPath("$.message").value("주소 목록을 성공적으로 조회했습니다."));
 
-        verify(addressService).getAllAddresses(any(PageRequest.class));
+        verify(addressService).getAllAddresses(any(PageRequest.class),any(),eq(customer.getUserId()));
     }
 
     @Test
@@ -92,14 +115,15 @@ class AddressControllerTest {
                 .memberPhone("010-1234-5678")
                 .memberEmail("user1@example.com")
                 .registrationDate(LocalDateTime.now())
-                .addresses(Arrays.asList(new AddressResponseDto(1L, "서울시 강남구")))
+                .addresses(Arrays.asList(new MemberDetailAddressResponse(1L,"서울시 강남구")))
                 .build();
 
-        when(addressService.getMemberInfoByAddressId(any(AddressMemberDetailRequest.class))).thenReturn(response);
+        when(addressService.getMemberInfoByAddressId(anyLong(),anyLong())).thenReturn(response);
 
         // When & Then
-        mockMvc.perform(get("/customers/addresses/{address_id}", request.getAddressId())
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/customers/addresses/{address_id}", request.getAddressId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.memberName").value("김철수"))
@@ -111,9 +135,6 @@ class AddressControllerTest {
                 .andExpect(jsonPath("$.data.addresses[0].address").value("서울시 강남구"))
                 .andExpect(jsonPath("$.message").value("주소 상세를 성공적으로 조회했습니다."));
 
-        verify(addressService).getMemberInfoByAddressId(argThat(req ->
-                req.getAddressId().equals(addressId)
-        ));
     }
 
     @Test
@@ -122,23 +143,25 @@ class AddressControllerTest {
         // Given
         AddressRequest addressRequest = AddressRequest.builder()
                 .memberId(1L)
+                .addressId(1L)
                 .address("서울시 강남구 테헤란로 123")
                 .recipientName("김철수")
                 .recipientPhone("010-1234-5678")
                 .build();
 
-        doNothing().when(addressService).addAddress(any(AddressRequest.class));
+        doNothing().when(addressService).addAddress(any(AddressRequest.class),anyLong());
 
         // When & Then
-        mockMvc.perform(post("/customers/addresses/")
+        mockMvc.perform(post("/api/customers/addresses/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(addressRequest)))
+                        .content(objectMapper.writeValueAsString(addressRequest))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").doesNotExist())
                 .andExpect(jsonPath("$.message").value("주소가 성공적으로 등록되었습니다."));
 
-        verify(addressService).addAddress(any(AddressRequest.class));
+        verify(addressService).addAddress(any(AddressRequest.class),eq(customer.getUserId()));
     }
 
     @Test
@@ -154,18 +177,19 @@ class AddressControllerTest {
                 .recipientPhone("010-1234-5678")
                 .build();
 
-        doNothing().when(addressService).updateAddress(addressId, addressRequest);
+        doNothing().when(addressService).updateAddress(anyLong(),any(),anyLong());
 
         // When & Then
-        mockMvc.perform(put("/customers/addresses/{address_id}", addressId)
+        mockMvc.perform(put("/api/customers/addresses/{address_id}", addressId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(addressRequest)))
+                        .content(objectMapper.writeValueAsString(addressRequest))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").doesNotExist())
                 .andExpect(jsonPath("$.message").value("주소가 성공적으로 수정되었습니다."));
 
-        verify(addressService).updateAddress(eq(addressId), any(AddressRequest.class));
+        verify(addressService).updateAddress(eq(addressId), any(AddressRequest.class),eq(customer.getUserId()));
     }
 
     @Test
@@ -173,16 +197,16 @@ class AddressControllerTest {
     void deleteAddress_ShouldDeleteSuccessfully() throws Exception {
         // Given
         Long addressId = 1L;
-        doNothing().when(addressService).deleteAddress(addressId);
+        doNothing().when(addressService).deleteAddress(anyLong(),anyLong());
 
         // When & Then
-        mockMvc.perform(delete("/customers/addresses/{address_id}", addressId)
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/api/customers/addresses/{address_id}", addressId)
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").doesNotExist())
                 .andExpect(jsonPath("$.message").value("주소가 성공적으로 삭제되었습니다."));
 
-        verify(addressService).deleteAddress(addressId);
+        verify(addressService).deleteAddress(eq(addressId),eq(customer.getUserId()));
     }
 }

@@ -49,7 +49,7 @@ public class AddressController {
 
     @Operation(summary = "회원의 주소 수정")
     @PutMapping(value = "/{address_id}")
-    public ResponseDto<?> updateAddress(@PathVariable("address_id") Long addressId,@Valid @RequestBody AddressRequest addressRequest,@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseDto<?> updateAddress(@PathVariable("address_id") Long addressId, @Valid @RequestBody AddressRequest addressRequest,@AuthenticationPrincipal CustomUserDetails userDetails) {
         addressService.updateAddress(addressId, addressRequest,userDetails.getUserId());
         return ResponseDto.ok(null, "주소가 성공적으로 수정되었습니다.");
     }

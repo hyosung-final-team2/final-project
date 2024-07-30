@@ -11,7 +11,8 @@ const BankAccountForm = ({ inputStyle, labelStyle, onFormChange }) => {
   const [formData, setFormData] = useState({
     accountNumber: '',
     paymentMethodNickname: '',
-    bank: null,
+    bankName: '',
+    accountPassword: '',
   });
 
   const updateFormData = useCallback((key, value) => {
@@ -66,6 +67,7 @@ const BankAccountForm = ({ inputStyle, labelStyle, onFormChange }) => {
           className='text-main'
           value={formData.accountPassword}
           onChange={handleInputChange('accountPassword')}
+          type='password'
         />
       </form>
       <SlideUpModal isOpen={isModalOpen} setIsModalOpen={setIsModalOpen} headerText='은행을 선택하세요' isButton={false}>

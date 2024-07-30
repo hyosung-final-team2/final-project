@@ -3,10 +3,11 @@ package kr.or.kosa.ubun2_be.domain.paymentmethod.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class RegisterPaymentMethodRequest {
-
 
     private String cardCompanyName;
 
@@ -22,4 +23,12 @@ public class RegisterPaymentMethodRequest {
 
     @Pattern(regexp = "^\\d{3,6}-?\\d{2,6}-?\\d{3,6}$")
     private String accountNumber;
+
+    private String cardPassword;
+
+    private String accountPassword;
+
+    private String cardExpirationDate;
+
+    private String cvc;
 }

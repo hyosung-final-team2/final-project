@@ -10,6 +10,7 @@ import CustomerForgotPassword from './customer/pages/external/ForgotPassword';
 import CustomerForgotLoginId from './customer/pages/external/ForgotLoginId';
 import CustomerLayout from './customer/layouts/Layout';
 import AddressSearchPopUp from './customer/components/common/AddressSearch/AddressSearchPopUp';
+import ExternalPageLayout from "./customer/layouts/ExternalPageLayout.jsx";
 
 //Member
 import MemberLogin from './member/pages/external/Login.jsx'
@@ -59,21 +60,19 @@ const App = () => {
   return (
     <>
       <Routes>
+
         {/* Customer Routes */}
-        <Route
-          path='/customer/*'
-          element={
-            <Routes>
-              <Route path='login' element={<CustomerLogin />} />
-              <Route path='register' element={<CustomerRegister />} />
-              <Route path='forgot-password' element={<CustomerForgotPassword />} />
-              <Route path='forgot-loginid' element={<CustomerForgotLoginId />} />
-              <Route path='app/*' element={<CustomerLayout />} />
-              <Route path='*' element={<Navigate to={token ? '/customer/app/dashboard' : '/customer/login'} replace />} />
-              <Route path='/address-search' element={<AddressSearchPopUp />} />
-            </Routes>
-          }
-        />
+        <Route path='/customer/*' element={<Routes>
+          <Route element={<ExternalPageLayout />}>
+            <Route path='login' element={<CustomerLogin />} />
+            <Route path='register' element={<CustomerRegister />} />
+            <Route path='forgot-password' element={<CustomerForgotPassword />} />
+            <Route path='forgot-loginid' element={<CustomerForgotLoginId />} />
+          </Route>
+          <Route path='app/*' element={<CustomerLayout />} />
+          <Route path='*' element={<Navigate to={token ? '/customer/app/dashboard' : '/customer/login'} replace />} />
+          <Route path='address-search' element={<AddressSearchPopUp />} />
+        </Routes>} />
 
         {/* Member Routes */}
         <Route

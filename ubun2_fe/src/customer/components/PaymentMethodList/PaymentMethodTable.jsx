@@ -16,7 +16,7 @@ import useAddressStore from '../../store/Address/useAddressStore';
 
 import { useGetPayments } from '../../api/PaymentMethod/Table/queris';
 import { useGetPaymentDetail } from '../../api/PaymentMethod/Modal/queris';
-import usePaymentMethodTableStore from '../../store/PaymentMethod/paymentMethodTableStore';
+import usePaymentMethodTableStore, { resetPaymentMethodTableStore } from '../../store/PaymentMethod/paymentMethodTableStore';
 import PaymentMethodRegistrationModal from './PaymentMethodRegistrationModal';
 
 import SkeletonTable from '../Skeleton/SkeletonTable';
@@ -104,6 +104,32 @@ const PaymentMethodTable = () => {
     setCurrentPage(1);
     await refetchPayments();
   };
+
+  // useEffect(() => {
+  //   resetPaymentMethodTableStore();
+  // }, []);
+
+  useEffect(() => {
+    const handleLoad = () => {
+      // performance.navigation은 deprecated되었지만, 여전히 많은 브라우저에서 지원됩니다.
+      if (performance.navigation.type === 1) {
+        // 1은 새로고침을 의미합니다.
+        const entries = performance.getEntriesByType('navigation');
+        if (entries.length > 0 && entries[0].type === 'reload') {
+          // 강제 새로고침 (Ctrl+F5)인 경우 리셋
+          resetPaymentMethodTableStore();
+        }
+      }
+    };
+
+    // 페이지 로드 완료 시 실행
+    window.addEventListener('load', handleLoad);
+
+    return () => {
+      window.removeEventListener('load', handleLoad);
+    };
+  }, []);
+
   useEffect(() => {
     return () => resetData();
   }, [resetData]);
@@ -116,7 +142,7 @@ const PaymentMethodTable = () => {
       setSkeletonTotalPage(totalPages);
       setSkeletonSortData(sort);
     }
-  }, [isLoading, paymentList, totalPages, sort, setSkeletonData, setSkeletonTotalPage, setSkeletonSortData]);
+  }, [isLoading, paymentList, totalPages, sort]);
 
   if (isLoading) {
     return (
@@ -144,6 +170,7 @@ const PaymentMethodTable = () => {
             allChecked={checkedMembers?.length === paymentList?.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
+            headerType={'paymentMethod'}
           />
           <DynamicTableBody
             dataList={paymentList}

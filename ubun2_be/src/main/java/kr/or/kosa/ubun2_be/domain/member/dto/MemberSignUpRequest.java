@@ -3,9 +3,11 @@ package kr.or.kosa.ubun2_be.domain.member.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor
 public class MemberSignUpRequest {
 
     @NotBlank(message = "로그인 ID를 입력해주세요")
@@ -25,7 +27,7 @@ public class MemberSignUpRequest {
     private String memberEmail;
 
     @NotBlank(message = "전화번호를 입력해주세요")
-    @Pattern(regexp = "^(010|011|016|017|018|019)\\d{3,4}\\d{4}$", message = "ex) 01012345678")
+    @Pattern(regexp = "^(010|011|016|017|018|019)-\\d{3,4}-\\d{4}$", message = "ex) 010-1234-5678")
     private String memberPhone;
 
     @NotBlank(message = "fcmToken을 입력해주세요")

@@ -5,9 +5,16 @@ import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.CardPayment;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.entity.PaymentMethod;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodException;
 import kr.or.kosa.ubun2_be.domain.paymentmethod.exception.paymentMethod.PaymentMethodExceptionType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberPaymentMethodsResponse {
     private Long paymentMethodId;
     private String accountNumber;

@@ -9,7 +9,7 @@ import ExcelModal from '../ExcelModal/ExcelModal';
 import DynamicTableBody from '../../common/Table/DynamicTableBody.jsx';
 
 import {useEffect, useState} from 'react';
-import { useGetMembers } from '../../../api/Customer/MemberList/MemberTable/queris.js';
+import {useDeleteSelectedMember, useGetMembers} from '../../../api/Customer/MemberList/MemberTable/queris.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { getMembers } from '../../../api/Customer/MemberList/MemberTable/memberTable.js';
 import {useGetMemberDetail} from '../../../api/Customer/MemberList/MemberModal/queris.js';
@@ -33,6 +33,7 @@ const MemberTable = () => {
   const { sort, updateSort } = useMemberTableStore()
   const {searchCategory, setSearchCategory} = useMemberTableStore() // 검색할 카테고리 (드롭다운)
   const {searchKeyword, setSearchKeyword} = useMemberTableStore() // 검색된 단어
+  const { setTotalElements} = useMemberTableStore()
   const { resetData } = useMemberTableStore()
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,9 +42,11 @@ const MemberTable = () => {
   const { data: members,refetch: refetchMembers , isLoading } = useGetMembers(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
   const totalPages = members?.data?.data?.totalPages;
+  const totalElementsFromPage = members?.data?.data?.totalElements;
   const memberList = members?.data?.data?.content || [];
 
   const { data, refetch } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
+  const { mutate:selectedMemberDeleteMutate } = useDeleteSelectedMember(selectedMembers, currentPage,sort, searchCategory, searchKeyword);
 
   const queryClient = useQueryClient();
 
@@ -56,6 +59,17 @@ const MemberTable = () => {
       });
     }
   }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
+
+  useEffect(() => {
+    setSelectedMembers([])
+  }, [currentPage,memberList]);
+
+  //  이 부분 추가
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -122,7 +136,7 @@ const MemberTable = () => {
   },[])
 
   // isLoading 시, skeletonTable
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore()
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword, setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore()
 
   useEffect(() => {
     if (!isLoading) {
@@ -131,6 +145,9 @@ const MemberTable = () => {
       setSkeletonSortData(sort)
       setSkeletonSearchCategory(searchCategory);
       setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage)
+      }
     }
   }, [memberList, totalPages, sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
 
@@ -142,12 +159,12 @@ const MemberTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색  등 */}
-      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} selectedMembers={selectedMembers} handleDataReset={handleDataReset}/>
+      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} selectedMembers={selectedMembers} handleDataReset={handleDataReset} selectedMemberDeleteMutate={selectedMemberDeleteMutate}/>
 
       {/* 테이블 */}
       <div className='px-4 shadow-md'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.member} allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
+          <TableHead tableColumns={tableColumn.member} headerType="member" allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
 
           <DynamicTableBody
             dataList={memberList}

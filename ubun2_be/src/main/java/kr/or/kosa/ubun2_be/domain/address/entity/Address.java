@@ -73,6 +73,10 @@ public class Address extends BaseTimeEntity {
         this.address = address;
     }
 
+    public void updateDefaultStatus(boolean defaultStatus) {
+        this.defaultStatus = defaultStatus;
+    }
+
     public void updateAddress(String address) {
         this.address = address;
     }

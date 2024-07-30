@@ -102,7 +102,7 @@ public class CustomerController {
 
     @Operation(summary = "회원 & 가입대기 회원 리스트 삭제")
     @DeleteMapping("/members/selected")
-    public ResponseDto<?> deleteMember(@Valid @RequestBody List<MemberDeleteRequest> memberDeleteRequestList,
+    public ResponseDto<?> deleteSelectedMember(@Valid @RequestBody List<MemberDeleteRequest> memberDeleteRequestList,
                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         customerService.deleteSelectedProducts(memberDeleteRequestList, customUserDetails.getUserId());
         return ResponseDto.ok(null, "회원 삭제 정상 완료");

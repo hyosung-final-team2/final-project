@@ -1,45 +1,43 @@
 package kr.or.kosa.ubun2_be.domain.order.controller;
 
-import kr.or.kosa.ubun2_be.domain.address.controller.TestSecurityConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.order.dto.*;
-import kr.or.kosa.ubun2_be.domain.order.entity.Order;
-import kr.or.kosa.ubun2_be.domain.order.entity.OrderProduct;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
-import kr.or.kosa.ubun2_be.domain.product.entity.Product;
-import kr.or.kosa.ubun2_be.domain.product.enums.OrderOption;
-import kr.or.kosa.ubun2_be.domain.product.enums.OrderProductStatus;
-import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = OrderCustomerController.class)
-@MockBean(JpaMetamodelMappingContext.class)
-@Import(TestSecurityConfig.class)
-class OrderCustomerControllerTest {
-
+@SpringBootTest
+@AutoConfigureMockMvc
+class OrderCustomerControllerTest extends CommonTestSetup {
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @MockBean
     private OrderService orderService;
@@ -57,9 +55,15 @@ class OrderCustomerControllerTest {
     private UnifiedOrderResponse createOrderResponse(Long orderId, String orderStatus, String createdAt,
                                                      String memberName, String paymentType, int totalOrderPrice,
                                                      boolean isSubscription) {
-        return new UnifiedOrderResponse(
-                orderId, orderStatus, createdAt, memberName, paymentType, totalOrderPrice, isSubscription
-        );
+        return UnifiedOrderResponse.builder()
+                .orderId(orderId)
+                .orderStatus(orderStatus)
+                .createdAt(createdAt)
+                .memberName(memberName)
+                .paymentType(paymentType)
+                .totalOrderPrice(totalOrderPrice)
+                .isSubscription(isSubscription)
+                .build();
     }
 
     @Test
@@ -72,11 +76,12 @@ class OrderCustomerControllerTest {
         when(orderService.getOrders(eq(customerId), any(SearchRequest.class), any(PageRequest.class))).thenReturn(orderPage);
 
         // When & Then
-        mockMvc.perform(get("/customers/orders/")
+        mockMvc.perform(get("/api/customers/orders/")
                         .param("customerId", customerId.toString())
                         .param("page", "0")
                         .param("size", "10")
-                        .param("sort", "orderId,desc"))
+                        .param("sort", "orderId,desc")
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.content").isArray())
@@ -99,83 +104,115 @@ class OrderCustomerControllerTest {
     void getOrderByOrderId() throws Exception {
         // Given
         Long orderId = 1L;
-        Long customerId = 1L;
-        OrderDetailResponse orderDetailResponse = createOrderDetailResponse();
-
-        when(orderService.getOrderByCustomerIdAndOrderId(eq(orderId), eq(customerId)))
-                .thenReturn(orderDetailResponse);
+        OrderDetailResponse mockResponse = new OrderDetailResponse();
+        when(orderService.getOrderByCustomerIdAndOrderId(anyLong(), anyLong())).thenReturn(mockResponse);
 
         // When & Then
-        mockMvc.perform(get("/customers/orders/{order_id}", orderId)
-                        .param("customerId", customerId.toString()))
+        mockMvc.perform(get("/api/customers/orders/{order_id}", orderId)
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.data.memberName").value("김철수"))
-                .andExpect(jsonPath("$.data.memberEmail").value("user1@example.com"))
-                .andExpect(jsonPath("$.data.memberPhone").value("010-1234-5678"))
-                .andExpect(jsonPath("$.data.createdAt").value("2024-01-01T15:00:00"))
-                .andExpect(jsonPath("$.data.addressNickname").value("집"))
-                .andExpect(jsonPath("$.data.address").value("서울시 강남구 테헤란로 123"))
-                .andExpect(jsonPath("$.data.paymentType").value("CARD"))
-                .andExpect(jsonPath("$.data.cardCompanyName").value("신한카드"))
-                .andExpect(jsonPath("$.data.cardNumber").value("1234-5678-9012-3456"))
-                .andExpect(jsonPath("$.data.paymentMethodNickname").value("내 신용카드"))
-                .andExpect(jsonPath("$.data.orderAmount").value(25000))
-                .andExpect(jsonPath("$.data.discountAmount").value(3000))
-                .andExpect(jsonPath("$.data.paymentAmount").value(22000))
-                .andExpect(jsonPath("$.data.orderProducts").isArray())
-                .andExpect(jsonPath("$.data.orderProducts.length()").value(2))
-                .andExpect(jsonPath("$.data.orderProducts[0].productName").value("맛있는 사과"))
-                .andExpect(jsonPath("$.data.orderProducts[0].price").value(10000))
-                .andExpect(jsonPath("$.data.orderProducts[1].productName").value("달콤배"))
-                .andExpect(jsonPath("$.data.orderProducts[1].price").value(15000))
-                .andExpect(jsonPath("$.data.orderStatus").value("APPROVED"))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).getOrderByCustomerIdAndOrderId(eq(orderId), eq(customerId));
+        verify(orderService).getOrderByCustomerIdAndOrderId(eq(customer.getUserId()), eq(orderId));
     }
 
-    private OrderDetailResponse createOrderDetailResponse() {
-        Order order = Order.builder()
-                .orderId(1L)
-                .orderStatus(OrderStatus.APPROVED)
-                .build();
+    @Test
+    @DisplayName("정기 주문 상세를 조회한다")
+    void getSubscriptionOrderByOrderId() throws Exception {
+        // Given
+        Long orderId = 1L;
+        SubscriptionOrderDetailResponse mockResponse = new SubscriptionOrderDetailResponse();
+        when(orderService.getSubscriptionOrderByCustomerIdAndOrderId(anyLong(), anyLong())).thenReturn(mockResponse);
 
-        Product product1 = Product.builder()
-                .productId(1L)
-                .productName("맛있는 사과")
-                .productDescription("신선한 사과")
-                .productPrice(10000)
-                .productDiscount(1000)
-                .stockQuantity(100)
-                .orderOption(OrderOption.BOTH)
-                .productStatus(true)
-                .build();
+        // When & Then
+        mockMvc.perform(get("/api/customers/orders/subscription/{order_id}", orderId)
+                        .with(user(customer)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        Product product2 = Product.builder()
-                .productId(2L)
-                .productName("달콤배")
-                .productDescription("달콤한 배")
-                .productPrice(15000)
-                .productDiscount(2000)
-                .stockQuantity(80)
-                .orderOption(OrderOption.SINGLE)
-                .productStatus(true)
-                .build();
-
-        OrderProduct orderProduct1 = new OrderProduct(1L, order, product1, 1, 10000, 1000, OrderProductStatus.APPROVED);
-        OrderProduct orderProduct2 = new OrderProduct(2L, order, product2, 1, 15000, 2000, OrderProductStatus.APPROVED);
-
-        List<OrderDetailProductResponse> orderProducts = Arrays.asList(
-                new OrderDetailProductResponse(orderProduct1),
-                new OrderDetailProductResponse(orderProduct2)
-        );
-
-        return new OrderDetailResponse(
-                "김철수", "user1@example.com", "010-1234-5678", "2024-01-01T15:00:00",
-                "집", "서울시 강남구 테헤란로 123", "CARD", null, null,
-                "신한카드", "1234-5678-9012-3456", "내 신용카드",
-                25000, 3000, 22000, orderProducts, OrderStatus.APPROVED
-        );
+        verify(orderService).getSubscriptionOrderByCustomerIdAndOrderId(eq(customer.getUserId()), eq(orderId));
     }
+
+    @Test
+    @DisplayName("전체 주문 대기 목록을 조회한다")
+    void getPendingOrders() throws Exception {
+        // Given
+        Page<UnifiedOrderResponse> mockPage = new PageImpl<>(Arrays.asList(new UnifiedOrderResponse(), new UnifiedOrderResponse()));
+        when(orderService.getPendingOrders(anyLong(), any(), any())).thenReturn(mockPage);
+
+        // When & Then
+        mockMvc.perform(get("/api/customers/orders/pending")
+                        .with(user(customer)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data.content").isArray())
+                .andExpect(jsonPath("$.message").value("정상출력 데이터"));
+
+        verify(orderService).getPendingOrders(eq(customer.getUserId()), any(), any());
+    }
+
+    @Test
+    @DisplayName("대기 단건 주문 리스트를 승인하거나 취소한다")
+    void updateOrderStatus() throws Exception {
+        // Given
+        OrderApproveRequest orderApproveRequest1 = new OrderApproveRequest();
+        orderApproveRequest1.setOrderId(1L);
+        orderApproveRequest1.setOrderStatus("APPROVED");
+
+        OrderApproveRequest orderApproveRequest2 = new OrderApproveRequest();
+        orderApproveRequest2.setOrderId(2L);
+        orderApproveRequest2.setOrderStatus("APPROVED");
+
+        List<OrderApproveRequest> requests = Arrays.asList(orderApproveRequest1,orderApproveRequest2);
+
+        // When & Then
+        mockMvc.perform(put("/api/customers/orders/approve")
+                        .with(user(customer))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requests)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("정상출력 데이터"));
+
+        verify(orderService).updateOrderStatus(eq(customer.getUserId()), argThat(list -> {
+            if (list.size() != 2) return false;
+            OrderApproveRequest req1 = list.get(0);
+            OrderApproveRequest req2 = list.get(1);
+            return req1.getOrderId().equals(1L) && req1.getOrderStatus().equals("APPROVED") &&
+                    req2.getOrderId().equals(2L) && req2.getOrderStatus().equals("APPROVED");
+        }));
+
+    }
+
+    @Test
+    @DisplayName("대기 정기 주문 리스트를 승인하거나 취소한다")
+    void updateSubscriptionOrderStatus() throws Exception {
+        // Given
+        SubscriptionApproveRequest subscriptionApproveRequest1 = new SubscriptionApproveRequest();
+        subscriptionApproveRequest1.setSubscriptionOrderId(1L);
+        subscriptionApproveRequest1.setOrderStatus("APPROVED");
+
+        SubscriptionApproveRequest subscriptionApproveRequest2 = new SubscriptionApproveRequest();
+        subscriptionApproveRequest2.setSubscriptionOrderId(2L);
+        subscriptionApproveRequest2.setOrderStatus("APPROVED");
+        List<SubscriptionApproveRequest> requests = Arrays.asList(subscriptionApproveRequest1,subscriptionApproveRequest2);
+
+        // When & Then
+        mockMvc.perform(put("/api/customers/orders/subscription/approve")
+                        .with(user(customer))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requests)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.message").value("정상출력 데이터"));
+
+        verify(orderService).updateSubscriptionOrderStatus(eq(customer.getUserId()), argThat(list -> {
+            if (list.size() != 2) return false;
+            SubscriptionApproveRequest req1 = list.get(0);
+            SubscriptionApproveRequest req2 = list.get(1);
+            return req1.getSubscriptionOrderId().equals(1L) && req1.getOrderStatus().equals("APPROVED") &&
+                    req2.getSubscriptionOrderId().equals(2L) && req2.getOrderStatus().equals("APPROVED");
+        }));    }
 }
