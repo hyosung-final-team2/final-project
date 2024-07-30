@@ -30,6 +30,12 @@ const initialSalesData = {
   제주특별자치도: '0',
 };
 
+const mapSidoName = sidoName => {
+  if (sidoName === '전북특별자치도') return '전라북도';
+  if (sidoName === '강원특별자치도') return '강원도';
+  return sidoName;
+};
+
 const SidoMap = ({ addressesByDateValue }) => {
   const [tooltipContent, setTooltipContent] = useState('');
   const [salesDatas, setSalesDatas] = useState(initialSalesData);
@@ -40,11 +46,13 @@ const SidoMap = ({ addressesByDateValue }) => {
 
     // 새로운 데이터로 salesDatas 업데이트
     if (addressesByDateValue) {
+      console.log('addressesByDateValue', addressesByDateValue);
       const newSalesDatas = { ...initialSalesData };
       addressesByDateValue.forEach(address => {
         const sidoName = address?.addressName?.split(',')[1]?.trim();
-        if (newSalesDatas.hasOwnProperty(sidoName)) {
-          newSalesDatas[sidoName] = String(Number(newSalesDatas[sidoName]) + 1);
+        const mappedSidoName = mapSidoName(sidoName);
+        if (newSalesDatas.hasOwnProperty(mappedSidoName)) {
+          newSalesDatas[mappedSidoName] = String(Number(newSalesDatas[mappedSidoName]) + 1);
         }
       });
       setSalesDatas(newSalesDatas);
@@ -56,8 +64,8 @@ const SidoMap = ({ addressesByDateValue }) => {
     Object.entries(salesDatas).forEach(([sido, count]) => {
       const numCount = Number(count);
       if (numCount > 10) result[sido] = '10+';
-      else if (numCount > 5) result[sido] = '5+';
-      else if (numCount > 3) result[sido] = '3+';
+      else if (numCount >= 5) result[sido] = '5+';
+      else if (numCount >= 3) result[sido] = '3+';
       else result[sido] = '0+';
     });
     return result;

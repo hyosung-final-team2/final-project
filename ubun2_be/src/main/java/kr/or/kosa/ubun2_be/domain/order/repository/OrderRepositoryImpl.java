@@ -19,8 +19,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static kr.or.kosa.ubun2_be.domain.customer.entity.QCustomer.customer;
@@ -200,14 +199,18 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
 
     @Override
     public List<Address> findAddressesByDateRange(Long customerId, LocalDateTime startDate, LocalDateTime endDate) {
-        return from(order)
-                .select(order.address)
+        List<Tuple> results = from(order)
+                .select(order.address, order.orderId)
                 .join(order.orderProducts, orderProduct)
                 .join(orderProduct.product.customer, customer)
                 .where(customer.customerId.eq(customerId)
                         .and(order.createdAt.between(startDate, endDate))
                         .and(order.orderStatus.eq(OrderStatus.APPROVED)))
                 .fetch();
+
+        return  results.stream().map(tuple -> {
+            return tuple.get(order.address);
+        }).toList();
     }
 
     @Override
