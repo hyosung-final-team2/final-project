@@ -97,3 +97,5 @@ export const modifyProduct = async (productRequest, imageFile) => {
 };
 
 export const deleteProduct = async productId => await privateFetch.delete(`/customers/products/${productId}`);
+
+export const deleteSelectedProducts = async selectedProducts => await privateFetch.delete(`/customers/products/selected`, {data:selectedProducts});

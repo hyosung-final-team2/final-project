@@ -3,7 +3,7 @@ import {useState} from "react";
 import ProductInsertModal from "./ProductInsertlModal.jsx";
 import ArrowPathIcon from "@heroicons/react/24/outline/ArrowPathIcon.js";
 
-const ProductTableFeature = ({ tableColumns, onSearch,currentPage,handleDataReset }) => {
+const ProductTableFeature = ({ tableColumns, onSearch,currentPage,handleDataReset,deleteSelectedProductsMutate }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const [openProductInsertModal, setOpenProductInsertModal] = useState(false);
 
@@ -25,6 +25,7 @@ const ProductTableFeature = ({ tableColumns, onSearch,currentPage,handleDataRese
                     onClick={handleSaveClick}>상품 등록
             </button>
             <button
+                onClick={() => deleteSelectedProductsMutate()}
                 className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제
             </button>
         </div>
