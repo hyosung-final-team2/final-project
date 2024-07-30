@@ -33,6 +33,7 @@ const MemberTable = () => {
   const { sort, updateSort } = useMemberTableStore()
   const {searchCategory, setSearchCategory} = useMemberTableStore() // 검색할 카테고리 (드롭다운)
   const {searchKeyword, setSearchKeyword} = useMemberTableStore() // 검색된 단어
+  const { setTotalElements} = useMemberTableStore()
   const { resetData } = useMemberTableStore()
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,6 +42,7 @@ const MemberTable = () => {
   const { data: members,refetch: refetchMembers , isLoading } = useGetMembers(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
   const totalPages = members?.data?.data?.totalPages;
+  const totalElementsFromPage = members?.data?.data?.totalElements;
   const memberList = members?.data?.data?.content || [];
 
   const { data, refetch } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
@@ -61,6 +63,13 @@ const MemberTable = () => {
   useEffect(() => {
     setSelectedMembers([])
   }, [currentPage,memberList]);
+
+  //  이 부분 추가
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -127,7 +136,7 @@ const MemberTable = () => {
   },[])
 
   // isLoading 시, skeletonTable
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore()
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword, setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore()
 
   useEffect(() => {
     if (!isLoading) {
@@ -136,6 +145,9 @@ const MemberTable = () => {
       setSkeletonSortData(sort)
       setSkeletonSearchCategory(searchCategory);
       setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage)
+      }
     }
   }, [memberList, totalPages, sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
 
