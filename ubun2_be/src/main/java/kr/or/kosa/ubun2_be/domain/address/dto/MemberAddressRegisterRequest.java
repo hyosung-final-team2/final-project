@@ -6,13 +6,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class AddressRequest {
+public class MemberAddressRegisterRequest {
 
-    @NotNull(message = "memberId는 필수값입니다.")
     @Positive
     private Long memberId;
 
-    @NotNull(message = "addressId는 필수값입니다.")
     @Min(value = 0, message = "addressId는 0 이상의 값이어야 합니다.")
     private Long addressId;
 

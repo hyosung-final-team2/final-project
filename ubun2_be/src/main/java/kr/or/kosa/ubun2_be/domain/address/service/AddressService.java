@@ -22,9 +22,9 @@ public interface AddressService {
 
     public List<MyAddressResponse> getAddressesByMemberId(Long memberId);
 
-    public void addMemberAddress(AddressRequest addressRequest, Long memberId);
+    public void addMemberAddress(MemberAddressRegisterRequest addressRequest, Long memberId);
 
-    public void updateMemberAddress(Long addressId, AddressRequest addressRequest, Long memberId);
+    public void updateMemberAddress(Long addressId, MemberAddressRegisterRequest addressRequest, Long memberId);
 
     Address findByAddressIdAndMemberId(Long addressId, Long memberId);
 
@@ -35,4 +35,6 @@ public interface AddressService {
     Page<SearchMemberListResponse> searchMemberList(Pageable pageable, SearchRequest searchRequest, Long customerId);
 
     public List<MemberAddressListResponse> getMemberAddressList(Long memberId, Long customerId);
+
+    void setDefaultAddress(Long addressId, Long userId);
 }
