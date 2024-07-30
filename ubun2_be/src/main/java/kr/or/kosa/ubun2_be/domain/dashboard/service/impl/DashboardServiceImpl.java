@@ -12,9 +12,6 @@ import kr.or.kosa.ubun2_be.domain.order.repository.OrderRepository;
 import kr.or.kosa.ubun2_be.domain.order.repository.SubscriptionOrderRepository;
 import kr.or.kosa.ubun2_be.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -74,7 +71,7 @@ public class DashboardServiceImpl implements DashboardService {
     }
 
     @Override
-    public List<TopSellingProductDto> getTopSellingProducts(Long customerId, LocalDate startDate, LocalDate endDate, long limit) {
+    public List<TopSellingProductDto> getTopSellingProducts(Long customerId, LocalDate startDate, LocalDate endDate, int limit) {
         //localdate를 localdatetime으로 변환
         LocalDateTime start = startDate.atStartOfDay();
         LocalDateTime end = endDate.atTime(LocalTime.MAX).minusSeconds(1);
