@@ -125,7 +125,7 @@ const AddressTable = () => {
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       <AddressTableFeature
         setOpenModal={setOpenAddressRegistration}
-        tableColumns={tableColumn.address.list}
+        tableColumns={tableColumn.address.search}
         onSearch={handleSearch}
         selectedAddresses={selectedAddresses}
         handleDataReset={handleDataReset}

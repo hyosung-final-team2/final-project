@@ -28,7 +28,7 @@ const PaymentMethodTableFeature = ({ setOpenModal, setCurrentPage, onSearch, tab
   return (
     <div className='flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4 bg-white dark:bg-gray-900'>
       <div className='flex space-x-5 items-center'>
-        <SearchBarWithDrop tableColumns={paymentMethodType === 'ACCOUNT' ? tableColumns.accountList : tableColumns.cardList} onSearch={onSearch} />
+        <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} />
         <div className={accountStyle}>계좌</div>
         <ToggleButton items={items} onChange={handleDropdownChange} />
         <div className={cardStyle}>카드</div>

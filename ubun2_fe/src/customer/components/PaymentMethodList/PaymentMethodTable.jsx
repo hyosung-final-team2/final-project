@@ -159,6 +159,7 @@ const PaymentMethodTable = () => {
       />
     );
   }
+  const searchCategoryOptions = isAccount ? tableColumn.paymentMethod.accountSearch : tableColumn.paymentMethod.cardSearch;
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
@@ -167,7 +168,7 @@ const PaymentMethodTable = () => {
         setCurrentPage={setCurrentPage}
         handleDataReset={handleDataReset}
         onSearch={handleSearch}
-        tableColumns={tableColumn.paymentMethod}
+        tableColumns={searchCategoryOptions}
       />
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
