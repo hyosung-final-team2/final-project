@@ -159,7 +159,7 @@ const AddressTable = () => {
                     currentPage={currentPage}
                 />
             ) : (
-                <NoDataTable text="등록된 주소가 없습니다." buttonText="주소 등록하기" buttonFunc={NoDataTableButtonFunc}/>
+                <NoDataTable text="등록된 주소가 없습니다." buttonText="주소 등록하기" buttonFunc={NoDataTableButtonFunc} colNum={tableColumn.address.list.length}/>
             )
           }
 

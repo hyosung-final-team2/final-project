@@ -28,7 +28,10 @@ const ProductTable = () => {
   const { sort, updateSort } = useProductTableStore()
   const {searchKeyword, setSearchKeyword} = useProductTableStore(); // 검색된 단어
   const {searchCategory, setSearchCategory} = useProductTableStore(); // 검색할 카테고리 (드롭다운)
+  const { setTotalElements } = useProductTableStore()
   const { resetData } = useProductTableStore()
+
+  console.log( "외부 : ", searchKeyword,searchCategory)
 
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8
@@ -36,6 +39,7 @@ const ProductTable = () => {
   const { data: products, refetch: refetchProducts, isLoading } = useGetProducts(currentPage,PAGE_SIZE,sort,searchCategory,searchKeyword);
 
   const totalPages = products?.data?.data?.totalPages;
+  const totalElementsFromPage = products?.data?.data?.totalElements;
   const productList = products?.data?.data?.content || [];
 
   const { data, refetch } = useGetProductDetail(selectedProductDetail.productId);
@@ -52,10 +56,11 @@ const ProductTable = () => {
 
   useEffect(() => {
     if (currentPage < totalPages) {
+      console.log("useEffect : ", searchCategory,searchKeyword);
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['product', {page:nextPage, sort, searchCategory, searchKeyword}],
-        queryFn: () => getProducts(nextPage,PAGE_SIZE),
+        queryKey: ['product', {page:nextPage,PAGE_SIZE, sort, searchCategory, searchKeyword}],
+        queryFn: () => getProducts(nextPage,PAGE_SIZE,sort,searchCategory,searchKeyword),
       });
     }
   }, [currentPage, queryClient,searchCategory, searchKeyword, sort, totalPages]);
@@ -63,6 +68,12 @@ const ProductTable = () => {
   useEffect(() => {
     setSelectedProducts([])
   }, [currentPage,productList]);
+
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -75,12 +86,13 @@ const ProductTable = () => {
   const handleRowChecked = id => {
     setSelectedProducts(prev => (prev.includes(id) ? prev.filter(id => id !== id) : [...prev, id]));
   };
-//
+
   const handleRowClick = async (productId,page )=> {
     await setSelectedProductDetail({ productId: productId, currentPage:page });
     await refetch();
     await setOpenProductDetailModal(true);
   };
+
   const handleSearch = (keyword, category) => {
     setSearchKeyword(keyword);
     setSearchCategory(category);
@@ -110,15 +122,20 @@ const ProductTable = () => {
   },[])
 
   // isLoading 시, skeletonTable
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore()
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword, setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore()
 
   useEffect(() => {
     if (!isLoading) {
       setSkeletonData(productList);
       setSkeletonTotalPage(totalPages)
       setSkeletonSortData(sort)
+      setSkeletonSearchCategory(searchCategory);
+      setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage)
+      }
     }
-  }, [productList, totalPages,sort, setSkeletonTotalPage, setSkeletonData, isLoading]);
+  }, [productList,currentPage, totalPages,  sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
 
   if (isLoading) {
     // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
@@ -151,7 +168,7 @@ const ProductTable = () => {
                   currentPage={currentPage}
               />
           ) : (
-              <NoDataTable text="등록된 상품이 없습니다." buttonText="상품 등록하기" buttonFunc={handleSaveClick}/>
+              <NoDataTable text="등록된 상품이 없습니다." buttonText="상품 등록하기" buttonFunc={handleSaveClick} colNum={tableColumn.product.length}/>
           )}
 
         </Table>

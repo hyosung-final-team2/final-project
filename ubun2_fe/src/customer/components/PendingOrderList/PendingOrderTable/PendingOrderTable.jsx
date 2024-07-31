@@ -208,7 +208,7 @@ const PendingOrderTable = () => {
                     currentPage={currentPage}
                 />
             ) : (
-                <NoDataTable text="승인대기중인 주문이 없습니다" buttonText="메인으로 가기" buttonFunc={NoDataTableButtonFunc}/>
+                <NoDataTable text="승인대기중인 주문이 없습니다" buttonText="메인으로 가기" buttonFunc={NoDataTableButtonFunc} colNum={tableColumn.pendingOrders.length}/>
             )
           }
 

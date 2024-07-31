@@ -11,8 +11,10 @@ const useProductTableStore = create(
     persist(
         set => ({
             ...initialState,
+            totalElements: null,
             setSearchCategory: state => set({ searchCategory: state }),
             setSearchKeyword: state => set({ searchKeyword: state }),
+            setTotalElements: state => set({ totalElements: state }),
 
             // sort 배열 업데이트하는 메서드
             updateSort: (column, sortType) => set(state => {
