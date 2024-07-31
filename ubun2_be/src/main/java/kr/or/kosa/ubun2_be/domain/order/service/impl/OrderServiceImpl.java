@@ -45,6 +45,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -158,7 +160,12 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
         int latestCycleNumber = findLatestCycleNumber(customerId, orderId);
-        return new SubscriptionOrderDetailResponse(subscriptionOrder, latestCycleNumber);
+
+        PaymentMethod paymentMethod = subscriptionOrder.getPaymentMethod();
+        if (paymentMethod == null) {
+            return new SubscriptionOrderDetailResponse(subscriptionOrder, latestCycleNumber);
+        }
+        return createSubscriptionOrderDetailResponseWithPayment(subscriptionOrder, paymentMethod, latestCycleNumber);
     }
 
     private int findLatestCycleNumber(Long customerId, Long orderId) {
@@ -433,13 +440,32 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<UnifiedOrderResponse> getAllOrdersByMemberId(Long memberId) {
+    public List<UnifiedOrderResponse> getAllOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest,Long memberId) {
         List<UnifiedOrderResponse> orderResponses = orderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
         List<UnifiedOrderResponse> subscriptionOrderResponses = subscriptionOrderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
 
         List<UnifiedOrderResponse> combinedList = new ArrayList<>();
         combinedList.addAll(orderResponses);
         combinedList.addAll(subscriptionOrderResponses);
+
+        if(orderPeriodFilterRequest.getPeriodType()!=null && orderPeriodFilterRequest.getPeriodValue()>0){
+            LocalDateTime endDate = LocalDateTime.now();
+            LocalDateTime startDate = switch (orderPeriodFilterRequest.getPeriodType()) {
+                case WEEK -> endDate.minusWeeks(orderPeriodFilterRequest.getPeriodValue());
+                case MONTH -> endDate.minusMonths(orderPeriodFilterRequest.getPeriodValue());
+                default -> throw new OrderException(OrderExceptionType.NOT_MATCH_PERIOD_TYPE);
+            };
+
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+            combinedList = combinedList.stream()
+                    .filter(order -> {
+                        LocalDateTime createdAt = LocalDateTime.parse(order.getCreatedAt(), formatter);
+                        return createdAt.isAfter(startDate) && createdAt.isBefore(endDate);
+                    })
+                    .collect(Collectors.toList());
+
+        }
 
         return combinedList;
     }
@@ -496,6 +522,25 @@ public class OrderServiceImpl implements OrderService {
                 AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
                         .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
                 return new OrderDetailResponse(findOrder, accountPayment);
+            }
+            default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
+        }
+    }
+
+    private SubscriptionOrderDetailResponse createSubscriptionOrderDetailResponseWithPayment(SubscriptionOrder findSubOrder, PaymentMethod paymentMethod, int latestCycleNumber) {
+        Long paymentMethodId = paymentMethod.getPaymentMethodId();
+        String paymentMethodType = paymentMethod.getPaymentType();
+
+        switch (paymentMethodType) {
+            case "CARD" -> {
+                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new SubscriptionOrderDetailResponse(findSubOrder, cardPayment, latestCycleNumber);
+            }
+            case "ACCOUNT" -> {
+                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
+                return new SubscriptionOrderDetailResponse(findSubOrder, accountPayment, latestCycleNumber);
             }
             default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
         }

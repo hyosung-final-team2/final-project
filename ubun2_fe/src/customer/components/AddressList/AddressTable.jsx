@@ -8,12 +8,11 @@ import AddressTableRow from './AddressTableRow';
 import MemberAddressModal from './MemberAddressModal';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { useGetAddresses } from '../../api/Address/AddressTable/queris.js';
+import {useDeleteSelectedAddresses, useGetAddresses} from '../../api/Address/AddressTable/queris.js';
 import { useGetAddressDetail } from '../../api/Address/AddressModal/queris.js';
 import { getAddresses } from '../../api/Address/AddressTable/addressTable.js';
 
 import useAddressStore from '../../store/Address/useAddressStore.js';
-import DynamicTableBody from '../common/Table/DynamicTableBody.jsx';
 import AddressRegistrationModal from './AddressRegistrationModal.jsx';
 import useAddressTableStore from '../../store/Address/addressTableStore.js';
 
@@ -22,6 +21,8 @@ import SkeletonAddressTableFeature from './Skeleton/SkeletonAddressTableFeature.
 import SkeletonAddressTableRow from './Skeleton/SkeletonAddressTableRow.jsx';
 
 import useSkeletonStore from '../../store/skeletonStore.js';
+import NoDataTable from "../common/Table/NoDataTable.jsx";
+import TableBody from "../common/Table/TableBody.jsx";
 
 const AddressTable = () => {
   const [openAddressRegistration, setOpenAddressRegistration] = useState(false);
@@ -39,6 +40,8 @@ const AddressTable = () => {
   const totalPages = addresses?.data?.data?.totalPages;
   const addressList = addresses?.data?.data?.content;
 
+  const { mutate: deleteSelectedAddressesMutate } = useDeleteSelectedAddresses(selectedAddresses,currentPage,PAGE_SIZE)
+
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -50,6 +53,11 @@ const AddressTable = () => {
       });
     }
   }, [currentPage, queryClient, totalPages, sort, searchCategory, searchKeyword]);
+
+  useEffect(() => {
+    setSelectedAddresses([])
+  }, [currentPage,addressList]);
+
 
   //
   const { refetch } = useGetAddressDetail(addressId);
@@ -96,7 +104,12 @@ const AddressTable = () => {
     setCurrentPage(1);
   };
 
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore();
+
+  const NoDataTableButtonFunc = () => {
+    setOpenAddressRegistration(true)
+  }
+
+  const { resetSkeletonData, setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore();
 
   useEffect(() => {
     return resetData();
@@ -129,6 +142,7 @@ const AddressTable = () => {
         onSearch={handleSearch}
         selectedAddresses={selectedAddresses}
         handleDataReset={handleDataReset}
+        deleteSelectedAddressesMutate={deleteSelectedAddressesMutate}
       />
       <div className='px-4'>
         <Table hoverable>
@@ -140,20 +154,26 @@ const AddressTable = () => {
             handleSort={handleSort}
             nonSort={tableColumn.address.nonSort}
           />
-          <DynamicTableBody
-            TableRowComponent={AddressTableRow}
-            dataList={addressList}
-            setOpenModal={handleRowClick}
-            dynamicKey='addressId'
-            dynamicId='addressId'
-            selectedMembers={selectedAddresses}
-            handleRowChecked={handleRowChecked}
-            currentPage={currentPage}
-          />
+          {
+            addressList.length > 0 ? (
+                <TableBody
+                    TableRowComponent={AddressTableRow}
+                    dataList={addressList}
+                    setOpenModal={handleRowClick}
+                    dynamicId='addressId'
+                    selectedMembers={selectedAddresses}
+                    handleRowChecked={handleRowChecked}
+                    currentPage={currentPage}
+                />
+            ) : (
+                <NoDataTable text="등록된 주소가 없습니다." buttonText="주소 등록하기" buttonFunc={NoDataTableButtonFunc}/>
+            )
+          }
+
         </Table>
-        {isLoading === false ? (
+        {isLoading === false && addressList.length > 0 ? (
           <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
-        ) : null}
+        ) : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />}
 
         <MemberAddressModal
           isOpen={openMemberAddressModal}

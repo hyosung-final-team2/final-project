@@ -3,8 +3,10 @@ package kr.or.kosa.ubun2_be.global.auth.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class EmailRequest {
 
     @NotBlank(message = "이메일을 입력해주세요")

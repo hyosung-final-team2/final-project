@@ -46,13 +46,13 @@ class MemberPaymentMethodControllerTest extends CommonTestSetup {
         when(paymentMethodService.hasPaymentPassword(anyLong())).thenReturn(true);
 
         mockMvc.perform(get("/api/members/payments/password")
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").value(true))
                 .andExpect(jsonPath("$.message").value("결제비밀번호 존재 여부를 성공적으로 확인했습니다."));
 
-        verify(paymentMethodService).hasPaymentPassword(eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).hasPaymentPassword(eq(member.getUserId()));
     }
 
     @Test
@@ -66,14 +66,14 @@ class MemberPaymentMethodControllerTest extends CommonTestSetup {
         when(paymentMethodService.getMyCardPaymentMethods(anyLong())).thenReturn(mockResponses);
 
         mockMvc.perform(get("/api/members/payments/cards")
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(2))
                 .andExpect(jsonPath("$.message").value("카드 목록을 성공적으로 조회했습니다."));
 
-        verify(paymentMethodService).getMyCardPaymentMethods(eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).getMyCardPaymentMethods(eq(member.getUserId()));
 
     }
 
@@ -88,14 +88,14 @@ class MemberPaymentMethodControllerTest extends CommonTestSetup {
         when(paymentMethodService.getMyAccountPaymentMethods(anyLong())).thenReturn(mockResponses);
 
         mockMvc.perform(get("/api/members/payments/accounts")
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.data.length()").value(2))
                 .andExpect(jsonPath("$.message").value("계좌 목록을 성공적으로 조회했습니다."));
 
-        verify(paymentMethodService).getMyAccountPaymentMethods(eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).getMyAccountPaymentMethods(eq(member.getUserId()));
     }
 
     @Test
@@ -107,13 +107,13 @@ class MemberPaymentMethodControllerTest extends CommonTestSetup {
         when(paymentMethodService.getMyCardPaymentMethod(anyLong(), anyLong())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/members/payments/cards/{paymentMethodId}", paymentMethodId)
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.message").value("카드를 성공적으로 조회했습니다."));
 
-        verify(paymentMethodService).getMyCardPaymentMethod(eq(paymentMethodId), eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).getMyCardPaymentMethod(eq(paymentMethodId), eq(member.getUserId()));
     }
 
     @Test
@@ -125,13 +125,13 @@ class MemberPaymentMethodControllerTest extends CommonTestSetup {
         when(paymentMethodService.getMyAccountPaymentMethod(anyLong(), anyLong())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/members/payments/accounts/{paymentMethodId}", paymentMethodId)
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").exists())
                 .andExpect(jsonPath("$.message").value("계좌를 성공적으로 조회했습니다."));
 
-        verify(paymentMethodService).getMyAccountPaymentMethod(eq(paymentMethodId), eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).getMyAccountPaymentMethod(eq(paymentMethodId), eq(member.getUserId()));
     }
 
     @Test
@@ -148,15 +148,16 @@ class MemberPaymentMethodControllerTest extends CommonTestSetup {
         mockMvc.perform(post("/api/members/payments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("결제수단을 성공적으로 등록했습니다."));
 
-        verify(paymentMethodService).registerPaymentMethod(any(RegisterPaymentMethodRequest.class), eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).registerPaymentMethod(any(RegisterPaymentMethodRequest.class), eq(member.getUserId()));
     }
 
     @Test
+    @DisplayName("결제수단 수정")
     void updatePaymentMethod() throws Exception {
         Long paymentMethodId = 1L;
         UpdatePaymentMethodRequest request = new UpdatePaymentMethodRequest();
@@ -166,25 +167,26 @@ class MemberPaymentMethodControllerTest extends CommonTestSetup {
         mockMvc.perform(put("/api/members/payments/{paymentMethodId}", paymentMethodId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("결제수단을 성공적으로 수정했습니다."));
 
-        verify(paymentMethodService).updatePaymentMethod(eq(paymentMethodId), any(UpdatePaymentMethodRequest.class), eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).updatePaymentMethod(eq(paymentMethodId), any(UpdatePaymentMethodRequest.class), eq(member.getUserId()));
     }
 
     @Test
+    @DisplayName("결제수단 삭제")
     void deletePaymentMethod() throws Exception {
         Long paymentMethodId = 1L;
         doNothing().when(paymentMethodService).deleteMyPaymentMethod(anyLong(), anyLong());
 
         mockMvc.perform(delete("/api/members/payments/{paymentMethodId}", paymentMethodId)
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("결제수단을 성공적으로 삭제했습니다."));
 
-        verify(paymentMethodService).deleteMyPaymentMethod(eq(paymentMethodId), eq(customUserDetails.getUserId()));
+        verify(paymentMethodService).deleteMyPaymentMethod(eq(paymentMethodId), eq(member.getUserId()));
     }
 }

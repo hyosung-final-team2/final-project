@@ -18,7 +18,7 @@ const UpdateInputLabel = ({ labelTitle, name, value, type, disabled = false, con
   return (
     <div className={`form-control w-full ${containerStyle}`}>
       <div className='flex items-center'>
-        <label className='label w-28'>
+        <label className='w-1/3 label'>
           <span className='text-xl font-bold label-text'>{labelTitle}</span>
         </label>
         <input

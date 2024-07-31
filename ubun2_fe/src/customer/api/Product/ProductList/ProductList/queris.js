@@ -47,12 +47,11 @@ export const useDeleteProduct = (productId, currentPage) => {
 export const useDeleteSelectedProducts = (selectedProducts, currentPage) => {
   const queryClient = useQueryClient();
   const {sort,searchCategory,searchKeyword} = useProductTableStore()
-  const size = selectedProducts?.length
-  console.log(selectedProducts)
+  const count = selectedProducts?.length
   return useMutation({
     mutationFn: () => deleteSelectedProducts({productIdList:selectedProducts}),
     onSuccess: () => {
-      toast.success(`${size}개의 상품이 정상적으로 삭제되었습니다.`)
+      toast.success(`${count}개의 상품이 정상적으로 삭제되었습니다.`)
       queryClient.invalidateQueries({ queryKey: ['product', { page: currentPage,sort,searchCategory,searchKeyword }] });
     },
     onError: () => toast.error("상품 삭제에 실패하였습니다.")

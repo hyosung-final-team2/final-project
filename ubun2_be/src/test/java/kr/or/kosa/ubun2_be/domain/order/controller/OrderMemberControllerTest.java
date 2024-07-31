@@ -76,31 +76,33 @@ class OrderMemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("정기 주문 및 단건 주문 유효성 검사")
     void validateOrders() throws Exception {
         mockMvc.perform(post("/api/members/orders/validate")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requests)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("유효성 검사 및 결제 확인 완료"));
 
-        verify(orderService).validateAndPrepareOrder(eq(customUserDetails.getUserId()), any(SubscriptionOrderRequest.class));
-        verify(subscriptionOrderService).validateAndPrepareSubscriptionOrder(eq(customUserDetails.getUserId()), anyList());
+        verify(orderService).validateAndPrepareOrder(eq(member.getUserId()), any(SubscriptionOrderRequest.class));
+        verify(subscriptionOrderService).validateAndPrepareSubscriptionOrder(eq(member.getUserId()), anyList());
     }
 
     @Test
+    @DisplayName("정기 주문 및 단건 주문 생성")
     void registerOrders() throws Exception {
         mockMvc.perform(post("/api/members/orders")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requests)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).createSingleOrder(eq(customUserDetails.getUserId()), any(SubscriptionOrderRequest.class));
-        verify(subscriptionOrderService).createSubscriptionOrders(eq(customUserDetails.getUserId()), anyList());
+        verify(orderService).createSingleOrder(eq(member.getUserId()), any(SubscriptionOrderRequest.class));
+        verify(subscriptionOrderService).createSubscriptionOrders(eq(member.getUserId()), anyList());
 
     }
 
@@ -108,16 +110,16 @@ class OrderMemberControllerTest extends CommonTestSetup {
     @DisplayName("현재 로그인한 회원의 전체 주문 목록 조회")
     void getAllOrders() throws Exception {
         List<UnifiedOrderResponse> mockResponses = Arrays.asList(new UnifiedOrderResponse(), new UnifiedOrderResponse());
-        when(orderService.getAllOrdersByMemberId(anyLong())).thenReturn(mockResponses);
+        when(orderService.getAllOrdersByMemberId(any(),anyLong())).thenReturn(mockResponses);
 
         mockMvc.perform(get("/api/members/orders")
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).getAllOrdersByMemberId(eq(customUserDetails.getUserId()));
+        verify(orderService).getAllOrdersByMemberId(any(),eq(member.getUserId()));
     }
 
     @Test
@@ -128,12 +130,12 @@ class OrderMemberControllerTest extends CommonTestSetup {
         when(orderService.getOrderByMemberIdAndOrderId(anyLong(), anyLong())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/members/orders/{order_id}", orderId)
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).getOrderByMemberIdAndOrderId(eq(customUserDetails.getUserId()), eq(orderId));
+        verify(orderService).getOrderByMemberIdAndOrderId(eq(member.getUserId()), eq(orderId));
     }
 
     @Test
@@ -144,12 +146,12 @@ class OrderMemberControllerTest extends CommonTestSetup {
         when(subscriptionOrderService.getSubscriptionOrderByMemberIdAndOrderId(anyLong(), anyLong())).thenReturn(mockResponse);
 
         mockMvc.perform(get("/api/members/orders/subscription/{order_id}", orderId)
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(subscriptionOrderService).getSubscriptionOrderByMemberIdAndOrderId(eq(customUserDetails.getUserId()), eq(orderId));
+        verify(subscriptionOrderService).getSubscriptionOrderByMemberIdAndOrderId(eq(member.getUserId()), eq(orderId));
     }
 
     @Test
@@ -160,18 +162,19 @@ class OrderMemberControllerTest extends CommonTestSetup {
         cancelOrderRequest.setOrderId(2L);
 
         mockMvc.perform(post("/api/members/orders/cancel")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(cancelOrderRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터."));
 
-        verify(orderService).cancelOrder(eq(customUserDetails.getUserId()), any(CancelOrderRequest.class));
+        verify(orderService).cancelOrder(eq(member.getUserId()), any(CancelOrderRequest.class));
 
     }
 
     @Test
+    @DisplayName("정기 주문에서 특정 상품 제거")
     void removeSubscriptionOrderProduct() throws Exception {
         RemoveSubscriptionOrderProductRequest request = new RemoveSubscriptionOrderProductRequest();
         request.setOrderId(1L);
@@ -179,13 +182,13 @@ class OrderMemberControllerTest extends CommonTestSetup {
         request.setSubscriptionOrderProductIds(Arrays.asList(1L, 2L));
 
         mockMvc.perform(post("/api/members/orders/subscription/remove")
-                        .with(user(customUserDetails))
+                        .with(user(member))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(subscriptionOrderService).removeSubscriptionOrderProducts(eq(customUserDetails.getUserId()), any(RemoveSubscriptionOrderProductRequest.class));
+        verify(subscriptionOrderService).removeSubscriptionOrderProducts(eq(member.getUserId()), any(RemoveSubscriptionOrderProductRequest.class));
     }
 }

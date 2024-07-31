@@ -1,7 +1,7 @@
 import { Table, Checkbox } from 'flowbite-react';
 import useAddressTableStore from "../../store/Address/addressTableStore.js";
 
-const AddressTableRow = ({ id, memberId, addressId, memberName, address, setOpenModal, isChecked, handleRowChecked }) => {
+const AddressTableRow = ({  memberId, addressId, memberName, address, setOpenModal, isChecked, handleRowChecked }) => {
   const [zipNo, city, town, ...detail] = address.split(',');
 
   const { sort } = useAddressTableStore();
@@ -14,12 +14,11 @@ const AddressTableRow = ({ id, memberId, addressId, memberName, address, setOpen
     return '';
   };
 
-
   return (
     <>
       <Table.Row className='bg-white cursor-pointer' onClick={() => setOpenModal(addressId, memberId, address)}>
         <Table.Cell style={{ width: '5%' }}>
-          <Checkbox checked={isChecked} onChange={() => handleRowChecked(id)} onClick={e => e.stopPropagation()} />
+          <Checkbox checked={isChecked} onChange={() => handleRowChecked(addressId)} onClick={e => e.stopPropagation()} />
         </Table.Cell>
         <Table.Cell className={getColorForColumn('memberName')} style={{ width: '15%' }}>{memberName}</Table.Cell>
         <Table.Cell className={getColorForColumn('address')} style={{ width: '15%' }}>{city}</Table.Cell>

@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.customer.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.SmsRequest;
 import kr.or.kosa.ubun2_be.domain.customer.service.SmsService;
@@ -18,6 +19,7 @@ public class SmsController {
 
     private final SmsService smsService;
 
+    @Operation(summary = "문자 전송")
     @PostMapping("/sms")
     public ResponseEntity<String> sendSms(@Valid @RequestBody List<SmsRequest> nameAndPhoneNumbers,
                                           @AuthenticationPrincipal CustomUserDetails customUserDetails) {

@@ -5,6 +5,7 @@ import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
 import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.cart.repository.CartProductRepository;
+import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.financial.institution.entity.Bank;
 import kr.or.kosa.ubun2_be.domain.financial.institution.service.BankService;
 import kr.or.kosa.ubun2_be.domain.financial.institution.service.CardCompanyService;
@@ -114,14 +115,21 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
                 .flatMap(request -> request.getSubscriptionOrderProducts().stream())
                 .toList();
 
-        List<Long> insufficientStockProducts = allProducts.stream()
+        List<InSufficientStockProductResponse> insufficientStockProducts = allProducts.stream()
                 .filter(product -> {
                     int stock = inventoryService.getStock(product.getProductId());
                     return stock < product.getQuantity();
                 })
-                .map(SubscriptionOrderProductRequest::getProductId)
-                .collect(Collectors.toList());
 
+                .map(product -> {
+                    Long productId = product.getProductId();
+                    Product findProduct = productService.getProductById(productId);
+                    Customer customer = findProduct.getCustomer();
+
+                    alarmService.sendNoStock(customer, findProduct.getProductName());
+                    return new InSufficientStockProductResponse(productId, findProduct.getProductName());
+                })
+                .collect(Collectors.toList());
         if (!insufficientStockProducts.isEmpty()) {
             throw new ProductException(ProductExceptionType.INSUFFICIENT_STOCK, insufficientStockProducts);
         }

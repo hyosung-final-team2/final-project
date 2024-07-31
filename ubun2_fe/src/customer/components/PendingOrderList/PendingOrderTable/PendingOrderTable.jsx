@@ -17,8 +17,11 @@ import SkeletonTable from '../../Skeleton/SkeletonTable';
 import SkeletonPendingOrderTableRow from '../Skeleton/SkeletonPendingOrderTableRow';
 import SkeletonPendingOrderTableFeature from '../Skeleton/SkeletonPendingOrderTableFeature';
 import usePendingOrderTableStore from '../../../store/PendingOrderTable/pendingOrderTableStore';
+import NoDataTable from "../../common/Table/NoDataTable.jsx";
+import {useNavigate} from "react-router-dom";
 
 const PendingOrderTable = () => {
+  const navigate = useNavigate();
   const [openPendingOrderDetailModal, setOpenPendingOrderDetailModal] = useState(false);
 
   const [selectedPendingOrders, setSelectedPendingOrders] = useState([]); // 체크된 ID
@@ -132,6 +135,10 @@ const PendingOrderTable = () => {
     updatePendingOrderMutation({ requestData });
   };
 
+  const NoDataTableButtonFunc = () => {
+    navigate("/customer/app/dashboard")
+  }
+
   // isLoading 시, skeletonTable
   const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore();
 
@@ -172,7 +179,7 @@ const PendingOrderTable = () => {
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
       <PendingOrderTableFeature
-        tableColumns={tableColumn.pendingOrders}
+        tableColumns={tableColumn.ordersSearch}
         onSearch={handleSearch}
         handleOrderUpdate={handleOrderUpdate}
         selectedPendingOrders={selectedPendingOrders}
@@ -180,7 +187,8 @@ const PendingOrderTable = () => {
       />
 
       {/* 테이블 */}
-      <div className='px-4 shadow-md'>
+      {/*<div className='px-4 shadow-md'>*/}
+      <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead
             tableColumns={tableColumn.pendingOrders}
@@ -189,20 +197,29 @@ const PendingOrderTable = () => {
             handleSort={handleSort}
             headerType='pendingOrders'
           />
-          <UnifiedOrderTableBody
-            dataList={pendingOrderList}
-            TableRowComponent={props => <PendingOrderTableRow {...props} handleOrderUpdate={handleOrderUpdate} />}
-            setOpenModal={handleRowClick}
-            selectedOrders={selectedPendingOrders}
-            handleRowChecked={handleRowChecked}
-            currentPage={currentPage}
-          />
+          {
+            pendingOrderList.length > 0 ? (
+                <UnifiedOrderTableBody
+                    dataList={pendingOrderList}
+                    TableRowComponent={props => <PendingOrderTableRow {...props} handleOrderUpdate={handleOrderUpdate} />}
+                    setOpenModal={handleRowClick}
+                    selectedOrders={selectedPendingOrders}
+                    handleRowChecked={handleRowChecked}
+                    currentPage={currentPage}
+                />
+            ) : (
+                <NoDataTable text="승인대기중인 주문이 없습니다" buttonText="메인으로 가기" buttonFunc={NoDataTableButtonFunc}/>
+            )
+          }
+
         </Table>
       </div>
       {/* 페이지네이션 */}
-      {isLoading === false ? (
+      {isLoading === false && pendingOrderList.length > 0 ? (
         <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
-      ) : null}
+      ) :
+        <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />
+        }
       {/* 모달 */}
       <OrderDetailModal
         isOpen={openPendingOrderDetailModal}

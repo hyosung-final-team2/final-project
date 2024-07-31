@@ -3,6 +3,7 @@ package kr.or.kosa.ubun2_be.domain.alarm.service;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.GroupAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.dto.PersonalAlarmSendRequest;
 import kr.or.kosa.ubun2_be.domain.alarm.entity.Alarm;
+import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.order.dto.SubscriptionOrderRequest;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
@@ -31,4 +32,6 @@ public interface AlarmService {
     void sendSubCycleMessage(SubscriptionOrder subscriptionOrder, String delayReason);
 
     void sendNoStock(SubscriptionOrderProduct subscriptionOrderProduct, Long orderId);
+
+    void sendNoStock(Customer customer, String productName);
 }

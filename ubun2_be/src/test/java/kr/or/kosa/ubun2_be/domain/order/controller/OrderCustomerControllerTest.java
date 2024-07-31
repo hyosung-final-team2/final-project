@@ -81,7 +81,7 @@ class OrderCustomerControllerTest extends CommonTestSetup {
                         .param("page", "0")
                         .param("size", "10")
                         .param("sort", "orderId,desc")
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.content").isArray())
@@ -109,12 +109,12 @@ class OrderCustomerControllerTest extends CommonTestSetup {
 
         // When & Then
         mockMvc.perform(get("/api/customers/orders/{order_id}", orderId)
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).getOrderByCustomerIdAndOrderId(eq(customUserDetails.getUserId()), eq(orderId));
+        verify(orderService).getOrderByCustomerIdAndOrderId(eq(customer.getUserId()), eq(orderId));
     }
 
     @Test
@@ -127,12 +127,12 @@ class OrderCustomerControllerTest extends CommonTestSetup {
 
         // When & Then
         mockMvc.perform(get("/api/customers/orders/subscription/{order_id}", orderId)
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).getSubscriptionOrderByCustomerIdAndOrderId(eq(customUserDetails.getUserId()), eq(orderId));
+        verify(orderService).getSubscriptionOrderByCustomerIdAndOrderId(eq(customer.getUserId()), eq(orderId));
     }
 
     @Test
@@ -144,13 +144,13 @@ class OrderCustomerControllerTest extends CommonTestSetup {
 
         // When & Then
         mockMvc.perform(get("/api/customers/orders/pending")
-                        .with(user(customUserDetails)))
+                        .with(user(customer)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.data.content").isArray())
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).getPendingOrders(eq(customUserDetails.getUserId()), any(), any());
+        verify(orderService).getPendingOrders(eq(customer.getUserId()), any(), any());
     }
 
     @Test
@@ -169,14 +169,14 @@ class OrderCustomerControllerTest extends CommonTestSetup {
 
         // When & Then
         mockMvc.perform(put("/api/customers/orders/approve")
-                        .with(user(customUserDetails))
+                        .with(user(customer))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requests)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).updateOrderStatus(eq(customUserDetails.getUserId()), argThat(list -> {
+        verify(orderService).updateOrderStatus(eq(customer.getUserId()), argThat(list -> {
             if (list.size() != 2) return false;
             OrderApproveRequest req1 = list.get(0);
             OrderApproveRequest req2 = list.get(1);
@@ -201,14 +201,14 @@ class OrderCustomerControllerTest extends CommonTestSetup {
 
         // When & Then
         mockMvc.perform(put("/api/customers/orders/subscription/approve")
-                        .with(user(customUserDetails))
+                        .with(user(customer))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requests)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).updateSubscriptionOrderStatus(eq(customUserDetails.getUserId()), argThat(list -> {
+        verify(orderService).updateSubscriptionOrderStatus(eq(customer.getUserId()), argThat(list -> {
             if (list.size() != 2) return false;
             SubscriptionApproveRequest req1 = list.get(0);
             SubscriptionApproveRequest req2 = list.get(1);

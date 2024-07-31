@@ -1,12 +1,12 @@
 package kr.or.kosa.ubun2_be.domain.product.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.product.dto.CategoryResponse;
 import kr.or.kosa.ubun2_be.domain.product.dto.ProductDetailResponse;
 import kr.or.kosa.ubun2_be.domain.product.dto.ProductResponse;
 import kr.or.kosa.ubun2_be.domain.product.service.CategoryService;
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -35,9 +35,6 @@ class ProductMemberControllerTest extends CommonTestSetup {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockBean
     private ProductService productService;
 
@@ -45,6 +42,7 @@ class ProductMemberControllerTest extends CommonTestSetup {
     private CategoryService categoryService;
 
     @Test
+    @DisplayName("상품 카테고리 조회")
     void getCategories() throws Exception {
         //given
         List<CategoryResponse> mockCategories = Arrays.asList(new CategoryResponse(), new CategoryResponse());
@@ -52,12 +50,13 @@ class ProductMemberControllerTest extends CommonTestSetup {
 
         //when & then
         mockMvc.perform(get("/api/members/store/1/category")
-                        .with(user(customUserDetails)))
+                        .with(user(member)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
+    @DisplayName("전체 상품 목록 및 정렬, 검색을 통한 조회")
     void getProducts() throws Exception {
         //given
         Page<ProductResponse> mockPage = new PageImpl<>(Arrays.asList(new ProductResponse(),new ProductResponse()));
@@ -68,26 +67,28 @@ class ProductMemberControllerTest extends CommonTestSetup {
                 .param("page","0")
                 .param("size","9")
                 .param("sort","productCategory,desc")
-                .with(user(customUserDetails)))
+                .with(user(member)))
             .andDo(print())
             .andExpect(status().isOk());
 
     }
 
     @Test
+    @DisplayName("상품 상세 조회")
     void getProductByProductId() throws Exception {
         //given
         ProductDetailResponse mockProductDetailResponse = new ProductDetailResponse();
         when(productService.getProductByCustomerIdAndProductId(anyLong(),anyLong(),anyLong())).thenReturn(mockProductDetailResponse);
 
         //when & then
-        mockMvc.perform(get("/api/members/products/1/1").with(user(customUserDetails)))
+        mockMvc.perform(get("/api/members/products/1/1").with(user(member)))
                 .andDo(print())
                 .andExpect(status().isOk());
 
     }
 
     @Test
+    @DisplayName("카테고리별 상품 목록")
     void getProductsByCategory() throws Exception {
         //given
         Page<ProductResponse> mockPage = new PageImpl<>(Arrays.asList(new ProductResponse(),new ProductResponse()));
@@ -95,7 +96,7 @@ class ProductMemberControllerTest extends CommonTestSetup {
 
         //when & then
         mockMvc.perform(get("/api/members/products/1/category")
-                    .with(user(customUserDetails)))
+                    .with(user(member)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

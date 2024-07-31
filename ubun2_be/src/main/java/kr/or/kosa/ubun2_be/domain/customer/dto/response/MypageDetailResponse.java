@@ -1,11 +1,15 @@
 package kr.or.kosa.ubun2_be.domain.customer.dto.response;
 
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MypageDetailResponse {
     private String businessOwner;
     private String businessName;
