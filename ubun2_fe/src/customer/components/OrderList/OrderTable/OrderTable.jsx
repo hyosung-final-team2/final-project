@@ -30,6 +30,7 @@ const OrderTable = () => {
   const { sort, updateSort } = useOrderTableStore();
   const { searchCategory, setSearchCategory } = useOrderTableStore(); // 검색할 카테고리 (드롭다운)
   const { searchKeyword, setSearchKeyword } = useOrderTableStore(); // 검색된 단어
+  const { setTotalElements } = useOrderTableStore()
   const { resetData } = useOrderTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,6 +39,7 @@ const OrderTable = () => {
   const { data: orders, refetch: refetchOrders, isLoading } = useGetOrders(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword, searchKeyword);
 
   const totalPages = orders?.data?.data?.totalPages;
+  const totalElementsFromPage = orders?.data?.data?.totalElements;
   const orderList = orders?.data?.data?.content || [];
 
   const { data, refetch } = useGetOrderDetail(selectedOrderDetail.orderId, selectedOrderDetail.subscription);
@@ -49,10 +51,16 @@ const OrderTable = () => {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['order', nextPage, sort, searchCategory, searchKeyword],
-        queryFn: () => getOrders(nextPage, PAGE_SIZE),
+        queryFn: () => getOrders(nextPage, PAGE_SIZE,  sort, searchCategory, searchKeyword),
       });
     }
   }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
+
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -118,7 +126,7 @@ const OrderTable = () => {
   }, []);
 
   // isLoading 시, skeletonTable
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore();
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword,  setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore();
 
   useEffect(() => {
     if (!isLoading) {
@@ -127,6 +135,9 @@ const OrderTable = () => {
       setSkeletonSortData(sort);
       setSkeletonSearchCategory(searchCategory);
       setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage)
+      }
     }
   }, [
     orderList,

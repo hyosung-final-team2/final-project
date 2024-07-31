@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import InfoItem from '../common/input/InfoInput';
 import CreditCard from './CreditCard';
 import { companies } from './CardList';
@@ -13,10 +13,16 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
     paymentMethodNickname: '',
     cardCompanyName: null,
     cardPassword: '',
+    cvc: '',
     expirationDate: '',
   });
 
   const { modalState, setModalState } = useModalStore();
+
+  const cardNumberRef = useRef(null);
+  const cardPasswordRef = useRef(null);
+  const cvcRef = useRef(null);
+  const expirationDateRef = useRef(null);
 
   const updateFormData = useCallback((key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -32,6 +38,29 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
 
   const handleCardCompanyNameSelect = item => {
     updateFormData('cardCompanyName', item);
+    setTimeout(() => {
+      if (cardNumberRef.current) {
+        cardNumberRef.current.focus();
+      }
+    }, 0);
+  };
+
+  const handleCardNumberComplete = () => {
+    if (cardPasswordRef.current) {
+      cardPasswordRef.current.focus();
+    }
+  };
+
+  const handleCardPasswordComplete = () => {
+    if (cvcRef.current) {
+      cvcRef.current.focus();
+    }
+  };
+
+  const handleCVCComplete = () => {
+    if (expirationDateRef.current) {
+      expirationDateRef.current.focus();
+    }
   };
 
   return (
@@ -63,6 +92,7 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
           isSelectable={true}
         />
         <InfoItem
+          ref={cardNumberRef}
           label='카드 번호'
           placeholder='**** - **** - **** - ****'
           inputStyle={inputStyle}
@@ -70,8 +100,11 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
           onChange={handleInputChange('cardNumber')}
           onFocus={() => flipCard(false)}
           value={formData.cardNumber}
+          maxLength={16}
+          onInputComplete={handleCardNumberComplete}
         />
         <InfoItem
+          ref={cardPasswordRef}
           label='카드 비밀번호'
           placeholder='카드 비밀번호'
           inputStyle={inputStyle}
@@ -79,10 +112,13 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
           onChange={handleInputChange('cardPassword')}
           value={formData.cardPassword}
           type='password'
+          maxLength={4}
+          onInputComplete={handleCardPasswordComplete}
         />
         <div className='flex'>
           <div className='flex-1 -mr-4'>
             <InfoItem
+              ref={cvcRef}
               label='CVC'
               placeholder='123'
               inputStyle={inputStyle}
@@ -90,10 +126,13 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
               onChange={handleInputChange('cvc')}
               onFocus={() => flipCard(true)}
               value={formData.cvc}
+              maxLength={3}
+              onInputComplete={handleCVCComplete}
             />
           </div>
           <div className='flex-1 -ml-4'>
             <InfoItem
+              ref={expirationDateRef}
               label='카드 유효기간'
               placeholder='MM/YY'
               inputStyle={inputStyle}
@@ -101,6 +140,7 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
               onChange={handleInputChange('expirationDate')}
               onFocus={() => flipCard(false)}
               value={formData.expirationDate}
+              maxLength={4}
             />
           </div>
         </div>

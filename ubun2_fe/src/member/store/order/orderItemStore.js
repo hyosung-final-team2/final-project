@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { createJSONStorage, persist } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
 
 const useOrderItemsStore = create(
   persist(
@@ -13,7 +13,29 @@ const useOrderItemsStore = create(
       // 장바구니 데이터를 설정하는 함수
       setCartData: newCartData => {
         set(state => {
-          const newState = { ...state, cartData: newCartData };
+          const newSelectedItems = state.selectedItems
+            .map(selectedStore => {
+              const updatedStore = newCartData.find(s => s.customerId === selectedStore.customerId);
+              if (updatedStore) {
+                return {
+                  ...selectedStore,
+                  cartProducts: selectedStore.cartProducts
+                    .filter(product => updatedStore.cartProducts.some(p => p.cartProductId === product.cartProductId))
+                    .map(product => {
+                      const updatedProduct = updatedStore.cartProducts.find(p => p.cartProductId === product.cartProductId);
+                      return updatedProduct ? { ...updatedProduct, intervalDays: product.intervalDays } : product;
+                    }),
+                };
+              }
+              return selectedStore;
+            })
+            .filter(store => store.cartProducts.length > 0);
+
+          const newState = {
+            ...state,
+            cartData: newCartData,
+            selectedItems: newSelectedItems,
+          };
           return { ...newState, totals: calculateTotals(newState) };
         });
       },
@@ -160,13 +182,13 @@ const useOrderItemsStore = create(
         set(state => {
           const newCartData = state.cartData.map(store => ({
             ...store,
-            cartProducts: store.cartProducts.filter(product => !productIds.includes(product.productId)),
+            cartProducts: store.cartProducts.filter(product => !productIds.includes(product.cartProductId)),
           }));
 
           const newSelectedItems = state.selectedItems
             .map(store => ({
               ...store,
-              cartProducts: store.cartProducts.filter(product => !productIds.includes(product.productId)),
+              cartProducts: store.cartProducts.filter(product => !productIds.includes(product.cartProductId)),
             }))
             .filter(store => store.cartProducts.length > 0);
 
@@ -212,7 +234,7 @@ const useOrderItemsStore = create(
           customerId: store.customerId,
           cartId: store.cartProducts[0].cartId,
           cartProducts: store.cartProducts.map(product => ({
-            productId: product.productId,
+            cartProductId: product.cartProductId,
             quantity: updatedQuantities[`${store.customerId}-${product.cartProductId}`] || product.quantity,
           })),
         }));
@@ -243,7 +265,6 @@ const useOrderItemsStore = create(
     }),
     {
       name: 'order-items-storage',
-      storage: createJSONStorage(() => localStorage), // localStorage를 사용
     }
   )
 );

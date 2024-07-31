@@ -157,6 +157,7 @@ class MemberPaymentMethodControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("결제수단 수정")
     void updatePaymentMethod() throws Exception {
         Long paymentMethodId = 1L;
         UpdatePaymentMethodRequest request = new UpdatePaymentMethodRequest();
@@ -175,6 +176,7 @@ class MemberPaymentMethodControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("결제수단 삭제")
     void deletePaymentMethod() throws Exception {
         Long paymentMethodId = 1L;
         doNothing().when(paymentMethodService).deleteMyPaymentMethod(anyLong(), anyLong());

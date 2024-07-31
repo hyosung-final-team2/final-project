@@ -61,7 +61,7 @@ const PriceRangeInput = ({ onPriceChange }) => {
   );
 };
 
-const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
+const SearchBarWithDrop = ({ tableColumns, onSearch, dropdownRef }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showCategory, setShowCategory] = useState('카테고리');
@@ -70,7 +70,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
     endDate: null,
   });
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-  const dropdownRef = useRef(null);
+  // const dropdownRef = useRef(null);
 
   initDropdowns();
 

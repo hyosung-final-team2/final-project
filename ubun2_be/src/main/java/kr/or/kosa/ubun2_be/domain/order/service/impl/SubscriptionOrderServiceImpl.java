@@ -5,6 +5,7 @@ import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
 import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.cart.repository.CartProductRepository;
+import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.financial.institution.entity.Bank;
 import kr.or.kosa.ubun2_be.domain.financial.institution.service.BankService;
 import kr.or.kosa.ubun2_be.domain.financial.institution.service.CardCompanyService;
@@ -114,14 +115,21 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
                 .flatMap(request -> request.getSubscriptionOrderProducts().stream())
                 .toList();
 
-        List<Long> insufficientStockProducts = allProducts.stream()
+        List<InSufficientStockProductResponse> insufficientStockProducts = allProducts.stream()
                 .filter(product -> {
                     int stock = inventoryService.getStock(product.getProductId());
                     return stock < product.getQuantity();
                 })
-                .map(SubscriptionOrderProductRequest::getProductId)
-                .collect(Collectors.toList());
 
+                .map(product -> {
+                    Long productId = product.getProductId();
+                    Product findProduct = productService.getProductById(productId);
+                    Customer customer = findProduct.getCustomer();
+
+                    alarmService.sendNoStock(customer, findProduct.getProductName());
+                    return new InSufficientStockProductResponse(productId, findProduct.getProductName());
+                })
+                .collect(Collectors.toList());
         if (!insufficientStockProducts.isEmpty()) {
             throw new ProductException(ProductExceptionType.INSUFFICIENT_STOCK, insufficientStockProducts);
         }
@@ -379,6 +387,8 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
                 .findBySubscriptionOrderIdAndMemberId(request.getOrderId(), memberId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
+        OrderStatus currentStatus = order.getOrderStatus();
+
         for (Long productId : request.getSubscriptionOrderProductIds()) {
             SubscriptionOrderProduct productToRemove = order.getSubscriptionOrderProducts().stream()
                     .filter(product -> product.getSubscriptionOrderProductId().equals(productId))
@@ -387,6 +397,18 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
 
             productToRemove.changeSubscriptionOrderProductStatus(OrderProductStatus.REJECTED);
         }
+
+        // 모든 상품이 취소되었는지 확인
+        boolean allProductsCancelled = order.getSubscriptionOrderProducts().stream()
+                .allMatch(product -> product.getOrderProductStatus() == OrderProductStatus.REJECTED);
+
+        if (allProductsCancelled) {
+            order.changeOrderStatus(OrderStatus.DENIED);  // 모든 상품이 취소되면 주문 전체를 취소 상태로 변경
+        } else if (currentStatus == OrderStatus.APPROVED) {
+            order.changeOrderStatus(OrderStatus.MODIFIED);  // APPROVED 상태에서만 MODIFIED로 변경
+        }
+        // PENDING 상태일 경우 상태 변경 없음
+
         subscriptionOrderRepository.save(order);
     }
 }

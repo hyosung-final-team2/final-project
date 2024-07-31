@@ -23,7 +23,7 @@ public interface OrderService {
 
     void createSingleOrder(Long memberId, SubscriptionOrderRequest orderRequest);
 
-    List<UnifiedOrderResponse> getAllOrdersByMemberId(Long memberId);
+    List<UnifiedOrderResponse> getAllOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest,Long memberId);
 
     OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long orderId);
 

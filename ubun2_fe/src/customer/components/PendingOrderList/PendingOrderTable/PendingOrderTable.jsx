@@ -30,6 +30,7 @@ const PendingOrderTable = () => {
   const { sort, updateSort } = usePendingOrderTableStore();
   const { searchCategory, setSearchCategory } = usePendingOrderTableStore(); // 검색할 카테고리 (드롭다운)
   const { searchKeyword, setSearchKeyword } = usePendingOrderTableStore(); // 검색된 단어
+  const { setTotalElements } = usePendingOrderTableStore()
   const { resetData } = usePendingOrderTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,6 +43,7 @@ const PendingOrderTable = () => {
   } = useGetPendingOrders(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword, searchKeyword);
 
   const totalPages = pendingOrders?.data?.data?.totalPages;
+  const totalElementsFromPage = pendingOrders?.data?.data?.totalElements;
   const pendingOrderList = pendingOrders?.data?.data?.content || [];
 
   const { data, refetch } = useGetOrderDetail(selectedPendingOrderDetail.orderId, selectedPendingOrderDetail.subscription); // 테이블 데이터 가져오기
@@ -54,10 +56,16 @@ const PendingOrderTable = () => {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['pendingOrder', nextPage, sort, searchCategory, searchKeyword],
-        queryFn: () => getPendingOrders(nextPage, PAGE_SIZE),
+        queryFn: () => getPendingOrders(nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword),
       });
     }
   }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
+
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -140,7 +148,7 @@ const PendingOrderTable = () => {
   }
 
   // isLoading 시, skeletonTable
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore();
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword, setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore();
 
   useEffect(() => {
     if (!isLoading) {
@@ -149,6 +157,9 @@ const PendingOrderTable = () => {
       setSkeletonSortData(sort);
       setSkeletonSearchCategory(searchCategory);
       setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage)
+      }
     }
   }, [
     pendingOrderList,

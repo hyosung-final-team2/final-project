@@ -1,12 +1,13 @@
 const BADGE_STYLES = {
   APPROVED: { bgColor: 'bg-badge-green', txtColor: 'text-badge-green', text: '승인' },
   PENDING: { bgColor: 'bg-badge-orange', txtColor: 'text-badge-orange', text: '대기' },
-  REJECTED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '거절' },
-  DENIED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '취소' },
+  REJECTED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '취소' },
+  DENIED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '거절' },
   COMPLETED: { bgColor: 'bg-badge-green', txtColor: 'text-badge-green', text: '완료' },
   PUBLIC: { bgColor: 'bg-badge-blue', txtColor: 'text-badge-blue', text: '공개' },
   PRIVATE: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '비공개' },
   LOADING: { bgColor: 'bg-transparent', txtColor: 'text-transparent', text: '로딩중' },
+  MODIFIED: { bgColor: 'bg-badge-purple', txtColor: 'text-badge-gray', text: '변경' },
 };
 
 const StatusBadge = ({ status }) => {

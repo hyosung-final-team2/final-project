@@ -1,5 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.customer.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import kr.or.kosa.ubun2_be.domain.customer.service.ExcelService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
@@ -21,6 +22,7 @@ public class ExcelController {
 
     private final ExcelService excelService;
 
+    @Operation(summary = "회원 등록 양식 다운로드")
     @GetMapping("/download/excel")
     public ResponseEntity<InputStreamResource> downloadExcel() throws IOException {
         String fileName = excelService.getEncodedFileName("회원_등록_양식.xlsx");
@@ -31,6 +33,7 @@ public class ExcelController {
                 .body(new InputStreamResource(excelService.createExcel().getInputStream()));
     }
 
+    @Operation(summary = "회원 등록 양식 업로드")
     @PostMapping("/upload/excel")
     public ResponseDto<?> registerExcel(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         excelService.registerExcel(customUserDetails.getUserId(), file);
