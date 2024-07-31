@@ -14,6 +14,7 @@ export const tableColumn = {
   orders: ['정기 주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '주문결제수단', '승인 상태'],
   pendingOrders: ['정기 주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '주문결제수단', '승인 상태'],
   product: ['분류', '상품명', '수량', '상품가격', '할인율', '상품게시 상태', '배송 종류'],
+  ordersSearch: ['주문 일자', '주문자(구매자)', '총 주문금액'],
 };
 
 export const columnMapping = {
@@ -43,12 +44,8 @@ export const columnMapping = {
   '승인 상태': 'orderStatus',
 };
 
-
 export const getKeyByValue = (object, value) => {
   return Object.keys(object).find(key => object[key] === value);
 };
 
-export const betweenColumn = new Set(['createdAt', 'stockQuantity', 'productPrice','productDiscount']);
-
-
-
+export const betweenColumn = new Set(['createdAt', 'stockQuantity', 'productPrice', 'productDiscount']);

@@ -172,7 +172,7 @@ const PendingOrderTable = () => {
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
       <PendingOrderTableFeature
-        tableColumns={tableColumn.pendingOrders}
+        tableColumns={tableColumn.ordersSearch}
         onSearch={handleSearch}
         handleOrderUpdate={handleOrderUpdate}
         selectedPendingOrders={selectedPendingOrders}
