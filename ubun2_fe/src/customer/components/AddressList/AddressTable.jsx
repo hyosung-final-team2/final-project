@@ -104,6 +104,7 @@ const AddressTable = () => {
     setCurrentPage(1);
   };
 
+
   const NoDataTableButtonFunc = () => {
     setOpenAddressRegistration(true)
   }
@@ -124,7 +125,12 @@ const AddressTable = () => {
 
   if (isLoading) {
     return (
-      <SkeletonTable SkeletonTableFeature={SkeletonAddressTableFeature} TableRowComponent={SkeletonAddressTableRow} tableColumns={tableColumn.address.list} />
+      <SkeletonTable
+        SkeletonTableFeature={SkeletonAddressTableFeature}
+        TableRowComponent={SkeletonAddressTableRow}
+        tableColumns={tableColumn.address.list}
+        nonSort={tableColumn.address.nonSort}
+      />
     );
   }
 
@@ -132,7 +138,7 @@ const AddressTable = () => {
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       <AddressTableFeature
         setOpenModal={setOpenAddressRegistration}
-        tableColumns={tableColumn.address.list}
+        tableColumns={tableColumn.address.search}
         onSearch={handleSearch}
         selectedAddresses={selectedAddresses}
         handleDataReset={handleDataReset}
@@ -146,6 +152,7 @@ const AddressTable = () => {
             allChecked={selectedAddresses.length === addressList.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
+            nonSort={tableColumn.address.nonSort}
           />
           {
             addressList.length > 0 ? (

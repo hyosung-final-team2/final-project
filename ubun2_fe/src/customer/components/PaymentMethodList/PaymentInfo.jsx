@@ -41,7 +41,15 @@ const PaymentInfo = ({}) => {
       accountNumber: paymentMethod === 'CMS 결제' ? accountNumber : null,
       bankName: paymentMethod === 'CMS 결제' ? bankName : null,
     };
-    mutate(apiData);
+    mutate(apiData, {
+      onSuccess: () => {
+        // 성공 시 입력 필드 초기화
+        setCardNumber('');
+        setCardCompany('');
+        setAccountNumber('');
+        setBankName('');
+      },
+    });
   };
 
   const flushData = () => {
@@ -87,6 +95,7 @@ const PaymentInfo = ({}) => {
                 className='w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-700'
                 placeholder='카드 번호를 입력해주세요'
                 onChange={handleCardNumberChange}
+                value={cardNumber}
               />
               <label className='absolute text-xs text-gray-500 left-3 -top-2 bg-white px-1'>카드 번호</label>
             </div>
@@ -97,6 +106,7 @@ const PaymentInfo = ({}) => {
               onChange={e => {
                 setCardCompany(e);
               }}
+              value={cardCompany}
             />
             <button
               className={`${commonButtonStyles} bg-custom-button-purple text-custom-font-purple hover:text-white hover:bg-custom-font-purple`}
@@ -113,10 +123,11 @@ const PaymentInfo = ({}) => {
                 className='w-full bg-white border border-gray-300 rounded-lg p-3 text-gray-700'
                 placeholder='계좌 번호를 입력해주세요'
                 onChange={e => setAccountNumber(e.target.value)}
+                value={accountNumber}
               />
               <label className='absolute text-xs text-gray-500 left-3 -top-2 bg-white px-1'>계좌 번호</label>
             </div>
-            <Select id='bank' defaultOption='은행사를 선택해주세요' options={bankPayments} onChange={e => setBankName(e)} />
+            <Select id='bank' defaultOption='은행사를 선택해주세요' options={bankPayments} onChange={e => setBankName(e)} value={bankName} />
             <button
               className={`${commonButtonStyles} bg-custom-button-purple text-custom-font-purple hover:text-white hover:bg-custom-font-purple`}
               onClick={handleOnClick}

@@ -16,7 +16,7 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
     }, {})
   );
   const { selectedMemberId } = useAddressStore();
-  const { mutate } = useRegisterAddress();
+  const { mutate: registerMutate } = useRegisterAddress();
 
   const getCurrentHost = () => {
     return window.location.origin;
@@ -132,7 +132,17 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
     };
 
     try {
-      mutate(apiData);
+      registerMutate(apiData, {
+        onSuccess: () => {
+          // 성공 시 formData 초기화
+          setFormData(
+            infos.reduce((acc, info) => {
+              acc[info.label] = '';
+              return acc;
+            }, {})
+          );
+        },
+      });
     } catch (error) {
       console.error('API 호출 오류:', error);
     }
