@@ -17,8 +17,11 @@ import SkeletonTable from '../../Skeleton/SkeletonTable.jsx';
 import useOrderTableStore from '../../../store/OrderTable/orderTableStore.js';
 import SkeletonOrderTableFeature from '../Skeleton/SkeletonOrderTableFeature.jsx';
 import SkeletonOrderTableRow from '../Skeleton/SkeletonOrderTableRow.jsx';
+import NoDataTable from "../../common/Table/NoDataTable.jsx";
+import {useNavigate} from "react-router-dom";
 
 const OrderTable = () => {
+  const navigate = useNavigate();
   const [openOrderDetailModal, setOpenOrderDetailModal] = useState(false);
 
   const [selectedOrders, setSelectedOrders] = useState([]); // 체크된 멤버 ID
@@ -96,6 +99,10 @@ const OrderTable = () => {
     setCurrentPage(1);
   };
 
+  const NoDataTableButtonFunc = () => {
+    navigate("/customer/app/dashboard")
+  }
+
   const { toggleIsReset } = useOrderTableStore();
   const handleDataReset = async () => {
     await toggleIsReset();
@@ -155,14 +162,19 @@ const OrderTable = () => {
             handleSort={handleSort}
             headerType='orders'
           />
-          <UnifiedOrderTableBody
-            dataList={orderList}
-            TableRowComponent={OrderTableRow}
-            setOpenModal={handleRowClick}
-            selectedOrders={selectedOrders}
-            handleRowChecked={handleRowChecked}
-            currentPage={currentPage}
-          />
+          {orderList.length > 0 ? (
+              <UnifiedOrderTableBody
+                  dataList={orderList}
+                  TableRowComponent={OrderTableRow}
+                  setOpenModal={handleRowClick}
+                  selectedOrders={selectedOrders}
+                  handleRowChecked={handleRowChecked}
+                  currentPage={currentPage}
+              />
+          ) : (
+              <NoDataTable text="주문 내역이 없습니다" buttonText="메인으로 가기" buttonFunc={NoDataTableButtonFunc}/>
+          ) }
+
         </Table>
       </div>
       {/* 페이지네이션 */}

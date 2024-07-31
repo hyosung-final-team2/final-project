@@ -72,7 +72,6 @@ const AddressTable = () => {
   };
 
   const handleRowChecked = id => {
-    console.log(id)
     setSelectedAddresses(prev => (prev.includes(id) ? prev.filter(id => id !== id) : [...prev, id]));
   };
 
