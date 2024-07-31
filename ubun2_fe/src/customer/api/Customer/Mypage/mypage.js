@@ -17,7 +17,7 @@ export const updateMypage = async (myPageUpdateRequest, imageFile) => {
 
   if (imageFile) {
     formData.append('image', imageFile);
-  }
+  } // imageFile이 undefined인 경우, image 필드를 추가 X
 
   try {
     const response = await privateFileFetch.put('/customers/mypage', formData);

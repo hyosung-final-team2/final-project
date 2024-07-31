@@ -8,9 +8,9 @@ const StoreDescriptionNotice = ({ formData, handleInputChange }) => {
   };
 
   return (
-    <div className='flex h-full gap-6 p-3 mb-3'>
-      <div className='w-1/2'>
-        <Label htmlFor='description' className='text-sm text-gray-500'>
+    <div className='grid gap-6 md:grid-cols-2'>
+      <div>
+        <Label htmlFor='description' className='block mb-2 text-sm font-medium text-gray-700'>
           상점 상세 설명
         </Label>
         <Textarea
@@ -19,12 +19,13 @@ const StoreDescriptionNotice = ({ formData, handleInputChange }) => {
           name='description'
           value={formData.description}
           onChange={handleInputChange}
-          rows={10}
+          rows={6}
+          className='w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500'
         />
       </div>
 
-      <div className='w-1/2'>
-        <Label htmlFor='announcement' className='text-sm text-gray-500'>
+      <div>
+        <Label htmlFor='announcement' className='block mb-2 text-sm font-medium text-gray-700'>
           공지사항
         </Label>
         <Textarea
@@ -33,7 +34,8 @@ const StoreDescriptionNotice = ({ formData, handleInputChange }) => {
           name='announcement'
           value={formData.announcement}
           onChange={handleInputChange}
-          rows={10}
+          rows={6}
+          className='w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500'
         />
       </div>
     </div>
