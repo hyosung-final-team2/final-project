@@ -110,7 +110,7 @@ class OrderMemberControllerTest extends CommonTestSetup {
     @DisplayName("현재 로그인한 회원의 전체 주문 목록 조회")
     void getAllOrders() throws Exception {
         List<UnifiedOrderResponse> mockResponses = Arrays.asList(new UnifiedOrderResponse(), new UnifiedOrderResponse());
-        when(orderService.getAllOrdersByMemberId(anyLong())).thenReturn(mockResponses);
+        when(orderService.getAllOrdersByMemberId(any(),anyLong())).thenReturn(mockResponses);
 
         mockMvc.perform(get("/api/members/orders")
                         .with(user(member)))
@@ -119,7 +119,7 @@ class OrderMemberControllerTest extends CommonTestSetup {
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).getAllOrdersByMemberId(eq(member.getUserId()));
+        verify(orderService).getAllOrdersByMemberId(any(),eq(member.getUserId()));
     }
 
     @Test

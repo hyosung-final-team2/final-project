@@ -45,6 +45,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -433,13 +435,32 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<UnifiedOrderResponse> getAllOrdersByMemberId(Long memberId) {
+    public List<UnifiedOrderResponse> getAllOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest,Long memberId) {
         List<UnifiedOrderResponse> orderResponses = orderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
         List<UnifiedOrderResponse> subscriptionOrderResponses = subscriptionOrderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
 
         List<UnifiedOrderResponse> combinedList = new ArrayList<>();
         combinedList.addAll(orderResponses);
         combinedList.addAll(subscriptionOrderResponses);
+
+        if(orderPeriodFilterRequest.getPeriodType()!=null && orderPeriodFilterRequest.getPeriodValue()>0){
+            LocalDateTime endDate = LocalDateTime.now();
+            LocalDateTime startDate = switch (orderPeriodFilterRequest.getPeriodType()) {
+                case WEEK -> endDate.minusWeeks(orderPeriodFilterRequest.getPeriodValue());
+                case MONTH -> endDate.minusMonths(orderPeriodFilterRequest.getPeriodValue());
+                default -> throw new OrderException(OrderExceptionType.NOT_MATCH_PERIOD_TYPE);
+            };
+
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+            combinedList = combinedList.stream()
+                    .filter(order -> {
+                        LocalDateTime createdAt = LocalDateTime.parse(order.getCreatedAt(), formatter);
+                        return createdAt.isAfter(startDate) && createdAt.isBefore(endDate);
+                    })
+                    .collect(Collectors.toList());
+
+        }
 
         return combinedList;
     }

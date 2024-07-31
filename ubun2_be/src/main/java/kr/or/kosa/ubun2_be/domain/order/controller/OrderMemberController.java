@@ -51,8 +51,8 @@ public class OrderMemberController {
 
     @Operation(summary = "현재 로그인한 회원의 전체 주문 목록 조회")
     @GetMapping("/orders")
-    public ResponseDto<List<UnifiedOrderResponse>> getAllOrders(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        List<UnifiedOrderResponse> allOrders = orderService.getAllOrdersByMemberId(customUserDetails.getUserId());
+    public ResponseDto<List<UnifiedOrderResponse>> getAllOrders(@ModelAttribute OrderPeriodFilterRequest orderPeriodFilterRequest,@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        List<UnifiedOrderResponse> allOrders = orderService.getAllOrdersByMemberId(orderPeriodFilterRequest,customUserDetails.getUserId());
         return ResponseDto.ok(allOrders, "정상출력 데이터");
     }
 
