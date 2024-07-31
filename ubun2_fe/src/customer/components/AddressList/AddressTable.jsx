@@ -96,7 +96,7 @@ const AddressTable = () => {
     setCurrentPage(1);
   };
 
-  const { resetSkeletonData, setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore();
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore();
 
   useEffect(() => {
     return resetData();
@@ -112,7 +112,12 @@ const AddressTable = () => {
 
   if (isLoading) {
     return (
-      <SkeletonTable SkeletonTableFeature={SkeletonAddressTableFeature} TableRowComponent={SkeletonAddressTableRow} tableColumns={tableColumn.address.list} />
+      <SkeletonTable
+        SkeletonTableFeature={SkeletonAddressTableFeature}
+        TableRowComponent={SkeletonAddressTableRow}
+        tableColumns={tableColumn.address.list}
+        nonSort={tableColumn.address.nonSort}
+      />
     );
   }
 
@@ -133,6 +138,7 @@ const AddressTable = () => {
             allChecked={selectedAddresses.length === addressList.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
+            nonSort={tableColumn.address.nonSort}
           />
           <DynamicTableBody
             TableRowComponent={AddressTableRow}

@@ -24,7 +24,11 @@ const MemberInfo = ({ member, onlyInfo = true, title, searchable = false }) => {
           <InputLabel labelTitle='회원명' defaultValue={member ? member.name : selectedMember?.name} disabled={onlyInfo} />
           <InputLabel labelTitle='이메일' defaultValue={member ? member.email : selectedMember?.email} disabled={onlyInfo} />
           <InputLabel labelTitle='전화번호' defaultValue={member ? member.phone : selectedMember?.phone} disabled={onlyInfo} />
-          <InputLabel labelTitle='가입일' defaultValue={member ? member.createdAt : selectedMember?.createdAt?.split('T')[0]} disabled={onlyInfo} />
+          <InputLabel
+            labelTitle='가입일'
+            defaultValue={member ? member?.createdAt?.split('T')[0] : selectedMember?.createdAt?.split('T')[0]}
+            disabled={onlyInfo}
+          />
         </div>
       ) : (
         <div className='grid grid-cols-2 gap-3'>

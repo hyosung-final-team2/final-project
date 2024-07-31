@@ -17,7 +17,7 @@ const AddressInput = ({ disabled = false, infos, title }) => {
     }, {})
   );
   const { selectedMemberId } = useAddressStore();
-  const { mutate } = useRegisterAddress();
+  const { mutate: registerMutate } = useRegisterAddress();
 
   const getCurrentHost = () => {
     return window.location.origin;
@@ -134,7 +134,17 @@ const AddressInput = ({ disabled = false, infos, title }) => {
 
     // 모든 필드가 채워진 경우 API 호출
     try {
-      mutate(apiData);
+      registerMutate(apiData, {
+        onSuccess: () => {
+          // 성공 시 formData 초기화
+          setFormData(
+            infos.reduce((acc, info) => {
+              acc[info.label] = '';
+              return acc;
+            }, {})
+          );
+        },
+      });
     } catch (error) {
       console.error('API 호출 오류:', error);
     }
