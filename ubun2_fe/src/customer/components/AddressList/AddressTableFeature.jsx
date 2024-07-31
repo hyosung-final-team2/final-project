@@ -1,8 +1,7 @@
-import React from 'react';
 import ArrowPathIcon from '@heroicons/react/24/outline/ArrowPathIcon.js';
 import SearchBarWithDrop from '../common/SearchBar/SearchBarWithDrop';
 
-const AddressTableFeature = ({ onSearch, tableColumns, handleDataReset, setOpenModal }) => {
+const AddressTableFeature = ({ onSearch, tableColumns, handleDataReset, setOpenModal, deleteSelectedAddressesMutate }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
   const handleClick = () => {
@@ -21,7 +20,7 @@ const AddressTableFeature = ({ onSearch, tableColumns, handleDataReset, setOpenM
         <button className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`} onClick={handleClick}>
           주소 등록
         </button>
-        <button className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제</button>
+        <button onClick={() => deleteSelectedAddressesMutate()} className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제</button>
       </div>
     </div>
   );

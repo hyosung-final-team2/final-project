@@ -20,6 +20,7 @@ import SkeletonTable from "../../Skeleton/SkeletonTable.jsx";
 import useSkeletonStore from "../../../store/skeletonStore.js";
 import SkeletonMemberTableFeature from "../Skeleton/SkeletonMemberTableFeature.jsx";
 import SkeletonMemberTableRow from "../Skeleton/SkeletonMemberTableRow.jsx";
+import NoDataTable from "../../common/Table/NoDataTable.jsx";
 
 const MemberTable = () => {
 
@@ -120,6 +121,10 @@ const MemberTable = () => {
     }
   };
 
+  const NoDataTableButtonFunc = () => {
+    setOpenRegisterModal(true)
+  }
+
 
   const {toggleIsReset} = useMemberTableStore();
   const handleDataReset = async () => {
@@ -162,24 +167,33 @@ const MemberTable = () => {
       <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} selectedMembers={selectedMembers} handleDataReset={handleDataReset} selectedMemberDeleteMutate={selectedMemberDeleteMutate}/>
 
       {/* 테이블 */}
-      <div className='px-4 shadow-md'>
+      <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead tableColumns={tableColumn.member} headerType="member" allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
+          {
+            memberList.length > 0 ? (
+                <DynamicTableBody
+                    dataList={memberList}
+                    TableRowComponent={MemberTableRow}
+                    dynamicKey='memberEmail'
+                    dynamicId='memberId'
+                    selectedMembers={selectedMembers}
+                    handleRowChecked={handleRowChecked}
+                    setOpenModal={handleRowClick}
+                    currentPage={currentPage}
+                />
+            ) : (
+                <NoDataTable text="등록된 회원이 없습니다." buttonText="회원 등록하기" buttonFunc={NoDataTableButtonFunc}/>
+            )
+          }
 
-          <DynamicTableBody
-            dataList={memberList}
-            TableRowComponent={MemberTableRow}
-            dynamicKey='memberEmail'
-            dynamicId='memberId'
-            selectedMembers={selectedMembers}
-            handleRowChecked={handleRowChecked}
-            setOpenModal={handleRowClick}
-            currentPage={currentPage}
-          />
         </Table>
       </div>
       {/* 페이지네이션 */}
-      {isLoading === false ? <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' /> : null}
+      {isLoading === false && memberList.length > 0 ? (
+          <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+          ) : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />
+      }
 
       {/* 엑셀 조회 모달 */}
       {openExcelModal && <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} /> }

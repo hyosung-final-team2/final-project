@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { errorToastStyle } from '../../../../member/api/toastStyle.js';
 import useMemberTableStore from '../../../store/MemberTable/memberTableStore.js';
-import useSkeletonStore from '../../../store/skeletonStore.js';
 import { columnMapping } from '../Table/tableIndex.js';
 
 const priceInputStyle =
@@ -138,43 +137,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
     onSearch(searchValue, selectedCategory);
   };
 
-
-  //
-  // const { skeletonSearchCategory, skeletonSearchKeyword } = useSkeletonStore();
   const { isReset } = useMemberTableStore();
-  //
-  // const dropdownCategoryScreen = () => {
-  //   if (showCategory !== '카테고리') {
-  //     return showCategory;
-  //   }
-  //   if (skeletonSearchCategory !== null) {
-  //     const categoryKey = getKeyByValue(columnMapping, skeletonSearchCategory);
-  //     return categoryKey || '카테고리';
-  //   }
-  //   return '카테고리';
-  // };
-  //
-  // const dropdownKeywordScreen = () => {
-  //   if (searchTerm !== '') {
-  //     return searchTerm;
-  //   }
-  //   if (skeletonSearchKeyword !== null) {
-  //     return skeletonSearchKeyword;
-  //   }
-  //   return '';
-  // };
-  //
-  // useEffect(() => {
-  //   if (skeletonSearchKeyword) {
-  //     setSearchTerm(skeletonSearchKeyword);
-  //   }
-  // }, [skeletonSearchKeyword]);
-  //
-  // useEffect(() => {
-  //   if (skeletonSearchCategory) {
-  //     setShowCategory(getKeyByValue(columnMapping, skeletonSearchCategory));
-  //   }
-  // }, [skeletonSearchCategory]);
 
   useEffect(() => {
     setSearchTerm('');
@@ -217,8 +180,8 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
           }`}
           placeholder={showCategory !== '카테고리' ? 'Search' : '카테고리 선택'}
           required
-          // value={dropdownKeywordScreen()}
-            value={searchTerm}
+          disabled={showCategory === '카테고리'}
+          value={searchTerm}
           onChange={handleSearchChange}
         />
       );
@@ -237,7 +200,6 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
           }`}
           type='button'
         >
-          {/*{dropdownCategoryScreen()}*/}
           {showCategory}
           <svg className='w-2.5 h-2.5 ms-2.5' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 6'>
             <path stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='m1 1 4 4 4-4' />
