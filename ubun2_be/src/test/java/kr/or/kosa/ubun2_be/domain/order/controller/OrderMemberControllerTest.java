@@ -76,6 +76,7 @@ class OrderMemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("정기 주문 및 단건 주문 유효성 검사")
     void validateOrders() throws Exception {
         mockMvc.perform(post("/api/members/orders/validate")
                         .with(user(member))
@@ -90,6 +91,7 @@ class OrderMemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("정기 주문 및 단건 주문 생성")
     void registerOrders() throws Exception {
         mockMvc.perform(post("/api/members/orders")
                         .with(user(member))
@@ -108,7 +110,7 @@ class OrderMemberControllerTest extends CommonTestSetup {
     @DisplayName("현재 로그인한 회원의 전체 주문 목록 조회")
     void getAllOrders() throws Exception {
         List<UnifiedOrderResponse> mockResponses = Arrays.asList(new UnifiedOrderResponse(), new UnifiedOrderResponse());
-        when(orderService.getAllOrdersByMemberId(anyLong())).thenReturn(mockResponses);
+        when(orderService.getAllOrdersByMemberId(any(),anyLong())).thenReturn(mockResponses);
 
         mockMvc.perform(get("/api/members/orders")
                         .with(user(member)))
@@ -117,7 +119,7 @@ class OrderMemberControllerTest extends CommonTestSetup {
                 .andExpect(jsonPath("$.data").isArray())
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).getAllOrdersByMemberId(eq(member.getUserId()));
+        verify(orderService).getAllOrdersByMemberId(any(),eq(member.getUserId()));
     }
 
     @Test
@@ -172,6 +174,7 @@ class OrderMemberControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("정기 주문에서 특정 상품 제거")
     void removeSubscriptionOrderProduct() throws Exception {
         RemoveSubscriptionOrderProductRequest request = new RemoveSubscriptionOrderProductRequest();
         request.setOrderId(1L);

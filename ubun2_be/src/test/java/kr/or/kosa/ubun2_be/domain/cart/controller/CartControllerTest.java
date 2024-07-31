@@ -5,6 +5,7 @@ import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.cart.dto.*;
 import kr.or.kosa.ubun2_be.domain.cart.service.CartService;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderOption;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -38,6 +39,7 @@ class CartControllerTest extends CommonTestSetup {
     private CartService cartService;
 
     @Test
+    @DisplayName("장바구니 생성")
     void registerCarts() throws Exception {
         CartProductRequest productRequest1 = new CartProductRequest();
         productRequest1.setProductId(1L);
@@ -68,6 +70,7 @@ class CartControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("전체 상점 통합 장바구니 조회")
     void getCarts() throws Exception {
         List<CartResponse> cartResponses = Arrays.asList(new CartResponse(), new CartResponse());
         when(cartService.getCarts(anyLong())).thenReturn(cartResponses);
@@ -83,6 +86,7 @@ class CartControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("장바구니 수량 업데이트")
     void updateCartProductQuantities() throws Exception {
         CartProductDetailRequest productDetail1 = new CartProductDetailRequest();
         productDetail1.setCartProductId(1L);
@@ -111,6 +115,7 @@ class CartControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("장바구니 제품 삭제")
     void deleteCartProducts() throws Exception {
         CartProductDetailRequest productDetail1 = new CartProductDetailRequest();
         productDetail1.setCartProductId(1L);
@@ -124,7 +129,6 @@ class CartControllerTest extends CommonTestSetup {
         deleteRequest.setCartId(1L);
         deleteRequest.setCustomerId(1L);
         deleteRequest.setCartProducts(Arrays.asList(productDetail1, productDetail2));
-
 
         List<CartProductDeleteRequest> deleteRequests = Arrays.asList(deleteRequest);
 
