@@ -1,16 +1,15 @@
 import SearchBarWithDrop from '../../common/SearchBar/SearchBarWithDrop';
-import {useState} from "react";
 import ProductInsertModal from "./ProductInsertlModal.jsx";
 import ArrowPathIcon from "@heroicons/react/24/outline/ArrowPathIcon.js";
 
-const ProductTableFeature = ({ tableColumns, onSearch,currentPage,handleDataReset,deleteSelectedProductsMutate }) => {
+const ProductTableFeature = ({ tableColumns, onSearch,currentPage,handleDataReset,deleteSelectedProductsMutate,handleSaveClick,openProductInsertModal,setOpenProductInsertModal }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
-  const [openProductInsertModal, setOpenProductInsertModal] = useState(false);
-
-
-    const handleSaveClick = () => {
-        setOpenProductInsertModal(true);
-    };
+  // const [openProductInsertModal, setOpenProductInsertModal] = useState(false);
+  //
+  //
+  //   const handleSaveClick = () => {
+  //       setOpenProductInsertModal(true);
+  //   };
   return (
     <div className='flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4 bg-white dark:bg-gray-900'>
       <div className='flex gap-2'>

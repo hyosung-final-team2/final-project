@@ -17,6 +17,7 @@ import useSkeletonStore from "../../../store/skeletonStore.js";
 import SkeletonTable from "../../Skeleton/SkeletonTable.jsx";
 import SkeletonProductTableFeature from "../Skeleton/SkeletonProductTableFeature.jsx";
 import SkeletonProductTableRow from "../Skeleton/SkeletonProductTableRow.jsx";
+import NoDataTable from "../../common/Table/NoDataTable.jsx";
 
 const ProductTable = () => {
   const [openProductDetailModal, setOpenProductDetailModal] = useState(false);
@@ -39,6 +40,13 @@ const ProductTable = () => {
 
   const { data, refetch } = useGetProductDetail(selectedProductDetail.productId);
   const { mutate: deleteSelectedProductsMutate } = useDeleteSelectedProducts(selectedProducts,currentPage)
+
+  const [openProductInsertModal, setOpenProductInsertModal] = useState(false);
+
+
+  const handleSaveClick = () => {
+    setOpenProductInsertModal(true);
+  };
 
   const queryClient = useQueryClient();
 
@@ -119,22 +127,39 @@ const ProductTable = () => {
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      <ProductTableFeature tableColumns={tableColumn.product} onSearch={handleSearch} currentPage={currentPage} handleDataReset={handleDataReset} deleteSelectedProductsMutate={deleteSelectedProductsMutate}/>
+      <ProductTableFeature tableColumns={tableColumn.product}
+                           onSearch={handleSearch}
+                           currentPage={currentPage}
+                           handleDataReset={handleDataReset}
+                           deleteSelectedProductsMutate={deleteSelectedProductsMutate}
+                           handleSaveClick={handleSaveClick}
+                           openProductInsertModal={openProductInsertModal}
+                           setOpenProductInsertModal={setOpenProductInsertModal}
+      />
 
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead tableColumns={tableColumn.product} headerType="product" allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
-          <TableBody
-            dataList={productList}
-            TableRowComponent={ProductTableRow}
-            dynamicId='productId'
-            setOpenModal={handleRowClick}
-            selectedMembers={selectedProducts}
-            handleRowChecked={handleRowChecked}
-            currentPage={currentPage}
-          />
+          {productList.length > 0 ? (
+              <TableBody
+                  dataList={productList}
+                  TableRowComponent={ProductTableRow}
+                  dynamicId='productId'
+                  setOpenModal={handleRowClick}
+                  selectedMembers={selectedProducts}
+                  handleRowChecked={handleRowChecked}
+                  currentPage={currentPage}
+              />
+          ) : (
+              <NoDataTable text="등록된 상품이 없습니다." buttonText="상품 등록하기" buttonFunc={handleSaveClick}/>
+          )}
+
         </Table>
-        {isLoading === false ? <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' /> : null}
+        {isLoading === false && productList.length > 0 ?
+            <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+            : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />
+        }
+
         {/* modal */}
         <ProductDetailModal
           isOpen={openProductDetailModal}
