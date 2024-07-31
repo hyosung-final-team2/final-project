@@ -31,8 +31,6 @@ const ProductTable = () => {
   const { setTotalElements } = useProductTableStore()
   const { resetData } = useProductTableStore()
 
-  console.log( "외부 : ", searchKeyword,searchCategory)
-
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8
 
@@ -56,7 +54,6 @@ const ProductTable = () => {
 
   useEffect(() => {
     if (currentPage < totalPages) {
-      console.log("useEffect : ", searchCategory,searchKeyword);
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['product', {page:nextPage,PAGE_SIZE, sort, searchCategory, searchKeyword}],
@@ -135,7 +132,7 @@ const ProductTable = () => {
         setSkeletonTotalElements(totalElementsFromPage)
       }
     }
-  }, [productList,currentPage, totalPages,  sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
+  }, [productList, currentPage, totalPages,  sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
 
   if (isLoading) {
     // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작

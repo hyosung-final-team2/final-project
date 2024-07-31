@@ -1,6 +1,6 @@
 import {columnMapping, betweenColumn, getKeyByValue} from "../components/common/Table/tableIndex.js";
 
-const createSearchResult = ({ searchCategory, searchKeyword, totalElements }) => {
+const CreateSearchResult = ({ searchCategory, searchKeyword, totalElements }) => {
     if (searchCategory === null && searchKeyword === null) {
         return <p className="text-xl">전체 <span className="text-main font-bold">{totalElements}</span>건의 검색결과</p>;
     }
@@ -23,4 +23,4 @@ const createSearchResult = ({ searchCategory, searchKeyword, totalElements }) =>
     }
 };
 
-export default createSearchResult;
+export default CreateSearchResult;
