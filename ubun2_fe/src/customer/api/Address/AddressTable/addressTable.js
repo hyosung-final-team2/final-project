@@ -35,3 +35,6 @@ export const getMemberAddresses = async memberId => {
   console.log('Calling API with:', { memberId });
   return await privateFetch.get(`/customers/addresses/member/${memberId}`);
 };
+
+
+export const deleteSelectedAddresses = async (selectedAddresses) => await privateFetch.delete("/customers/addresses/selected",{data:selectedAddresses});
