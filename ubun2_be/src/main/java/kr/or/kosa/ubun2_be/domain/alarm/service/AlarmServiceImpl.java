@@ -255,5 +255,16 @@ public class AlarmServiceImpl implements AlarmService{
                 firstProductName + "이 주문되었습니다." :
                 firstProductName + " 외 " + (productListSize - 1) + "개가 주문되었습니다.";
     }
+    @Override
+    public void sendNoStock(Customer customer, String productName) {
+        String title = "재고부족";
+        String content = productName + " - 상품 재고가 부족합니다.";
+        String link = "http://localhost:5173/customer/app/product";
+
+        sendMessage(makeOrderMessage(title,content,customer.getFcmToken(),link));
+        // TODO: 실제 링크로 변경
+        Alarm alarm = Alarm.createAlarm(title, content,link);
+        customerAlarmRedisRepository.saveAlarm(String.valueOf(customer.getCustomerId()),alarm);
+    }
 
 }
