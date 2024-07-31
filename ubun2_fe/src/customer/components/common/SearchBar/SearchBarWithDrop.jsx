@@ -137,6 +137,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
     onSearch(searchValue, selectedCategory);
   };
 
+
   const { isReset } = useMemberTableStore();
 
   useEffect(() => {
@@ -155,7 +156,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
             i18n='ko'
             value={dateRange}
             theme={'light'}
-            inputClassName='input input-bordered w-72'
+            inputClassName='input input-bordered w-72 no-focus'
             toggleClassName='invisible'
             onChange={newValue => setDateRange(newValue)}
             showShortcuts={true}
@@ -176,7 +177,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
           type='search'
           id='search-dropdown'
           className={`block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 border-s-gray-50 border-s-2 border border-gray-300 focus:outline-none dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500 ${
-            !categoryGroups.date.includes(selectedCategory) && !categoryGroups.range.includes(selectedCategory) ? 'rounded-s-lg' : ''
+            !categoryGroups.date.includes(selectedCategory) && !categoryGroups.range.includes(selectedCategory) ? 'rounded-e-lg' : ''
           }`}
           placeholder={showCategory !== '카테고리' ? 'Search' : '카테고리 선택'}
           required
