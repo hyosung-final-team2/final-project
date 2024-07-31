@@ -23,6 +23,8 @@ module.exports = {
         'badge-orange': '#FD7A30',
         'badge-yellow': '#FDE047',
         'badge-orange-yellow': '#F59E0B',
+        'badge-purple': '#7000A6',
+        'badge-gray': '#331B3F',
         'custom-badge-roadaddr': '#DFECFF',
         'custom-badge-roadaddr-text': '#366EA7',
         'custom-badge-jibun': '#E6E6E6',

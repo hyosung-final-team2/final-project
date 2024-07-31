@@ -56,6 +56,7 @@ const OrderComplete = () => {
 
   const handleCancel = () => {
     resetOrderData();
+    setModalState(false);
     toast.success('주문이 취소되었습니다.', successToastStyle);
     navigate('/member/app/home', { replace: true });
   };
