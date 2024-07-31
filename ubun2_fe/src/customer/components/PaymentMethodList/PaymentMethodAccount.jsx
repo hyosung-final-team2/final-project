@@ -1,12 +1,14 @@
 import React from 'react';
-import { getBankLogo } from '../../../member/components/PaymentMethod/CardList';
+import { getBankLogo, getCardColor } from '../../../member/components/PaymentMethod/CardList';
+import { formatBankAccount } from '../../utils/accountFormat';
 
-const PaymentMethodAccount = ({ bgColor, bankName, memberName, accountNumber }) => {
+const PaymentMethodAccount = ({ bankName, memberName, accountNumber }) => {
+  console.log(getCardColor(bankName));
   return (
-    <div className={`flex-1 bg-slate-600 ${bgColor}} text-white w-[90%] h-[95%] p-6 relative flex flex-col rounded-xl`}>
+    <div className={`flex-1 bg-slate-600 w-[400px] h-[230px] ${getCardColor(bankName)} text-white  p-6 relative flex flex-col rounded-xl`}>
       {/* <div className='mt-auto flex justify-between'> */}
-      <div>
-        <img className='h-[30%]' src={`/src/assets/banklogos/${getBankLogo(bankName)}`} alt='' />
+      <div className='pb-10'>
+        <img className='h-[30px]' src={`/src/assets/banklogos/${getBankLogo(bankName)}`} alt='' />
       </div>
       <div>
         <div className='text-sm '>은행명</div>
@@ -23,7 +25,7 @@ const PaymentMethodAccount = ({ bgColor, bankName, memberName, accountNumber }) 
         </div>
         <div className='flex-1'>
           <div className='text-md'>계좌 번호</div>
-          <div className='text-md font-bold'>{accountNumber}</div>
+          <div className='text-md font-bold'>{formatBankAccount(bankName?.slice(0, -2), accountNumber)}</div>
         </div>
       </div>
     </div>

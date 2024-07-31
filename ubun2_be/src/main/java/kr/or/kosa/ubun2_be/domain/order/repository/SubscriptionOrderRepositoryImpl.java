@@ -235,6 +235,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                 .where(memberCustomer.customer.customerId.eq(customerId)
                         .and(subscriptionOrder.createdAt.between(startDate,endDate))
                         .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED)))
+                .distinct()
                 .fetch();
         return results.stream().map(tuple -> {
             return tuple.get(subscriptionOrder.address);

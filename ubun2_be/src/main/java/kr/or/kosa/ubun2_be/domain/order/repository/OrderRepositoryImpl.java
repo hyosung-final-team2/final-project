@@ -206,8 +206,8 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                 .where(customer.customerId.eq(customerId)
                         .and(order.createdAt.between(startDate, endDate))
                         .and(order.orderStatus.eq(OrderStatus.APPROVED)))
+                .distinct()
                 .fetch();
-
         return  results.stream().map(tuple -> {
             return tuple.get(order.address);
         }).toList();

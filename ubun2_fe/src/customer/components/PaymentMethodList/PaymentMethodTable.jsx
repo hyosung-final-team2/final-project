@@ -25,6 +25,9 @@ import SkeletonPaymentMethodTableFeature from './Skeleton/SkeletonPaymentMethodT
 
 import useSkeletonStore from '../../store/skeletonStore';
 
+import { getAccountPayments } from '../../api/PaymentMethod/Table/accountPaymentTable';
+import { getCardPayments } from '../../api/PaymentMethod/Table/cardPaymentTable';
+
 const PaymentMethodTable = () => {
   const [openRegistrationModal, setOpenRegistrationModal] = useState(false);
   const [checkedMembers, setCheckedMembers] = useState([]);
@@ -52,7 +55,9 @@ const PaymentMethodTable = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       const queryKey = ['payment', { type: isAccount ? 'ACCOUNT' : 'CARD', page: nextPage, sort, searchCategory, searchKeyword }];
-      const queryFn = () => getPayments(nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
+      const queryFn = isAccount
+        ? () => getAccountPayments(nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword)
+        : () => getCardPayments(nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
       queryClient.prefetchQuery({ queryKey, queryFn });
     }
   }, [currentPage, queryClient, totalPages, isAccount, sort, searchCategory, searchKeyword]);
@@ -150,6 +155,7 @@ const PaymentMethodTable = () => {
         SkeletonTableFeature={SkeletonPaymentMethodTableFeature}
         TableRowComponent={SkeletonPaymentMethodTableRow}
         tableColumns={isAccount ? tableColumn.paymentMethod.accountList : tableColumn.paymentMethod.cardList}
+        nonSort={tableColumn.paymentMethod.nonSort}
       />
     );
   }
@@ -171,6 +177,7 @@ const PaymentMethodTable = () => {
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
             headerType={'paymentMethod'}
+            nonSort={tableColumn.paymentMethod.nonSort}
           />
           <DynamicTableBody
             dataList={paymentList}
