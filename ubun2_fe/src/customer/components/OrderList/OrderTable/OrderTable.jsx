@@ -153,7 +153,7 @@ const OrderTable = () => {
       <OrderTableFeature tableColumns={tableColumn.ordersSearch} onSearch={handleSearch} handleDataReset={handleDataReset} />
 
       {/* 테이블 */}
-      <div className='px-4 shadow-md'>
+      <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead
             tableColumns={tableColumn.orders}
@@ -172,15 +172,16 @@ const OrderTable = () => {
                   currentPage={currentPage}
               />
           ) : (
-              <NoDataTable text="주문 내역이 없습니다" buttonText="메인으로 가기" buttonFunc={NoDataTableButtonFunc}/>
+              <NoDataTable text="주문 내역이 없습니다" buttonText="메인으로 가기" buttonFunc={NoDataTableButtonFunc} colNum={tableColumn.orders.length} />
           ) }
 
         </Table>
       </div>
       {/* 페이지네이션 */}
-      {isLoading === false ? (
+      {isLoading === false && orderList.length > 0 ? (
         <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
-      ) : null}
+      ) :<TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />
+      }
       {/* 모달 */}
       {openOrderDetailModal && (
         <OrderDetailModal

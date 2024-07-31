@@ -3,13 +3,13 @@ import ArrowPathIcon from "@heroicons/react/24/outline/ArrowPathIcon.js";
 import {betweenColumn, columnMapping, getKeyByValue, tableColumn} from "../../common/Table/tableIndex.js";
 import useSkeletonStore from "../../../store/skeletonStore.js";
 
+
 const SkeletonMemberTableFeature = () => {
     const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
     const {skeletonSearchCategory, skeletonSearchKeyword, skeletonTotalElements} = useSkeletonStore()
 
     const createSearchResult = (searchCategory, searchKeyword, totalElements) => {
-        console.log(searchCategory, searchKeyword, totalElements);
         if (searchCategory === null && searchKeyword === null) {
             return <p className="text-xl">전체 <span className="text-main font-bold">{totalElements}</span>건의 검색결과</p>
         }
