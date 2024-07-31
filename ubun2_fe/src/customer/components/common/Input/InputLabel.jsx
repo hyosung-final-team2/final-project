@@ -1,6 +1,16 @@
 import { useState, useEffect } from 'react';
 
-const InputLabel = ({ labelTitle, defaultValue, type, disabled = false, containerStyle = '', isUpdate = false, isOptional = true, onChange }) => {
+const InputLabel = ({
+  labelTitle,
+  defaultValue,
+  type,
+  disabled = false,
+  containerStyle = '',
+  isUpdate = false,
+  isOptional = true,
+  onChange,
+  textStyle = 'text-lg',
+}) => {
   const [value, setValue] = useState(defaultValue);
 
   // defaultValue가 변경될 때마다 value를 업데이트
@@ -19,8 +29,8 @@ const InputLabel = ({ labelTitle, defaultValue, type, disabled = false, containe
     <div className={`form-control w-full ${containerStyle}`}>
       <div className='flex items-center'>
         <label className={`w-1/3 label ${!isOptional ? 'justify-normal gap-4' : ''}`}>
-          {!isOptional ? <span className='text-red-500 text-2xl'>*</span> : null}
-          <span className={`text-lg font-bold label-text`}>{labelTitle}</span>
+          {!isOptional ? <span className='text-2xl text-red-500'>*</span> : null}
+          <span className={`${textStyle} font-bold label-text`}>{labelTitle}</span>
         </label>
         <input
           type={type || 'text'}
