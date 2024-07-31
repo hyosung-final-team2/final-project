@@ -342,19 +342,21 @@ public class CustomerServiceImpl implements CustomerService {
         Customer findCustomer = findById(customerId);
         String existingImageUrl = findCustomer.getLogoImagePath();
 
-        if (existingImageUrl != null) {
-            imageService.deleteImage(existingImageUrl);
-        }
-
-        if (image != null && !image.isEmpty()) { //새로운 이미지 있을때
+        if (image != null && !image.isEmpty()) {
+            // 새로운 이미지가 제공된 경우
+            if (existingImageUrl != null) {
+                // 기존 이미지가 있다면 삭제
+                imageService.deleteImage(existingImageUrl);
+            }
+            // 새 이미지 업로드
             String newImageUrl = imageService.uploadImage(image);
-            findCustomer.saveImage(image.getOriginalFilename(),newImageUrl);
+            findCustomer.saveImage(image.getOriginalFilename(), newImageUrl);
         } else {
-            findCustomer.saveImage(null,null);
+            // 새로운 이미지가 제공되지 않은 경우
+            // 기존 이미지 유지 (아무 작업도 하지 않음)
         }
 
         findCustomer.updateCustomer(myPageUpdateRequest);
-
     }
 
     @Override
