@@ -387,6 +387,8 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
                 .findBySubscriptionOrderIdAndMemberId(request.getOrderId(), memberId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
+        OrderStatus currentStatus = order.getOrderStatus();
+
         for (Long productId : request.getSubscriptionOrderProductIds()) {
             SubscriptionOrderProduct productToRemove = order.getSubscriptionOrderProducts().stream()
                     .filter(product -> product.getSubscriptionOrderProductId().equals(productId))
@@ -395,6 +397,18 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
 
             productToRemove.changeSubscriptionOrderProductStatus(OrderProductStatus.REJECTED);
         }
+
+        // 모든 상품이 취소되었는지 확인
+        boolean allProductsCancelled = order.getSubscriptionOrderProducts().stream()
+                .allMatch(product -> product.getOrderProductStatus() == OrderProductStatus.REJECTED);
+
+        if (allProductsCancelled) {
+            order.changeOrderStatus(OrderStatus.DENIED);  // 모든 상품이 취소되면 주문 전체를 취소 상태로 변경
+        } else if (currentStatus == OrderStatus.APPROVED) {
+            order.changeOrderStatus(OrderStatus.MODIFIED);  // APPROVED 상태에서만 MODIFIED로 변경
+        }
+        // PENDING 상태일 경우 상태 변경 없음
+
         subscriptionOrderRepository.save(order);
     }
 }

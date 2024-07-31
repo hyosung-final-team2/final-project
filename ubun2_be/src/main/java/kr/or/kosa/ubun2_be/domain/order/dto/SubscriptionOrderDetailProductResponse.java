@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 public class SubscriptionOrderDetailProductResponse {
     private Long subscriptionOrderProductId;
+    private String createdAt;
     private Long productId;
     private String productName;
     private String productDescription;
@@ -24,6 +25,7 @@ public class SubscriptionOrderDetailProductResponse {
     public SubscriptionOrderDetailProductResponse(SubscriptionOrderProduct subscriptionOrderProduct) {
         Product product = subscriptionOrderProduct.getProduct();
         this.subscriptionOrderProductId = subscriptionOrderProduct.getSubscriptionOrderProductId();
+        this.createdAt = subscriptionOrderProduct.getCreatedAt().toString();
         this.productId = product.getProductId();
         this.productName = product.getProductName();
         this.productDescription = product.getProductDescription();

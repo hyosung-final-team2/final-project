@@ -492,6 +492,11 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
         order.changeOrderStatus(OrderStatus.DENIED);
+
+        for (OrderProduct orderProduct : order.getOrderProducts()) {
+            orderProduct.changeOrderProductStatus(OrderProductStatus.REJECTED);
+        }
+
         restoreInventory(order.getOrderProducts());
         orderRepository.save(order);
     }

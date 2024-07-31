@@ -42,8 +42,8 @@ const UserInfo = ({ memberInfo }) => {
             icon={ClockIcon}
             label='승인대기'
             count={memberInfo.pending}
-            bgColor={memberInfo.pending > 0 ? 'bg-purple-50' : 'bg-gray-50'}
-            textColor={memberInfo.pending > 0 ? 'text-purple-600' : 'text-gray-400'}
+            bgColor={memberInfo.pending > 0 ? 'bg-orange-50' : 'bg-gray-50'}
+            textColor={memberInfo.pending > 0 ? 'text-orange-600' : 'text-gray-400'}
           />
           <OrderStatusBox
             icon={XCircleIcon}
