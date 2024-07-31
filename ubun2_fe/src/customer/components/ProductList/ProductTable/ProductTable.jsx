@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { Table } from 'flowbite-react';
 import TableHead from '../../common/Table/TableHead';
 import ProductTableFeature from './ProductTableFeature';
@@ -44,6 +44,8 @@ const ProductTable = () => {
   const { mutate: deleteSelectedProductsMutate } = useDeleteSelectedProducts(selectedProducts,currentPage)
 
   const [openProductInsertModal, setOpenProductInsertModal] = useState(false);
+
+  const dropdownRef = useRef(null);
 
 
   const handleSaveClick = () => {
@@ -114,6 +116,12 @@ const ProductTable = () => {
     await setCurrentPage(1)
   }
 
+  const handleDropdownButtonClick = () => {
+    if (dropdownRef.current) {
+      dropdownRef.current.click();
+    }
+  };
+
   useEffect(() => {
     return resetData()
   },[])
@@ -149,6 +157,7 @@ const ProductTable = () => {
                            handleSaveClick={handleSaveClick}
                            openProductInsertModal={openProductInsertModal}
                            setOpenProductInsertModal={setOpenProductInsertModal}
+                           dropdownRef={dropdownRef}
       />
 
       <div className='px-4'>
@@ -165,7 +174,10 @@ const ProductTable = () => {
                   currentPage={currentPage}
               />
           ) : (
-              <NoDataTable text="등록된 상품이 없습니다." buttonText="상품 등록하기" buttonFunc={handleSaveClick} colNum={tableColumn.product.length}/>
+              <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 상품이 없습니다."}
+                           buttonText={searchCategory && searchKeyword ? "다시 검색하기":"상품 등록하기"}
+                           buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : handleSaveClick}
+                           colNum={tableColumn.product.length} />
           )}
 
         </Table>

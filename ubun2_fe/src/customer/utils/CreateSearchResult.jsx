@@ -14,6 +14,7 @@ const CreateSearchResult = ({ searchCategory, searchKeyword, totalElements }) =>
             </p>
         );
     } else {
+
         const splitData = (searchKeyword) => {
             const firstData = searchKeyword?.split(",")[0]
             const secondData = searchKeyword?.split(",")[1]
