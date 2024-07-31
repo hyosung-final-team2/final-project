@@ -30,6 +30,7 @@ const OrderTable = () => {
   const { sort, updateSort } = useOrderTableStore();
   const { searchCategory, setSearchCategory } = useOrderTableStore(); // 검색할 카테고리 (드롭다운)
   const { searchKeyword, setSearchKeyword } = useOrderTableStore(); // 검색된 단어
+  const { setTotalElements } = useOrderTableStore()
   const { resetData } = useOrderTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,6 +39,7 @@ const OrderTable = () => {
   const { data: orders, refetch: refetchOrders, isLoading } = useGetOrders(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword, searchKeyword);
 
   const totalPages = orders?.data?.data?.totalPages;
+  const totalElementsFromPage = orders?.data?.data?.totalElements;
   const orderList = orders?.data?.data?.content || [];
 
   const { data, refetch } = useGetOrderDetail(selectedOrderDetail.orderId, selectedOrderDetail.subscription);
@@ -49,10 +51,16 @@ const OrderTable = () => {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['order', nextPage, sort, searchCategory, searchKeyword],
-        queryFn: () => getOrders(nextPage, PAGE_SIZE),
+        queryFn: () => getOrders(nextPage, PAGE_SIZE,  sort, searchCategory, searchKeyword),
       });
     }
   }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
+
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -118,7 +126,7 @@ const OrderTable = () => {
   }, []);
 
   // isLoading 시, skeletonTable
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore();
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword,  setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore();
 
   useEffect(() => {
     if (!isLoading) {
@@ -127,6 +135,9 @@ const OrderTable = () => {
       setSkeletonSortData(sort);
       setSkeletonSearchCategory(searchCategory);
       setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage)
+      }
     }
   }, [
     orderList,
@@ -153,7 +164,7 @@ const OrderTable = () => {
       <OrderTableFeature tableColumns={tableColumn.ordersSearch} onSearch={handleSearch} handleDataReset={handleDataReset} />
 
       {/* 테이블 */}
-      <div className='px-4 shadow-md'>
+      <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead
             tableColumns={tableColumn.orders}
@@ -172,15 +183,16 @@ const OrderTable = () => {
                   currentPage={currentPage}
               />
           ) : (
-              <NoDataTable text="주문 내역이 없습니다" buttonText="메인으로 가기" buttonFunc={NoDataTableButtonFunc}/>
+              <NoDataTable text="주문 내역이 없습니다" buttonText="메인으로 가기" buttonFunc={NoDataTableButtonFunc} colNum={tableColumn.orders.length} />
           ) }
 
         </Table>
       </div>
       {/* 페이지네이션 */}
-      {isLoading === false ? (
+      {isLoading === false && orderList.length > 0 ? (
         <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
-      ) : null}
+      ) :<TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />
+      }
       {/* 모달 */}
       {openOrderDetailModal && (
         <OrderDetailModal

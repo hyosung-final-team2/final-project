@@ -31,13 +31,14 @@ const AddressTable = () => {
   const [clickedAddress, setClickedAddress] = useState(null);
   const { setSelectedMemberId, openMemberAddressModal, setOpenMemberAddressModal } = useAddressStore();
 
-  const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset } = useAddressTableStore();
+  const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset, setTotalElements } = useAddressTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8;
   const { data: addresses, refetch: refetchAddresses, isLoading } = useGetAddresses(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
   const totalPages = addresses?.data?.data?.totalPages;
+  const totalElementsFromPage = addresses?.data?.data?.totalElements;
   const addressList = addresses?.data?.data?.content;
 
   const { mutate: deleteSelectedAddressesMutate } = useDeleteSelectedAddresses(selectedAddresses,currentPage,PAGE_SIZE)
@@ -48,8 +49,8 @@ const AddressTable = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['address', nextPage, sort, searchCategory, searchKeyword],
-        queryFn: () => getAddresses(nextPage, PAGE_SIZE),
+        queryKey: ['address', nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword],
+        queryFn: () => getAddresses(nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword),
       });
     }
   }, [currentPage, queryClient, totalPages, sort, searchCategory, searchKeyword]);
@@ -57,6 +58,12 @@ const AddressTable = () => {
   useEffect(() => {
     setSelectedAddresses([])
   }, [currentPage,addressList]);
+
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
 
 
   //
@@ -109,7 +116,7 @@ const AddressTable = () => {
     setOpenAddressRegistration(true)
   }
 
-  const { resetSkeletonData, setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore();
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword, setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore();
 
   useEffect(() => {
     return resetData();
@@ -120,8 +127,25 @@ const AddressTable = () => {
       setSkeletonData(addressList);
       setSkeletonTotalPage(totalPages);
       setSkeletonSortData(sort);
+      setSkeletonSearchCategory(searchCategory);
+      setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage)
+      }
     }
-  }, [isLoading, totalPages, addressList, sort]);
+  }, [
+    addressList,
+    totalPages,
+    sort,
+    searchKeyword,
+    searchCategory,
+    setSkeletonTotalPage,
+    setSkeletonSortData,
+    setSkeletonData,
+    setSkeletonSearchCategory,
+    setSkeletonSearchKeyword,
+    isLoading,
+  ]);
 
   if (isLoading) {
     return (
@@ -166,7 +190,7 @@ const AddressTable = () => {
                     currentPage={currentPage}
                 />
             ) : (
-                <NoDataTable text="등록된 주소가 없습니다." buttonText="주소 등록하기" buttonFunc={NoDataTableButtonFunc}/>
+                <NoDataTable text="등록된 주소가 없습니다." buttonText="주소 등록하기" buttonFunc={NoDataTableButtonFunc} colNum={tableColumn.address.list.length}/>
             )
           }
 

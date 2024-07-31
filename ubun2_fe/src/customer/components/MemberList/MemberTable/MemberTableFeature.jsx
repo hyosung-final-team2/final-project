@@ -2,7 +2,7 @@ import SearchBarWithDrop from '../../common/SearchBar/SearchBarWithDrop';
 import {useSendSms} from "../../../api/Customer/MemberList/MemberTable/queris.js";
 import ArrowPathIcon from "@heroicons/react/24/outline/ArrowPathIcon.js";
 import useMemberTableStore from "../../../store/MemberTable/memberTableStore.js";
-import {columnMapping , betweenColumn , getKeyByValue} from "../../common/Table/tableIndex.js";
+import CreateSearchResult from "../../../utils/CreateSearchResult.jsx";
 
 const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegisterModal,selectedMembers, handleDataReset, selectedMemberDeleteMutate }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
@@ -11,24 +11,6 @@ const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegis
 
   const { searchCategory, searchKeyword, totalElements} = useMemberTableStore()
 
-  const createSearchResult = (searchCategory, searchKeyword, totalElements) => {
-    if (searchCategory === null && searchKeyword === null) {
-      return <p className="text-xl">전체 <span className="text-main font-bold">{totalElements}</span>건의 검색결과</p>
-    }
-
-    const showCategory = getKeyByValue(columnMapping, searchCategory);
-    if (!betweenColumn.has(searchCategory)) { // 숫자나 날짜
-      return (<p className="text-lg">
-        <span className="text-main font-bold">"{showCategory}"</span>에서
-        <span className="text-main font-bold">"{searchKeyword}"</span>에 대한 총 <span className="text-main font-bold">{totalElements}</span>건의 검색결과
-      </p>)
-    } else {
-      return (<p className="text-lg">
-        <span className="text-main font-bold">"{showCategory}"</span>에서
-        <span className="text-main font-bold">"{searchKeyword?.split(",")[0]} ~ {searchKeyword?.split(",")[1]}"</span>에 대한 총 <span className="text-main font-bold">{totalElements}</span>건의 검색결과
-      </p>)
-    }
-  }
 
   return (
       <div
@@ -36,7 +18,7 @@ const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegis
       <div className='flex gap-2 items-center'>
         <button onClick={() => smsMutate()} className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`}>링크 전송</button>
         <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} />
-        {createSearchResult(searchCategory,searchKeyword,totalElements)}
+        <CreateSearchResult searchCategory={searchCategory} searchKeyword={searchKeyword} totalElements={totalElements}/>
       </div>
       <div className='flex gap-2 items-center'>
         <button className='btn btn-ghost btn-sm normal-case' onClick={() => handleDataReset()}>

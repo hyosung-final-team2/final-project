@@ -34,7 +34,7 @@ const MemberTable = () => {
   const { sort, updateSort } = useMemberTableStore()
   const {searchCategory, setSearchCategory} = useMemberTableStore() // 검색할 카테고리 (드롭다운)
   const {searchKeyword, setSearchKeyword} = useMemberTableStore() // 검색된 단어
-  const { setTotalElements} = useMemberTableStore()
+  const { setTotalElements } = useMemberTableStore()
   const { resetData } = useMemberTableStore()
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,7 +56,7 @@ const MemberTable = () => {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['member', nextPage, sort, searchCategory, searchKeyword],
-        queryFn: () => getMembers(nextPage,PAGE_SIZE),
+        queryFn: () => getMembers(nextPage,PAGE_SIZE, sort, searchCategory, searchKeyword),
       });
     }
   }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);

@@ -1,12 +1,18 @@
 import SearchBarWithDrop from '../../common/SearchBar/SearchBarWithDrop.jsx';
 import ArrowPathIcon from '@heroicons/react/24/outline/ArrowPathIcon.js';
 import { tableColumn } from '../../common/Table/tableIndex.js';
+import useSkeletonStore from "../../../store/skeletonStore.js";
+import CreateSearchResult from "../../../utils/CreateSearchResult.jsx";
 
 const SkeletonOrderTableFeature = () => {
+
+  const {skeletonSearchCategory, skeletonSearchKeyword, skeletonTotalElements} = useSkeletonStore()
+
   return (
     <div className='flex flex-wrap items-center justify-between p-4 space-y-4 bg-white flex-column md:flex-row md:space-y-0 dark:bg-gray-900'>
-      <div className='flex'>
+      <div className='flex items-center gap-2'>
         <SearchBarWithDrop tableColumns={tableColumn.orders} />
+        <CreateSearchResult searchCategory={skeletonSearchCategory} searchKeyword={skeletonSearchKeyword} totalElements={skeletonTotalElements}/>
       </div>
       <div className='flex items-center gap-2'>
         <button className='normal-case btn btn-ghost btn-sm'>

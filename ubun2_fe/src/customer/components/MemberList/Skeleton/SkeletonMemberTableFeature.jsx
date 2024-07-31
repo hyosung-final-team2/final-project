@@ -1,41 +1,22 @@
 import SearchBarWithDrop from "../../common/SearchBar/SearchBarWithDrop.jsx";
 import ArrowPathIcon from "@heroicons/react/24/outline/ArrowPathIcon.js";
-import {betweenColumn, columnMapping, getKeyByValue, tableColumn} from "../../common/Table/tableIndex.js";
+import { tableColumn } from "../../common/Table/tableIndex.js";
 import useSkeletonStore from "../../../store/skeletonStore.js";
+import CreateSearchResult from "../../../utils/CreateSearchResult.jsx";
+
 
 const SkeletonMemberTableFeature = () => {
     const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
     const {skeletonSearchCategory, skeletonSearchKeyword, skeletonTotalElements} = useSkeletonStore()
 
-    const createSearchResult = (searchCategory, searchKeyword, totalElements) => {
-        console.log(searchCategory, searchKeyword, totalElements);
-        if (searchCategory === null && searchKeyword === null) {
-            return <p className="text-xl">전체 <span className="text-main font-bold">{totalElements}</span>건의 검색결과</p>
-        }
-
-        const showCategory = getKeyByValue(columnMapping, searchCategory);
-        if (!betweenColumn.has(searchCategory)) { // 숫자나 날짜
-            return (<p className="text-lg">
-                <span className="text-main font-bold">"{showCategory}"</span>에서
-                <span className="text-main font-bold">"{searchKeyword}"</span>에 대한 총 <span className="text-main font-bold">{totalElements}</span>건의 검색결과
-            </p>)
-        } else {
-            return (<p className="text-lg">
-                <span className="text-main font-bold">"{showCategory}"</span>에서
-                <span className="text-main font-bold">"{searchKeyword?.split(",")[0]} ~ {searchKeyword?.split(",")[1]}"</span>에 대한 총 <span className="text-main font-bold">{totalElements}</span>건의 검색결과
-            </p>)
-        }
-    }
-
 
     return (
         <div className='flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4 bg-white dark:bg-gray-900'>
-        {/*<div className='flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4 bg-red-400 dark:bg-gray-900'>*/}
             <div className='flex gap-2 items-center'>
                 <button  className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`}>링크 전송</button>
                 <SearchBarWithDrop tableColumns={tableColumn.member} />
-                {createSearchResult(skeletonSearchCategory,skeletonSearchKeyword,skeletonTotalElements)}
+                <CreateSearchResult searchCategory={skeletonSearchCategory} searchKeyword={skeletonSearchKeyword} totalElements={skeletonTotalElements}/>
             </div>
             <div className='flex gap-2 items-center'>
                 <button className='btn btn-ghost btn-sm normal-case'>
