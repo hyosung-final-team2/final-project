@@ -59,6 +59,10 @@ module.exports = {
         'custom-card-shinhan-to': '#002a96',
         'custom-card-nonghyup-from': '#1EAE57',
         'custom-card-nonghyup-to': '#15773b',
+        'custom-card-kakao-from': '#FFD900',
+        'custom-card-kakao-to': '#FFB400',
+        'custom-card-toss-from': '#68686d',
+        'custom-card-toss-to': '#000000',
 
         //dashboard custom color
         'custom-dashboard-pending-bg': '#F86767',

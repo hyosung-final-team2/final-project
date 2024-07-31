@@ -7,6 +7,7 @@ import WooriIcon from '../../../assets/images/woori.svg';
 import SamsungIcon from '../../../assets/images/samsungcard.svg';
 import ShinhanIcon from '../../../assets/images/shinhan.svg';
 import NonghyupIcon from '../../../assets/images/nonghyup.svg';
+import TossIcon from '../../../assets/images/toss.svg';
 
 import KBLogo from '../../../assets/images/logo/kb.svg';
 import BCLogo from '../../../assets/images/logo/bc.svg';
@@ -82,34 +83,41 @@ export const companies = [
     color: 'bg-gradient-to-br from-custom-card-nonghyup-from to-custom-card-nonghyup-to ',
     path: 'nonghyup.png',
   },
+  {
+    name: '토스',
+    icon: <TossIcon className='w-10 h-10' />,
+    logo: null,
+    color: 'bg-gradient-to-br from-custom-card-toss-from to-custom-card-toss-to',
+    path: 'toss.png',
+  },
 ];
 
 export const getIcon = name => {
-  const cleanName = name?.replace(/(은행|카드)$/, '').trim();
+  const cleanName = name?.replace(/(은행|카드|뱅크)$/, '').trim();
   const company = companies.find(c => c.name === cleanName);
   return company ? company.icon : null;
 };
 
 export const getPng = name => {
-  const cleanName = name?.replace(/(은행|카드)$/, '').trim();
+  const cleanName = name?.replace(/(은행|카드|뱅크)$/, '').trim();
   const company = companies.find(c => c.name === cleanName);
   return company ? company.path : null;
 };
 
 export const getCardColor = name => {
-  const cleanName = name?.replace(/(은행|카드)$/, '').trim();
+  const cleanName = name?.replace(/(은행|카드|뱅크)$/, '').trim();
   const company = companies.find(c => c.name === cleanName);
   return company ? company.color : null;
 };
 
 export const getCardLogo = name => {
-  const cleanName = name?.replace(/(은행|카드)$/, '').trim();
+  const cleanName = name?.replace(/(은행|카드|뱅크)$/, '').trim();
   const company = companies.find(c => c.name === cleanName);
   return company ? company.logo : null;
 };
 
 export const getBankLogo = name => {
-  const cleanName = name?.replace(/(은행|카드)$/, '').trim();
+  const cleanName = name?.replace(/(은행|카드|뱅크)$/, '').trim();
   const company = companies.find(c => c.name === cleanName);
   return company ? company.path : null;
 };
