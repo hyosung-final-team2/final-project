@@ -3,7 +3,7 @@ import SearchBarWithDrop from '../common/SearchBar/SearchBarWithDrop';
 import useAddressTableStore from "../../store/Address/addressTableStore.js";
 import CreateSearchResult from "../../utils/CreateSearchResult.jsx";
 
-const AddressTableFeature = ({ onSearch, tableColumns, handleDataReset, setOpenModal, deleteSelectedAddressesMutate }) => {
+const AddressTableFeature = ({ onSearch, tableColumns, handleDataReset, setOpenModal, deleteSelectedAddressesMutate,dropdownRef }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
   const handleClick = () => {
@@ -15,7 +15,7 @@ const AddressTableFeature = ({ onSearch, tableColumns, handleDataReset, setOpenM
     return (
     <div className='flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4 bg-white dark:bg-gray-900'>
       <div className='flex gap-2 items-center'>
-        <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} />
+        <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} dropdownRef={dropdownRef}/>
         <CreateSearchResult searchCategory={searchCategory} searchKeyword={searchKeyword} totalElements={totalElements}/>
       </div>
       <div className='flex space-x-2 items-center'>

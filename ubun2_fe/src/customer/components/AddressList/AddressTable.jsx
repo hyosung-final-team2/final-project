@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useRef} from 'react';
 import { Table } from 'flowbite-react';
 import { tableColumn } from '../common/Table/tableIndex';
 import TableHead from '../common/Table/TableHead';
@@ -40,6 +40,8 @@ const AddressTable = () => {
   const totalPages = addresses?.data?.data?.totalPages;
   const totalElementsFromPage = addresses?.data?.data?.totalElements;
   const addressList = addresses?.data?.data?.content;
+
+  const dropdownRef = useRef(null);
 
   const { mutate: deleteSelectedAddressesMutate } = useDeleteSelectedAddresses(selectedAddresses,currentPage,PAGE_SIZE)
 
@@ -111,6 +113,11 @@ const AddressTable = () => {
     setCurrentPage(1);
   };
 
+  const handleDropdownButtonClick = () => {
+    if (dropdownRef.current) {
+      dropdownRef.current.click();
+    }
+  };
 
   const NoDataTableButtonFunc = () => {
     setOpenAddressRegistration(true)
@@ -167,6 +174,7 @@ const AddressTable = () => {
         selectedAddresses={selectedAddresses}
         handleDataReset={handleDataReset}
         deleteSelectedAddressesMutate={deleteSelectedAddressesMutate}
+        dropdownRef={dropdownRef}
       />
       <div className='px-4'>
         <Table hoverable>
@@ -190,7 +198,11 @@ const AddressTable = () => {
                     currentPage={currentPage}
                 />
             ) : (
-                <NoDataTable text="등록된 주소가 없습니다." buttonText="주소 등록하기" buttonFunc={NoDataTableButtonFunc} colNum={tableColumn.address.list.length}/>
+                <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 주소가 없습니다."}
+                             buttonText={searchCategory && searchKeyword ? "다시 검색하기":"주소 등록하기"}
+                             buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
+                             colNum={tableColumn.address.list.length}
+                />
             )
           }
 

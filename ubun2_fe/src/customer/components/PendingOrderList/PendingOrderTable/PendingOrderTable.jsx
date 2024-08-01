@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Table } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { useGetOrderDetail } from '../../../api/Order/OrderList/OrderModal/queris';
 import { getPendingOrders } from '../../../api/Order/PendingOrderList/PendingOrderTable/pendingOrderTable';
 import { useGetPendingOrders, useUpdatePendingOrder } from '../../../api/Order/PendingOrderList/PendingOrderTable/queris';
@@ -48,6 +48,8 @@ const PendingOrderTable = () => {
 
   const { data, refetch } = useGetOrderDetail(selectedPendingOrderDetail.orderId, selectedPendingOrderDetail.subscription); // 테이블 데이터 가져오기
   const { mutate: updatePendingOrderMutation } = useUpdatePendingOrder(currentPage); // 상태 업데이트
+
+  const dropdownRef = useRef(null);
 
   const queryClient = useQueryClient();
 
@@ -147,6 +149,12 @@ const PendingOrderTable = () => {
     navigate("/customer/app/dashboard")
   }
 
+  const handleDropdownButtonClick = () => {
+    if (dropdownRef.current) {
+      dropdownRef.current.click();
+    }
+  };
+
   // isLoading 시, skeletonTable
   const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword, setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore();
 
@@ -195,6 +203,7 @@ const PendingOrderTable = () => {
         handleOrderUpdate={handleOrderUpdate}
         selectedPendingOrders={selectedPendingOrders}
         handleDataReset={handleDataReset}
+        dropdownRef={dropdownRef}
       />
 
       {/* 테이블 */}
@@ -219,7 +228,11 @@ const PendingOrderTable = () => {
                     currentPage={currentPage}
                 />
             ) : (
-                <NoDataTable text="승인대기중인 주문이 없습니다" buttonText="메인으로 가기" buttonFunc={NoDataTableButtonFunc} colNum={tableColumn.pendingOrders.length}/>
+                <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "승인 대기중인 주문이 없습니다."}
+                             buttonText={searchCategory && searchKeyword ? "다시 검색하기":"메인으로 가기"}
+                             buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
+                             colNum={tableColumn.pendingOrders.length}
+                />
             )
           }
 
