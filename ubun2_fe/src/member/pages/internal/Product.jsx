@@ -100,7 +100,7 @@ function Product() {
     <div className='flex flex-col w-full'>
       {/* 이미지 */}
       <div style={{ width: '100%', aspectRatio: '1/1', position: 'relative' }} className='bg-second'>
-        <img src={product?.productImagePath} style={{ aspectRatio: 1 }} className='w-full' alt='상품사진' />
+        <img src={product?.productImagePath || "/default_big.png"} style={{ aspectRatio: 1 }} className='w-full' alt='상품사진' />
           {
               product?.stockQuantity === 0 ? (
                   <div className="absolute top-0 left-0 w-full h-full object-cover bg-black opacity-55">
