@@ -39,12 +39,25 @@ public class EmailServiceImpl implements EmailService {
         String email = emailRequest.getEmail();
         System.out.println("email = " + email);
         System.out.println("emailRequest = " + emailRequest.getUserType());
+        System.out.println("isRegister = " + emailRequest.isRegister());
         //이메일 중복체크
-        if(customerRepository.existsByCustomerEmail(email)&&UserRole.ROLE_CUSTOMER.toString().equals(emailRequest.getUserType())){
-            throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER);
-        }else if(memberRepository.existsByMemberEmail(email)&&UserRole.ROLE_MEMBER.toString().equals(emailRequest.getUserType())) {
-            System.out.println("yes");
-            throw new MemberException(MemberExceptionType.DUPLICATE_MEMBER);
+        boolean isCustomerRole = UserRole.ROLE_CUSTOMER.toString().equals(emailRequest.getUserType());
+        boolean isMemberRole = UserRole.ROLE_MEMBER.toString().equals(emailRequest.getUserType());
+
+        if (emailRequest.isRegister()) {
+            // 회원가입 시 중복 체크
+            if (isCustomerRole && customerRepository.existsByCustomerEmail(email)) {
+                throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER);
+            } else if (isMemberRole && memberRepository.existsByMemberEmail(email)) {
+                throw new MemberException(MemberExceptionType.DUPLICATE_MEMBER);
+            }
+        } else {
+            // 아이디/비밀번호 찾기 시 존재 여부 확인
+            if (isCustomerRole && !customerRepository.existsByCustomerEmail(email)) {
+                throw new CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER);
+            } else if (isMemberRole && !memberRepository.existsByMemberEmail(email)) {
+                throw new MemberException(MemberExceptionType.NOT_EXIST_MEMBER);
+            }
         }
 
         String authenticationNumber = generateAuthenticationNumber();
