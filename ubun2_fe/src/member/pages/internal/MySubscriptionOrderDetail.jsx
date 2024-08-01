@@ -2,9 +2,10 @@ import PencilSquareIcon from '@heroicons/react/24/solid/PencilSquareIcon';
 import { Select } from 'flowbite-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { formatAccountNumber, maskAccountNumber } from '../../../customer/utils/accountFormat';
-import { formatCardNumber, maskCardNumber } from '../../../customer/utils/cardFormat';
+import { maskAccountNumber } from '../../../customer/utils/accountFormat';
+import { maskCardNumber } from '../../../customer/utils/cardFormat';
 import { useGetSubscriptionOrderDetail, useUpdateSubscriptionCancelOrder } from '../../api/Order/queris';
+import AddressSummary from '../../components/common/addressSummary/AddressSummary';
 import OrderStatusBadge from '../../components/common/badge/OrderStatusBadge';
 import DoubleBottomButton from '../../components/common/button/DoubleBottomButton';
 import PaymentSummaryCompleted from '../../components/common/paymentSummary/PaymentSummaryCompleted';
@@ -12,8 +13,6 @@ import ProductItemReadOnly from '../../components/common/productItem/ProductItem
 import SubscriptionProductItemEditable from '../../components/common/productItem/SubscriptionProductItemEditable';
 import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import AddressSummary from '../../components/common/addressSummary/AddressSummary';
 
 const modalButtonStyle = 'bg-gray-600 text-white';
 const secondModalButtonStyle = 'bg-red-700 text-white';

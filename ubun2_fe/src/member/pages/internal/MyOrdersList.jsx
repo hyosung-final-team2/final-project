@@ -4,20 +4,21 @@ import SlideUpModal from '../../components/common/SlideUpModal';
 import OrderList from '../../components/Order/OrderMypage/OrderList';
 import UserInfo from '../../components/Order/OrderMypage/UserInfo';
 import useModalStore from '../../store/modalStore';
+import { ChevronDownIcon } from '@heroicons/react/24/solid';
 
 const MyOrdersList = () => {
-  const { data: orderListResponse, isLoading, isError } = useGetOrderList();
+  const [selectedPeriod, setSelectedPeriod] = useState({ value: null, label: '전체', periodType: null, periodValue: null });
+  const { data: orderListResponse, isLoading, isError } = useGetOrderList(selectedPeriod.periodType, selectedPeriod.periodValue);
   const [singleOrders, setSingleOrders] = useState([]);
   const [subscriptionOrders, setSubscriptionOrders] = useState([]);
   const [memberInfo, setMemberInfo] = useState({});
-  const [period, setPeriod] = useState('ALL');
   const { modalState, setModalState } = useModalStore();
 
   const periodOptions = [
-    { value: 'ALL', label: '전체' },
-    { value: 'WEEK', label: '1주일' },
-    { value: 'MONTH', label: '1달' },
-    { value: 'THREE_MONTHS', label: '3달' },
+    { value: null, label: '전체', periodType: null, periodValue: null },
+    { value: 'WEEK', label: '1주일', periodType: 'WEEK', periodValue: 1 },
+    { value: 'MONTH', label: '1달', periodType: 'MONTH', periodValue: 1 },
+    { value: 'THREE_MONTHS', label: '3달', periodType: 'MONTH', periodValue: 3 },
   ];
 
   useEffect(() => {
@@ -42,7 +43,8 @@ const MyOrdersList = () => {
   }, [orderListResponse]);
 
   const handlePeriodChange = newPeriod => {
-    setPeriod(newPeriod);
+    setSelectedPeriod(newPeriod);
+    setModalState(false);
   };
 
   if (isLoading) return <div>로딩 중...</div>;
@@ -51,6 +53,17 @@ const MyOrdersList = () => {
   return (
     <div className='flex flex-col gap-5 p-4 bg-white'>
       <UserInfo memberInfo={memberInfo} />
+
+      <div className='flex items-center justify-between'>
+        <h3 className='text-2xl font-bold'>주문 목록</h3>
+        <button
+          onClick={() => setModalState(true)}
+          className='flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+        >
+          {selectedPeriod.label}
+          <ChevronDownIcon className='w-5 h-5 ml-2 -mr-1' aria-hidden='true' />
+        </button>
+      </div>
 
       {singleOrders.length > 0 && (
         <>
@@ -81,11 +94,8 @@ const MyOrdersList = () => {
           {periodOptions.map(option => (
             <button
               key={option.value}
-              onClick={() => {
-                handlePeriodChange(option.value);
-                setModalState(false);
-              }}
-              className='p-2 text-lg text-gray-500'
+              onClick={() => handlePeriodChange(option)}
+              className={`w-full p-2 text-lg text-left ${selectedPeriod.value === option.value ? 'text-blue-500 font-bold' : 'text-gray-500'}`}
             >
               {option.label}
             </button>

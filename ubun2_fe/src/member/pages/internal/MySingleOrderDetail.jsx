@@ -108,19 +108,6 @@ const MySingleOrderDetail = () => {
             </div>
           </div>
         </div>
-        {/* <div className='flex flex-col gap-2 p-4 py-8 mb-4 bg-white rounded-3xl'>
-          <h2 className='mb-2 text-lg font-semibold'>
-            <span className='text-xl text-gray-600'>{`${orderData?.memberName} `}</span>
-            님의 배송지 정보
-          </h2>
-          <p className='font-semibold'>{orderData?.addressNickname}</p>
-          <p className='text-sm text-gray-600'>{orderData?.address}</p>
-          <p className='text-sm text-gray-600'>{orderData?.memberPhone}</p>
-          <div className='flex gap-5 '>
-            <InformationCircleIcon className='w-5' />
-            <p className='text-sm text-gray-500'>배송지 변경을 원하시면 결제취소 후 다시 주문해주세요</p>
-          </div>
-        </div> */}
         <AddressSummary data={orderData} />
         <PaymentSummaryCompleted
           productAmount={orderData?.orderAmount}
