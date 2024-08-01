@@ -37,9 +37,6 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendEmail(EmailRequest emailRequest) {
         String email = emailRequest.getEmail();
-        System.out.println("email = " + email);
-        System.out.println("emailRequest = " + emailRequest.getUserType());
-        System.out.println("isRegister = " + emailRequest.isRegister());
         //이메일 중복체크
         boolean isCustomerRole = UserRole.ROLE_CUSTOMER.toString().equals(emailRequest.getUserType());
         boolean isMemberRole = UserRole.ROLE_MEMBER.toString().equals(emailRequest.getUserType());
