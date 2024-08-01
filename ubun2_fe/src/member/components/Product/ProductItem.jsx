@@ -52,7 +52,7 @@ function ProductItem({ productId, productName, productPrice, productDiscountPerc
         <div style={{width: "50%"}} onClick={() => navigate(`product/${productId}`)}>
           <div className={`p-3 w-full h-full flex flex-col gap-1 ${!isOdd ? "pl-2 pr-4" : "pl-4 pr-2"}`}>
               <div style={{width: "100%", aspectRatio: "1/1", position: "relative"}} className=" rounded-xl">
-                  <img src={productImage} style={{aspectRatio:1}} className="w-full h-full object-cover rounded-xl" alt="상품사진"/>
+                  <img src={productImage || "/default_big.png"} style={{aspectRatio:1}} className="w-full h-full object-cover rounded-xl" alt="상품사진"/>
                   {
                       stockQuantity <= 10 && stockQuantity !== 0?
                           <div className="absolute top-1 left-1">

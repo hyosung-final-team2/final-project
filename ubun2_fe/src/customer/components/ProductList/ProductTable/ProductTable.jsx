@@ -147,12 +147,12 @@ const ProductTable = () => {
 
   if (isLoading) {
     // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
-    return <SkeletonTable SkeletonTableFeature={SkeletonProductTableFeature} TableRowComponent={SkeletonProductTableRow} tableColumns={tableColumn.product}/>
+    return <SkeletonTable SkeletonTableFeature={SkeletonProductTableFeature} TableRowComponent={SkeletonProductTableRow} tableColumns={tableColumn.product.list}/>
   }
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      <ProductTableFeature tableColumns={tableColumn.product}
+      <ProductTableFeature tableColumns={tableColumn.product.search}
                            onSearch={handleSearch}
                            currentPage={currentPage}
                            handleDataReset={handleDataReset}
@@ -165,7 +165,7 @@ const ProductTable = () => {
 
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.product} headerType="product" allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
+          <TableHead tableColumns={tableColumn.product.list} headerType="product" allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
           {productList.length > 0 ? (
               <TableBody
                   dataList={productList}
@@ -180,7 +180,7 @@ const ProductTable = () => {
               <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 상품이 없습니다."}
                            buttonText={searchCategory && searchKeyword ? "다시 검색하기":"상품 등록하기"}
                            buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : handleSaveClick}
-                           colNum={tableColumn.product.length} />
+                           colNum={tableColumn.product.list.length} />
           )}
 
         </Table>

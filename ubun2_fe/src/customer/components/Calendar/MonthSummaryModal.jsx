@@ -19,7 +19,7 @@ const MonthSummaryModal = ({isOpen,setOpenModal,currentMonth,previousMonth,curre
             return (
                 <div className='flex items-center'>
                     (
-                    <span className='text-red-500'>{(currentData - previousData).toLocaleString()}</span>
+                    <span className='text-red-500'>{Math.abs(currentData - previousData).toLocaleString()}</span>
                     <UpIcon className="w-4 h-4 ml-1 text-red-500" style={{ strokeWidth: 3 }}/>
                     )
                 </div>
@@ -28,7 +28,7 @@ const MonthSummaryModal = ({isOpen,setOpenModal,currentMonth,previousMonth,curre
             return (
                 <div className='flex items-center'>
                     (
-                    <span className="text-blue-500">{(currentData - previousData).toLocaleString()}</span>
+                    <span className="text-blue-500">{Math.abs(currentData - previousData).toLocaleString()}</span>
                     <DownIcon className="w-4 h-4 ml-1 text-blue-500" style={{ strokeWidth: 3 }}/>
                     )
                 </div>

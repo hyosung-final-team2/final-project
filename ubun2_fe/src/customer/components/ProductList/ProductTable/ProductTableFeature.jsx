@@ -18,7 +18,7 @@ const ProductTableFeature = ({ tableColumns, onSearch,currentPage,handleDataRese
         <div className='flex gap-2 items-center'>
             <button className='btn btn-ghost btn-sm normal-case' onClick={() => handleDataReset()}>
                 <ArrowPathIcon className='w-4 mr-2'/>
-                Reset
+                초기화
             </button>
             <button className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`}
                     onClick={handleSaveClick}>상품 등록

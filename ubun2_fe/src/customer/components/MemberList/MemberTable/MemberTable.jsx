@@ -165,13 +165,13 @@ const MemberTable = () => {
 
   if (isLoading) {
     // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
-    return <SkeletonTable SkeletonTableFeature={SkeletonMemberTableFeature} TableRowComponent={SkeletonMemberTableRow} tableColumns={tableColumn.member}/>
+    return <SkeletonTable SkeletonTableFeature={SkeletonMemberTableFeature} TableRowComponent={SkeletonMemberTableRow} tableColumns={tableColumn.member.list}/>
   }
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색  등 */}
-      <MemberTableFeature tableColumns={tableColumn.member}
+      <MemberTableFeature tableColumns={tableColumn.member.search}
                           onSearch={handleSearch}
                           setExcelModal={setOpenExcelModal}
                           setOpenRegisterModal={setOpenRegisterModal}
@@ -184,7 +184,7 @@ const MemberTable = () => {
       {/* 테이블 */}
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.member} headerType="member" allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
+          <TableHead tableColumns={tableColumn.member.list} headerType="member" allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
           {
             memberList.length > 0 ? (
                 <DynamicTableBody
@@ -201,7 +201,7 @@ const MemberTable = () => {
                 <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 회원이 없습니다."}
                              buttonText={searchCategory && searchKeyword ? "다시 검색하기":"회원 등록하기"}
                              buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
-                             colNum={tableColumn.member.length}
+                             colNum={tableColumn.member.list.length}
                 />
             )
           }
