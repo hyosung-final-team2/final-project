@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
-    Optional<Product> findByCustomerCustomerIdAndProductId(Long customerId, Long productId);
-    boolean existsByProductName(String productName);
+    Optional<Product> findByIsDeletedFalseAndCustomerCustomerIdAndProductId(Long customerId, Long productId);
+    boolean existsByIsDeletedFalseAndProductName(String productName);
 
-    long countByCustomerCustomerId(Long customerId);
-    long countByCustomerCustomerIdAndProductStatus(Long customerId, boolean productStatus);
+    long countByIsDeletedFalseAndCustomerCustomerId(Long customerId);
+    long countByIsDeletedFalseAndCustomerCustomerIdAndProductStatus(Long customerId, boolean productStatus);
 }

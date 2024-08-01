@@ -34,7 +34,6 @@ public class AddressServiceImpl implements AddressService {
     private final MemberRepository memberRepository;
 
     private final PendingMemberRepository pendingMemberRepository;
-
     @Override
     public Page<AddressResponse> getAllAddresses(Pageable pageable, SearchRequest searchRequest, Long customerId) {
         return addressRepository.findAllAddressesWithMember(pageable,searchRequest, customerId).map(AddressResponse::new);
@@ -100,7 +99,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public List<MyAddressResponse> getAddressesByMemberId(Long memberId) {
-        List<Address> addresses = addressRepository.findByMemberMemberId(memberId);
+        List<Address> addresses = addressRepository.findByIsDeletedFalseAndMemberMemberId(memberId);
 
         return addresses.stream()
                 .map(MyAddressResponse::new)
@@ -158,7 +157,7 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     public Address findByAddressIdAndMemberId(Long addressId, Long memberId) {
-        return addressRepository.findByAddressIdAndMemberMemberId(addressId, memberId).orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
+        return addressRepository.findByIsDeletedFalseAndAddressIdAndMemberId(addressId, memberId).orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
     }
 
     @Override
@@ -180,7 +179,7 @@ public class AddressServiceImpl implements AddressService {
     public List<MemberAddressListResponse> getMemberAddressList(Long memberId, Long customerId) {
         validateMyMember(customerId, memberId);
 
-        List<Address> addresses = addressRepository.findByMemberMemberId(memberId);
+        List<Address> addresses = addressRepository.findByIsDeletedFalseAndMemberMemberId(memberId);
         return addresses.stream()
                 .map(MemberAddressListResponse::new)
                 .toList();

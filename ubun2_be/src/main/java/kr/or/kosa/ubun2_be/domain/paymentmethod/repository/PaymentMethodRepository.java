@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Long>, PaymentMethodRepositoryCustom {
-    List<PaymentMethod> findByMemberMemberId(Long memberId);
+    List<PaymentMethod> findByIsDeletedFalseAndMemberMemberId(Long memberId);
 
-    boolean existsByPaymentMethodIdAndMemberMemberId(Long PaymentMethodId, Long memberId);
+    boolean existsByIsDeletedFalseAndPaymentMethodIdAndMemberMemberId(Long PaymentMethodId, Long memberId);
 }

@@ -242,7 +242,7 @@ public class AlarmServiceImpl implements AlarmService{
 
     private Product getFirstProduct(SubscriptionOrderRequest request, Customer customer) {
         Long firstProductId = request.getSubscriptionOrderProducts().get(0).getProductId();
-        return productRepository.findByCustomerCustomerIdAndProductId(customer.getCustomerId(), firstProductId)
+        return productRepository.findByIsDeletedFalseAndCustomerCustomerIdAndProductId(customer.getCustomerId(), firstProductId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
     }
 

@@ -366,12 +366,12 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
 
         switch (paymentMethodType) {
             case "CARD" -> {
-                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                CardPayment cardPayment = cardPaymentRepository.findByIsDeletedFalseAndPaymentMethodId(paymentMethodId)
                         .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
                 return new SubscriptionOrderDetailResponse(findSubscriptionOrder, cardPayment, latestCycleNumber);
             }
             case "ACCOUNT" -> {
-                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                AccountPayment accountPayment = accountPaymentRepository.findByIsDeletedFalseAndPaymentMethodId(paymentMethodId)
                         .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
                 return new SubscriptionOrderDetailResponse(findSubscriptionOrder, accountPayment, latestCycleNumber);
             }

@@ -55,9 +55,9 @@ public class DashboardServiceImpl implements DashboardService {
 
     @Override
     public ProductCountResponseDto getProductCounts(Long customerId) {
-        long totalCount = productRepository.countByCustomerCustomerId(customerId);
-        long activeCount = productRepository.countByCustomerCustomerIdAndProductStatus(customerId, true);
-        long inactiveCount = productRepository.countByCustomerCustomerIdAndProductStatus(customerId, false);
+        long totalCount = productRepository.countByIsDeletedFalseAndCustomerCustomerId(customerId);
+        long activeCount = productRepository.countByIsDeletedFalseAndCustomerCustomerIdAndProductStatus(customerId, true);
+        long inactiveCount = productRepository.countByIsDeletedFalseAndCustomerCustomerIdAndProductStatus(customerId, false);
 
         return ProductCountResponseDto.of(totalCount, activeCount, inactiveCount);
     }

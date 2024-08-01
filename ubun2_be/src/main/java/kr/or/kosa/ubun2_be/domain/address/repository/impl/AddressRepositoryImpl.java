@@ -40,7 +40,7 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
         QueryResults<Address> results = from(address1)
                 .join(address1.member, member)
                 .join(member.memberCustomers, memberCustomer)
-                .where(memberCustomer.customer.customerId.eq(customerId),addressSearch(searchRequest))
+                .where(address1.isDeleted.isFalse(),memberCustomer.customer.customerId.eq(customerId),addressSearch(searchRequest))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(addressSort(pageable).stream().toArray(OrderSpecifier[]::new))
@@ -106,7 +106,8 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
                 .join(address1.member, member)
                 .join(member.memberCustomers, memberCustomer)
                 .join(memberCustomer.customer, customer)
-                .where(address1.addressId.eq(addressId)
+                .where(address1.isDeleted.isFalse()
+                        .and(address1.addressId.eq(addressId))
                         .and(customer.customerId.eq(customerId)))
                 .fetchOne();
 

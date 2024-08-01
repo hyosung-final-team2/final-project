@@ -19,7 +19,7 @@ const MyPagePaymentItem = ({ payment, path, selected = false, setIsModalOpen, se
     if (payment?.paymentType === 'CARD') {
       return `${payment?.cardCompanyName} ${payment?.cardNumber?.slice(-4).replace(/\d{2}$/, '**')}`;
     } else if (payment?.paymentType === 'ACCOUNT') {
-      return `${payment?.bankName} ${formatBankAccount(payment?.bankName.slice(0, -2), payment?.accountNumber)}`;
+      return `${payment?.bankName} ${formatBankAccount(payment?.bankName?.slice(0, -2), payment?.accountNumber)}`;
     }
     return '';
   };

@@ -514,12 +514,12 @@ public class OrderServiceImpl implements OrderService {
 
         switch (paymentMethodType) {
             case "CARD" -> {
-                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                CardPayment cardPayment = cardPaymentRepository.findByIsDeletedFalseAndPaymentMethodId(paymentMethodId)
                         .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
                 return new OrderDetailResponse(findOrder, cardPayment);
             }
             case "ACCOUNT" -> {
-                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                AccountPayment accountPayment = accountPaymentRepository.findByIsDeletedFalseAndPaymentMethodId(paymentMethodId)
                         .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
                 return new OrderDetailResponse(findOrder, accountPayment);
             }
@@ -533,12 +533,12 @@ public class OrderServiceImpl implements OrderService {
 
         switch (paymentMethodType) {
             case "CARD" -> {
-                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                CardPayment cardPayment = cardPaymentRepository.findByIsDeletedFalseAndPaymentMethodId(paymentMethodId)
                         .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
                 return new SubscriptionOrderDetailResponse(findSubOrder, cardPayment, latestCycleNumber);
             }
             case "ACCOUNT" -> {
-                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
+                AccountPayment accountPayment = accountPaymentRepository.findByIsDeletedFalseAndPaymentMethodId(paymentMethodId)
                         .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
                 return new SubscriptionOrderDetailResponse(findSubOrder, accountPayment, latestCycleNumber);
             }
