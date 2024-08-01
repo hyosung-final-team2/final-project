@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { getIcon, getCardColor, getCardLogo } from '../../../member/components/PaymentMethod/CardList';
-import { formatCardNumberWithSpace } from '../../utils/cardFormat';
+import { maskCardNumber } from '../../utils/cardFormat';
 
 const PaymentMethodCard = ({ isFlipped, cardNumber, cvc, handleClick, memberName, cardCompany }) => {
-  const formattedCardNumber = cardNumber ? formatCardNumberWithSpace(cardNumber) : '****-****-****-****';
+  const formattedCardNumber = cardNumber ? maskCardNumber(cardNumber) : '****-****-****-****';
 
   const embossedTextStyle = {
     fontFamily: '"Courier New", monospace',

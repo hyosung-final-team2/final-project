@@ -26,7 +26,7 @@ const MemberAddressMap = ({ address = '' }) => {
 
   return (
     <>
-      <div className='relative'>
+      <div className='relative p-4'>
         <div className='text-lg font-semibold w-full text-custom-font-gray bg-custom-input-gray p-3 pl-4 rounded-lg rounded-b-none shadow'>{`${query} (${zipNo})`}</div>
         <Map center={{ lat: parseFloat(y), lng: parseFloat(x) }} level={4} style={{ width: '100%', height: '360px' }} className='rounded-lg rounded-t-none'>
           <MapMarker position={{ lat: parseFloat(y), lng: parseFloat(x) }} />

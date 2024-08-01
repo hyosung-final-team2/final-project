@@ -3,6 +3,7 @@ import { getBankLogo, getCardColor } from '../../../member/components/PaymentMet
 import { formatBankAccount } from '../../utils/accountFormat';
 
 const PaymentMethodAccount = ({ bankName, memberName, accountNumber }) => {
+  const formattedBankNumber = accountNumber ? formatBankAccount(bankName?.slice(0, -2), accountNumber, true) : '-';
   console.log(getCardColor(bankName));
   return (
     <div className={`flex-1 bg-slate-600 w-[400px] h-[230px] ${getCardColor(bankName)} text-white  p-6 relative flex flex-col rounded-xl`}>
@@ -25,7 +26,7 @@ const PaymentMethodAccount = ({ bankName, memberName, accountNumber }) => {
         </div>
         <div className='flex-1'>
           <div className='text-md'>계좌 번호</div>
-          <div className='text-md font-bold'>{formatBankAccount(bankName?.slice(0, -2), accountNumber)}</div>
+          <div className='text-md font-bold'>{formattedBankNumber}</div>
         </div>
       </div>
     </div>

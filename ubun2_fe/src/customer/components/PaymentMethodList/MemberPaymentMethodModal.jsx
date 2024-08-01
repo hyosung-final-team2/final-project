@@ -9,7 +9,7 @@ import PaymentMethodCard from './PaymentMethodCard';
 import { useState, useEffect } from 'react';
 import InputLabel from '../common/Input/InputLabel';
 import PaymentMethodAccount from './PaymentMethodAccount';
-import { formatCardNumber } from '../../utils/cardFormat';
+import { maskCardNumber } from '../../utils/cardFormat';
 import { formatBankAccount } from '../../utils/accountFormat';
 
 const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId, currentPage, clickedPayment }) => {
@@ -31,7 +31,7 @@ const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId
 
   const flipCard = flip => setIsFlipped(flip);
 
-  const formattedCardNumber = clickedPayment?.cardNumber ? formatCardNumber(clickedPayment?.cardNumber) : '****-****-****-****';
+  const formattedCardNumber = clickedPayment?.cardNumber ? maskCardNumber(clickedPayment?.cardNumber) : '****-****-****-****';
   const formattedBankNumber = clickedPayment?.accountNumber ? formatBankAccount(clickedPayment?.bankName, clickedPayment?.accountNumber, true) : '-';
 
   useEffect(() => {
