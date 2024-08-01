@@ -6,6 +6,7 @@ import kr.or.kosa.ubun2_be.global.auth.dto.EmailRequest;
 import kr.or.kosa.ubun2_be.global.auth.enums.UserRole;
 import kr.or.kosa.ubun2_be.global.auth.service.EmailService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -43,6 +44,7 @@ class EmailControllerTest {
     }
 
     @Test
+    @DisplayName("인증번호 발송")
     void sendEmail() throws Exception {
         // Given
 
@@ -60,6 +62,7 @@ class EmailControllerTest {
     }
 
     @Test
+    @DisplayName("인증번호 검증")
     void checkAuthenticationNumber() throws Exception {
         when(emailService.validateAuthenticationNumber(any(EmailAuthenticationRequest.class))).thenReturn(true);
 

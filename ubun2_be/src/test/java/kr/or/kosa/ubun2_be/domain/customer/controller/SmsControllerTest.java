@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.SmsRequest;
 import kr.or.kosa.ubun2_be.domain.customer.service.SmsService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -39,6 +40,7 @@ class SmsControllerTest extends CommonTestSetup {
     private SmsService smsService;
 
     @Test
+    @DisplayName("문자 전송")
     void sendSms() throws Exception {
         List<SmsRequest> smsRequests = Arrays.asList(
                 new SmsRequest("010-1234-1234","김철수"),

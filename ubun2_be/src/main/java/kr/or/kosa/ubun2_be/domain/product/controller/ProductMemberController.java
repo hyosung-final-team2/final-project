@@ -37,7 +37,7 @@ public class ProductMemberController {
         return ResponseDto.ok(categories, "정상출력 데이터");
     }
 
-    @Operation(summary = "전체 상품 목록 및 정렬,검색을 통한 상품 목록 조회")
+    @Operation(summary = "전체 상품 목록 및 정렬,검색을 통한 조회")
     @GetMapping("/products/{customer_id}")
     public ResponseDto<?> getProducts(@PathVariable("customer_id") Long customerId, SearchRequest searchRequest, @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         Page<ProductResponse> productResponseList = productService.getProducts(customerId, searchRequest, pageable, customUserDetails.getUserId());

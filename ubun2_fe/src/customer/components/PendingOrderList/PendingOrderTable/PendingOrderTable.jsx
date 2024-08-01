@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Table } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { useGetOrderDetail } from '../../../api/Order/OrderList/OrderModal/queris';
 import { getPendingOrders } from '../../../api/Order/PendingOrderList/PendingOrderTable/pendingOrderTable';
 import { useGetPendingOrders, useUpdatePendingOrder } from '../../../api/Order/PendingOrderList/PendingOrderTable/queris';
@@ -17,8 +17,11 @@ import SkeletonTable from '../../Skeleton/SkeletonTable';
 import SkeletonPendingOrderTableRow from '../Skeleton/SkeletonPendingOrderTableRow';
 import SkeletonPendingOrderTableFeature from '../Skeleton/SkeletonPendingOrderTableFeature';
 import usePendingOrderTableStore from '../../../store/PendingOrderTable/pendingOrderTableStore';
+import NoDataTable from "../../common/Table/NoDataTable.jsx";
+import {useNavigate} from "react-router-dom";
 
 const PendingOrderTable = () => {
+  const navigate = useNavigate();
   const [openPendingOrderDetailModal, setOpenPendingOrderDetailModal] = useState(false);
 
   const [selectedPendingOrders, setSelectedPendingOrders] = useState([]); // 체크된 ID
@@ -27,6 +30,7 @@ const PendingOrderTable = () => {
   const { sort, updateSort } = usePendingOrderTableStore();
   const { searchCategory, setSearchCategory } = usePendingOrderTableStore(); // 검색할 카테고리 (드롭다운)
   const { searchKeyword, setSearchKeyword } = usePendingOrderTableStore(); // 검색된 단어
+  const { setTotalElements } = usePendingOrderTableStore()
   const { resetData } = usePendingOrderTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,10 +43,13 @@ const PendingOrderTable = () => {
   } = useGetPendingOrders(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword, searchKeyword);
 
   const totalPages = pendingOrders?.data?.data?.totalPages;
+  const totalElementsFromPage = pendingOrders?.data?.data?.totalElements;
   const pendingOrderList = pendingOrders?.data?.data?.content || [];
 
   const { data, refetch } = useGetOrderDetail(selectedPendingOrderDetail.orderId, selectedPendingOrderDetail.subscription); // 테이블 데이터 가져오기
   const { mutate: updatePendingOrderMutation } = useUpdatePendingOrder(currentPage); // 상태 업데이트
+
+  const dropdownRef = useRef(null);
 
   const queryClient = useQueryClient();
 
@@ -51,10 +58,16 @@ const PendingOrderTable = () => {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['pendingOrder', nextPage, sort, searchCategory, searchKeyword],
-        queryFn: () => getPendingOrders(nextPage, PAGE_SIZE),
+        queryFn: () => getPendingOrders(nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword),
       });
     }
   }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
+
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -132,8 +145,18 @@ const PendingOrderTable = () => {
     updatePendingOrderMutation({ requestData });
   };
 
+  const NoDataTableButtonFunc = () => {
+    navigate("/customer/app/dashboard")
+  }
+
+  const handleDropdownButtonClick = () => {
+    if (dropdownRef.current) {
+      dropdownRef.current.click();
+    }
+  };
+
   // isLoading 시, skeletonTable
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore();
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword, setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore();
 
   useEffect(() => {
     if (!isLoading) {
@@ -142,6 +165,9 @@ const PendingOrderTable = () => {
       setSkeletonSortData(sort);
       setSkeletonSearchCategory(searchCategory);
       setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage)
+      }
     }
   }, [
     pendingOrderList,
@@ -172,15 +198,17 @@ const PendingOrderTable = () => {
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
       <PendingOrderTableFeature
-        tableColumns={tableColumn.pendingOrders}
+        tableColumns={tableColumn.ordersSearch}
         onSearch={handleSearch}
         handleOrderUpdate={handleOrderUpdate}
         selectedPendingOrders={selectedPendingOrders}
         handleDataReset={handleDataReset}
+        dropdownRef={dropdownRef}
       />
 
       {/* 테이블 */}
-      <div className='px-4 shadow-md'>
+      {/*<div className='px-4 shadow-md'>*/}
+      <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead
             tableColumns={tableColumn.pendingOrders}
@@ -189,20 +217,33 @@ const PendingOrderTable = () => {
             handleSort={handleSort}
             headerType='pendingOrders'
           />
-          <UnifiedOrderTableBody
-            dataList={pendingOrderList}
-            TableRowComponent={props => <PendingOrderTableRow {...props} handleOrderUpdate={handleOrderUpdate} />}
-            setOpenModal={handleRowClick}
-            selectedOrders={selectedPendingOrders}
-            handleRowChecked={handleRowChecked}
-            currentPage={currentPage}
-          />
+          {
+            pendingOrderList.length > 0 ? (
+                <UnifiedOrderTableBody
+                    dataList={pendingOrderList}
+                    TableRowComponent={props => <PendingOrderTableRow {...props} handleOrderUpdate={handleOrderUpdate} />}
+                    setOpenModal={handleRowClick}
+                    selectedOrders={selectedPendingOrders}
+                    handleRowChecked={handleRowChecked}
+                    currentPage={currentPage}
+                />
+            ) : (
+                <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "승인 대기중인 주문이 없습니다."}
+                             buttonText={searchCategory && searchKeyword ? "다시 검색하기":"메인으로 가기"}
+                             buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
+                             colNum={tableColumn.pendingOrders.length}
+                />
+            )
+          }
+
         </Table>
       </div>
       {/* 페이지네이션 */}
-      {isLoading === false ? (
+      {isLoading === false && pendingOrderList.length > 0 ? (
         <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
-      ) : null}
+      ) :
+        <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />
+        }
       {/* 모달 */}
       <OrderDetailModal
         isOpen={openPendingOrderDetailModal}

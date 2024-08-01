@@ -3,6 +3,7 @@ package kr.or.kosa.ubun2_be.global.auth.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.kosa.ubun2_be.global.auth.dto.*;
 import kr.or.kosa.ubun2_be.global.auth.service.FindInfoService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,6 +34,7 @@ class FindInfoControllerTest {
     private FindInfoService findInfoService;
 
     @Test
+    @DisplayName("고객&회원 아이디 찾기")
     void findId() throws Exception {
         FindIdRequest request = new FindIdRequest("이찬혁", "john@example.com", "ROLE_CUSTOMER");
         FindIdResponse response = FindIdResponse.createFindId("john123");
@@ -51,6 +53,7 @@ class FindInfoControllerTest {
     }
 
     @Test
+    @DisplayName("고객&회원 비밀번호 찾기")
     void findPassword() throws Exception {
         FindPasswordRequest request = new FindPasswordRequest("이찬혁", "john@example.com", "john123", "ROLE_CUSTOMER");
 
@@ -67,6 +70,7 @@ class FindInfoControllerTest {
     }
 
     @Test
+    @DisplayName("고객&회원 비밀번호 재설정")
     void resetPassword() throws Exception {
         ResetPasswordRequest request = new ResetPasswordRequest("john@example.com", "newPassword123@", "ROLE_CUSTOMER");
 
@@ -83,6 +87,7 @@ class FindInfoControllerTest {
     }
 
     @Test
+    @DisplayName("고객& 회원 id 중복 체크")
     void checkLoginId() throws Exception {
         CheckLoginIdRequest request = new CheckLoginIdRequest("ROLE_CUSTOMER","john123");
 

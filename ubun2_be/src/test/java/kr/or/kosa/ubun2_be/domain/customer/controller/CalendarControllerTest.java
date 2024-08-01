@@ -6,6 +6,7 @@ import kr.or.kosa.ubun2_be.domain.customer.dto.DailyOrderSummaryResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.MonthlySummaryResponse;
 import kr.or.kosa.ubun2_be.domain.customer.service.CalendarService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,6 +42,7 @@ class CalendarControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("캘린더 판매현황 조회")
     void getDailySalesForMonthAndCustomer() throws Exception {
         List<DailyOrderSummaryResponse> mockResponse = Arrays.asList(
                 new DailyOrderSummaryResponse(),
@@ -64,6 +66,7 @@ class CalendarControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("월간 요약 조회")
     void getMonthlySummary() throws Exception {
         MonthlySummaryResponse mockResponse = new MonthlySummaryResponse();
 

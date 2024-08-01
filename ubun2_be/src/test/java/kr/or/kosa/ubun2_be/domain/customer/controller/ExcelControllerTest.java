@@ -2,6 +2,7 @@ package kr.or.kosa.ubun2_be.domain.customer.controller;
 
 import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.customer.service.ExcelService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,6 +29,7 @@ class ExcelControllerTest extends CommonTestSetup {
     private ExcelService excelService;
 
     @Test
+    @DisplayName("회원 등록 양식 다운로드")
     void downloadExcel() throws Exception {
         String fileName = "encoded_filename.xlsx";
         byte[] fileContent = "test content".getBytes();
@@ -48,6 +50,7 @@ class ExcelControllerTest extends CommonTestSetup {
     }
 
     @Test
+    @DisplayName("회원 등록 양식 업로드")
     void registerExcel() throws Exception {
         MockMultipartFile file = new MockMultipartFile(
                 "file",

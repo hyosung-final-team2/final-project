@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useRef} from 'react';
 import { Table } from 'flowbite-react';
 import { tableColumn } from '../common/Table/tableIndex';
 import TableHead from '../common/Table/TableHead';
@@ -8,12 +8,11 @@ import AddressTableRow from './AddressTableRow';
 import MemberAddressModal from './MemberAddressModal';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { useGetAddresses } from '../../api/Address/AddressTable/queris.js';
+import {useDeleteSelectedAddresses, useGetAddresses} from '../../api/Address/AddressTable/queris.js';
 import { useGetAddressDetail } from '../../api/Address/AddressModal/queris.js';
 import { getAddresses } from '../../api/Address/AddressTable/addressTable.js';
 
 import useAddressStore from '../../store/Address/useAddressStore.js';
-import DynamicTableBody from '../common/Table/DynamicTableBody.jsx';
 import AddressRegistrationModal from './AddressRegistrationModal.jsx';
 import useAddressTableStore from '../../store/Address/addressTableStore.js';
 
@@ -22,6 +21,8 @@ import SkeletonAddressTableFeature from './Skeleton/SkeletonAddressTableFeature.
 import SkeletonAddressTableRow from './Skeleton/SkeletonAddressTableRow.jsx';
 
 import useSkeletonStore from '../../store/skeletonStore.js';
+import NoDataTable from "../common/Table/NoDataTable.jsx";
+import TableBody from "../common/Table/TableBody.jsx";
 
 const AddressTable = () => {
   const [openAddressRegistration, setOpenAddressRegistration] = useState(false);
@@ -30,14 +31,19 @@ const AddressTable = () => {
   const [clickedAddress, setClickedAddress] = useState(null);
   const { setSelectedMemberId, openMemberAddressModal, setOpenMemberAddressModal } = useAddressStore();
 
-  const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset } = useAddressTableStore();
+  const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset, setTotalElements } = useAddressTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8;
   const { data: addresses, refetch: refetchAddresses, isLoading } = useGetAddresses(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
   const totalPages = addresses?.data?.data?.totalPages;
+  const totalElementsFromPage = addresses?.data?.data?.totalElements;
   const addressList = addresses?.data?.data?.content;
+
+  const dropdownRef = useRef(null);
+
+  const { mutate: deleteSelectedAddressesMutate } = useDeleteSelectedAddresses(selectedAddresses,currentPage,PAGE_SIZE)
 
   const queryClient = useQueryClient();
 
@@ -45,11 +51,22 @@ const AddressTable = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['address', nextPage, sort, searchCategory, searchKeyword],
-        queryFn: () => getAddresses(nextPage, PAGE_SIZE),
+        queryKey: ['address', nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword],
+        queryFn: () => getAddresses(nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword),
       });
     }
   }, [currentPage, queryClient, totalPages, sort, searchCategory, searchKeyword]);
+
+  useEffect(() => {
+    setSelectedAddresses([])
+  }, [currentPage,addressList]);
+
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
+
 
   //
   const { refetch } = useGetAddressDetail(addressId);
@@ -96,7 +113,17 @@ const AddressTable = () => {
     setCurrentPage(1);
   };
 
-  const { resetSkeletonData, setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore();
+  const handleDropdownButtonClick = () => {
+    if (dropdownRef.current) {
+      dropdownRef.current.click();
+    }
+  };
+
+  const NoDataTableButtonFunc = () => {
+    setOpenAddressRegistration(true)
+  }
+
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword, setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore();
 
   useEffect(() => {
     return resetData();
@@ -107,12 +134,34 @@ const AddressTable = () => {
       setSkeletonData(addressList);
       setSkeletonTotalPage(totalPages);
       setSkeletonSortData(sort);
+      setSkeletonSearchCategory(searchCategory);
+      setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage)
+      }
     }
-  }, [isLoading, totalPages, addressList, sort]);
+  }, [
+    addressList,
+    totalPages,
+    sort,
+    searchKeyword,
+    searchCategory,
+    setSkeletonTotalPage,
+    setSkeletonSortData,
+    setSkeletonData,
+    setSkeletonSearchCategory,
+    setSkeletonSearchKeyword,
+    isLoading,
+  ]);
 
   if (isLoading) {
     return (
-      <SkeletonTable SkeletonTableFeature={SkeletonAddressTableFeature} TableRowComponent={SkeletonAddressTableRow} tableColumns={tableColumn.address.list} />
+      <SkeletonTable
+        SkeletonTableFeature={SkeletonAddressTableFeature}
+        TableRowComponent={SkeletonAddressTableRow}
+        tableColumns={tableColumn.address.list}
+        nonSort={tableColumn.address.nonSort}
+      />
     );
   }
 
@@ -120,10 +169,12 @@ const AddressTable = () => {
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       <AddressTableFeature
         setOpenModal={setOpenAddressRegistration}
-        tableColumns={tableColumn.address.list}
+        tableColumns={tableColumn.address.search}
         onSearch={handleSearch}
         selectedAddresses={selectedAddresses}
         handleDataReset={handleDataReset}
+        deleteSelectedAddressesMutate={deleteSelectedAddressesMutate}
+        dropdownRef={dropdownRef}
       />
       <div className='px-4'>
         <Table hoverable>
@@ -133,21 +184,32 @@ const AddressTable = () => {
             allChecked={selectedAddresses.length === addressList.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
+            nonSort={tableColumn.address.nonSort}
           />
-          <DynamicTableBody
-            TableRowComponent={AddressTableRow}
-            dataList={addressList}
-            setOpenModal={handleRowClick}
-            dynamicKey='addressId'
-            dynamicId='addressId'
-            selectedMembers={selectedAddresses}
-            handleRowChecked={handleRowChecked}
-            currentPage={currentPage}
-          />
+          {
+            addressList.length > 0 ? (
+                <TableBody
+                    TableRowComponent={AddressTableRow}
+                    dataList={addressList}
+                    setOpenModal={handleRowClick}
+                    dynamicId='addressId'
+                    selectedMembers={selectedAddresses}
+                    handleRowChecked={handleRowChecked}
+                    currentPage={currentPage}
+                />
+            ) : (
+                <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 주소가 없습니다."}
+                             buttonText={searchCategory && searchKeyword ? "다시 검색하기":"주소 등록하기"}
+                             buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
+                             colNum={tableColumn.address.list.length}
+                />
+            )
+          }
+
         </Table>
-        {isLoading === false ? (
+        {isLoading === false && addressList.length > 0 ? (
           <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
-        ) : null}
+        ) : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />}
 
         <MemberAddressModal
           isOpen={openMemberAddressModal}

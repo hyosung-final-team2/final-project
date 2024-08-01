@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { errorToastStyle } from '../../../../member/api/toastStyle.js';
 import useMemberTableStore from '../../../store/MemberTable/memberTableStore.js';
-import useSkeletonStore from '../../../store/skeletonStore.js';
 import { columnMapping } from '../Table/tableIndex.js';
 
 const priceInputStyle =
@@ -62,7 +61,7 @@ const PriceRangeInput = ({ onPriceChange }) => {
   );
 };
 
-const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
+const SearchBarWithDrop = ({ tableColumns, onSearch, dropdownRef }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showCategory, setShowCategory] = useState('카테고리');
@@ -71,7 +70,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
     endDate: null,
   });
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-  const dropdownRef = useRef(null);
+  // const dropdownRef = useRef(null);
 
   initDropdowns();
 
@@ -139,42 +138,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
   };
 
 
-  //
-  // const { skeletonSearchCategory, skeletonSearchKeyword } = useSkeletonStore();
   const { isReset } = useMemberTableStore();
-  //
-  // const dropdownCategoryScreen = () => {
-  //   if (showCategory !== '카테고리') {
-  //     return showCategory;
-  //   }
-  //   if (skeletonSearchCategory !== null) {
-  //     const categoryKey = getKeyByValue(columnMapping, skeletonSearchCategory);
-  //     return categoryKey || '카테고리';
-  //   }
-  //   return '카테고리';
-  // };
-  //
-  // const dropdownKeywordScreen = () => {
-  //   if (searchTerm !== '') {
-  //     return searchTerm;
-  //   }
-  //   if (skeletonSearchKeyword !== null) {
-  //     return skeletonSearchKeyword;
-  //   }
-  //   return '';
-  // };
-  //
-  // useEffect(() => {
-  //   if (skeletonSearchKeyword) {
-  //     setSearchTerm(skeletonSearchKeyword);
-  //   }
-  // }, [skeletonSearchKeyword]);
-  //
-  // useEffect(() => {
-  //   if (skeletonSearchCategory) {
-  //     setShowCategory(getKeyByValue(columnMapping, skeletonSearchCategory));
-  //   }
-  // }, [skeletonSearchCategory]);
 
   useEffect(() => {
     setSearchTerm('');
@@ -192,7 +156,7 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
             i18n='ko'
             value={dateRange}
             theme={'light'}
-            inputClassName='input input-bordered w-72'
+            inputClassName='input input-bordered w-72 no-focus'
             toggleClassName='invisible'
             onChange={newValue => setDateRange(newValue)}
             showShortcuts={true}
@@ -213,12 +177,12 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
           type='search'
           id='search-dropdown'
           className={`block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 border-s-gray-50 border-s-2 border border-gray-300 focus:outline-none dark:bg-gray-700 dark:border-s-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500 ${
-            !categoryGroups.date.includes(selectedCategory) && !categoryGroups.range.includes(selectedCategory) ? 'rounded-s-lg' : ''
+            !categoryGroups.date.includes(selectedCategory) && !categoryGroups.range.includes(selectedCategory) ? 'rounded-e-lg' : ''
           }`}
           placeholder={showCategory !== '카테고리' ? 'Search' : '카테고리 선택'}
           required
-          // value={dropdownKeywordScreen()}
-            value={searchTerm}
+          disabled={showCategory === '카테고리'}
+          value={searchTerm}
           onChange={handleSearchChange}
         />
       );
@@ -237,7 +201,6 @@ const SearchBarWithDrop = ({ tableColumns, onSearch }) => {
           }`}
           type='button'
         >
-          {/*{dropdownCategoryScreen()}*/}
           {showCategory}
           <svg className='w-2.5 h-2.5 ms-2.5' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 6'>
             <path stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='m1 1 4 4 4-4' />

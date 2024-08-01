@@ -1,8 +1,8 @@
 import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircleIcon';
 import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
 import { useParams } from 'react-router-dom';
-import { formatAccountNumber } from '../../../customer/utils/accountFormat';
-import { formatCardNumber } from '../../../customer/utils/cardFormat';
+import { formatAccountNumber, maskAccountNumber } from '../../../customer/utils/accountFormat';
+import { formatCardNumber, maskCardNumber } from '../../../customer/utils/cardFormat';
 import { useGetOrderDetail, useUpdateCancelOrder } from '../../api/Order/queris';
 import OrderStatusBadge from '../../components/common/badge/OrderStatusBadge';
 import DoubleBottomButton from '../../components/common/button/DoubleBottomButton';
@@ -10,6 +10,7 @@ import PaymentSummaryCompleted from '../../components/common/paymentSummary/Paym
 import ProductItemReadOnly from '../../components/common/productItem/ProductItemReadOnly';
 import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
+import AddressSummary from '../../components/common/addressSummary/AddressSummary';
 
 const MySingleOrderDetail = () => {
   const { orderId } = useParams();
@@ -26,7 +27,7 @@ const MySingleOrderDetail = () => {
 
   const paymentInfo = {
     paymentName: orderData?.paymentType === 'CARD' ? orderData?.cardCompanyName : orderData?.bankName,
-    paymentContent: orderData?.paymentType === 'CARD' ? formatCardNumber(orderData?.cardNumber) : formatAccountNumber(orderData?.accountNumber),
+    paymentContent: orderData?.paymentType === 'CARD' ? maskCardNumber(orderData?.cardNumber) : maskAccountNumber(orderData?.accountNumber),
   };
 
   const formatDate = dateString => {
@@ -65,7 +66,7 @@ const MySingleOrderDetail = () => {
           <h1 className='text-2xl font-bold'>주문번호 {orderId}</h1>
           <OrderStatusBadge status='SINGLE' />
         </div>
-        <div className='px-4 py-6 mb-2 bg-white rounded-3xl'>
+        <div className='px-4 py-6 mb-3 bg-white rounded-3xl'>
           <div className='flex justify-between'>
             <h2 className='mb-4 text-xl font-bold text-gray-800'>주문 내역</h2>
             <OrderStatusBadge status={orderData?.orderStatus} customSize={'text-xs'} />
@@ -107,6 +108,7 @@ const MySingleOrderDetail = () => {
             </div>
           </div>
         </div>
+        <AddressSummary data={orderData} />
         <PaymentSummaryCompleted
           productAmount={orderData?.orderAmount}
           discount={orderData?.discountAmount}

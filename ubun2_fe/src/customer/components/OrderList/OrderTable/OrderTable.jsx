@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Table } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { useGetOrderDetail } from '../../../api/Order/OrderList/OrderModal/queris.js';
 import { getOrders } from '../../../api/Order/OrderList/OrderTable/orderTable.js';
 import { useGetOrders } from '../../../api/Order/OrderList/OrderTable/queris.js';
@@ -17,8 +17,11 @@ import SkeletonTable from '../../Skeleton/SkeletonTable.jsx';
 import useOrderTableStore from '../../../store/OrderTable/orderTableStore.js';
 import SkeletonOrderTableFeature from '../Skeleton/SkeletonOrderTableFeature.jsx';
 import SkeletonOrderTableRow from '../Skeleton/SkeletonOrderTableRow.jsx';
+import NoDataTable from "../../common/Table/NoDataTable.jsx";
+import {useNavigate} from "react-router-dom";
 
 const OrderTable = () => {
+  const navigate = useNavigate();
   const [openOrderDetailModal, setOpenOrderDetailModal] = useState(false);
 
   const [selectedOrders, setSelectedOrders] = useState([]); // 체크된 멤버 ID
@@ -27,6 +30,7 @@ const OrderTable = () => {
   const { sort, updateSort } = useOrderTableStore();
   const { searchCategory, setSearchCategory } = useOrderTableStore(); // 검색할 카테고리 (드롭다운)
   const { searchKeyword, setSearchKeyword } = useOrderTableStore(); // 검색된 단어
+  const { setTotalElements } = useOrderTableStore()
   const { resetData } = useOrderTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,9 +39,12 @@ const OrderTable = () => {
   const { data: orders, refetch: refetchOrders, isLoading } = useGetOrders(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword, searchKeyword);
 
   const totalPages = orders?.data?.data?.totalPages;
+  const totalElementsFromPage = orders?.data?.data?.totalElements;
   const orderList = orders?.data?.data?.content || [];
 
   const { data, refetch } = useGetOrderDetail(selectedOrderDetail.orderId, selectedOrderDetail.subscription);
+
+  const dropdownRef = useRef(null);
 
   const queryClient = useQueryClient();
 
@@ -46,10 +53,16 @@ const OrderTable = () => {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['order', nextPage, sort, searchCategory, searchKeyword],
-        queryFn: () => getOrders(nextPage, PAGE_SIZE),
+        queryFn: () => getOrders(nextPage, PAGE_SIZE,  sort, searchCategory, searchKeyword),
       });
     }
   }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
+
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -96,12 +109,22 @@ const OrderTable = () => {
     setCurrentPage(1);
   };
 
+  const NoDataTableButtonFunc = () => {
+    navigate("/customer/app/dashboard")
+  }
+
   const { toggleIsReset } = useOrderTableStore();
   const handleDataReset = async () => {
     await toggleIsReset();
     await resetData();
     await refetchOrders();
     await setCurrentPage(1);
+  };
+
+  const handleDropdownButtonClick = () => {
+    if (dropdownRef.current) {
+      dropdownRef.current.click();
+    }
   };
 
   useEffect(() => {
@@ -111,7 +134,7 @@ const OrderTable = () => {
   }, []);
 
   // isLoading 시, skeletonTable
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword } = useSkeletonStore();
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword,  setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore();
 
   useEffect(() => {
     if (!isLoading) {
@@ -120,6 +143,9 @@ const OrderTable = () => {
       setSkeletonSortData(sort);
       setSkeletonSearchCategory(searchCategory);
       setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage)
+      }
     }
   }, [
     orderList,
@@ -143,32 +169,46 @@ const OrderTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
-      <OrderTableFeature tableColumns={tableColumn.orders} onSearch={handleSearch} handleDataReset={handleDataReset} />
+      <OrderTableFeature tableColumns={tableColumn.ordersSearch}
+                         onSearch={handleSearch}
+                         handleDataReset={handleDataReset}
+                         dropdownRef={dropdownRef}
+      />
 
       {/* 테이블 */}
-      <div className='px-4 shadow-md'>
+      <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead
             tableColumns={tableColumn.orders}
             allChecked={selectedOrders.length === orderList?.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
-            headerType="orders"
+            headerType='orders'
           />
-          <UnifiedOrderTableBody
-            dataList={orderList}
-            TableRowComponent={OrderTableRow}
-            setOpenModal={handleRowClick}
-            selectedOrders={selectedOrders}
-            handleRowChecked={handleRowChecked}
-            currentPage={currentPage}
-          />
+          {orderList.length > 0 ? (
+              <UnifiedOrderTableBody
+                  dataList={orderList}
+                  TableRowComponent={OrderTableRow}
+                  setOpenModal={handleRowClick}
+                  selectedOrders={selectedOrders}
+                  handleRowChecked={handleRowChecked}
+                  currentPage={currentPage}
+              />
+          ) : (
+              <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "주문 내역이 없습니다."}
+                           buttonText={searchCategory && searchKeyword ? "다시 검색하기":"메인으로 가기"}
+                           buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
+                           colNum={tableColumn.orders.length}
+              />
+          ) }
+
         </Table>
       </div>
       {/* 페이지네이션 */}
-      {isLoading === false ? (
+      {isLoading === false && orderList.length > 0 ? (
         <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
-      ) : null}
+      ) :<TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />
+      }
       {/* 모달 */}
       {openOrderDetailModal && (
         <OrderDetailModal

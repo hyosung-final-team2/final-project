@@ -8,9 +8,9 @@ import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
 import PaymentMethodCard from './PaymentMethodCard';
 import { useState, useEffect } from 'react';
 import InputLabel from '../common/Input/InputLabel';
-import { formatCardNumber } from '../../utils/cardFormat';
 import PaymentMethodAccount from './PaymentMethodAccount';
-import { getCardColor } from '../../../member/components/PaymentMethod/CardList';
+import { formatCardNumber } from '../../utils/cardFormat';
+import { formatBankAccount } from '../../utils/accountFormat';
 
 const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId, currentPage, clickedPayment }) => {
   const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
@@ -32,7 +32,7 @@ const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId
   const flipCard = flip => setIsFlipped(flip);
 
   const formattedCardNumber = clickedPayment?.cardNumber ? formatCardNumber(clickedPayment?.cardNumber) : '****-****-****-****';
-  const formattedBankNumber = clickedPayment?.accountNumber ? formatCardNumber(clickedPayment?.accountNumber) : '****-****-****-****';
+  const formattedBankNumber = clickedPayment?.accountNumber ? formatBankAccount(clickedPayment?.bankName, clickedPayment?.accountNumber, true) : '-';
 
   useEffect(() => {
     setModalPaymentId(paymentMethodId);
@@ -85,7 +85,6 @@ const MemberPaymentMethodModal = ({ isOpen, setOpenModal, title, paymentMethodId
                       bankName={clickedPayment?.bankName}
                       accountNumber={clickedPayment?.accountNumber}
                       memberName={clickedPayment?.memberName}
-                      bgColor={getCardColor(clickedPayment?.bankName)}
                     />
                   </div>
                   <div className='flex-1 p-3 space-y-3'>

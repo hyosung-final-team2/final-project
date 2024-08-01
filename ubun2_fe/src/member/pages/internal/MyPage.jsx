@@ -2,27 +2,25 @@ import { ArrowRightOnRectangleIcon, ChevronRightIcon, CreditCardIcon, ShoppingBa
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SubscriptionLineIcon from '../../../assets/images/subscription-line.svg';
-import { useGetOrderList } from '../../api/Order/queris';
 import { useLogout } from '../../../customer/api/common/Logout/queris.js';
+import { useGetMemberName } from '../../api/Mypage/queris.js';
+import { useGetOrderList } from '../../api/Order/queris';
+import User from '../../../assets/images/user.svg';
 
 function MyPage() {
   const { data: orderListResponse } = useGetOrderList();
-  const [singleOrders, setSingleOrders] = useState([]);
-  const [subscriptionOrders, setSubscriptionOrders] = useState([]);
   const [memberInfo, setMemberInfo] = useState({});
   const navigate = useNavigate();
+  const { data: memberName } = useGetMemberName();
 
   useEffect(() => {
     if (orderListResponse?.data?.data) {
       const orders = orderListResponse.data.data;
       const single = orders.filter(order => !order.subscription);
       const subscription = orders.filter(order => order.subscription);
-      setSingleOrders(single);
-      setSubscriptionOrders(subscription);
 
       if (orders.length > 0) {
         setMemberInfo({
-          name: orders[0].memberName,
           singleOrders: single.length,
           subscriptionOrders: subscription.length,
         });
@@ -51,21 +49,26 @@ function MyPage() {
     navigate(value);
   };
 
+  const handleOrderClick = orderType => {
+    navigate('/member/app/mypage/order-list', { state: { orderType } });
+  };
+
   return (
     <div className='flex flex-col min-h-full bg-custom-mypage-back-bg'>
-      <div className='p-4'>
+      <div className='p-2'>
         {/* User Info Card */}
-        <div className='p-4 mb-4 rounded-xl'>
+        <div className='p-3 mb-4 rounded-xl'>
           <div className='flex flex-col items-center mb-4'>
-            <img src='/src/assets/images/png/user-icon.png' alt='Avatar' className='mb-2 rounded-full w-36 h-36' />
+            {/* <img src='/src/assets/images/png/user-icon.png' alt='Avatar' className='mb-2 rounded-lg w-36 h-36' /> */}
+            <User className='mb-2 rounded-lg w-28 h-28' />
             <h5 className='mb-4 ml-1 text-3xl font-bold tracking-tight text-gray-900 dark:text-white'>
-              {memberInfo?.name}
-              <span className='ml-1 text-base'>님</span>
+              {/* {memberName?.name} */}
+              <span className='ml-1 text-base'>{memberName?.data?.data?.memberName}님</span>
             </h5>
           </div>
 
           <div className='flex gap-2 p-6 mb-4 bg-custom-mypage-bg justify-evenly rounded-3xl'>
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-2' onClick={() => handleOrderClick('single')}>
               <div className='flex items-center justify-center w-10 h-10 mb-1 bg-white rounded-full'>
                 <TruckIcon className='w-6 h-6' />
               </div>
@@ -75,7 +78,7 @@ function MyPage() {
               </div>
             </div>
             <div className='border-l border-gray-100'></div>
-            <div className='flex items-center gap-2 text-white'>
+            <div className='flex items-center gap-2 text-white' onClick={() => handleOrderClick('subscription')}>
               <div className='flex items-center justify-center w-10 h-10 mb-1 bg-white rounded-full'>
                 <SubscriptionLineIcon className='w-6 h-6 text-gray-500' />
               </div>
@@ -88,8 +91,8 @@ function MyPage() {
         </div>
 
         {/* My Info Section */}
-        <div className='p-4 mt-4'>
-          <div className='py-4 space-y-4 bg-white rounded-3xl'>
+        <div className='p-3 mt-4'>
+          <div className='px-8 py-4 space-y-4 bg-white rounded-3xl'>
             <h2 className='p-4 text-xl font-semibold text-gray-500'>내 정보</h2>
             {myInfoItems.map(item => (
               <div key={item.id} className='flex items-center justify-between p-5' onClick={() => handleMyInfoMenu(item.value)}>

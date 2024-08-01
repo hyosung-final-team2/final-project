@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { Table } from 'flowbite-react';
 import TableHead from '../../common/Table/TableHead';
 import ProductTableFeature from './ProductTableFeature';
@@ -17,6 +17,7 @@ import useSkeletonStore from "../../../store/skeletonStore.js";
 import SkeletonTable from "../../Skeleton/SkeletonTable.jsx";
 import SkeletonProductTableFeature from "../Skeleton/SkeletonProductTableFeature.jsx";
 import SkeletonProductTableRow from "../Skeleton/SkeletonProductTableRow.jsx";
+import NoDataTable from "../../common/Table/NoDataTable.jsx";
 
 const ProductTable = () => {
   const [openProductDetailModal, setOpenProductDetailModal] = useState(false);
@@ -27,7 +28,10 @@ const ProductTable = () => {
   const { sort, updateSort } = useProductTableStore()
   const {searchKeyword, setSearchKeyword} = useProductTableStore(); // 검색된 단어
   const {searchCategory, setSearchCategory} = useProductTableStore(); // 검색할 카테고리 (드롭다운)
+  const { setTotalElements } = useProductTableStore()
   const { resetData } = useProductTableStore()
+
+  console.log( "외부 : ", searchKeyword,searchCategory)
 
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8
@@ -35,19 +39,30 @@ const ProductTable = () => {
   const { data: products, refetch: refetchProducts, isLoading } = useGetProducts(currentPage,PAGE_SIZE,sort,searchCategory,searchKeyword);
 
   const totalPages = products?.data?.data?.totalPages;
+  const totalElementsFromPage = products?.data?.data?.totalElements;
   const productList = products?.data?.data?.content || [];
 
   const { data, refetch } = useGetProductDetail(selectedProductDetail.productId);
   const { mutate: deleteSelectedProductsMutate } = useDeleteSelectedProducts(selectedProducts,currentPage)
 
+  const [openProductInsertModal, setOpenProductInsertModal] = useState(false);
+
+  const dropdownRef = useRef(null);
+
+
+  const handleSaveClick = () => {
+    setOpenProductInsertModal(true);
+  };
+
   const queryClient = useQueryClient();
 
   useEffect(() => {
     if (currentPage < totalPages) {
+      console.log("useEffect : ", searchCategory,searchKeyword);
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['product', {page:nextPage, sort, searchCategory, searchKeyword}],
-        queryFn: () => getProducts(nextPage,PAGE_SIZE),
+        queryKey: ['product', {page:nextPage,PAGE_SIZE, sort, searchCategory, searchKeyword}],
+        queryFn: () => getProducts(nextPage,PAGE_SIZE,sort,searchCategory,searchKeyword),
       });
     }
   }, [currentPage, queryClient,searchCategory, searchKeyword, sort, totalPages]);
@@ -55,6 +70,12 @@ const ProductTable = () => {
   useEffect(() => {
     setSelectedProducts([])
   }, [currentPage,productList]);
+
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
 
   const handleAllChecked = checked => {
     if (checked) {
@@ -67,12 +88,13 @@ const ProductTable = () => {
   const handleRowChecked = id => {
     setSelectedProducts(prev => (prev.includes(id) ? prev.filter(id => id !== id) : [...prev, id]));
   };
-//
+
   const handleRowClick = async (productId,page )=> {
     await setSelectedProductDetail({ productId: productId, currentPage:page });
     await refetch();
     await setOpenProductDetailModal(true);
   };
+
   const handleSearch = (keyword, category) => {
     setSearchKeyword(keyword);
     setSearchCategory(category);
@@ -97,20 +119,31 @@ const ProductTable = () => {
     await setCurrentPage(1)
   }
 
+  const handleDropdownButtonClick = () => {
+    if (dropdownRef.current) {
+      dropdownRef.current.click();
+    }
+  };
+
   useEffect(() => {
     return resetData()
   },[])
 
   // isLoading 시, skeletonTable
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore()
+  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword, setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore()
 
   useEffect(() => {
     if (!isLoading) {
       setSkeletonData(productList);
       setSkeletonTotalPage(totalPages)
       setSkeletonSortData(sort)
+      setSkeletonSearchCategory(searchCategory);
+      setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage)
+      }
     }
-  }, [productList, totalPages,sort, setSkeletonTotalPage, setSkeletonData, isLoading]);
+  }, [productList, currentPage, totalPages,  sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
 
   if (isLoading) {
     // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
@@ -119,22 +152,43 @@ const ProductTable = () => {
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      <ProductTableFeature tableColumns={tableColumn.product} onSearch={handleSearch} currentPage={currentPage} handleDataReset={handleDataReset} deleteSelectedProductsMutate={deleteSelectedProductsMutate}/>
+      <ProductTableFeature tableColumns={tableColumn.product}
+                           onSearch={handleSearch}
+                           currentPage={currentPage}
+                           handleDataReset={handleDataReset}
+                           deleteSelectedProductsMutate={deleteSelectedProductsMutate}
+                           handleSaveClick={handleSaveClick}
+                           openProductInsertModal={openProductInsertModal}
+                           setOpenProductInsertModal={setOpenProductInsertModal}
+                           dropdownRef={dropdownRef}
+      />
 
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead tableColumns={tableColumn.product} headerType="product" allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
-          <TableBody
-            dataList={productList}
-            TableRowComponent={ProductTableRow}
-            dynamicId='productId'
-            setOpenModal={handleRowClick}
-            selectedMembers={selectedProducts}
-            handleRowChecked={handleRowChecked}
-            currentPage={currentPage}
-          />
+          {productList.length > 0 ? (
+              <TableBody
+                  dataList={productList}
+                  TableRowComponent={ProductTableRow}
+                  dynamicId='productId'
+                  setOpenModal={handleRowClick}
+                  selectedMembers={selectedProducts}
+                  handleRowChecked={handleRowChecked}
+                  currentPage={currentPage}
+              />
+          ) : (
+              <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 상품이 없습니다."}
+                           buttonText={searchCategory && searchKeyword ? "다시 검색하기":"상품 등록하기"}
+                           buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : handleSaveClick}
+                           colNum={tableColumn.product.length} />
+          )}
+
         </Table>
-        {isLoading === false ? <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' /> : null}
+        {isLoading === false && productList.length > 0 ?
+            <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+            : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />
+        }
+
         {/* modal */}
         <ProductDetailModal
           isOpen={openProductDetailModal}

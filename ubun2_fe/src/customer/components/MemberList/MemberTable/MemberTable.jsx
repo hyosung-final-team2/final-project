@@ -8,7 +8,7 @@ import MemberTableRow from './MemberTableRow';
 import ExcelModal from '../ExcelModal/ExcelModal';
 import DynamicTableBody from '../../common/Table/DynamicTableBody.jsx';
 
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useDeleteSelectedMember, useGetMembers} from '../../../api/Customer/MemberList/MemberTable/queris.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { getMembers } from '../../../api/Customer/MemberList/MemberTable/memberTable.js';
@@ -20,6 +20,7 @@ import SkeletonTable from "../../Skeleton/SkeletonTable.jsx";
 import useSkeletonStore from "../../../store/skeletonStore.js";
 import SkeletonMemberTableFeature from "../Skeleton/SkeletonMemberTableFeature.jsx";
 import SkeletonMemberTableRow from "../Skeleton/SkeletonMemberTableRow.jsx";
+import NoDataTable from "../../common/Table/NoDataTable.jsx";
 
 const MemberTable = () => {
 
@@ -33,7 +34,7 @@ const MemberTable = () => {
   const { sort, updateSort } = useMemberTableStore()
   const {searchCategory, setSearchCategory} = useMemberTableStore() // 검색할 카테고리 (드롭다운)
   const {searchKeyword, setSearchKeyword} = useMemberTableStore() // 검색된 단어
-  const { setTotalElements} = useMemberTableStore()
+  const { setTotalElements } = useMemberTableStore()
   const { resetData } = useMemberTableStore()
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -48,6 +49,8 @@ const MemberTable = () => {
   const { data, refetch } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
   const { mutate:selectedMemberDeleteMutate } = useDeleteSelectedMember(selectedMembers, currentPage,sort, searchCategory, searchKeyword);
 
+  const dropdownRef = useRef(null);
+
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -55,7 +58,7 @@ const MemberTable = () => {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['member', nextPage, sort, searchCategory, searchKeyword],
-        queryFn: () => getMembers(nextPage,PAGE_SIZE),
+        queryFn: () => getMembers(nextPage,PAGE_SIZE, sort, searchCategory, searchKeyword),
       });
     }
   }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
@@ -120,6 +123,15 @@ const MemberTable = () => {
     }
   };
 
+  const NoDataTableButtonFunc = () => {
+    setOpenRegisterModal(true)
+  }
+
+  const handleDropdownButtonClick = () => {
+    if (dropdownRef.current) {
+      dropdownRef.current.click();
+    }
+  };
 
   const {toggleIsReset} = useMemberTableStore();
   const handleDataReset = async () => {
@@ -159,27 +171,48 @@ const MemberTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색  등 */}
-      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} selectedMembers={selectedMembers} handleDataReset={handleDataReset} selectedMemberDeleteMutate={selectedMemberDeleteMutate}/>
+      <MemberTableFeature tableColumns={tableColumn.member}
+                          onSearch={handleSearch}
+                          setExcelModal={setOpenExcelModal}
+                          setOpenRegisterModal={setOpenRegisterModal}
+                          selectedMembers={selectedMembers}
+                          handleDataReset={handleDataReset}
+                          selectedMemberDeleteMutate={selectedMemberDeleteMutate}
+                          dropdownRef={dropdownRef}
+      />
 
       {/* 테이블 */}
-      <div className='px-4 shadow-md'>
+      <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead tableColumns={tableColumn.member} headerType="member" allChecked={selectedMembers.length === memberList?.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
+          {
+            memberList.length > 0 ? (
+                <DynamicTableBody
+                    dataList={memberList}
+                    TableRowComponent={MemberTableRow}
+                    dynamicKey='memberEmail'
+                    dynamicId='memberId'
+                    selectedMembers={selectedMembers}
+                    handleRowChecked={handleRowChecked}
+                    setOpenModal={handleRowClick}
+                    currentPage={currentPage}
+                />
+            ) : (
+                <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 회원이 없습니다."}
+                             buttonText={searchCategory && searchKeyword ? "다시 검색하기":"회원 등록하기"}
+                             buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
+                             colNum={tableColumn.member.length}
+                />
+            )
+          }
 
-          <DynamicTableBody
-            dataList={memberList}
-            TableRowComponent={MemberTableRow}
-            dynamicKey='memberEmail'
-            dynamicId='memberId'
-            selectedMembers={selectedMembers}
-            handleRowChecked={handleRowChecked}
-            setOpenModal={handleRowClick}
-            currentPage={currentPage}
-          />
         </Table>
       </div>
       {/* 페이지네이션 */}
-      {isLoading === false ? <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' /> : null}
+      {isLoading === false && memberList.length > 0 ? (
+          <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+          ) : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />
+      }
 
       {/* 엑셀 조회 모달 */}
       {openExcelModal && <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} /> }

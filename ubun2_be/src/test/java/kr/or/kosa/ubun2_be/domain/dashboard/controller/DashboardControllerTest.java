@@ -1,6 +1,5 @@
 package kr.or.kosa.ubun2_be.domain.dashboard.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.dashboard.dto.*;
@@ -31,9 +30,6 @@ class DashboardControllerTest extends CommonTestSetup {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private DashboardService dashboardService;

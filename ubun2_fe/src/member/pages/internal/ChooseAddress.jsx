@@ -24,7 +24,7 @@ const ChooseAddress = ({ title }) => {
   const handleAddressSelect = addressId => {
     setSelectedAddressId(addressId);
     updateOrderData({ addressId });
-    navigate(-1);
+    navigate('/member/app/order');
   };
 
   const handleEdit = address => {

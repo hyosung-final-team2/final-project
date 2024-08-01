@@ -2,7 +2,9 @@ import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircle
 import ChevronRightIcon from '@heroicons/react/24/solid/ChevronRightIcon';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-import { useGetMyAddresses } from '../../api/Address/queries';
+import { maskAccountNumber } from '../../../customer/utils/accountFormat';
+import { maskCardNumber } from '../../../customer/utils/cardFormat';
+import { useGetMyAddresses, useSetDefaultAddressStatus } from '../../api/Address/queries';
 import { useCreateOrder } from '../../api/Order/queris';
 import { useGetAccount, useGetCard } from '../../api/Payment/queries';
 import { successToastStyle } from '../../api/toastStyle';
@@ -14,9 +16,6 @@ import OrderCompleteStore from '../../components/OrderComplete/OrderCompleteStor
 import useModalStore from '../../store/modalStore';
 import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
-import { maskCardNumber } from '../../../customer/utils/cardFormat';
-import { maskAccountNumber } from '../../../customer/utils/accountFormat';
-import { useSetDefaultAddressStatus } from '../../api/Address/queries';
 
 const OrderComplete = () => {
   const { selectedItems, totals, clearCart } = useOrderItemsStore();
@@ -57,6 +56,7 @@ const OrderComplete = () => {
 
   const handleCancel = () => {
     resetOrderData();
+    setModalState(false);
     toast.success('주문이 취소되었습니다.', successToastStyle);
     navigate('/member/app/home', { replace: true });
   };

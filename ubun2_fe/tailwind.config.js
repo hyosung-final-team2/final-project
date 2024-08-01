@@ -23,6 +23,8 @@ module.exports = {
         'badge-orange': '#FD7A30',
         'badge-yellow': '#FDE047',
         'badge-orange-yellow': '#F59E0B',
+        'badge-purple': '#7000A6',
+        'badge-gray': '#331B3F',
         'custom-badge-roadaddr': '#DFECFF',
         'custom-badge-roadaddr-text': '#366EA7',
         'custom-badge-jibun': '#E6E6E6',
@@ -59,6 +61,10 @@ module.exports = {
         'custom-card-shinhan-to': '#002a96',
         'custom-card-nonghyup-from': '#1EAE57',
         'custom-card-nonghyup-to': '#15773b',
+        'custom-card-kakao-from': '#FFD900',
+        'custom-card-kakao-to': '#FFB400',
+        'custom-card-toss-from': '#68686d',
+        'custom-card-toss-to': '#000000',
 
         //dashboard custom color
         'custom-dashboard-pending-bg': '#F86767',

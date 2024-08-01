@@ -1,7 +1,9 @@
 import { ArrowPathIcon } from '@heroicons/react/16/solid';
 import SearchBarWithDrop from '../../common/SearchBar/SearchBarWithDrop';
+import CreateSearchResult from "../../../utils/CreateSearchResult.jsx";
+import usePendingOrderTableStore from "../../../store/PendingOrderTable/pendingOrderTableStore.js";
 
-const PendingOrderTableFeature = ({ tableColumns, onSearch, handleOrderUpdate, selectedPendingOrders, handleDataReset }) => {
+const PendingOrderTableFeature = ({ tableColumns, onSearch, handleOrderUpdate, selectedPendingOrders, handleDataReset, dropdownRef }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const isButtonDisabled = selectedPendingOrders.length === 0;
 
@@ -15,10 +17,13 @@ const PendingOrderTableFeature = ({ tableColumns, onSearch, handleOrderUpdate, s
     handleOrderUpdate(selectedPendingOrders, 'DENIED');
   };
 
+  const { searchCategory, searchKeyword, totalElements} = usePendingOrderTableStore()
+
   return (
     <div className='flex flex-wrap items-center justify-between p-4 space-y-4 bg-white flex-column md:flex-row md:space-y-0 dark:bg-gray-900'>
-      <div className='flex'>
-        <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} />
+      <div className='flex gap-2 items-center'>
+        <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} dropdownRef={dropdownRef}/>
+        <CreateSearchResult searchCategory={searchCategory} searchKeyword={searchKeyword} totalElements={totalElements}/>
       </div>
       <div className='flex gap-2'>
         <button className='normal-case btn btn-ghost btn-sm' onClick={() => handleDataReset()}>

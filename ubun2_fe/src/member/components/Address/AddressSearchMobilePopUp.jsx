@@ -74,17 +74,17 @@ const AddressSearchMobilePopUp = () => {
             <div className='border-b p-2 hover:bg-gray-100 cursor-pointer pl-3 py-3' key={index} onClick={() => postData(result)}>
               <h6 className='text-lg font-semibold'>{result.zipNo}</h6>
               <div className='flex text-sm text-gray-900 my-2'>
-                <Badge color='indigo' size='lg'>
+                <Badge color='indigo' size='lg' className='flex-shrink-0'>
                   도로명
                 </Badge>
-                <div className='ml-2'>{result.roadAddr}</div>
+                <div className='ml-2 truncate'>{result.roadAddr}</div>
               </div>
               <div className='flex text-sm text-gray-600 my-2'>
-                <Badge color='gray' size='lg'>
+                <Badge color='gray' size='lg' className='flex-shrink-0'>
                   구주소
                 </Badge>
 
-                <div className='ml-2'>{result.jibunAddr}</div>
+                <div className='ml-2 truncate'>{result.jibunAddr}</div>
               </div>
             </div>
           ))
