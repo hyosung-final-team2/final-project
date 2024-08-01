@@ -25,10 +25,10 @@ const PendingOrderTableFeature = ({ tableColumns, onSearch, handleOrderUpdate, s
         <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} dropdownRef={dropdownRef}/>
         <CreateSearchResult searchCategory={searchCategory} searchKeyword={searchKeyword} totalElements={totalElements}/>
       </div>
-      <div className='flex gap-2'>
+      <div className='flex gap-2 items-center'>
         <button className='normal-case btn btn-ghost btn-sm' onClick={() => handleDataReset()}>
           <ArrowPathIcon className='w-4 mr-2' />
-          Reset
+          초기화
         </button>
         <button
           onClick={handleApprove}

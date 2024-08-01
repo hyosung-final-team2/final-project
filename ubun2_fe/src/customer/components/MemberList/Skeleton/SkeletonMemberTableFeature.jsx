@@ -16,13 +16,13 @@ const SkeletonMemberTableFeature = () => {
     return (
         <div className='flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4 bg-white dark:bg-gray-900'>
             <div className='flex gap-2 items-center'>
-                <SearchBarWithDrop tableColumns={tableColumn.member} />
+                <SearchBarWithDrop tableColumns={tableColumn.member.search} />
                 <CreateSearchResult searchCategory={skeletonSearchCategory} searchKeyword={skeletonSearchKeyword} totalElements={skeletonTotalElements}/>
             </div>
             <div className='flex gap-2 items-center'>
                 <button className='btn btn-ghost btn-sm normal-case'>
                     <ArrowPathIcon className='w-4 mr-2'/>
-                    Reset
+                    초기화
                 </button>
                 <button
                     className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50 flex gap-2 pr-6 items-center`}>

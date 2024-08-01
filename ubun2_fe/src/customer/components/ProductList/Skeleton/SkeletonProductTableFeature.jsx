@@ -12,7 +12,7 @@ const SkeletonProductTableFeature = () => {
     return (
         <div className='flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4 bg-white dark:bg-gray-900'>
             <div className='flex gap-2 items-center'>
-                <SearchBarWithDrop tableColumns={tableColumn.product} />
+                <SearchBarWithDrop tableColumns={tableColumn.product.search} />
                 <CreateSearchResult searchCategory={skeletonSearchCategory} searchKeyword={skeletonSearchKeyword} totalElements={skeletonTotalElements}/>
             </div>
             <div className='flex gap-2'>
