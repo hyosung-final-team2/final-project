@@ -452,3 +452,13 @@ p > strong::after {
   outline: none;
   box-shadow: none;
 }
+
+/* input password*/
+input[type=password]{
+  font-family: serif;
+}
+
+::placeholder {
+  font-family: 'Hyosung', sans-serif;
+  opacity: 1; /* Firefox */
+}
