@@ -57,7 +57,7 @@ function MyPage() {
     <div className='flex flex-col min-h-full bg-custom-mypage-back-bg'>
       <div className='p-2'>
         {/* User Info Card */}
-        <div className='p-2 mb-4 rounded-xl'>
+        <div className='p-3 mb-4 rounded-xl'>
           <div className='flex flex-col items-center mb-4'>
             {/* <img src='/src/assets/images/png/user-icon.png' alt='Avatar' className='mb-2 rounded-lg w-36 h-36' /> */}
             <User className='mb-2 rounded-lg w-28 h-28' />
@@ -91,7 +91,7 @@ function MyPage() {
         </div>
 
         {/* My Info Section */}
-        <div className='p-2 mt-4'>
+        <div className='p-3 mt-4'>
           <div className='px-8 py-4 space-y-4 bg-white rounded-3xl'>
             <h2 className='p-4 text-xl font-semibold text-gray-500'>내 정보</h2>
             {myInfoItems.map(item => (
