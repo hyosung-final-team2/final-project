@@ -3,6 +3,8 @@ import ArrowPathIcon from "@heroicons/react/24/outline/ArrowPathIcon.js";
 import { tableColumn } from "../../common/Table/tableIndex.js";
 import useSkeletonStore from "../../../store/skeletonStore.js";
 import CreateSearchResult from "../../../utils/CreateSearchResult.jsx";
+import LinkIcon from "@heroicons/react/24/outline/LinkIcon.js";
+import UserPlusIcon from "@heroicons/react/24/outline/UserPlusIcon.js";
 
 
 
@@ -14,7 +16,6 @@ const SkeletonMemberTableFeature = () => {
     return (
         <div className='flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4 bg-white dark:bg-gray-900'>
             <div className='flex gap-2 items-center'>
-                <button  className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`}>링크 전송</button>
                 <SearchBarWithDrop tableColumns={tableColumn.member} />
                 <CreateSearchResult searchCategory={skeletonSearchCategory} searchKeyword={skeletonSearchKeyword} totalElements={skeletonTotalElements}/>
             </div>
@@ -24,9 +25,15 @@ const SkeletonMemberTableFeature = () => {
                     Reset
                 </button>
                 <button
+                    className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50 flex gap-2 pr-6 items-center`}>
+                    <LinkIcon className='w-5'/>
+                    링크 전송
+                </button>
+                <button
                     className={`${commonButtonStyles} bg-white text-gray-600 hover:text-excel hover:bg-slate-50 flex gap-2 pr-6`}
                 >
-                    <svg width='24px' height='24px' viewBox='-4 0 64 64' xmlns='http://www.w3.org/2000/svg' fill='#000000'>
+                    <svg width='24px' height='24px' viewBox='-4 0 64 64' xmlns='http://www.w3.org/2000/svg'
+                         fill='#000000'>
                         <g id='SVGRepo_bgCarrier' strokeWidth='0'></g>
                         <g id='SVGRepo_tracerCarrier' strokeLinecap='round' strokeLinejoin='round'></g>
                         <g id='SVGRepo_iconCarrier'>
@@ -57,11 +64,12 @@ const SkeletonMemberTableFeature = () => {
                     </svg>
                     엑셀 등록
                 </button>
-                <button
-                        className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`}>
+                <button className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50 flex gap-2 pr-6 items-center`}>
+                    <UserPlusIcon className='w-5'/>
                     회원 등록
                 </button>
-                <button className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제
+                <button
+                    className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제
                 </button>
             </div>
         </div>

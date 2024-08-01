@@ -112,19 +112,21 @@ const CalendarView = () => {
         setCurrMonth(firstDayOfNextMonth.format("MMM-yyyy"));
     };
 
+    moment.locale('ko');
+
     return (
         <>
         <div className="w-full bg-base-100 p-4 rounded-lg" style={{ height: "95%" }}>
             <div className="flex items-center justify-between">
                 <div className="flex justify-normal gap-2 sm:gap-4">
                     <p className="font-semibold text-xl w-48">
-                        {moment(firstDayOfMonth).format("MMMM yyyy")}
+                        {moment(firstDayOfMonth).format("YYYY년 M월")}
                     </p>
                     <button className="btn btn-square btn-sm btn-ghost" onClick={getPrevMonth}>
                         <ChevronLeftIcon className="w-5 h-5" />
                     </button>
                     <button className="btn btn-sm btn-ghost normal-case" onClick={getCurrentMonth}>
-                        Current Month
+                        현재 월로 이동
                     </button>
                     <button className="btn btn-square btn-sm btn-ghost" onClick={getNextMonth}>
                         <ChevronRightIcon className="w-5 h-5" />
