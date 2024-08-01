@@ -31,10 +31,10 @@ export const useCreateOrder = navigate => {
   });
 };
 
-export const useGetOrderList = () => {
+export const useGetOrderList = (periodType, periodValue) => {
   return useQuery({
-    queryKey: ['orders'],
-    queryFn: () => getOrderList(),
+    queryKey: ['orders', periodType, periodValue],
+    queryFn: () => getOrderList(periodType, periodValue),
   });
 };
 

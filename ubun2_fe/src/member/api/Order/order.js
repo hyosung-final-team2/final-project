@@ -10,8 +10,12 @@ export const createOrder = async orderData => {
   return res;
 };
 
-export const getOrderList = async () => {
-  const res = await privateFetch.get('/members/orders');
+export const getOrderList = async (periodType, periodValue) => {
+  const params = new URLSearchParams();
+  if (periodType) params.append('periodType', periodType);
+  if (periodValue) params.append('periodValue', periodValue);
+
+  const res = await privateFetch.get(`/members/orders?${params.toString()}`);
   return res;
 };
 
