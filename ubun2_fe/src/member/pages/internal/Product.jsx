@@ -18,7 +18,6 @@ function Product() {
 
   const { data: productData } = useGetProductDetail(parseInt(productId));
   const product = productData?.data?.data;
-  console.log(product)
   const discountedPrice = Math.round((product?.productPrice * (1 - product?.productDiscount / 100)) / 10) * 10;
 
   const orderOptionFunc = orderOption => {
