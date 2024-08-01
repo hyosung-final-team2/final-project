@@ -48,8 +48,8 @@ const MemberAddressTable = ({ memberAddresses, title }) => {
       {totalPages < 1 ? null : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
       {!memberAddresses?.length ? (
         <>
-          <div className='flex justify-center items-center mx-3 py-16 bg-gray-100 rounded-lg'>
-            <h1>등록된 주소지가 없습니다.</h1>
+          <div className='flex justify-center items-center py-16 bg-gray-100 rounded-t-none rounded-b-lg'>
+            <div className='text-main font-bold text-lg'>등록된 주소지가 없습니다</div>
           </div>
         </>
       ) : null}

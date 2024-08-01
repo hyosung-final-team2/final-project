@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { josa } from 'es-hangul';
 
 const DashboardPieChart = ({ topSellingProductsValue }) => {
   const [legendLayout, setLegendLayout] = useState('vertical');
@@ -35,10 +36,14 @@ const DashboardPieChart = ({ topSellingProductsValue }) => {
     return () => window.removeEventListener('resize', updateLayout);
   }, []);
 
+  const first = josa(topSellingProductNames, '이/가').slice(0, -1);
+  const second = josa(topSellingProductNames, '이/가').slice(-1);
+
   return (
-    <div ref={containerRef} className='h-[30dvh] rounded-2xl p-5 bg-white drop-shadow-lg shadow-lg'>
+    <div ref={containerRef} className='h-[30dvh] rounded-2xl p-5 bg-white drop-shadow-lg shadow-lg col-span-1'>
       <div className='p-2 text-2xl font-bold'>
-        기간 동안 <span className='text-red-600'>{topSellingProductNames}</span>가 <br /> 가장 많이 팔렸어요!
+        기간 동안 <span className='text-red-600'>{first}</span>
+        {second} <br /> 가장 많이 팔렸어요!
       </div>
       <ResponsiveContainer width='100%' height='75%'>
         <PieChart>
