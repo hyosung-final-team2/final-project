@@ -19,6 +19,7 @@
     "chart.js": "^4.0.1",
     "d3-geo": "^3.1.1",
     "dayjs": "^1.11.7",
+    "es-hangul": "^1.4.6",
     "firebase": "^10.12.3",
     "flowbite": "^2.4.1",
     "flowbite-react": "^0.10.1",
