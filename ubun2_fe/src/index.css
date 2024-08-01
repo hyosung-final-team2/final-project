@@ -5,6 +5,33 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Hyosung';
+  src: url('/src/assets/fonts/BrandNewHyosungLight.ttf') format('truetype');
+  src: url('/src/assets/fonts/BrandNewHyosungOTFLight.otf') format('opentype');
+
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Hyosung';
+  src: url('/src/assets/fonts/BrandNewHyosungMedium.ttf') format('truetype');
+  src: url('/src/assets/fonts/BrandNewHyosungOTFMedium.otf') format('opentype');
+
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Hyosung';
+  src: url('/src/assets/fonts/BrandNewHyosungBold.ttf') format('truetype');
+  src: url('/src/assets/fonts/BrandNewHyosungOTFBold.otf') format('opentype');
+
+  font-weight: 700;
+  font-style: normal;
+}
+
 html {
   overscroll-behavior: none;
 }
@@ -39,7 +66,7 @@ html {
 }
 
 * {
-  font-family: 'Toss Product Sans', serif;
+  font-family: 'Hyosung', serif;
 }
 
 .mobile_container {
