@@ -8,7 +8,7 @@ import MemberTableRow from './MemberTableRow';
 import ExcelModal from '../ExcelModal/ExcelModal';
 import DynamicTableBody from '../../common/Table/DynamicTableBody.jsx';
 
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useDeleteSelectedMember, useGetMembers} from '../../../api/Customer/MemberList/MemberTable/queris.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { getMembers } from '../../../api/Customer/MemberList/MemberTable/memberTable.js';
@@ -48,6 +48,8 @@ const MemberTable = () => {
 
   const { data, refetch } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
   const { mutate:selectedMemberDeleteMutate } = useDeleteSelectedMember(selectedMembers, currentPage,sort, searchCategory, searchKeyword);
+
+  const dropdownRef = useRef(null);
 
   const queryClient = useQueryClient();
 
@@ -125,6 +127,11 @@ const MemberTable = () => {
     setOpenRegisterModal(true)
   }
 
+  const handleDropdownButtonClick = () => {
+    if (dropdownRef.current) {
+      dropdownRef.current.click();
+    }
+  };
 
   const {toggleIsReset} = useMemberTableStore();
   const handleDataReset = async () => {
@@ -164,7 +171,15 @@ const MemberTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색  등 */}
-      <MemberTableFeature tableColumns={tableColumn.member} onSearch={handleSearch} setExcelModal={setOpenExcelModal} setOpenRegisterModal={setOpenRegisterModal} selectedMembers={selectedMembers} handleDataReset={handleDataReset} selectedMemberDeleteMutate={selectedMemberDeleteMutate}/>
+      <MemberTableFeature tableColumns={tableColumn.member}
+                          onSearch={handleSearch}
+                          setExcelModal={setOpenExcelModal}
+                          setOpenRegisterModal={setOpenRegisterModal}
+                          selectedMembers={selectedMembers}
+                          handleDataReset={handleDataReset}
+                          selectedMemberDeleteMutate={selectedMemberDeleteMutate}
+                          dropdownRef={dropdownRef}
+      />
 
       {/* 테이블 */}
       <div className='px-4'>
@@ -183,7 +198,11 @@ const MemberTable = () => {
                     currentPage={currentPage}
                 />
             ) : (
-                <NoDataTable text="등록된 회원이 없습니다." buttonText="회원 등록하기" buttonFunc={NoDataTableButtonFunc}/>
+                <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 회원이 없습니다."}
+                             buttonText={searchCategory && searchKeyword ? "다시 검색하기":"회원 등록하기"}
+                             buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
+                             colNum={tableColumn.member.length}
+                />
             )
           }
 

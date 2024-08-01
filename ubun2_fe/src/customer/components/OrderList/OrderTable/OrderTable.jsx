@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Table } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import {useEffect, useRef, useState} from 'react';
 import { useGetOrderDetail } from '../../../api/Order/OrderList/OrderModal/queris.js';
 import { getOrders } from '../../../api/Order/OrderList/OrderTable/orderTable.js';
 import { useGetOrders } from '../../../api/Order/OrderList/OrderTable/queris.js';
@@ -43,6 +43,8 @@ const OrderTable = () => {
   const orderList = orders?.data?.data?.content || [];
 
   const { data, refetch } = useGetOrderDetail(selectedOrderDetail.orderId, selectedOrderDetail.subscription);
+
+  const dropdownRef = useRef(null);
 
   const queryClient = useQueryClient();
 
@@ -119,6 +121,12 @@ const OrderTable = () => {
     await setCurrentPage(1);
   };
 
+  const handleDropdownButtonClick = () => {
+    if (dropdownRef.current) {
+      dropdownRef.current.click();
+    }
+  };
+
   useEffect(() => {
     return () => {
       resetData();
@@ -161,7 +169,11 @@ const OrderTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
-      <OrderTableFeature tableColumns={tableColumn.ordersSearch} onSearch={handleSearch} handleDataReset={handleDataReset} />
+      <OrderTableFeature tableColumns={tableColumn.ordersSearch}
+                         onSearch={handleSearch}
+                         handleDataReset={handleDataReset}
+                         dropdownRef={dropdownRef}
+      />
 
       {/* 테이블 */}
       <div className='px-4'>
@@ -183,7 +195,11 @@ const OrderTable = () => {
                   currentPage={currentPage}
               />
           ) : (
-              <NoDataTable text="주문 내역이 없습니다" buttonText="메인으로 가기" buttonFunc={NoDataTableButtonFunc} colNum={tableColumn.orders.length} />
+              <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "주문 내역이 없습니다."}
+                           buttonText={searchCategory && searchKeyword ? "다시 검색하기":"메인으로 가기"}
+                           buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
+                           colNum={tableColumn.orders.length}
+              />
           ) }
 
         </Table>
