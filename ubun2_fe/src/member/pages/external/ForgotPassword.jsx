@@ -31,7 +31,7 @@ const ForgotPassword = () => {
     const navigate = useNavigate();
 
 
-    const {mutate:sendEmailMutate} = useSendEmail(passwordObj.memberEmail)
+    const {mutate:sendEmailMutate} = useSendEmail(passwordObj.memberEmail,"ROLE_MEMBER",false);
     const {mutate:authEmailMutate} = useAuthEmail();
 
 
@@ -104,12 +104,24 @@ const ForgotPassword = () => {
         setRegisterObj({ ...passwordObj, [updateType]: value });
     };
 
+    const [isEmailCheckPass, setIsEmailCheckPass] = useState(null);
+    const [duplicateEmailMessage, setDuplicateEmailMessage] = useState(null);
+
     const buttonFuncSendEmail = () => {
-        sendEmailMutate({},{
-            onSuccess: setIsSendEmail(true),
-        })
-        setIsSendEmail(true);
-        setTimerValue(300);
+        sendEmailMutate({},
+            {
+                onSuccess: () => {
+                    setIsSendEmail(true);
+                    setTimerValue(300);
+                    setIsEmailCheckPass(true)
+                    setDuplicateEmailMessage(null)
+                },
+                onError: (err) => {
+                    console.log(err)
+                    setIsEmailCheckPass(false)
+                    setDuplicateEmailMessage(err.response.data.errorMessage)
+                }
+            });
     };
 
     const buttonFuncAuthEmail = () => {
@@ -166,6 +178,10 @@ const ForgotPassword = () => {
                                   buttonFunc={buttonFuncSendEmail}
                                   regex={emailRegex}
                                   regexMessage={emailRegexMessage}
+                                  isAuthInput={true}
+                                  isAuthSuccess={isEmailCheckPass}
+                                  isDuplicateInput={true}
+                                  duplicateMessage={duplicateEmailMessage}
                 />
                 {!isSendEmail ? <p onClick={() => forgotLoginIdFunc()} className='mt-2 text-gray-400 underline text-end'>아이디를
                     잊어버렸어요</p> : null}

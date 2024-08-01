@@ -1,10 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { authEmail, checkDuplicateId, sendEmail } from './register.js';
 
-export const useSendEmail = (email, userType) => {
+export const useSendEmail = (email, userType, isRegister) => {
   const emailData = {
     email,
     userType,
+    isRegister
   };
   return useMutation({
     mutationFn: () => sendEmail(emailData),

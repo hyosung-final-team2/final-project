@@ -34,7 +34,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
   const [timerValue, setTimerValue] = useState(300);
   const [isAuthSuccess, setIsAuthSuccess] = useState(null);
 
-  const {mutate:sendEmailMutate} = useSendEmail(secondRegisterObj.customerEmail)
+  const {mutate:sendEmailMutate} = useSendEmail(secondRegisterObj.customerEmail, "ROLE_CUSTOMER", true)
   const {mutate:authEmailMutate} = useAuthEmail();
   const {mutate:checkDuplicateIdMutate} = useCheckDuplicateId()
 
@@ -87,10 +87,24 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
     setRegisterObj({ ...secondRegisterObj, [updateType]: value });
   };
 
+
+  const [isEmailCheckPass, setIsEmailCheckPass] = useState(null);
+  const [duplicateEmailMessage, setDuplicateEmailMessage] = useState(null);
+
   const buttonFuncSendEmail = () => {
-    sendEmailMutate()
-    setIsSendEmail(true);
-    setTimerValue(300);
+      sendEmailMutate({},
+{
+        onSuccess: () => {
+          setIsSendEmail(true);
+          setTimerValue(300);
+          setIsEmailCheckPass(true)
+          setDuplicateEmailMessage(null)
+        },
+        onError: (err) => {
+          setIsEmailCheckPass(false)
+          setDuplicateEmailMessage(err.response.data.errorMessage)
+        }
+      });
   };
 
   const buttonFuncAuthEmail = () => {
@@ -130,7 +144,6 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
   return (
     <>
       <h2 className='text-3xl font-bold mb-2 text-left text-main'>정보를 입력해주세요.</h2>
-      {/*<form onSubmit={e => submitForm(e)}>*/}
       <div>
         <div className='mb-4'>
           <InputText
@@ -156,6 +169,10 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
             buttonFunc={buttonFuncSendEmail}
             regex={emailRegex}
             regexMessage={emailRegexMessage}
+            isAuthInput={true}
+            isAuthSuccess={isEmailCheckPass}
+            isDuplicateInput={true}
+            duplicateMessage={duplicateEmailMessage}
           />
 
           {isSendEmail && (
@@ -226,7 +243,6 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
           </div>
         </div>
 
-        {/* <ErrorText styleClass='mt-8'>{errorMessage}</ErrorText> */}
         <button
           onClick={() => submitForm()}
           className={
