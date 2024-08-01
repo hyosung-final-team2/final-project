@@ -2,7 +2,7 @@ import { Table, Checkbox } from 'flowbite-react';
 import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
 import PaymentMethodBadge from '../common/Badge/PaymentMethodBadge';
 import { maskCardNumber } from '../../utils/cardFormat';
-import { maskAccountNumber } from '../../utils/accountFormat';
+import { formatBankAccount } from '../../utils/accountFormat';
 import usePaymentMethodTableStore from '../../store/PaymentMethod/paymentMethodTableStore';
 const PaymentMethodTableRow = ({
   paymentMethodId,
@@ -61,7 +61,7 @@ const PaymentMethodTableRow = ({
           {isAccount ? bankName : cardCompanyName}
         </Table.Cell>
         <Table.Cell className={getColorForColumn(sortNumber)} style={{ width: '20%' }}>
-          {isAccount ? maskAccountNumber(accountNumber) : maskCardNumber(cardNumber)}
+          {isAccount ? formatBankAccount(bankName.slice(0, -2), accountNumber, true) : maskCardNumber(cardNumber)}
         </Table.Cell>
       </Table.Row>
     </>

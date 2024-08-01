@@ -26,7 +26,7 @@ const RegisterFirstStep = ({ setRegisterStep, setMemberName, setMemberEmail }) =
   const [isAllValuePossible, setIsAllValuePossible] = useState(false);
   const [firstRegisterObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ);
 
-  const { mutate: sendEmailMutate } = useSendEmail(firstRegisterObj.memberEmail, 'ROLE_MEMBER');
+  const { mutate: sendEmailMutate } = useSendEmail(firstRegisterObj.memberEmail, 'ROLE_MEMBER', true);
   const { mutate: authEmailMutate } = useAuthEmail();
 
   const [isKeyboardOn, setIsKeyboardOn] = useState(false);
@@ -86,15 +86,23 @@ const RegisterFirstStep = ({ setRegisterStep, setMemberName, setMemberEmail }) =
     setRegisterObj({ ...firstRegisterObj, [updateType]: value });
   };
 
+  const [isEmailCheckPass, setIsEmailCheckPass] = useState(null);
+  const [duplicateEmailMessage, setDuplicateEmailMessage] = useState(null);
+
   const buttonFuncSendEmail = () => {
-    sendEmailMutate(
-      {},
-      {
-        onSuccess: setIsSendEmail(true),
-      }
-    );
-    setIsSendEmail(true);
-    setTimerValue(300);
+    sendEmailMutate({},
+        {
+          onSuccess: () => {
+            setIsSendEmail(true);
+            setTimerValue(300);
+            setIsEmailCheckPass(true)
+            setDuplicateEmailMessage(null)
+          },
+          onError: (err) => {
+            setIsEmailCheckPass(false)
+            setDuplicateEmailMessage(err.response.data.errorMessage)
+          }
+        });
   };
 
   const buttonFuncAuthEmail = () => {
@@ -145,6 +153,10 @@ const RegisterFirstStep = ({ setRegisterStep, setMemberName, setMemberEmail }) =
           buttonFunc={buttonFuncSendEmail}
           regex={emailRegex}
           regexMessage={emailRegexMessage}
+          isAuthInput={true}
+          isAuthSuccess={isEmailCheckPass}
+          isDuplicateInput={true}
+          duplicateMessage={duplicateEmailMessage}
         />
         {isSendEmail && (
           <InputTextWithBtn

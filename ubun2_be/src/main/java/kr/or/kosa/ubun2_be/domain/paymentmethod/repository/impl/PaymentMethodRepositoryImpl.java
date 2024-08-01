@@ -47,7 +47,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
                 .join(cardPayment)
                 .on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .join(member.memberCustomers, memberCustomer)
-                .where(paymentMethod.paymentType.eq(String.valueOf(PaymentMethodOption.CARD)).and(memberCustomer.customer.customerId.eq(customerId)),paymentMethodSearch(searchRequest,PaymentMethodOption.CARD))
+                .where(paymentMethod.isDeleted.isFalse(),paymentMethod.paymentType.eq(String.valueOf(PaymentMethodOption.CARD)).and(memberCustomer.customer.customerId.eq(customerId)),paymentMethodSearch(searchRequest,PaymentMethodOption.CARD))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(paymentMethodSort(pageable).toArray(OrderSpecifier[]::new))
@@ -84,7 +84,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
                 .join(accountPayment)
                 .on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
                 .join(member.memberCustomers, memberCustomer)
-                .where(paymentMethod.paymentType.eq(String.valueOf(PaymentMethodOption.ACCOUNT)).and(memberCustomer.customer.customerId.eq(customerId)),paymentMethodSearch(searchRequest,PaymentMethodOption.ACCOUNT))
+                .where(paymentMethod.isDeleted.isFalse(),paymentMethod.paymentType.eq(String.valueOf(PaymentMethodOption.ACCOUNT)).and(memberCustomer.customer.customerId.eq(customerId)),paymentMethodSearch(searchRequest,PaymentMethodOption.ACCOUNT))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(paymentMethodSort(pageable).toArray(OrderSpecifier[]::new))
@@ -137,7 +137,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
                 .join(paymentMethod.member, member)
                 .join(member.memberCustomers, memberCustomer)
                 .join(memberCustomer.customer,customer)
-                .where(paymentMethod.paymentMethodId.eq(paymentMethodId)
+                .where(paymentMethod.isDeleted.isFalse(),paymentMethod.paymentMethodId.eq(paymentMethodId)
                         .and(customer.customerId.eq(customerId)))
                 .fetchOne();
 

@@ -38,7 +38,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
     public Page<Product> findProducts(Long customerId, SearchRequest searchRequest, Pageable pageable, boolean isMember) {
         QueryResults<Product> results = from(product)
                 .join(product.category,category)
-                .where(product.customer.customerId.eq(customerId), productSearch(searchRequest), productStatusForMember(isMember))
+                .where(product.isDeleted.isFalse(),product.customer.customerId.eq(customerId), productSearch(searchRequest), productStatusForMember(isMember))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(productSort(pageable).stream().toArray(OrderSpecifier[]::new))
@@ -123,7 +123,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
     @Override
     public Page<Product> findProductsByCategory(Long customerId, CategoryRequest categoryRequest, Pageable pageable) {
         QueryResults<Product> results = from(product)
-                .where(product.customer.customerId.eq(customerId), categorySearch(categoryRequest),productStatusForMember(true))
+                .where(product.isDeleted.isFalse(),product.customer.customerId.eq(customerId), categorySearch(categoryRequest),productStatusForMember(true))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(product.createdAt.desc()) //생성날짜 내림차순

@@ -22,6 +22,8 @@ import {
   useGetProductCount,
 } from '../../api/Dashboard/queries';
 import { useNavigate } from 'react-router-dom';
+import SkeletonDashboardIndex from './Skeleton/SkeletonDashboardIndex';
+import SkeletonDashboardStats from './Skeleton/SkeletonDashboardStats';
 
 const formatDate = date => {
   const year = date.getFullYear();
@@ -48,13 +50,17 @@ const Dashboard = () => {
   const startDate = dateValue.startDate;
   const endDate = dateValue.endDate;
 
-  const { data: ordersCount, refetch: refetchOrdersCount } = useGetOrdersCount(startDate, endDate);
-  const { data: ordersCountAndRevenue, refetch: refetchOrdersCountAndRevenue } = useGetOrdersCountAndRevenue(startDate, endDate);
-  const { data: productCount, refetch: refetchProductCount } = useGetProductCount();
-  const { data: customerCount, refetch: refetchCustomerCount } = useGetCustomerCount();
-  const { data: topSellingProducts, refetch: refetchTopSellingProducts } = useGetTopSellingProducts(startDate, endDate);
-  const { data: ordersByDate, refetch: refetchOrdersByDate } = useGetOrdersByDate(startDate, endDate);
-  const { data: addressesByDate, refetch: refetchAddressesByDate } = useGetAddressesByDate(startDate, endDate);
+  const { data: ordersCount, refetch: refetchOrdersCount, isLoading: ordersCountIsLoading } = useGetOrdersCount(startDate, endDate);
+  const {
+    data: ordersCountAndRevenue,
+    refetch: refetchOrdersCountAndRevenue,
+    isLoading: ordersCountAndRevenueIsLoading,
+  } = useGetOrdersCountAndRevenue(startDate, endDate);
+  const { data: productCount, refetch: refetchProductCount, isLoading: productCountisLoading } = useGetProductCount();
+  const { data: customerCount, refetch: refetchCustomerCount, isLoading: customerCountisLoading } = useGetCustomerCount();
+  const { data: topSellingProducts, refetch: refetchTopSellingProducts, isLoading: topSellingProductsIsLoading } = useGetTopSellingProducts(startDate, endDate);
+  const { data: ordersByDate, refetch: refetchOrdersByDate, isLoading: ordersByDateIsLoading } = useGetOrdersByDate(startDate, endDate);
+  const { data: addressesByDate, refetch: refetchAddressesByDate, isLoading: addressesByDateIsLoading } = useGetAddressesByDate(startDate, endDate);
 
   const handleRefresh = useCallback(() => {
     setRefreshKey(prevKey => prevKey + 1);
@@ -156,6 +162,7 @@ const Dashboard = () => {
       hoverBgColor: 'bg-gray-200',
       textColor: 'text-main',
       handleOnclick: handlePendingOrderClick,
+      isLoading: ordersByDateIsLoading,
     },
     {
       id: 'total-orders',
@@ -167,6 +174,7 @@ const Dashboard = () => {
       hoverBgColor: 'bg-gray-200',
       textColor: 'text-main',
       handleOnclick: handleOrdersByDateClick,
+      isLoading: ordersCountIsLoading,
     },
     {
       id: 'members-count',
@@ -178,6 +186,7 @@ const Dashboard = () => {
       hoverBgColor: 'bg-gray-200',
       textColor: 'text-main',
       handleOnclick: handleMembersClick,
+      isLoading: customerCountisLoading,
     },
     {
       id: 'products-count',
@@ -189,8 +198,21 @@ const Dashboard = () => {
       hoverBgColor: 'bg-gray-200',
       textColor: 'text-main',
       handleOnclick: handleProductsClick,
+      isLoading: productCountisLoading,
     },
   ];
+
+  if (
+    ordersCountIsLoading ||
+    ordersCountAndRevenueIsLoading ||
+    productCountisLoading ||
+    customerCountisLoading ||
+    topSellingProductsIsLoading ||
+    ordersByDateIsLoading ||
+    addressesByDateIsLoading
+  ) {
+    return <SkeletonDashboardIndex />;
+  }
 
   return (
     <div className='px-4 pb-4 h-[95%] bg-white' key={refreshKey}>

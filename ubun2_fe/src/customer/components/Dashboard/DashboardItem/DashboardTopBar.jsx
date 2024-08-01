@@ -1,8 +1,5 @@
 // import SelectBox from "../../../components/Input/SelectBox"
-import ArrowDownTrayIcon from '@heroicons/react/24/outline/ArrowDownTrayIcon';
 import SaveIcon from '@heroicons/react/24/outline/ArrowDownTrayIcon';
-import EnvelopeIcon from '@heroicons/react/24/outline/EnvelopeIcon';
-import EllipsisVerticalIcon from '@heroicons/react/24/outline/EllipsisVerticalIcon';
 import ArrowPathIcon from '@heroicons/react/24/outline/ArrowPathIcon';
 import Datepicker from 'react-tailwindcss-datepicker';
 import { useState } from 'react';
@@ -42,7 +39,7 @@ const DashboardTopBar = ({ dateValue, setDateValue, onRefresh, captureAndSaveIma
       <div className='text-right '>
         <button className='btn btn-ghost btn-sm normal-case' onClick={handleRefreshData}>
           <ArrowPathIcon className='w-4 mr-2' />
-          Refresh Data
+          초기화
         </button>
         <button className='btn btn-ghost btn-sm normal-case  ml-2' onClick={captureAndSaveImage}>
           <SaveIcon className='w-4 mr-2' />

@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId, boolean isMember) {
-        Product findProduct = productRepository.findByCustomerCustomerIdAndProductId(customerId, productId)
+        Product findProduct = productRepository.findByIsDeletedFalseAndCustomerCustomerIdAndProductId(customerId, productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
 
         return new ProductDetailResponse(findProduct);
@@ -100,7 +100,7 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Override
     public void removeProduct(Long customerId, Long productId) {
-        Product findProduct = productRepository.findByCustomerCustomerIdAndProductId(customerId, productId)
+        Product findProduct = productRepository.findByIsDeletedFalseAndCustomerCustomerIdAndProductId(customerId, productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
         inventoryService.removeStock(findProduct.getProductId());
         if(findProduct.getProductImagePath()!=null) {
@@ -112,7 +112,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public boolean isExistProductName(String productName) {
-        return productRepository.existsByProductName(productName);
+        return productRepository.existsByIsDeletedFalseAndProductName(productName);
     }
 
     @Override

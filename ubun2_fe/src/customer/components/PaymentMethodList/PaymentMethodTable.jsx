@@ -73,17 +73,16 @@ const PaymentMethodTable = () => {
     setCheckedMembers(prev => (prev.includes(id) ? prev.filter(prevId => prevId !== id) : [...prev, id]));
   }, []);
 
-  const handleRowClick = useCallback(
-    async (paymentMethodId, memberId, payment) => {
-      setPaymentMethodId(paymentMethodId);
-      await refetchPaymentDetail();
-      setOpenModal(true);
-      setClickedPayment(payment);
-      setSelectedMemberId(memberId);
-    },
-    [refetchPaymentDetail, setOpenModal, setSelectedMemberId]
-  );
-
+  const handleRowClick = async (paymentMethodId, memberId, payment) => {
+    console.log('paymentMethodId', paymentMethodId);
+    console.log('memberId', memberId);
+    console.log('payment', payment);
+    setPaymentMethodId(paymentMethodId);
+    setOpenModal(true);
+    setClickedPayment(payment);
+    setSelectedMemberId(memberId);
+    await refetchPaymentDetail();
+  };
   const handleSearch = useCallback(
     (term, category) => {
       if (term.trim() === '' || category === '카테고리') return;

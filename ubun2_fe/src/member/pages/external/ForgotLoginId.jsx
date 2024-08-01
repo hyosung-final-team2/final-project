@@ -32,7 +32,7 @@ const ForgotLoginId = () => {
     const navigate = useNavigate();
 
 
-    const {mutate:sendEmailMutate} = useSendEmail(loginIdObj.memberEmail)
+    const {mutate:sendEmailMutate} = useSendEmail(loginIdObj.memberEmail,"ROLE_MEMBER",false)
     const {mutate:authEmailMutate} = useAuthEmail();
 
 
@@ -102,13 +102,26 @@ const ForgotLoginId = () => {
         setRegisterObj({ ...loginIdObj, [updateType]: value });
     };
 
+    const [isEmailCheckPass, setIsEmailCheckPass] = useState(null);
+    const [duplicateEmailMessage, setDuplicateEmailMessage] = useState(null);
+
     const buttonFuncSendEmail = () => {
-        sendEmailMutate({},{
-            onSuccess: setIsSendEmail(true),
-        })
-        setIsSendEmail(true);
-        setTimerValue(300);
+        sendEmailMutate({},
+            {
+                onSuccess: () => {
+                    setIsSendEmail(true);
+                    setTimerValue(300);
+                    setIsEmailCheckPass(true)
+                    setDuplicateEmailMessage(null)
+                },
+                onError: (err) => {
+                    console.log(err)
+                    setIsEmailCheckPass(false)
+                    setDuplicateEmailMessage(err.response.data.errorMessage)
+                }
+            });
     };
+
 
     const buttonFuncAuthEmail = () => {
         authEmailMutate({
@@ -177,6 +190,10 @@ const ForgotLoginId = () => {
                                   buttonFunc={buttonFuncSendEmail}
                                   regex={emailRegex}
                                   regexMessage={emailRegexMessage}
+                                  isAuthInput={true}
+                                  isAuthSuccess={isEmailCheckPass}
+                                  isDuplicateInput={true}
+                                  duplicateMessage={duplicateEmailMessage}
                 />
                 {!isSendEmail ? <p onClick={() => forgotPasswordFunc()} className='mt-2 text-gray-400 underline text-end'>비밀번호를 잊어버렸어요</p> : null}
                 {isSendEmail && (
