@@ -34,7 +34,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterSecondData }) => {
   const [timerValue, setTimerValue] = useState(300);
   const [isAuthSuccess, setIsAuthSuccess] = useState(null);
 
-  const {mutate:sendEmailMutate} = useSendEmail(secondRegisterObj.customerEmail, "ROLE_CUSTOMER", true)
+  const {mutate:sendEmailMutate} = useSendEmail(secondRegisterObj.customerEmail, "ROLE_CUSTOMER", "YES")
   const {mutate:authEmailMutate} = useAuthEmail();
   const {mutate:checkDuplicateIdMutate} = useCheckDuplicateId()
 

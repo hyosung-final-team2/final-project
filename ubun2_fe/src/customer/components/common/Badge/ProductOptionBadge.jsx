@@ -6,7 +6,7 @@ const ProductOptionBadge = ({ productOption }) => {
   return productOption === 'SINGLE' ? (
     <div className='flex items-center space-x-2'>
       <SingleIcon className='w-6 h-6' />
-      <span>단기</span>
+      <span>단건</span>
     </div>
   ) : productOption === 'SUBSCRIPTION' ? (
     <div className='flex items-center space-x-2'>
@@ -16,7 +16,7 @@ const ProductOptionBadge = ({ productOption }) => {
   ) : (
     <div className='flex items-center space-x-2'>
       <BothIcon className='w-6 h-6' />
-      <span>단&정기</span>
+      <span>단건&정기</span>
     </div>
   );
 };
