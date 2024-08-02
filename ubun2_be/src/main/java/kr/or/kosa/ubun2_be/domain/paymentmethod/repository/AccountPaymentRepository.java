@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface AccountPaymentRepository extends JpaRepository<AccountPayment, Long> {
     Optional<AccountPayment> findByIsDeletedFalseAndPaymentMethodId(Long paymentMethodId);
+    Optional<AccountPayment> findByPaymentMethodId(Long paymentMethodId);
 }

@@ -348,6 +348,21 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             processSubscriptionOrder(order);
         }
     }
+    @Override
+    @Transactional
+    public SubscriptionOrderDetailResponse getSubscriptionOrderByCustomerIdAndOrderId(Long orderId, Long customerId) {
+        SubscriptionOrder subscriptionOrder = subscriptionOrderRepository.findSubscriptionOrderByIdAndCustomerId(orderId, customerId)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
+
+        int latestCycleNumber = findLatestCycleNumber(customerId, orderId);
+
+        return createSubscriptionOrderDetailResponse(subscriptionOrder,latestCycleNumber);
+    }
+
+    private int findLatestCycleNumber(Long customerId, Long orderId) {
+        return subscriptionOrderRepository.findLatestCycleNumberByCustomerIdAndOrderId(customerId, orderId)
+                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
+    }
 
     @Override
     public SubscriptionOrderDetailResponse getSubscriptionOrderByMemberIdAndOrderId(Long memberId, Long orderId) {
@@ -355,30 +370,28 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
         int latestCycleNumber = findSubscriptionOrder.getMaxCycleNumber();
-        PaymentMethod paymentMethod = findSubscriptionOrder.getPaymentMethod();
 
-        if (paymentMethod == null) {
-            return new SubscriptionOrderDetailResponse(findSubscriptionOrder, latestCycleNumber);
-        }
+        return createSubscriptionOrderDetailResponse(findSubscriptionOrder,latestCycleNumber);
+    }
 
-        Long paymentMethodId = paymentMethod.getPaymentMethodId();
-        String paymentMethodType = paymentMethod.getPaymentType();
+    private SubscriptionOrderDetailResponse createSubscriptionOrderDetailResponse(SubscriptionOrder findSubOrder, int latestCycleNumber) {
+        Long paymentMethodId = findSubOrder.getPaymentMethod().getPaymentMethodId();
+        String paymentMethodType = findSubOrder.getPaymentMethod().getPaymentType();
 
         switch (paymentMethodType) {
             case "CARD" -> {
-                CardPayment cardPayment = cardPaymentRepository.findByIsDeletedFalseAndPaymentMethodId(paymentMethodId)
+                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
                         .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
-                return new SubscriptionOrderDetailResponse(findSubscriptionOrder, cardPayment, latestCycleNumber);
+                return new SubscriptionOrderDetailResponse(findSubOrder, cardPayment, latestCycleNumber);
             }
             case "ACCOUNT" -> {
-                AccountPayment accountPayment = accountPaymentRepository.findByIsDeletedFalseAndPaymentMethodId(paymentMethodId)
+                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
                         .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
-                return new SubscriptionOrderDetailResponse(findSubscriptionOrder, accountPayment, latestCycleNumber);
+                return new SubscriptionOrderDetailResponse(findSubOrder, accountPayment, latestCycleNumber);
             }
             default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
         }
     }
-
     @Transactional
     public void removeSubscriptionOrderProducts(Long memberId, RemoveSubscriptionOrderProductRequest request) {
         memberService.isExistMemberCustomer(memberId, request.getCustomerId());
