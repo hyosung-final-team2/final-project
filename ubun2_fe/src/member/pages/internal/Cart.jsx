@@ -7,11 +7,11 @@ import { errorToastStyle } from '../../api/toastStyle';
 import { cycleContent } from '../../components/Cart/cartDummyData';
 import CartStore from '../../components/Cart/cartList/CartStore';
 import EmptyCartBox from '../../components/Cart/cartList/EmptyCartBox';
+import ModalBottomButton from '../../components/common/button/ModalBottomButton';
 import PaymentSummaryPre from '../../components/common/paymentSummary/PaymentSummaryPre';
 import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
-import ModalBottomButton from '../../components/common/button/ModalBottomButton';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -213,9 +213,9 @@ const Cart = () => {
       )}
 
       <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='배송 주기 선택' isButton={false}>
-        <div className='flex flex-col items-start space-y-4'>
+        <div className='flex flex-col items-start space-y-4 text-start'>
           {cycleContent.map(content => (
-            <button key={content.value} onClick={() => handlePeriodSelection(content.value)} className='p-2 text-lg text-gray-500'>
+            <button key={content.value} onClick={() => handlePeriodSelection(content.value)} className='flex w-full p-2 text-lg text-gray-500'>
               {content.text}
             </button>
           ))}
