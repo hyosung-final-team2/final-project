@@ -13,7 +13,6 @@ const TableHead = ({ tableColumns, headerType, allChecked, setAllChecked, handle
       </Table.HeadCell>
       {/* tableindx에 본인이 개발하는 테이블의 컬럼 넣고 export */}
       {tableColumns.map((item, idx) => {
-
         if (nonSort.includes(item)) {
           return <TableHeadCell key={idx} colunmName={item} nonSort={true} />;
         }
@@ -24,6 +23,9 @@ const TableHead = ({ tableColumns, headerType, allChecked, setAllChecked, handle
     <Table.Head>
       {/* tableindx에 본인이 개발하는 테이블의 컬럼 넣고 export */}
       {tableColumns.map((item, idx) => {
+        if (nonSort.includes(item)) {
+          return <TableHeadCell key={idx} colunmName={item} nonSort={true} />;
+        }
         return <TableHeadCell key={idx} colunmName={item} />;
       })}
     </Table.Head>
