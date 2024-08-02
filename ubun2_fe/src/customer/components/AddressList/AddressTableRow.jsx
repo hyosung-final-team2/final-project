@@ -1,10 +1,22 @@
 import { Table, Checkbox } from 'flowbite-react';
 import useAddressTableStore from '../../store/Address/addressTableStore.js';
+import StatusBadge from "../common/Badge/StatusBadge.jsx";
 
-const AddressTableRow = ({ memberId, addressId, memberName, address, setOpenModal, isChecked, handleRowChecked }) => {
+const AddressTableRow = ({ memberId, addressId, memberName, address, setOpenModal, isChecked, handleRowChecked, isEmpty,colNum }) => {
+  const { sort } = useAddressTableStore();
+
+  if (isEmpty) {
+    return (
+        <Table.Row className="cursor-default">
+          <Table.Cell colSpan={colNum + 1} className="text-center text-gray-500 bg-gray-50">
+            <span className="invisible">없음</span>
+          </Table.Cell>
+        </Table.Row>
+    );
+  }
   const [zipNo, city, town, ...detail] = address.split(',');
 
-  const { sort } = useAddressTableStore();
+
 
   const getColorForColumn = column => {
     const sortItem = sort.find(item => item.startsWith(`${column},`));
