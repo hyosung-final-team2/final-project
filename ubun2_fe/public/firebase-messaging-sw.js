@@ -32,3 +32,11 @@ messaging.onBackgroundMessage((payload) => {
     };
     self.registration.showNotification(notificationTitle, notificationOptions);
 });
+
+// 클릭 시 수행
+self.addEventListener("notificationclick", function (event) {
+    const url = "https://clicknbuy.co.kr/member/login"
+    event.notification.close();
+    event.waitUntil(self.clients.openWindow(url));
+    // event.waitUntil(clients.openWindow(url));
+});

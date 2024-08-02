@@ -19,14 +19,32 @@ const CreateSearchResult = ({ searchCategory, searchKeyword, totalElements }) =>
             const firstData = searchKeyword?.split(",")[0]
             const secondData = searchKeyword?.split(",")[1]
 
+            let unit = "";
+            switch (searchCategory) {
+                case 'stockQuantity':
+                    unit = "개";
+                    break;
+                case 'productPrice':
+                    unit = "원";
+                    break;
+                case 'productDiscount':
+                    unit = "%";
+                    break;
+                case 'totalCost':
+                    unit = "원";
+                    break;
+                default:
+                    unit = "";
+            }
+
             if (firstData === "0") {
-                return `${secondData} 이하` // 부등호로 바꾸면 더 좋을수도
+                return `${parseInt(secondData).toLocaleString()}${unit} 이하`;
             } else if (secondData === "1000000000") {
-                return ` ${firstData} 이상`  // 부등호로 바꾸면 더 좋을수도
+                return `${parseInt(firstData).toLocaleString()}${unit} 이상`;
             } else if (firstData === secondData) {
-                return `${firstData}`
+                return `${parseInt(firstData).toLocaleString()}${unit}`;
             } else {
-                return `${firstData} - ${secondData}`
+                return `${parseInt(firstData).toLocaleString()}${unit} - ${parseInt(secondData).toLocaleString()}${unit}`;
             }
         }
 
