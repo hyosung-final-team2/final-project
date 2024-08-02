@@ -8,7 +8,8 @@ import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressException;
 import kr.or.kosa.ubun2_be.domain.address.exception.AddressExceptionType;
 import kr.or.kosa.ubun2_be.domain.address.repository.AddressRepository;
-import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
+import kr.or.kosa.ubun2_be.domain.alarm.event.SubscribeAlarmEvent;
+import kr.or.kosa.ubun2_be.domain.alarm.event.UnSubscribeAlarmEvent;
 import kr.or.kosa.ubun2_be.domain.customer.dto.request.*;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberDetailResponse;
 import kr.or.kosa.ubun2_be.domain.customer.dto.response.MemberListResponse;
@@ -40,6 +41,7 @@ import kr.or.kosa.ubun2_be.domain.paymentmethod.repository.PaymentMethodReposito
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.product.service.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -69,8 +71,10 @@ public class CustomerServiceImpl implements CustomerService {
     private final AccountPaymentRepository accountPaymentRepository;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
-    private final AlarmService alarmService;
+    //private final AlarmService alarmService;
     private final ImageService imageService;
+    private final ApplicationEventPublisher eventPublisher;
+
 
     @Override
     public Customer findById(Long customerId) {
@@ -105,7 +109,8 @@ public class CustomerServiceImpl implements CustomerService {
             // 1. 있으면 => 이미 서비스에 가입되어있는 회원이기에 바로 다대다 테이블에 등록
             memberCustomerRepository.save(MemberCustomer.createMemberCustomer(memberOptional.get(),customer));
             // TODO: 구독 로직
-            alarmService.subscribeCustomer(memberOptional.get().getFcmToken(), customerId);
+           // alarmService.subscribeCustomer(memberOptional.get().getFcmToken(), customerId);
+            eventPublisher.publishEvent(new SubscribeAlarmEvent(memberOptional.get().getFcmToken(), customerId));
         } else {
             // 2. 없으면 => 가입 대기중인 pendingMemberTable에 등록
             pendingMemberRepository.save(PendingMember.createPendingMember(registerMemberRequest,customer));
@@ -325,7 +330,9 @@ public class CustomerServiceImpl implements CustomerService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
         memberRepository.deleteById(memberId);
-        alarmService.unsubscribeCustomer(member.getFcmToken(), customerId);
+        //TODO
+        //alarmService.unsubscribeCustomer(member.getFcmToken(), customerId);
+        eventPublisher.publishEvent(new UnSubscribeAlarmEvent(member.getFcmToken(), customerId));
     }
 
     @Transactional

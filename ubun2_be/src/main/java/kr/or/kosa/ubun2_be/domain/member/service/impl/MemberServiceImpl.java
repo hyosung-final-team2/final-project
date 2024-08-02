@@ -1,6 +1,7 @@
 package kr.or.kosa.ubun2_be.domain.member.service.impl;
 
-import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
+import kr.or.kosa.ubun2_be.domain.alarm.event.SubscribeAlarmEvent;
+import kr.or.kosa.ubun2_be.domain.alarm.event.UnSubscribeAlarmEvent;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
 import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
 import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
@@ -16,6 +17,7 @@ import kr.or.kosa.ubun2_be.domain.member.repository.PendingMemberRepository;
 import kr.or.kosa.ubun2_be.domain.member.service.MemberService;
 import kr.or.kosa.ubun2_be.global.auth.enums.UserRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +34,8 @@ public class MemberServiceImpl implements MemberService {
     private final MemberCustomerRepository memberCustomerRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
-    private final AlarmService alarmService;
+    //private final AlarmService alarmService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -54,7 +57,8 @@ public class MemberServiceImpl implements MemberService {
         }
         for (PendingMember findPendingMember : findPendingMembers) {
             memberCustomerRepository.save(MemberCustomer.createMemberCustomer(savedMember,findPendingMember.getCustomer()));
-            alarmService.subscribeCustomer(memberSignUpRequest.getFcmToken(), findPendingMember.getCustomer().getId());
+            //alarmService.subscribeCustomer(memberSignUpRequest.getFcmToken(), findPendingMember.getCustomer().getId());
+            eventPublisher.publishEvent(new SubscribeAlarmEvent(memberSignUpRequest.getFcmToken(),findPendingMember.getCustomer().getId()));
             pendingMemberRepository.delete(findPendingMember);
         }
     }
@@ -103,14 +107,16 @@ public class MemberServiceImpl implements MemberService {
 
         // 1. 원래 FcmToken으로 구독된거 다 끊어주고
         for (MemberCustomer memberCustomer : memberCustomers) {
-            alarmService.unsubscribeCustomer(member.getFcmToken(), memberCustomer.getCustomer().getCustomerId());
+            //alarmService.unsubscribeCustomer(member.getFcmToken(), memberCustomer.getCustomer().getCustomerId());
+            eventPublisher.publishEvent(new UnSubscribeAlarmEvent(member.getFcmToken(),memberCustomer.getCustomer().getCustomerId()));
         }
         // 2. FCM 토큰 업데이트 해주고
         member.updateMemberFcmToken(fcmTokenRequest.getFcmToken());
 
         // 3. 바뀐 토큰으로 다시 구독
         for (MemberCustomer memberCustomer : memberCustomers) {
-            alarmService.subscribeCustomer(fcmTokenRequest.getFcmToken(), memberCustomer.getCustomer().getCustomerId());
+            //alarmService.subscribeCustomer(fcmTokenRequest.getFcmToken(), memberCustomer.getCustomer().getCustomerId());
+            eventPublisher.publishEvent(new SubscribeAlarmEvent(member.getFcmToken(),memberCustomer.getCustomer().getCustomerId()));
         }
 
     }
