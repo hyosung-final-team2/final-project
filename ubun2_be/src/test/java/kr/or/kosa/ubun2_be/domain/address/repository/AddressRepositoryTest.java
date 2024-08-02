@@ -58,7 +58,7 @@ class AddressRepositoryTest {
     @Test
     @DisplayName("회원 ID로 주소 찾기")
     void findByMemberMemberId() {
-        List<Address> addresses = addressRepository.findByMemberMemberId(member1.getMemberId());
+        List<Address> addresses = addressRepository.findByIsDeletedFalseAndMemberMemberId(member1.getMemberId());
         assertThat(addresses).hasSize(1);
         assertThat(addresses.get(0).getAddress()).isEqualTo("Test Address 1");
     }
@@ -66,7 +66,7 @@ class AddressRepositoryTest {
     @Test
     @DisplayName("주소 ID와 회원 ID로 주소 찾기")
     void findByAddressIdAndMemberMemberId() {
-        Optional<Address> foundAddress = addressRepository.findByAddressIdAndMemberMemberId(address1.getAddressId(), member1.getMemberId());
+        Optional<Address> foundAddress = addressRepository.findByIsDeletedFalseAndAddressIdAndMemberId(address1.getAddressId(), member1.getMemberId());
         assertThat(foundAddress).isPresent();
         assertThat(foundAddress.get().getAddress()).isEqualTo("Test Address 1");
     }
