@@ -1,7 +1,7 @@
 export const tableColumn = {
   member: {
     list: ['회원 이메일', '회원명', '전화번호', '가입일', '가입 상태'],
-    search:['회원 이메일', '회원명', '전화번호', '가입일']
+    search: ['회원 이메일', '회원명', '전화번호', '가입일'],
   },
   address: {
     list: ['회원명', '주소(시, 도)', '주소(시,군,구)', '상세주소', '우편번호'],
@@ -17,14 +17,17 @@ export const tableColumn = {
     cardSearch: ['회원 이메일', '회원명', '카드사명'],
     nonSort: ['결제수단'],
   },
-  orders: ['정기 주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '주문결제수단', '승인 상태'],
-  pendingOrders: ['정기 주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '주문결제수단', '승인 상태'],
   product: {
     // list:['분류', '상품명', '수량', '상품가격', '할인율', '상품게시 상태', '배송 종류'],
-    list:['배송 종류','분류', '상품명', '수량', '상품가격', '할인율', '상품게시 상태'],
-    search:['분류', '상품명', '수량', '상품가격', '할인율'],
+    list: ['배송 종류', '분류', '상품명', '수량', '상품가격', '할인율', '상품게시 상태'],
+    search: ['분류', '상품명', '수량', '상품가격', '할인율'],
   },
-  ordersSearch: ['주문 일자', '주문자(구매자)', '총 주문금액'],
+  order: {
+    orders: ['주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '결제종류', '승인 상태'],
+    pendingOrders: ['주문 상태', '주문 일자', '주문자(구매자)', '총 주문금액', '결제종류', '승인/거절'],
+    search: ['주문 일자', '주문자(구매자)', '총 주문금액'],
+    nonSort: ['결제종류', '승인/거절'],
+  },
 };
 
 export const columnMapping = {
@@ -58,4 +61,4 @@ export const getKeyByValue = (object, value) => {
   return Object.keys(object).find(key => object[key] === value);
 };
 
-export const betweenColumn = new Set(['createdAt', 'stockQuantity', 'productPrice', 'productDiscount','totalCost']);
+export const betweenColumn = new Set(['createdAt', 'stockQuantity', 'productPrice', 'productDiscount', 'totalCost']);

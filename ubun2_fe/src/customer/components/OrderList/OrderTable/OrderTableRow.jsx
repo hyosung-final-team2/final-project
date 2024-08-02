@@ -19,9 +19,8 @@ const OrderTableRow = ({
   isChecked,
   handleRowChecked,
   currentPage,
-   isEmpty,
-   colNum
-
+  isEmpty,
+  colNum,
 }) => {
   const { sort } = useOrderTableStore();
 
@@ -36,20 +35,19 @@ const OrderTableRow = ({
     return '';
   };
 
-
-    if (isEmpty) {
-        return (
-            <Table.Row className="cursor-default">
-                <Table.Cell colSpan={colNum + 1} className="text-center text-gray-500 bg-gray-50">
-                    <StatusBadge status={'EMPTY'} />
-                </Table.Cell>
-            </Table.Row>
-        );
-    }
+  if (isEmpty) {
+    return (
+      <Table.Row className='cursor-default'>
+        <Table.Cell colSpan={colNum + 1} className='text-center text-gray-500 bg-gray-50'>
+          <StatusBadge status={'EMPTY'} />
+        </Table.Cell>
+      </Table.Row>
+    );
+  }
 
   return (
     <Table.Row className='bg-white' onClick={() => setOpenModal(orderId, subscription, currentPage)}>
-      <Table.Cell className={getColorForColumn('isSubscription')} style={{ width: '20%' }}>
+      <Table.Cell className={getColorForColumn('isSubscription')} style={{ width: '15%' }}>
         <OrderOptionBadge subscription={subscription} />
       </Table.Cell>
       <Table.Cell className={getColorForColumn('createdAt')} style={{ width: '20%' }}>
@@ -61,10 +59,10 @@ const OrderTableRow = ({
       <Table.Cell className={getColorForColumn('totalCost')} style={{ width: '20%' }}>{`${
         totalOrderPrice ? formatCurrency(totalOrderPrice) : '-'
       } 원`}</Table.Cell>
-      <Table.Cell className={getColorForColumn('paymentType')} style={{ width: '10%' }}>
+      <Table.Cell className={getColorForColumn('paymentType')} style={{ width: '15%' }}>
         <PaymentMethodBadge paymentType={paymentType} />
       </Table.Cell>
-      <Table.Cell style={{ width: '10%' }}>
+      <Table.Cell style={{ width: '15%' }}>
         <StatusBadge status={orderStatus} />
       </Table.Cell>
     </Table.Row>

@@ -171,42 +171,51 @@ const OrderTable = () => {
 
   if (isLoading) {
     // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
-    return <SkeletonTable SkeletonTableFeature={SkeletonOrderTableFeature} TableRowComponent={SkeletonOrderTableRow} tableColumns={tableColumn.orders} />;
+    return (
+      <SkeletonTable
+        SkeletonTableFeature={SkeletonOrderTableFeature}
+        TableRowComponent={SkeletonOrderTableRow}
+        tableColumns={tableColumn.order.orders}
+        nonSort={tableColumn.order.nonSort}
+        isCheckable={false}
+      />
+    );
   }
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
-      <OrderTableFeature tableColumns={tableColumn.ordersSearch} onSearch={handleSearch} handleDataReset={handleDataReset} dropdownRef={dropdownRef} />
+      <OrderTableFeature tableColumns={tableColumn.order.search} onSearch={handleSearch} handleDataReset={handleDataReset} dropdownRef={dropdownRef} />
 
       {/* 테이블 */}
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead
-            tableColumns={tableColumn.orders}
+            tableColumns={tableColumn.order.orders}
             allChecked={selectedOrders.length === orderList?.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
             headerType='orders'
-            checkable={false}
+            isCheckable={false}
+            nonSort={tableColumn.order.nonSort}
           />
           {orderList.length > 0 ? (
-              <UnifiedOrderTableBody
-                  dataList={orderList}
-                  TableRowComponent={OrderTableRow}
-                  setOpenModal={handleRowClick}
-                  selectedOrders={selectedOrders}
-                  handleRowChecked={handleRowChecked}
-                  currentPage={currentPage}
-                  PAGE_SIZE={PAGE_SIZE}
-                  colNum={tableColumn.orders.length}
-              />
+            <UnifiedOrderTableBody
+              dataList={orderList}
+              TableRowComponent={OrderTableRow}
+              setOpenModal={handleRowClick}
+              selectedOrders={selectedOrders}
+              handleRowChecked={handleRowChecked}
+              currentPage={currentPage}
+              PAGE_SIZE={PAGE_SIZE}
+              colNum={tableColumn.order.orders.length}
+            />
           ) : (
             <NoDataTable
               text={searchCategory && searchKeyword ? '검색 결과가 없습니다!' : '주문 내역이 없습니다.'}
               buttonText={searchCategory && searchKeyword ? '다시 검색하기' : '메인으로 가기'}
               buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
-              colNum={tableColumn.orders.length}
+              colNum={tableColumn.order.orders.length}
             />
           )}
         </Table>
