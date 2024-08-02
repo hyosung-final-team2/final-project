@@ -22,9 +22,9 @@ const OrderDetailInfo = ({ orderInfo, selectedCycle, isSubscription }) => {
       };
     }
 
-    const cycleProducts = orderInfo.subscriptionOrderProducts.filter(p => p.cycleNumber === selectedCycle);
-    const orderAmount = cycleProducts.reduce((sum, p) => sum + p.price * p.quantity, 0);
-    const discountAmount = cycleProducts.reduce((sum, p) => sum + Math.round((p.price * p.quantity * p.discount) / 100), 0);
+    const cycleProducts = orderInfo?.subscriptionOrderProducts.filter(p => p.cycleNumber === selectedCycle);
+    const orderAmount = cycleProducts?.reduce((sum, p) => sum + p.price * p.quantity, 0);
+    const discountAmount = cycleProducts?.reduce((sum, p) => sum + Math.round((p.price * p.quantity * p.discount) / 100), 0);
     const paymentAmount = orderAmount - discountAmount;
 
     return { orderAmount, discountAmount, paymentAmount };

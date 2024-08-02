@@ -5,8 +5,8 @@ import StatusBadge from '../../common/Badge/StatusBadge';
 
 const SubscriptionOrderProduct = ({ orderInfo, selectedCycle, onCycleChange }) => {
   const filteredProducts = useMemo(() => {
-    return orderInfo.subscriptionOrderProducts.filter(product => product.cycleNumber === selectedCycle);
-  }, [selectedCycle, orderInfo.subscriptionOrderProducts]);
+    return orderInfo?.subscriptionOrderProducts.filter(product => product.cycleNumber === selectedCycle);
+  }, [selectedCycle, orderInfo?.subscriptionOrderProducts]);
 
   const getPriceClassName = (discount, orderStatus) => {
     if (orderStatus === 'MODIFIED') return `text-badge-orange`;
@@ -29,7 +29,7 @@ const SubscriptionOrderProduct = ({ orderInfo, selectedCycle, onCycleChange }) =
             * 정기주문 회차
           </label>
           <Select value={selectedCycle} onChange={e => onCycleChange(Number(e.target.value))} className='mt-2 w-fit'>
-            {Array.from({ length: orderInfo.latestCycleNumber }, (_, i) => i + 1).map(cycleNum => (
+            {Array.from({ length: orderInfo?.latestCycleNumber }, (_, i) => i + 1).map(cycleNum => (
               <option key={cycleNum} value={cycleNum}>
                 {cycleNum} 회차
               </option>
@@ -39,7 +39,7 @@ const SubscriptionOrderProduct = ({ orderInfo, selectedCycle, onCycleChange }) =
       )}
 
       <List unstyled className='px-8 py-6 divide-y divide-gray-200 rounded-md dark:divide-gray-700 bg-custom-alert-bg-gray'>
-        {filteredProducts.map(product => (
+        {filteredProducts?.map(product => (
           <List.Item key={product.productId} className='flex items-center gap-6 py-4'>
             <div className='w-32 h-32'>
               <img src={product.productImagePath || '/image.jpg'} alt={product.productImageOriginalName} className='w-full h-full rounded-md' />
