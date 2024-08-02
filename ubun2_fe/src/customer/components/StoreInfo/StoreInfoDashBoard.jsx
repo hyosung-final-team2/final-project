@@ -1,11 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
-import AddressInput from '../common/Input/AddressInput';
-import StoreInfoDetail from './StoreInfoDetail';
-import StoreDescriptionNotice from './StoreDescriptionNotice';
-import { useGetMypage, useUpdateMypage } from '../../api/Customer/Mypage/queries';
+import { Card } from 'flowbite-react';
+import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { errorToastStyle, successToastStyle } from '../../../member/api/toastStyle';
-import { Card } from 'flowbite-react';
+import { useGetMypage, useUpdateMypage } from '../../api/Customer/Mypage/queries';
+import AddressInput from '../common/Input/AddressInput';
+import StoreDescriptionNotice from './StoreDescriptionNotice';
+import StoreInfoDetail from './StoreInfoDetail';
+import { formatPhoneNumber } from '../../utils/phoneFormat';
 
 const StoreInfoDashBoard = () => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md ';
@@ -53,7 +54,7 @@ const StoreInfoDashBoard = () => {
       setFormData(prevState => ({
         ...prevState,
         customerName: mypage.data.customerName || prevState.customerName,
-        customerPhone: mypage.data.customerPhone || prevState.customerPhone,
+        customerPhone: formatPhoneNumber(mypage.data.customerPhone) || formatPhoneNumber(prevState.customerPhone),
         businessAddress: mypage.data.businessAddress || prevState.businessAddress,
         description: mypage.data.description || prevState.description,
         announcement: mypage.data.announcement || prevState.announcement,
@@ -102,43 +103,11 @@ const StoreInfoDashBoard = () => {
       }));
     });
 
-    setFormData(prevState => {
-      const newBusinessAddress = Object.values(newAddressData).filter(Boolean).join(',').trim();
-      return {
-        ...prevState,
-        businessAddress: newBusinessAddress,
-      };
-    });
-  }, []);
-
-  useEffect(() => {
-    const handleMessage = event => {
-      if (event.data && event.data.type === 'ADDRESS_SELECTED') {
-        const result = event.data.result;
-        const { roadAddress, detailAddress } = separateAddress(result.roadAddrPart1 || '');
-        const newAddressInfos = [
-          { placeholder: result.zipNo, value: result.zipNo || '', label: '우편번호' },
-          { placeholder: roadAddress, value: roadAddress || '', label: '도로명주소' },
-          { placeholder: detailAddress, value: detailAddress || '', label: '상세주소' },
-        ];
-        setAddressInfos(newAddressInfos);
-
-        const fullAddress = newAddressInfos
-          .map(info => info.value)
-          .filter(Boolean)
-          .join(',')
-          .trim();
-        setFormData(prevState => ({
-          ...prevState,
-          businessAddress: fullAddress,
-        }));
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-    return () => {
-      window.removeEventListener('message', handleMessage);
-    };
+    const fullAddress = Object.values(newAddressData).filter(Boolean).join(',').trim();
+    setFormData(prevState => ({
+      ...prevState,
+      businessAddress: fullAddress,
+    }));
   }, []);
 
   const handleSubmit = () => {
@@ -187,8 +156,8 @@ const StoreInfoDashBoard = () => {
 
   return (
     <div className='p-6 bg-white'>
-      <div className='max-w-5xl mx-auto'>
-        <Card className='mb-6'>
+      <div className='w-full mx-auto'>
+        <div className='mb-6'>
           <h1 className='mb-6 text-2xl font-bold'>상점 정보</h1>
           <StoreInfoDetail
             isEditingName={isEditingName}
@@ -197,17 +166,17 @@ const StoreInfoDashBoard = () => {
             handleInputChange={handleInputChange}
             imageFile={imageFile}
           />
-        </Card>
+        </div>
 
-        <Card className='mb-6'>
+        <div className='mb-6'>
           <h2 className='mb-4 text-xl font-semibold'>주소 정보</h2>
-          <AddressInput infos={addressInfos} title='주소 추가' onChange={handleAddressInputChange} />
-        </Card>
+          <AddressInput infos={addressInfos} onChange={handleAddressInputChange} isExistButton={false} disabled={false} />
+        </div>
 
-        <Card className='mb-6'>
+        <div className='mb-6'>
           <h2 className='mb-4 text-xl font-semibold'>상점 설명 및 공지사항</h2>
           <StoreDescriptionNotice formData={formData} handleInputChange={handleInputChange} />
-        </Card>
+        </div>
 
         <div className='flex justify-end'>
           <button
