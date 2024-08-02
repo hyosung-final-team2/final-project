@@ -1,10 +1,10 @@
 import SearchBarWithDrop from '../../common/SearchBar/SearchBarWithDrop';
-import {useSendSms} from "../../../api/Customer/MemberList/MemberTable/queris.js";
 import ArrowPathIcon from "@heroicons/react/24/outline/ArrowPathIcon.js";
 import LinkIcon from "@heroicons/react/24/outline/LinkIcon.js";
 import UserPlusIcon from "@heroicons/react/24/outline/UserPlusIcon.js";
 import useMemberTableStore from "../../../store/MemberTable/memberTableStore.js";
 import CreateSearchResult from "../../../utils/CreateSearchResult.jsx";
+import TrashIcon from "@heroicons/react/24/outline/TrashIcon.js";
 
 const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegisterModal,selectedMembers, handleDataReset, dropdownRef, setIsDeleteConfirmModalOpen, setIsAlertConfirmModalOpen, setIsCheckConfirmModalOpen }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
@@ -81,7 +81,9 @@ const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegis
               setIsAlertConfirmModalOpen(true);
             }
           }}
-                  className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제
+                  className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500  flex gap-2 pr-6 items-center`}>
+            <TrashIcon className='w-5'/>
+            삭제
           </button>
         </div>
       </div>

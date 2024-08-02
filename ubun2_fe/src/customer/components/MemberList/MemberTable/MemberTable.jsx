@@ -284,6 +284,7 @@ const MemberTable = () => {
         <CheckConfirmModal isCheckConfirmModalOpen={isCheckConfirmModalOpen}
                            setIsCheckConfirmModalOpen={setIsCheckConfirmModalOpen}
                            text={<p className="text-lg"><span className="text-green-500 font-bold">{selectedMembers.length}</span>명의 회원을 선택하셨습니다</p>}
+                           secondText="전송"
                            firstButtonFunc={checkConfirmFirstButtonFunc}
                            secondButtonFunc={checkConfirmSecondButtonFunc}
         />

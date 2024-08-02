@@ -4,7 +4,7 @@ import ArrowPathIcon from "@heroicons/react/24/outline/ArrowPathIcon.js";
 import useProductTableStore from "../../../store/ProductTable/productTableStore.js";
 import CreateSearchResult from "../../../utils/CreateSearchResult.jsx";
 
-const ProductTableFeature = ({ tableColumns, onSearch,currentPage,handleDataReset,deleteSelectedProductsMutate,handleSaveClick,openProductInsertModal,setOpenProductInsertModal,dropdownRef }) => {
+const ProductTableFeature = ({ tableColumns, onSearch,currentPage,handleDataReset,handleSaveClick,openProductInsertModal,setOpenProductInsertModal,dropdownRef,selectedProducts,setIsDeleteConfirmModalOpen, setIsAlertConfirmModalOpen }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
     const { searchCategory, searchKeyword, totalElements} = useProductTableStore()
@@ -24,7 +24,13 @@ const ProductTableFeature = ({ tableColumns, onSearch,currentPage,handleDataRese
                     onClick={handleSaveClick}>상품 등록
             </button>
             <button
-                onClick={() => deleteSelectedProductsMutate()}
+                onClick={() => {
+                    if (selectedProducts.length > 0) {
+                        setIsDeleteConfirmModalOpen(true);
+                    } else {
+                        setIsAlertConfirmModalOpen(true);
+                    }
+                }}
                 className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제
             </button>
         </div>
