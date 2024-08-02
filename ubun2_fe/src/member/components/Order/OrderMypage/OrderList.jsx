@@ -38,7 +38,7 @@ const OrderList = ({ order }) => {
         {firstProduct && (
           <OrderItemList
             productImagePath={firstProduct.productImagePath || ''}
-            productDescription={firstProduct.productDescription || ''}
+            productName={firstProduct.productName || ''}
             quantity={firstProduct.quantity}
             productImageOriginalName={firstProduct.productImageOriginalName || ''}
             totalPrice={firstProduct.totalPrice}

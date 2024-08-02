@@ -27,9 +27,9 @@ const ProductItemEditable = ({
       <div className='flex items-start flex-grow'>
         <div className='flex-grow'>
           <div className='flex flex-col'>
-            <h3 className='font-semibold'>{productDescription}</h3>
+            <h3 className='font-semibold'>{productName}</h3>
             <div className='flex gap-3'>
-              <p>{productName}</p>
+              <p>{productDescription}</p>
             </div>
             <p className='font-bold'>
               <span className='text-red-500 mr-0.5'>{productDiscount}%</span> {discountedPrice.toLocaleString()}원

@@ -1,9 +1,10 @@
 import Single from '../../../assets/images/single.svg';
 import Subscription from '../../../assets/images/subscription.svg';
+import { getCycleText } from '../Cart/cycleContent';
 import ProductItemReadOnly from '../common/productItem/ProductItemReadOnly';
 
 const OrderCompleteStore = ({ store }) => {
-  const { businessName, orderType, products } = store;
+  const { businessName, orderType, products, intervalDays } = store;
 
   return (
     <div className='flex flex-col gap-2 px-4 py-3 mb-3 bg-white'>
@@ -27,9 +28,7 @@ const OrderCompleteStore = ({ store }) => {
       </div>
       <div className='flex flex-col w-full gap-8 '>
         <div className='flex flex-col w-full gap-3 bg-white'>
-          <div className='flex items-center pb-2 border-b'>
-            <div className='flex gap-3 text-gray-500'></div>
-          </div>
+          <div className='flex items-end justify-end gap-3 text-gray-500'>{orderType === '정기 주문' && intervalDays && getCycleText(intervalDays)}</div>
           <div className='flex flex-col gap-5'>
             {products.map(product => (
               <ProductItemReadOnly key={product.productId} {...product} isComplete={true} />
