@@ -68,10 +68,6 @@ const ProductTable = () => {
   }, [currentPage, queryClient,searchCategory, searchKeyword, sort, totalPages]);
 
   useEffect(() => {
-    setSelectedProducts([])
-  }, [currentPage,productList]);
-
-  useEffect(() => {
     if (totalElementsFromPage !== undefined) {
       setTotalElements(totalElementsFromPage);
     }
@@ -143,7 +139,7 @@ const ProductTable = () => {
         setSkeletonTotalElements(totalElementsFromPage)
       }
     }
-  }, [productList, currentPage, totalPages,  sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
+  }, [productList, totalPages,  sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
 
   if (isLoading) {
     // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
@@ -190,13 +186,15 @@ const ProductTable = () => {
         }
 
         {/* modal */}
-        <ProductDetailModal
-          isOpen={openProductDetailModal}
-          setOpenModal={setOpenProductDetailModal}
-          title='상품 상세'
-          selectedProductDetail={selectedProductDetail}
-          currentPage={currentPage}
-        />
+        { openProductDetailModal &&
+          <ProductDetailModal
+            isOpen={openProductDetailModal}
+            setOpenModal={setOpenProductDetailModal}
+            title='상품 상세'
+            selectedProductDetail={selectedProductDetail}
+            currentPage={currentPage}
+          />
+        }
       </div>
     </div>
   );
