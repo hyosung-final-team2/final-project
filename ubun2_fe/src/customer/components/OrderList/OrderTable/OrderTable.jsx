@@ -24,19 +24,16 @@ const OrderTable = () => {
   const navigate = useNavigate();
   const [openOrderDetailModal, setOpenOrderDetailModal] = useState(false);
 
-  const [selectedOrders, setSelectedOrders] = useState([]); // 체크된 멤버 ID
-  const [selectedOrderDetail, setSelectedOrderDetail] = useState({ orderId: null, subscription: false, currentPage: null }); // 선택된 주문 ID - 모달 오픈 시
+  const [selectedOrders, setSelectedOrders] = useState([]);
+  const [selectedOrderDetail, setSelectedOrderDetail] = useState({ orderId: null, subscription: false, currentPage: null });
 
-  const { sort, updateSort } = useOrderTableStore();
-  const { searchCategory, setSearchCategory } = useOrderTableStore(); // 검색할 카테고리 (드롭다운)
-  const { searchKeyword, setSearchKeyword } = useOrderTableStore(); // 검색된 단어
-  const { setTotalElements } = useOrderTableStore();
-  const { resetData } = useOrderTableStore();
+  const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, setTotalElements, resetData, orderStatus, setOrderStatus } =
+    useOrderTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
 
   const PAGE_SIZE = 8;
-  const { data: orders, refetch: refetchOrders, isLoading } = useGetOrders(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword, searchKeyword);
+  const { data: orders, refetch: refetchOrders, isLoading } = useGetOrders(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword, orderStatus);
 
   const totalPages = orders?.data?.data?.totalPages;
   const totalElementsFromPage = orders?.data?.data?.totalElements;
@@ -52,11 +49,11 @@ const OrderTable = () => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
-        queryKey: ['order', nextPage, sort, searchCategory, searchKeyword],
-        queryFn: () => getOrders(nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword),
+        queryKey: ['order', nextPage, sort, searchCategory, searchKeyword, orderStatus],
+        queryFn: () => getOrders(nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword, orderStatus),
       });
     }
-  }, [currentPage, queryClient, searchCategory, searchKeyword, sort, totalPages]);
+  }, [currentPage, queryClient, searchCategory, searchKeyword, sort, orderStatus, totalPages]);
 
   useEffect(() => {
     if (totalElementsFromPage !== undefined) {
@@ -79,9 +76,9 @@ const OrderTable = () => {
 
   const handleRowChecked = (id, subscription) => {
     setSelectedOrders(prev => {
-      const isSelected = prev.some(order => order.orderId === id && order.subscription === subscription); // 변경된 부분
+      const isSelected = prev.some(order => order.orderId === id && order.subscription === subscription);
       if (isSelected) {
-        return prev.filter(order => !(order.orderId === id && order.subscription === subscription)); // 변경된 부분
+        return prev.filter(order => !(order.orderId === id && order.subscription === subscription));
       } else {
         return [...prev, { orderId: id, subscription }];
       }
@@ -105,6 +102,12 @@ const OrderTable = () => {
 
   const handleSort = async (column, sortType) => {
     await updateSort(column, sortType);
+    refetchOrders();
+    setCurrentPage(1);
+  };
+
+  const handleOrderStatusChange = async status => {
+    await setOrderStatus(status);
     refetchOrders();
     setCurrentPage(1);
   };
@@ -185,7 +188,13 @@ const OrderTable = () => {
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
       {/* 각종 기능 버튼 : 검색, 정렬 등 */}
-      <OrderTableFeature tableColumns={tableColumn.order.search} onSearch={handleSearch} handleDataReset={handleDataReset} dropdownRef={dropdownRef} />
+      <OrderTableFeature
+        tableColumns={tableColumn.order.search}
+        onSearch={handleSearch}
+        handleDataReset={handleDataReset}
+        dropdownRef={dropdownRef}
+        onOrderStatusChange={handleOrderStatusChange}
+      />
 
       {/* 테이블 */}
       <div className='px-4'>

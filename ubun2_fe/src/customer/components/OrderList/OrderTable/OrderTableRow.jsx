@@ -1,11 +1,11 @@
-import { Checkbox, Table } from 'flowbite-react';
+import { Table } from 'flowbite-react';
+import { memo } from 'react';
+import useOrderTableStore from '../../../store/OrderTable/orderTableStore.js';
 import { formatCurrency } from '../../../utils/currencyFormat';
 import { formatDate } from '../../../utils/dateFormat';
 import OrderOptionBadge from '../../common/Badge/OrderOptionBadge';
 import PaymentMethodBadge from '../../common/Badge/PaymentMethodBadge';
 import StatusBadge from '../../common/Badge/StatusBadge';
-import { memo } from 'react';
-import useOrderTableStore from '../../../store/OrderTable/orderTableStore.js';
 
 const OrderTableRow = ({
   orderId,

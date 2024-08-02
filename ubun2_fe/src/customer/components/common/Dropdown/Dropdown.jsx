@@ -35,7 +35,7 @@ const Dropdown = ({ label, items, onChange }) => {
     <div className='relative' ref={dropdownRef}>
       <button
         onClick={handleToggle}
-        className='btn border w-full bg-white shadow-md focus:border-blue-500 focus:outline-none focus:ring hover:bg-gray-200'
+        className='w-full bg-white border shadow-md btn focus:border-blue-500 focus:outline-none focus:ring hover:bg-gray-200'
         style={{ height: '42px', minHeight: 'auto' }}
       >
         {label}
@@ -44,11 +44,11 @@ const Dropdown = ({ label, items, onChange }) => {
         </svg>
       </button>
       {isOpen && (
-        <ul className='absolute mt-1 p-2 bg-white text-sm rounded-lg shadow-md border-gray-700 text-gray-700 z-20'>
+        <ul className='absolute z-20 w-full p-2 mt-1 text-sm text-gray-700 bg-white border-gray-700 rounded-lg shadow-md'>
           {items.map((item, index) => (
             <li
               key={index}
-              className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer hover:text-main hover:font-bold'
+              className='px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 hover:text-main hover:font-bold'
               onClick={() => handleItemClick(item)}
             >
               {item.label}
