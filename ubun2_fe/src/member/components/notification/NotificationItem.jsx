@@ -3,7 +3,6 @@ import {useNavigate} from "react-router-dom";
 
 const NotificationItem = ({id, title, content, timestamp, link, setIsAlarmOpen}) => {
     const navigate = useNavigate();
-    // const {}
 
     const timeAgo = (timestamp) => {
         const now = new Date();
@@ -30,7 +29,7 @@ const NotificationItem = ({id, title, content, timestamp, link, setIsAlarmOpen})
     const extractPath = (url) => {
         const parts = url?.split('/');
         // 나중에 배포 url로 변경
-        const index = parts?.findIndex(part => part?.includes('localhost:5173'));
+        const index = parts?.findIndex(part => part?.includes('clicknbuy.co.kr'));
         if (index === -1) {
             return '';
         }

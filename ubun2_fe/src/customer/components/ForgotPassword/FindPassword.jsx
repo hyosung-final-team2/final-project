@@ -32,7 +32,7 @@ const FindPassword = ({setIsSuccess}) => {
     const navigate = useNavigate();
 
 
-    const {mutate:sendEmailMutate} = useSendEmail(passwordObj.memberEmail, "ROLE_CUSTOMER", false);
+    const {mutate:sendEmailMutate} = useSendEmail(passwordObj.memberEmail, "ROLE_CUSTOMER", "NO");
     const {mutate:authEmailMutate} = useAuthEmail();
 
     useEffect(() => {

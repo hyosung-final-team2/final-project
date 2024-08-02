@@ -26,7 +26,7 @@ const RegisterFirstStep = ({ setRegisterStep, setMemberName, setMemberEmail }) =
   const [isAllValuePossible, setIsAllValuePossible] = useState(false);
   const [firstRegisterObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ);
 
-  const { mutate: sendEmailMutate } = useSendEmail(firstRegisterObj.memberEmail, 'ROLE_MEMBER', true);
+  const { mutate: sendEmailMutate } = useSendEmail(firstRegisterObj.memberEmail, 'ROLE_MEMBER', "YES");
   const { mutate: authEmailMutate } = useAuthEmail();
 
   const [isKeyboardOn, setIsKeyboardOn] = useState(false);

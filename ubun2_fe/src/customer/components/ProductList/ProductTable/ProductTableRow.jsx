@@ -20,6 +20,8 @@ const ProductTableRow = ({
     colNum
 }) => {
 
+  console.log(isChecked)
+
   const { sort } = useProductTableStore();
 
   const getColorForColumn = (column) => {

@@ -7,6 +7,7 @@ export const useSendEmail = (email, userType, isRegister) => {
     userType,
     isRegister
   };
+  console.log(emailData)
   return useMutation({
     mutationFn: () => sendEmail(emailData),
   });

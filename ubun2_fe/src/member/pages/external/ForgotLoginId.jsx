@@ -32,7 +32,7 @@ const ForgotLoginId = () => {
     const navigate = useNavigate();
 
 
-    const {mutate:sendEmailMutate} = useSendEmail(loginIdObj.memberEmail,"ROLE_MEMBER",false)
+    const {mutate:sendEmailMutate} = useSendEmail(loginIdObj.memberEmail,"ROLE_MEMBER","NO")
     const {mutate:authEmailMutate} = useAuthEmail();
 
 

@@ -3,7 +3,6 @@ package kr.or.kosa.ubun2_be.domain.order.service.impl;//package kr.or.kosa.ubun2
 import jakarta.transaction.Transactional;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
-import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.cart.repository.CartProductRepository;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.financial.institution.entity.Bank;
@@ -14,6 +13,9 @@ import kr.or.kosa.ubun2_be.domain.member.service.MemberService;
 import kr.or.kosa.ubun2_be.domain.order.dto.*;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
+import kr.or.kosa.ubun2_be.domain.alarm.event.NoStockEvent;
+import kr.or.kosa.ubun2_be.domain.alarm.event.OrderCreatedEvent;
+import kr.or.kosa.ubun2_be.domain.alarm.event.SubCycleCompletedEvent;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderException;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderExceptionType;
 import kr.or.kosa.ubun2_be.domain.order.repository.SubscriptionOrderProductRepository;
@@ -35,6 +37,7 @@ import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductExceptionType
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import kr.or.kosa.ubun2_be.domain.product.service.impl.InventoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -56,9 +59,11 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
     private final BankService bankService;
     private final AddressService addressService;
     private final CardCompanyService cardCompanyService;
-    private final AlarmService alarmService;
+    //private final AlarmService alarmService;
     private final CardPaymentRepository cardPaymentRepository;
     private final AccountPaymentRepository accountPaymentRepository;
+
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -96,7 +101,9 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             deleteCartProducts(memberId, request.getSubscriptionOrderProducts());
 
             // 4. 고객에게 push notification (정기주문)
-            alarmService.sendMessageToCustomer(request);
+            //TODO
+            //alarmService.sendMessageToCustomer(request);
+            eventPublisher.publishEvent(new OrderCreatedEvent(request));
         }
     }
 
@@ -125,8 +132,10 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
                     Long productId = product.getProductId();
                     Product findProduct = productService.getProductById(productId);
                     Customer customer = findProduct.getCustomer();
-
-                    alarmService.sendNoStock(customer, findProduct.getProductName());
+                    //TODO
+                    //alarmService.sendNoStock(customer, findProduct.getProductName());
+                    System.out.println("여기 아직 메서드 못만들엇어.......");
+                    //eventPublisher.publishEvent(new NoStockEvent());
                     return new InSufficientStockProductResponse(productId, findProduct.getProductName());
                 })
                 .collect(Collectors.toList());
@@ -260,14 +269,21 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             List<SubscriptionOrderProduct> nextProducts = createNextCycleProducts(subscriptionOrder, previousCycleProducts);
             updateOrderWithNewProducts(subscriptionOrder, nextProducts);
             // 정기주문 회차 생성 (회원)
-            alarmService.sendSubCycleMessage(subscriptionOrder, null);
+            //TODO
+            //alarmService.sendSubCycleMessage(subscriptionOrder, null);
+            eventPublisher.publishEvent(new SubCycleCompletedEvent(subscriptionOrder,null));
         } catch (ProductException e) {
             // 연기 알림 보내는 부분 (회원) - 사유 : 재고부족
-            alarmService.sendSubCycleMessage(subscriptionOrder, "재고부족");
+            //TODO
+            //alarmService.sendSubCycleMessage(subscriptionOrder, "재고부족");
+            eventPublisher.publishEvent(new SubCycleCompletedEvent(subscriptionOrder,"재고부족"));
             subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
         } catch (Exception e) {
             // 연기 알림 보내는 부분(회원) - 사유 : 결제실패
-            alarmService.sendSubCycleMessage(subscriptionOrder, "결제실패");
+            // TODO
+            // alarmService.sendSubCycleMessage(subscriptionOrder, "결제실패");
+            eventPublisher.publishEvent(new SubCycleCompletedEvent(subscriptionOrder,"결제실패"));
+
             subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
         }
         subscriptionOrderRepository.save(subscriptionOrder);//        명시적 save
@@ -279,7 +295,9 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             int availableStock = inventoryService.getStock(product.getProduct().getProductId());
             if (availableStock < product.getQuantity()) {
                 // 재고부족한 상품이름 (고객)
-                alarmService.sendNoStock(product, orderId);
+                //TODO
+                //alarmService.sendNoStock(product, orderId);
+                eventPublisher.publishEvent(new NoStockEvent(product,orderId));
                 throw new ProductException(ProductExceptionType.INSUFFICIENT_STOCK);
             }
         }

@@ -18,5 +18,5 @@ public class EmailRequest {
     private String userType;
 
     @NotNull(message = "true / false 를 입력해주세요")
-    private boolean isRegister;
+    private String isRegister;
 }

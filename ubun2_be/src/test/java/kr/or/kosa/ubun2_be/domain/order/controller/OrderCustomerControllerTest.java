@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.kosa.ubun2_be.common.CommonTestSetup;
 import kr.or.kosa.ubun2_be.domain.order.dto.*;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
+import kr.or.kosa.ubun2_be.domain.order.service.SubscriptionOrderService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -32,12 +34,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class OrderCustomerControllerTest extends CommonTestSetup {
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private SubscriptionOrderService subscriptionOrderService;
 
     @MockBean
     private OrderService orderService;
@@ -123,7 +129,7 @@ class OrderCustomerControllerTest extends CommonTestSetup {
         // Given
         Long orderId = 1L;
         SubscriptionOrderDetailResponse mockResponse = new SubscriptionOrderDetailResponse();
-        when(orderService.getSubscriptionOrderByCustomerIdAndOrderId(anyLong(), anyLong())).thenReturn(mockResponse);
+        when(subscriptionOrderService.getSubscriptionOrderByCustomerIdAndOrderId(anyLong(), anyLong())).thenReturn(mockResponse);
 
         // When & Then
         mockMvc.perform(get("/api/customers/orders/subscription/{order_id}", orderId)
@@ -132,7 +138,7 @@ class OrderCustomerControllerTest extends CommonTestSetup {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("정상출력 데이터"));
 
-        verify(orderService).getSubscriptionOrderByCustomerIdAndOrderId(eq(customer.getUserId()), eq(orderId));
+        verify(subscriptionOrderService).getSubscriptionOrderByCustomerIdAndOrderId(eq(customer.getUserId()), eq(orderId));
     }
 
     @Test

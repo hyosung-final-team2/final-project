@@ -31,8 +31,6 @@ const ProductTable = () => {
   const { setTotalElements } = useProductTableStore()
   const { resetData } = useProductTableStore()
 
-  console.log( "외부 : ", searchKeyword,searchCategory)
-
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8
 
@@ -58,7 +56,6 @@ const ProductTable = () => {
 
   useEffect(() => {
     if (currentPage < totalPages) {
-      console.log("useEffect : ", searchCategory,searchKeyword);
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['product', {page:nextPage,PAGE_SIZE, sort, searchCategory, searchKeyword}],
@@ -81,7 +78,7 @@ const ProductTable = () => {
 
   const handleAllChecked = checked => {
     if (checked) {
-      setSelectedProducts(productList.map(product => product.id));
+      setSelectedProducts(productList.map(product => product.productId));
     } else {
       setSelectedProducts([]);
     }

@@ -6,13 +6,10 @@ import UserPlusIcon from "@heroicons/react/24/outline/UserPlusIcon.js";
 import useMemberTableStore from "../../../store/MemberTable/memberTableStore.js";
 import CreateSearchResult from "../../../utils/CreateSearchResult.jsx";
 
-const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegisterModal,selectedMembers, handleDataReset, selectedMemberDeleteMutate,dropdownRef }) => {
+const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegisterModal,selectedMembers, handleDataReset, dropdownRef, setIsDeleteConfirmModalOpen, setIsAlertConfirmModalOpen, setIsCheckConfirmModalOpen }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
 
-  const {mutate: smsMutate} = useSendSms(selectedMembers)
-
   const { searchCategory, searchKeyword, totalElements} = useMemberTableStore()
-
 
   return (
       <div
@@ -26,7 +23,13 @@ const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegis
             <ArrowPathIcon className='w-4 mr-2'/>
             초기화
           </button>
-          <button onClick={() => smsMutate()}
+          <button onClick={() => {
+            if (selectedMembers.length > 0) {
+              setIsCheckConfirmModalOpen(true);
+            } else {
+              setIsAlertConfirmModalOpen(true);
+            }
+          }}
                   className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50 flex gap-2 pr-6 items-center`}>
                   <LinkIcon className='w-5' />
                   링크 전송
@@ -71,7 +74,13 @@ const MemberTableFeature = ({ tableColumns, onSearch, setExcelModal,setOpenRegis
                   <UserPlusIcon className='w-5'/>
                   회원 등록
           </button>
-          <button onClick={() => selectedMemberDeleteMutate()}
+          <button onClick={() => {
+            if (selectedMembers.length > 0) {
+              setIsDeleteConfirmModalOpen(true);
+            } else {
+              setIsAlertConfirmModalOpen(true);
+            }
+          }}
                   className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제
           </button>
         </div>

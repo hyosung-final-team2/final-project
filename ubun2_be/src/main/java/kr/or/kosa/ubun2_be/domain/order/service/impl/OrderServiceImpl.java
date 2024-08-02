@@ -2,7 +2,6 @@ package kr.or.kosa.ubun2_be.domain.order.service.impl;
 
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
-import kr.or.kosa.ubun2_be.domain.alarm.service.AlarmService;
 import kr.or.kosa.ubun2_be.domain.cart.entity.Cart;
 import kr.or.kosa.ubun2_be.domain.cart.repository.CartProductRepository;
 import kr.or.kosa.ubun2_be.domain.cart.service.CartService;
@@ -16,6 +15,7 @@ import kr.or.kosa.ubun2_be.domain.order.entity.Order;
 import kr.or.kosa.ubun2_be.domain.order.entity.OrderProduct;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
+import kr.or.kosa.ubun2_be.domain.alarm.event.OrderCreatedEvent;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderException;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderExceptionType;
 import kr.or.kosa.ubun2_be.domain.order.repository.OrderProductRepository;
@@ -38,6 +38,7 @@ import kr.or.kosa.ubun2_be.domain.product.exception.product.ProductExceptionType
 import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import kr.or.kosa.ubun2_be.domain.product.service.impl.InventoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -68,9 +69,10 @@ public class OrderServiceImpl implements OrderService {
     private final AddressService addressService;
     private final OrderProductRepository orderProductRepository;
     private final CartService cartService;
-    private final AlarmService alarmService;
+    //private final AlarmService alarmService;
     private final CardPaymentRepository cardPaymentRepository;
     private final AccountPaymentRepository accountPaymentRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional(readOnly = true)
@@ -118,7 +120,6 @@ public class OrderServiceImpl implements OrderService {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
         List<UnifiedOrderResponse> paginatedList = combinedList.subList(start, end);
-
         return new PageImpl<>(paginatedList, pageable, combinedList.size());
     }
     private int compareOrders(UnifiedOrderResponse o1, UnifiedOrderResponse o2, String property) {
@@ -126,7 +127,7 @@ public class OrderServiceImpl implements OrderService {
             case "totalCost" -> compareNullable(o1.getTotalOrderPrice(), o2.getTotalOrderPrice());
             case "createdAt" -> compareNullable(o1.getCreatedAt(), o2.getCreatedAt());
             case "memberName" -> compareNullable(o1.getMemberName(), o2.getMemberName());
-            case "orderStatus" -> compareNullable(o1.getOrderStatus(), o2.getOrderStatus());
+            case "orderStatus" -> compareNullable(OrderStatus.valueOf(o1.getOrderStatus()).getName(), OrderStatus.valueOf(o2.getOrderStatus()).getName());
             case "paymentType" -> compareNullable(o1.getPaymentType(), o2.getPaymentType());
             case "isSubscription" -> Boolean.compare(o1.isSubscription(), o2.isSubscription());
             default -> 0;
@@ -299,7 +300,9 @@ public class OrderServiceImpl implements OrderService {
         deleteCartProducts(memberId, orderRequest.getSubscriptionOrderProducts());
 
         // 5. 고객에게 push notification (단건주문)
-        alarmService.sendMessageToCustomer(orderRequest);
+        //TODO 이벤트 등록듕
+        //alarmService.sendMessageToCustomer(orderRequest);
+        eventPublisher.publishEvent(new OrderCreatedEvent(orderRequest));
     }
 
     private void validateCustomerProduct(SubscriptionOrderRequest orderRequest) {
