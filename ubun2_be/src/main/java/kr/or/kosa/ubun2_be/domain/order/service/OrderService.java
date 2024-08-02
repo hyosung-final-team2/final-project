@@ -11,8 +11,6 @@ public interface OrderService {
 
     OrderDetailResponse getOrderByCustomerIdAndOrderId(Long orderId, Long customerId);
 
-    SubscriptionOrderDetailResponse getSubscriptionOrderByCustomerIdAndOrderId(Long orderId, Long customerId);
-
     Page<UnifiedOrderResponse> getPendingOrders(Long customerId, SearchRequest searchRequest, Pageable pageable);
 
     void updateOrderStatus(Long customerId, List<OrderApproveRequest> orderApproveRequests);
