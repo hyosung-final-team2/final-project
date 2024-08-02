@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Table } from 'flowbite-react';
 
 import MemberPaymentMethodModal from './MemberPaymentMethodModal';
@@ -27,13 +27,15 @@ import useSkeletonStore from '../../store/skeletonStore';
 
 import { getAccountPayments } from '../../api/PaymentMethod/Table/accountPaymentTable';
 import { getCardPayments } from '../../api/PaymentMethod/Table/cardPaymentTable';
+import NoDataTable from '../common/Table/NoDataTable';
 
 const PaymentMethodTable = () => {
   const [openRegistrationModal, setOpenRegistrationModal] = useState(false);
   const [checkedMembers, setCheckedMembers] = useState([]);
   const { paymentMethodType, openModal, setOpenModal } = paymentMethodStore();
   const [paymentMethodId, setPaymentMethodId] = useState(null);
-  const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset } = usePaymentMethodTableStore();
+  const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset, setTotalElements } =
+    usePaymentMethodTableStore();
   const PAGE_SIZE = 8;
   const isAccount = paymentMethodType === 'ACCOUNT';
 
@@ -45,7 +47,8 @@ const PaymentMethodTable = () => {
   const { data: payments, refetch: refetchPayments, isLoading } = useGetPayments(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
   const paymentList = payments?.data?.data?.content;
-  const totalPages = payments?.data?.data?.totalPages || 5;
+  const totalPages = payments?.data?.data?.totalPages;
+  const totalElementsFromPage = payments?.data?.data?.totalElements;
 
   const { refetch: refetchPaymentDetail } = useGetPaymentDetail(paymentMethodId);
 
@@ -61,6 +64,12 @@ const PaymentMethodTable = () => {
       queryClient.prefetchQuery({ queryKey, queryFn });
     }
   }, [currentPage, queryClient, totalPages, isAccount, sort, searchCategory, searchKeyword]);
+
+  useEffect(() => {
+    if (totalElementsFromPage !== undefined) {
+      setTotalElements(totalElementsFromPage);
+    }
+  }, [totalElementsFromPage, setTotalElements]);
 
   const handleAllChecked = useCallback(
     checked => {
@@ -113,6 +122,18 @@ const PaymentMethodTable = () => {
   //   resetPaymentMethodTableStore();
   // }, []);
 
+  const dropdownRef = useRef(null);
+
+  const handleDropdownButtonClick = () => {
+    if (dropdownRef.current) {
+      dropdownRef.current.click();
+    }
+  };
+
+  const NoDataTableButtonFunc = () => {
+    setOpenRegistrationModal(true);
+  };
+
   useEffect(() => {
     const handleLoad = () => {
       // performance.navigation은 deprecated되었지만, 여전히 많은 브라우저에서 지원됩니다.
@@ -138,15 +159,40 @@ const PaymentMethodTable = () => {
     return () => resetData();
   }, [resetData]);
 
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData } = useSkeletonStore();
+  const {
+    setSkeletonData,
+    setSkeletonTotalPage,
+    setSkeletonSortData,
+    setSkeletonSearchCategory,
+    setSkeletonSearchKeyword,
+    setSkeletonTotalElements,
+    skeletonTotalElement,
+  } = useSkeletonStore();
 
   useEffect(() => {
     if (!isLoading) {
       setSkeletonData(paymentList);
       setSkeletonTotalPage(totalPages);
       setSkeletonSortData(sort);
+      setSkeletonSearchCategory(searchCategory);
+      setSkeletonSearchKeyword(searchKeyword);
+      if (skeletonTotalElement !== totalElementsFromPage) {
+        setSkeletonTotalElements(totalElementsFromPage);
+      }
     }
-  }, [isLoading, paymentList, totalPages, sort]);
+  }, [
+    isLoading,
+    paymentList,
+    totalPages,
+    sort,
+    searchKeyword,
+    searchCategory,
+    setSkeletonTotalPage,
+    setSkeletonSortData,
+    setSkeletonData,
+    setSkeletonSearchCategory,
+    setSkeletonSearchKeyword,
+  ]);
 
   if (isLoading) {
     return (
@@ -168,6 +214,7 @@ const PaymentMethodTable = () => {
         handleDataReset={handleDataReset}
         onSearch={handleSearch}
         tableColumns={searchCategoryOptions}
+        dropdownRef={dropdownRef}
       />
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
@@ -179,18 +226,31 @@ const PaymentMethodTable = () => {
             headerType={'paymentMethod'}
             nonSort={tableColumn.paymentMethod.nonSort}
           />
-          <DynamicTableBody
-            dataList={paymentList}
-            TableRowComponent={PaymentMethodTableRow}
-            dynamicKey='paymentMethodId'
-            dynamicId='paymentMethodId'
-            setOpenModal={handleRowClick}
-            selectedMembers={checkedMembers}
-            handleRowChecked={handleRowChecked}
-            currentPage={currentPage}
-          />
+          {paymentList.length > 0 ? (
+            <DynamicTableBody
+              dataList={paymentList}
+              TableRowComponent={PaymentMethodTableRow}
+              dynamicKey='paymentMethodId'
+              dynamicId='paymentMethodId'
+              setOpenModal={handleRowClick}
+              selectedMembers={checkedMembers}
+              handleRowChecked={handleRowChecked}
+              currentPage={currentPage}
+            />
+          ) : (
+            <NoDataTable
+              text={searchCategory && searchKeyword ? '검색 결과가 없습니다!' : '등록된 결제수단이 없습니다.'}
+              buttonText={searchCategory && searchKeyword ? '다시 검색하기' : '결제수단 등록하기'}
+              buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
+              colNum={tableColumn.address.list.length}
+            />
+          )}
         </Table>
-        <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+        {isLoading === false && paymentList.length > 0 ? (
+          <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
+        ) : (
+          <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />
+        )}
         <MemberPaymentMethodModal
           isOpen={openModal}
           setOpenModal={setOpenModal}

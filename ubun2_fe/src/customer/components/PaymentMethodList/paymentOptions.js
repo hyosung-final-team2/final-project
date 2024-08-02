@@ -8,6 +8,7 @@ export const cardPayments = [
   { value: '하나카드', label: '하나카드' },
   { value: '비씨카드', label: '비씨카드' },
   { value: '농협카드', label: '농협카드' },
+  { value: '토스카드', label: '토스카드' },
 ];
 
 export const bankPayments = [
