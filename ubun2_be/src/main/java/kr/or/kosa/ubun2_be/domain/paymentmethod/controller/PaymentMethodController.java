@@ -28,17 +28,18 @@ import java.util.List;
 public class PaymentMethodController {
     private final PaymentMethodService paymentMethodService;
     private static final int PAGE_SIZE = 9;
+    private static final String SORT_DEFAULT = "createdAt";
 
     @Operation(summary = "카드결제수단을 전체 조회.")
     @GetMapping("/cards")
-    public ResponseDto<?> getCardPaymentMethods(@PageableDefault(size = PAGE_SIZE, sort = "paymentMethodId", direction = Sort.Direction.DESC) Pageable pageable, SearchRequest searchRequest ,@AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseDto<?> getCardPaymentMethods(@PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable, SearchRequest searchRequest ,@AuthenticationPrincipal CustomUserDetails userDetails) {
         Page<CardPaymentResponse> paymentMethods = paymentMethodService.getAllCardPaymentMethodsForMember(pageable, searchRequest,userDetails.getUserId());
         return ResponseDto.ok(paymentMethods, "카드 목록을 성공적으로 조회했습니다.");
     }
 
     @Operation(summary = "계좌결제수단을 전체 조회.")
     @GetMapping("/accounts")
-    public ResponseDto<?> getAccountPaymentMethods(@PageableDefault(size = PAGE_SIZE, sort = "paymentMethodId", direction = Sort.Direction.DESC) Pageable pageable, SearchRequest searchRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseDto<?> getAccountPaymentMethods(@PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable, SearchRequest searchRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
         Page<AccountPaymentResponse> paymentMethods = paymentMethodService.getAllAccountPaymentMethodsForMember(pageable, searchRequest,userDetails.getUserId());
         return ResponseDto.ok(paymentMethods, "계좌 목록을 성공적으로 조회했습니다.");
     }

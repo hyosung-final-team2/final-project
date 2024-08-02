@@ -76,7 +76,7 @@ const PaymentInfo = ({}) => {
               setPaymentMethod('CMS 결제'), flushData();
             }}
           />
-          <label htmlFor='cms'>CMS 결제</label>
+          <label htmlFor='cms'>계좌</label>
           <Radio
             id='card'
             name='paymentMethod'
@@ -86,7 +86,7 @@ const PaymentInfo = ({}) => {
               setPaymentMethod('카드 결제'), flushData();
             }}
           />
-          <label htmlFor='card'>카드 결제</label>
+          <label htmlFor='card'>카드</label>
         </div>
         {paymentMethod === '카드 결제' && (
           <div className='grid grid-cols-2 gap-4' style={{ gridTemplateColumns: '5fr 3fr 2fr' }}>

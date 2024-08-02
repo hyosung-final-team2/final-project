@@ -14,7 +14,7 @@ const RecentOrdersTable = ({ ordersByDateValue }) => {
         <div className='inline-block min-w-full align-middle'>
           <div className='overflow-hidden h-30'>
             <Table className='min-w-full divide-y divide-gray-200'>
-              <TableHead tableColumns={tableColumns} isCheckable={false} />
+              <TableHead tableColumns={tableColumns} isCheckable={false} nonSort={tableColumns} />
               <UnifiedOrdersTableBody
                 dataList={ordersByDateValue}
                 TableRowComponent={RecentOrderTableRow}

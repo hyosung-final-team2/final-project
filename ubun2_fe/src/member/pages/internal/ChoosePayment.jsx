@@ -12,6 +12,7 @@ import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
 import toast from 'react-hot-toast';
 import { errorToastStyle } from '../../api/toastStyle';
+import { formatBankAccount } from '../../../customer/utils/accountFormat';
 
 const ChoosePayment = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,7 +42,7 @@ const ChoosePayment = () => {
         ...account,
         icon: <img className='w-10 h-10' src={`/src/assets/images/png/${getPng(account.bankName)}`} alt='' />,
         title: account.paymentMethodNickname,
-        subtitle: `${account.bankName} ${account.accountNumber}`,
+        subtitle: `${account.bankName} ${formatBankAccount(account?.bankName?.slice(0, -2), account?.accountNumber, true)}`,
         defaultStatus: account.defaultStatus,
         type: 'ACCOUNT',
       })),
@@ -49,7 +50,7 @@ const ChoosePayment = () => {
         ...card,
         icon: <img className='w-10 h-10' src={`/src/assets/images/png/${getPng(card.cardCompanyName)}`} alt='' />,
         title: card.paymentMethodNickname,
-        subtitle: `${card.cardCompanyName} ${card.cardNumber}`,
+        subtitle: `${card.cardCompanyName} ${card?.cardNumber?.slice(-4)?.replace(/\d{2}$/, '**')}`,
         defaultStatus: card.defaultStatus,
         type: 'CARD',
       })),
@@ -163,17 +164,19 @@ const ChoosePayment = () => {
       >
         {isPasswordSet ? (
           <>
-            {paymentMethods.allMethods.map(method => (
-              <PaymentItem
-                key={method.paymentMethodId}
-                icon={method.icon}
-                title={method.title}
-                subtitle={method.subtitle}
-                selected={selectedPaymentMethod?.paymentMethodId === method.paymentMethodId}
-                checkedIcon={<CheckIcon className='w-8 h-8' />}
-                onClick={() => handlePaymentMethodSelect(method)}
-              />
-            ))}
+            {paymentMethods.allMethods.map(method => {
+              return (
+                <PaymentItem
+                  key={method.paymentMethodId}
+                  icon={method.icon}
+                  title={method.title}
+                  subtitle={method.subtitle}
+                  selected={selectedPaymentMethod?.paymentMethodId === method.paymentMethodId}
+                  checkedIcon={<CheckIcon className='w-8 h-8' />}
+                  onClick={() => handlePaymentMethodSelect(method)}
+                />
+              );
+            })}
             <div className='my-3 -mx-4 bg-gray-100 min-h-5'></div>
             <PaymentItem
               icon={<CardIcon className='w-12 h-12' />}

@@ -1,46 +1,61 @@
-import { useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import paymentMethodStore from '../../../../customer/store/PaymentMethod/paymentMethodStore';
-import { initDropdowns } from 'flowbite';
+import usePaymentMethodTableStore from '../../../store/PaymentMethod/paymentMethodTableStore';
+
 const Dropdown = ({ label, items, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const paymentMethodType = paymentMethodStore(state => state.paymentMethodType);
   const setPaymentMethodType = paymentMethodStore(state => state.setPaymentMethodType);
   const dropdownRef = useRef(null);
+  const { resetData } = usePaymentMethodTableStore();
 
-  initDropdowns();
-  const handleOnClick = item => {
-    setPaymentMethodType(item.value);
-    if (onChange) {
-      onChange(item.value);
-      dropdownRef.current.click();
-    }
+  const handleToggle = () => setIsOpen(!isOpen);
+
+  const handleItemClick = item => {
+    console.log('handleItemClick');
+    console.log('paymentMethodType', paymentMethodType);
+    const newType = paymentMethodType === 'ACCOUNT' ? 'CARD' : 'ACCOUNT';
+    setPaymentMethodType(newType);
+    onChange && onChange(item);
+    setIsOpen(false);
   };
 
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
-    <div className='flex items-center'>
+    <div className='relative' ref={dropdownRef}>
       <button
-        ref={dropdownRef}
-        id='dropdownDefaultButton'
-        data-dropdown-toggle='dropdown'
-        type='button'
-        className='shadow-md border-gray-300 bg-white text-black font-medium rounded-lg text-sm px-4 py-2.5 inline-flex items-center'
+        onClick={handleToggle}
+        className='btn border w-full bg-white shadow-md focus:border-blue-500 focus:outline-none focus:ring hover:bg-gray-200'
+        style={{ height: '42px', minHeight: 'auto' }}
       >
         {label}
         <svg className='w-2.5 h-2.5 ml-3' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 6'>
           <path stroke='currentColor' strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='m1 1 4 4 4-4' />
         </svg>
       </button>
-      <div id='dropdown' className='z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700'>
-        <ul className='py-2 text-sm text-gray-700 dark:text-gray-200' aria-labelledby='dropdownDefaultButton'>
+      {isOpen && (
+        <ul className='absolute mt-1 p-2 bg-white text-sm rounded-lg shadow-md border-gray-700 text-gray-700 z-20'>
           {items.map((item, index) => (
             <li
               key={index}
-              className='block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white cursor-pointer'
-              onClick={() => handleOnClick(item)}
+              className='px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer hover:text-main hover:font-bold'
+              onClick={() => handleItemClick(item)}
             >
               {item.label}
             </li>
           ))}
         </ul>
-      </div>
+      )}
     </div>
   );
 };

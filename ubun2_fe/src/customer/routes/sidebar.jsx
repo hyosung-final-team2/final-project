@@ -19,7 +19,7 @@ const routes = [
   {
     path: '/customer/app/dashboard',
     icon: <Squares2X2Icon className={iconClasses} />,
-    name: '메인보드',
+    name: '대시보드',
   },
   {
     path: '/customer/app/calendar',

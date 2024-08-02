@@ -4,6 +4,8 @@ import BottomButton from '../../components/common/button/BottomButton';
 import InfoInput from '../../components/common/input/InfoInput';
 import useAddressStore from '../../store/address/AddressStore';
 import { useRegisterAddress, useUpdateAddress, useDeleteAddress } from '../../api/Address/queries';
+import DoubleBottomButton from '../../components/common/button/DoubleBottomButton';
+import { formatPhoneNumber } from '../../../customer/utils/phoneFormat';
 
 const SEARCH_URL = '/member/app/addresses/address-search';
 
@@ -116,13 +118,13 @@ const RegisterAddress = () => {
 
   const handleConfirm = () => {
     if (isAllValuePossible) {
-      const [city, town, ...rest] = addressData.address.split(' ');
+      const [city, town, ...rest] = addressData?.address?.split(' ');
       const data = {
         memberId: memberId,
-        address: `${addressData.zipNo.trim()},${city},${town},${rest.join(' ')} ${addressData.detailAddress}`,
-        recipientName: addressData.recipientName,
-        recipientPhone: addressData.phoneNumber,
-        addressNickname: addressData.name || `${addressData.recipientName}님의 배송지`,
+        address: `${addressData?.zipNo.trim()},${city},${town},${rest.join(' ')} ${addressData?.detailAddress}`,
+        recipientName: addressData?.recipientName,
+        recipientPhone: formatPhoneNumber(addressData?.phoneNumber),
+        addressNickname: addressData?.name || `${addressData?.recipientName}님의 배송지`,
       };
       if (isRegister) {
         registerAddress(data, {
@@ -144,7 +146,6 @@ const RegisterAddress = () => {
           }
         );
       }
-      console.log('주소 데이터:', data);
     }
   };
   const handleDelete = () => {
@@ -162,7 +163,7 @@ const RegisterAddress = () => {
   const labelStyle = 'text-gray-700';
 
   return (
-    <div className='h-full bg-white border-x-2'>
+    <div className='h-full bg-white border-x'>
       {/* header */}
       <div className='flex items-center p-6 pb-4'>
         <h5 className='text-xl font-bold tracking-tight text-gray-900 dark:text-white'>배송지 정보</h5>
@@ -194,15 +195,17 @@ const RegisterAddress = () => {
           disabled={!isAllValuePossible}
         />
       ) : (
-        <>
-          <BottomButton buttonStyle='bg-custom-input-gray text-black' buttonText='삭제' buttonFunc={handleDelete} />
-          <BottomButton
-            buttonStyle={isAllValuePossible ? 'bg-main text-white' : 'bg-gray-300 text-gray-500'}
-            buttonText='확인'
-            buttonFunc={handleConfirm}
-            disabled={!isAllValuePossible}
+        <div className='absolute w-full px-4 bottom-4'>
+          <div className='p-10'></div>
+          <DoubleBottomButton
+            firstButtonText='삭제'
+            secondButtonText='확인'
+            firstButtonFunc={handleDelete}
+            buttonStyle='bg-custom-input-gray text-black'
+            secondButtonFunc={handleConfirm}
+            secondButtonStyle={isAllValuePossible ? 'bg-main text-white' : 'bg-gray-300 text-gray-500'}
           />
-        </>
+        </div>
       )}
     </div>
   );

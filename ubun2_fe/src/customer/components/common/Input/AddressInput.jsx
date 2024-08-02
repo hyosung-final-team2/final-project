@@ -5,7 +5,7 @@ import useAddressStore from '../../../store/Address/useAddressStore';
 const POPUP_WIDTH = 700;
 const POPUP_HEIGHT = 760;
 
-const AddressInput = ({ disabled = false, infos, title, onChange }) => {
+const AddressInput = ({ disabled = false, infos, title }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md ';
   const [address, setAddress] = useState({});
   const [popup, setPopup] = useState(null);
@@ -62,7 +62,6 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
           상세주소: formData['상세주소'], // 기존 상세주소 유지
         };
         setFormData(newFormData);
-        onChange(newFormData);
       } catch (error) {
         console.error('Failed to receive message', error);
       } finally {
@@ -92,7 +91,6 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
           상세주소: formData['상세주소'], // 기존 상세주소 유지
         };
         setFormData(newFormData);
-        onChange(newFormData);
       }
     };
 
@@ -101,7 +99,7 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
     return () => {
       window.removeEventListener('message', handleMessage);
     };
-  }, [formData, onChange]);
+  }, [formData]);
 
   const handleChange = (label, value) => {
     const newFormData = {
@@ -109,7 +107,6 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
       [label]: value,
     };
     setFormData(newFormData);
-    onChange(newFormData);
   };
 
   const handleOnClick = async () => {

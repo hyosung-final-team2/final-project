@@ -33,7 +33,7 @@ const MemberPaymentTable = ({ payments, title }) => {
     <div className='p-2'>
       <h1 className='text-2xl font-bold mb-3 text-main'>{title}</h1>
       <Table hoverable>
-        <TableHead tableColumns={tableColumn.paymentMethod.detail} isCheckable={false} />
+        <TableHead tableColumns={tableColumn.paymentMethod.detail} isCheckable={false} nonSort={tableColumn.paymentMethod.detail} />
         <DynamicTableBody
           dataList={paginatedData}
           TableRowComponent={MemberPaymentTableRow}

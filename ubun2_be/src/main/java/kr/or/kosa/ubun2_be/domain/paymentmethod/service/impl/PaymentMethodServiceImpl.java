@@ -97,6 +97,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
                     .member(member)
                     .cardNumber(paymentMethodRequest.getCardNumber())
                     .cardCompanyName(paymentMethodRequest.getCardCompanyName())
+                    .paymentMethodNickname(paymentMethodRequest.getCardCompanyName())
                     .build();
             paymentMethodRepository.save(cardPayment);
         } else if ("ACCOUNT".equals(paymentMethodRequest.getPaymentType())) {
@@ -112,6 +113,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
                     .member(member)
                     .accountNumber(paymentMethodRequest.getAccountNumber())
                     .bankName(paymentMethodRequest.getBankName())
+                    .paymentMethodNickname(paymentMethodRequest.getBankName())
                     .build();
             paymentMethodRepository.save(accountPayment);
 

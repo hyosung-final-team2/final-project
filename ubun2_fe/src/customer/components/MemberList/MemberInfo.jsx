@@ -2,6 +2,7 @@ import InputLabel from '../common/Input/InputLabel.jsx';
 import StatusBadge from '../common/Badge/StatusBadge.jsx';
 import { formatDate } from '../../utils/dateFormat.js';
 
+
 const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchable = false, isPending, handleInputChange, isOrder = false }) => {
   return (
     <div className='p-3'>
@@ -33,6 +34,7 @@ const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchab
             onChange={value => handleInputChange('memberPhone', value)}
           />
           <InputLabel
+
             labelTitle={isOrder ? '주문일자' : '가입일'}
             defaultValue={MemberInfoData.memberCreatedAt !== '-' ? formatDate(MemberInfoData.memberCreatedAt) : '-'}
             disabled={onlyInfo}
