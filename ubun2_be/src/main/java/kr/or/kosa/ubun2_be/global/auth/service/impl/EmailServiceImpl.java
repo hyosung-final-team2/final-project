@@ -41,7 +41,7 @@ public class EmailServiceImpl implements EmailService {
         boolean isCustomerRole = UserRole.ROLE_CUSTOMER.toString().equals(emailRequest.getUserType());
         boolean isMemberRole = UserRole.ROLE_MEMBER.toString().equals(emailRequest.getUserType());
 
-        if (emailRequest.isRegister()) {
+        if (emailRequest.getIsRegister().equals("YES")) {
             // 회원가입 시 중복 체크
             if (isCustomerRole && customerRepository.existsByCustomerEmail(email)) {
                 throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER);

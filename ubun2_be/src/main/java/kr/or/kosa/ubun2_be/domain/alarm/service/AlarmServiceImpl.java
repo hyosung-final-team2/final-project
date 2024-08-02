@@ -116,7 +116,7 @@ public class AlarmServiceImpl implements AlarmService{
 
         String title = getOrderTitle(request.getIntervalDays());
         String content = getOrderContent(firstProductName, productListSize);
-        String link = "http://localhost:5173/customer/app/pendingorder";
+        String link = "https://clicknbuy.co.kr/customer/app/pendingorder";
 
         Message message = makeOrderMessage(title, content, customer.getFcmToken(), link);
         String messageId = sendMessage(message);
@@ -163,7 +163,7 @@ public class AlarmServiceImpl implements AlarmService{
         String fcmToken = subscriptionOrderProduct.getProduct().getCustomer().getFcmToken();
         String title = "재고부족";
         String content = subscriptionOrderProduct.getProduct().getProductName() + " - 상품 재고가 부족합니다.";
-        String link = "http://localhost:5173/customer/app/product";
+        String link = "https://clicknbuy.co.kr/customer/app/product";
 
         sendMessage(makeOrderMessage(title,content,fcmToken,link));
         // TODO: 실제 링크로 변경
@@ -259,7 +259,7 @@ public class AlarmServiceImpl implements AlarmService{
     public void sendNoStock(Customer customer, String productName) {
         String title = "재고부족";
         String content = productName + " - 상품 재고가 부족합니다.";
-        String link = "http://localhost:5173/customer/app/product";
+        String link = "https://clicknbuy.co.kr/customer/app/product";
 
         sendMessage(makeOrderMessage(title,content,customer.getFcmToken(),link));
         // TODO: 실제 링크로 변경
