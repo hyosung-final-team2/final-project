@@ -8,6 +8,7 @@ const BADGE_STYLES = {
   PRIVATE: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '비공개' },
   LOADING: { bgColor: 'bg-transparent', txtColor: 'text-transparent', text: '로딩중' },
   MODIFIED: { bgColor: 'bg-badge-purple', txtColor: 'text-badge-gray', text: '변경' },
+  DELAY: { bgColor: 'bg-badge-purple', txtColor: 'text-badge-gray', text: '연기' },
 };
 
 const StatusBadge = ({ status }) => {
