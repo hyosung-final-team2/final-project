@@ -155,10 +155,9 @@ const StoreInfoDashBoard = () => {
   if (isError) return <div>에러가 발생했습니다.</div>;
 
   return (
-    <div className='p-6 bg-white'>
-      <div className='w-full mx-auto'>
-        <div className='mb-6'>
-          <h1 className='mb-6 text-2xl font-bold'>상점 정보</h1>
+    <div className='p-6' style={{ height: '95%', background: 'white' }}>
+      <div className='flex w-full h-full gap-10'>
+        <div className='flex flex-col items-center justify-center w-2/5 h-full p-4 border border-gray-300 rounded-lg'>
           <StoreInfoDetail
             isEditingName={isEditingName}
             formData={formData}
@@ -168,23 +167,26 @@ const StoreInfoDashBoard = () => {
           />
         </div>
 
-        <div className='mb-6'>
-          <h2 className='mb-4 text-xl font-semibold'>주소 정보</h2>
-          <AddressInput infos={addressInfos} onChange={handleAddressInputChange} isExistButton={false} disabled={false} />
-        </div>
+        <div className='flex flex-col justify-between w-3/5 h-full gap-12 p-4 border border-gray-300 rounded-lg'>
+          <div className='h-full'>
+            <div className='mb-6'>
+              <h2 className='mb-4 text-xl font-semibold'>주소 정보</h2>
+              <AddressInput infos={addressInfos} onChange={handleAddressInputChange} isExistButton={false} disabled={false} />
+            </div>
 
-        <div className='mb-6'>
-          <h2 className='mb-4 text-xl font-semibold'>상점 설명 및 공지사항</h2>
-          <StoreDescriptionNotice formData={formData} handleInputChange={handleInputChange} />
-        </div>
-
-        <div className='flex justify-end'>
-          <button
-            className={`${commonButtonStyles} bg-custom-button-purple text-custom-font-purple hover:text-white hover:bg-custom-font-purple`}
-            onClick={handleSubmit}
-          >
-            저장
-          </button>
+            <div>
+              <h2 className='mb-4 text-xl font-semibold'>상점 설명 및 공지사항</h2>
+              <StoreDescriptionNotice formData={formData} handleInputChange={handleInputChange} />
+            </div>
+          </div>
+          <div className='flex justify-end'>
+            <button
+              className={`${commonButtonStyles} bg-custom-button-purple text-custom-font-purple hover:text-white hover:bg-custom-font-purple`}
+              onClick={handleSubmit}
+            >
+              저장
+            </button>
+          </div>
         </div>
       </div>
     </div>
