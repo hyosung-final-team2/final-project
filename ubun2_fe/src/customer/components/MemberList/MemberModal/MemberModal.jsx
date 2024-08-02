@@ -7,16 +7,7 @@ import { memo } from 'react';
 import { customModalTheme } from './modalStyle';
 import { useDeleteMember, useGetMemberDetail } from '../../../api/Customer/MemberList/MemberModal/queris.js';
 
-const MemberModal = ({
-  isOpen,
-  setOpenModal,
-  title,
-  primaryButtonText,
-  secondaryButtonText,
-  onPrimaryClick,
-  onSecondaryClick,
-  selectedMemberDetail,
-}) => {
+const MemberModal = ({ isOpen, setOpenModal, title, primaryButtonText, secondaryButtonText, onPrimaryClick, onSecondaryClick, selectedMemberDetail }) => {
   const { data: memberDetail } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
   const member = memberDetail?.data?.data;
 
