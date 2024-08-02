@@ -35,9 +35,6 @@ const OrderTableRow = ({
 
   return (
     <Table.Row className='bg-white' onClick={() => setOpenModal(orderId, subscription, currentPage)}>
-      <Table.Cell style={{ width: '5%' }}>
-        <Checkbox checked={isChecked} onChange={() => handleRowChecked(orderId, subscription)} onClick={e => e.stopPropagation()} />
-      </Table.Cell>
       <Table.Cell className={getColorForColumn('isSubscription')} style={{ width: '20%' }}>
         <OrderOptionBadge subscription={subscription} />
       </Table.Cell>

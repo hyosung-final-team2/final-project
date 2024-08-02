@@ -7,7 +7,7 @@ import MemberInfo from '../../MemberList/MemberInfo';
 import OrderDetailInfo from '../OrderDetailModal/OrderDetailInfo';
 import SingleOrderProduct from '../OrderDetailModal/SingleOrderProduct';
 import SubscriptionOrderProduct from '../OrderDetailModal/SubScriptionOrderProduct';
-import {useSendPersonalAlarm} from "../../../api/notification/queris.js";
+import { useSendPersonalAlarm } from '../../../api/notification/queris.js';
 
 const commonButtonStyles = {
   APPROVED:
@@ -19,10 +19,10 @@ const commonButtonStyles = {
 const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPrimaryClick, selectedOrderDetail, handleOrderUpdate }) => {
   const { data: orderDetail, isLoading } = useGetOrderDetail(selectedOrderDetail.orderId, selectedOrderDetail.subscription);
   const orderInfo = orderDetail?.data?.data;
-  console.log(orderInfo)
+  console.log(orderInfo);
   const [selectedCycle, setSelectedCycle] = useState(1);
 
-  const { mutate:sendPersonalAlarmMutate } = useSendPersonalAlarm(orderInfo?.memberId,orderInfo?.orderId,orderInfo?.intervalDays)
+  const { mutate: sendPersonalAlarmMutate } = useSendPersonalAlarm(orderInfo?.memberId, orderInfo?.orderId, orderInfo?.intervalDays);
 
   useEffect(() => {
     if (orderInfo) {
@@ -41,13 +41,13 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
 
   const handleApprove = () => {
     handleOrderUpdate([{ orderId: selectedOrderDetail.orderId, subscription: selectedOrderDetail.subscription }], 'APPROVED');
-    sendPersonalAlarmMutate(true)
+    sendPersonalAlarmMutate(true);
     handleCloseModal();
   };
 
   const handleCancel = () => {
     handleOrderUpdate([{ orderId: selectedOrderDetail.orderId, subscription: selectedOrderDetail.subscription }], 'DENIED');
-    sendPersonalAlarmMutate(false)
+    sendPersonalAlarmMutate(false);
     handleCloseModal();
   };
 
@@ -72,6 +72,7 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
               onlyInfo={true}
               title='주문 정보'
               isPending={orderInfo?.orderStatus === 'PENDING'}
+              isOrder={true}
             />
 
             {/* 상품 목록 */}
