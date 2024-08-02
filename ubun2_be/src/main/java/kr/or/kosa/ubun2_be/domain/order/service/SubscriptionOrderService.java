@@ -16,6 +16,8 @@ public interface SubscriptionOrderService {
 
     void processDelaySubscriptionOrders();
 
+    SubscriptionOrderDetailResponse getSubscriptionOrderByCustomerIdAndOrderId(Long orderId, Long customerId);
+
     SubscriptionOrderDetailResponse getSubscriptionOrderByMemberIdAndOrderId(Long memberId, Long orderId);
 
     void removeSubscriptionOrderProducts(Long memberId, RemoveSubscriptionOrderProductRequest request);

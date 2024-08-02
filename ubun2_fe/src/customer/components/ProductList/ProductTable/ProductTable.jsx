@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import { Table } from 'flowbite-react';
 import TableHead from '../../common/Table/TableHead';
 import ProductTableFeature from './ProductTableFeature';
@@ -67,10 +67,13 @@ const ProductTable = () => {
     }
   }, [currentPage, queryClient,searchCategory, searchKeyword, sort, totalPages]);
 
+  const memoizedProductList = useMemo(() => productList, [JSON.stringify(productList)]);
+
   useEffect(() => {
     setSelectedProducts([])
-  }, [currentPage,productList]);
+  }, [memoizedProductList]);
 
+  console.log(selectedProducts)
   useEffect(() => {
     if (totalElementsFromPage !== undefined) {
       setTotalElements(totalElementsFromPage);
