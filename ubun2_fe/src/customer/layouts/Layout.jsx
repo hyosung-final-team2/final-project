@@ -3,6 +3,7 @@ import PageContent from './PageContent';
 import RightSidebar from "./RightSideBar.jsx";
 
 const Layout = () => {
+
   return (
     <>
       <div className='drawer  lg:drawer-open'>

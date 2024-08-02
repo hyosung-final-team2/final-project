@@ -9,7 +9,11 @@ import ExcelModal from '../ExcelModal/ExcelModal';
 import DynamicTableBody from '../../common/Table/DynamicTableBody.jsx';
 
 import {useEffect, useRef, useState} from 'react';
-import {useDeleteSelectedMember, useGetMembers} from '../../../api/Customer/MemberList/MemberTable/queris.js';
+import {
+  useDeleteSelectedMember,
+  useGetMembers,
+  useSendSms
+} from '../../../api/Customer/MemberList/MemberTable/queris.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { getMembers } from '../../../api/Customer/MemberList/MemberTable/memberTable.js';
 import {useGetMemberDetail} from '../../../api/Customer/MemberList/MemberModal/queris.js';
@@ -21,12 +25,19 @@ import useSkeletonStore from "../../../store/skeletonStore.js";
 import SkeletonMemberTableFeature from "../Skeleton/SkeletonMemberTableFeature.jsx";
 import SkeletonMemberTableRow from "../Skeleton/SkeletonMemberTableRow.jsx";
 import NoDataTable from "../../common/Table/NoDataTable.jsx";
+import DeleteConfirmModal from "../../common/Modal/DeleteConfirmModal.jsx";
+import AlertConfirmModal from "../../common/Modal/AlertConfirmModal.jsx";
+import CheckConfirmModal from "../../common/Modal/CheckConfirmModal.jsx";
 
 const MemberTable = () => {
 
   const [openExcelModal, setOpenExcelModal] = useState(false);
   const [openInsertModal, setOpenInsertModal] = useState(false);
   const [openRegisterModal, setOpenRegisterModal] = useState(false);
+  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
+  const [isAlertConfirmModalOpen, setIsAlertConfirmModalOpen] = useState(false);
+  const [isCheckConfirmModalOpen, setIsCheckConfirmModalOpen] = useState(false);
+
 
   const [selectedMembers, setSelectedMembers] = useState([]); // 체크된 멤버
   const [selectedMemberDetail, setSelectedMemberDetail] = useState({ memberId: null, pending: null, currentPage: null }); // 선택된 멤버 ID - 모달 오픈 시
@@ -47,7 +58,8 @@ const MemberTable = () => {
   const memberList = members?.data?.data?.content || [];
 
   const { data, refetch } = useGetMemberDetail(selectedMemberDetail.memberId, selectedMemberDetail.pending);
-  const { mutate:selectedMemberDeleteMutate } = useDeleteSelectedMember(selectedMembers, currentPage,sort, searchCategory, searchKeyword);
+  const { mutate: selectedMemberDeleteMutate } = useDeleteSelectedMember(selectedMembers, currentPage,sort, searchCategory, searchKeyword);
+  const { mutate: smsMutate } = useSendSms(selectedMembers)
 
   const dropdownRef = useRef(null);
 
@@ -67,7 +79,6 @@ const MemberTable = () => {
     setSelectedMembers([])
   }, [currentPage,memberList]);
 
-  //  이 부분 추가
   useEffect(() => {
     if (totalElementsFromPage !== undefined) {
       setTotalElements(totalElementsFromPage);
@@ -133,6 +144,22 @@ const MemberTable = () => {
     }
   };
 
+  const deleteConfirmFirstButtonFunc = () => {
+    setIsDeleteConfirmModalOpen(true)
+  }
+
+  const deleteConfirmSecondButtonFunc = () => {
+    selectedMemberDeleteMutate()
+  }
+
+  const checkConfirmFirstButtonFunc = () => {
+    setIsCheckConfirmModalOpen(false)
+  }
+
+  const checkConfirmSecondButtonFunc = () => {
+    smsMutate()
+  }
+
   const {toggleIsReset} = useMemberTableStore();
   const handleDataReset = async () => {
     await toggleIsReset()
@@ -177,8 +204,11 @@ const MemberTable = () => {
                           setOpenRegisterModal={setOpenRegisterModal}
                           selectedMembers={selectedMembers}
                           handleDataReset={handleDataReset}
-                          selectedMemberDeleteMutate={selectedMemberDeleteMutate}
+                          setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
                           dropdownRef={dropdownRef}
+                          currentPage={currentPage}
+                          setIsAlertConfirmModalOpen={setIsAlertConfirmModalOpen}
+                          setIsCheckConfirmModalOpen={setIsCheckConfirmModalOpen}
       />
 
       {/* 테이블 */}
@@ -196,6 +226,8 @@ const MemberTable = () => {
                     handleRowChecked={handleRowChecked}
                     setOpenModal={handleRowClick}
                     currentPage={currentPage}
+                    PAGE_SIZE={PAGE_SIZE}
+                    colNum={tableColumn.member.list.length}
                 />
             ) : (
                 <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 회원이 없습니다."}
@@ -217,11 +249,43 @@ const MemberTable = () => {
       {/* 엑셀 조회 모달 */}
       {openExcelModal && <ExcelModal isOpen={openExcelModal} setOpenModal={setOpenExcelModal} /> }
 
-    {/* 회원 조회 & 수정 모달 */}
+      {/* 회원 조회 & 수정 모달 */}
       {openInsertModal && <MemberInsertModal isOpen={openInsertModal} setOpenModal={setOpenInsertModal} selectedMemberDetail={selectedMemberDetail} setCurrentPage={setCurrentPage} currentPage={currentPage} setSelectedMemberDetail={setSelectedMemberDetail}/>}
 
-    {/*  회원 등록 모달*/}
+      {/*  회원 등록 모달 */}
       {openRegisterModal && <MemberRegisterModal isOpen={openRegisterModal} setOpenModal={setOpenRegisterModal} handleRegisterSuccess={handleRegisterSuccess}/>}
+
+      {/* 삭제 화인 모달 */}
+      {
+        isDeleteConfirmModalOpen &&
+        selectedMembers.length > 0 &&
+        <DeleteConfirmModal isDeleteConfirmModalOpen={isDeleteConfirmModalOpen}
+                            setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
+                            text={<p className="text-lg"><span className="text-red-500 font-bold">{selectedMembers.length}</span>명의 회원을 선택하셨습니다</p>}
+                            firstButtonFunc={deleteConfirmFirstButtonFunc}
+                            secondButtonFunc={deleteConfirmSecondButtonFunc}
+        />
+      }
+
+      {/* alert 모달 */}
+      {
+        isAlertConfirmModalOpen &&
+        <AlertConfirmModal isAlertConfirmModalOpen={isAlertConfirmModalOpen}
+                           setIsAlertConfirmModalOpen={setIsAlertConfirmModalOpen}
+                           text={<p className="text-lg pt-4 pb-7">선택된 회원이 없습니다!</p>}
+        />
+      }
+
+      {/* 체크 모달 */}
+      {
+        isCheckConfirmModalOpen &&
+        <CheckConfirmModal isCheckConfirmModalOpen={isCheckConfirmModalOpen}
+                           setIsCheckConfirmModalOpen={setIsCheckConfirmModalOpen}
+                           text={<p className="text-lg"><span className="text-green-500 font-bold">{selectedMembers.length}</span>명의 회원을 선택하셨습니다</p>}
+                           firstButtonFunc={checkConfirmFirstButtonFunc}
+                           secondButtonFunc={checkConfirmSecondButtonFunc}
+        />
+      }
     </div>
   );
 };

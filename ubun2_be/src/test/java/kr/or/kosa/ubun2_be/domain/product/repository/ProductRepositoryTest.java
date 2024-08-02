@@ -84,7 +84,7 @@ class ProductRepositoryTest {
     void findByCustomerCustomerIdAndProductId() {
         //given
         //when
-        Optional<Product> byCustomerCustomerIdAndProductId = productRepository.findByCustomerCustomerIdAndProductId(customer.getCustomerId(), product.getProductId());
+        Optional<Product> byCustomerCustomerIdAndProductId = productRepository.findByIsDeletedFalseAndCustomerCustomerIdAndProductId(customer.getCustomerId(), product.getProductId());
         //then
         assertThat(byCustomerCustomerIdAndProductId.get().getProductName()).isEqualTo(product.getProductName());
     }
@@ -93,7 +93,7 @@ class ProductRepositoryTest {
     void existsByProductName() {
         //given
         //when
-        boolean exists = productRepository.existsByProductName("Smartphone");
+        boolean exists = productRepository.existsByIsDeletedFalseAndProductName("Smartphone");
         //then
         assertThat(exists).isTrue();
     }
@@ -103,7 +103,7 @@ class ProductRepositoryTest {
     void countByCustomerCustomerId() {
         //given
         //when
-        long count = productRepository.countByCustomerCustomerId(customer.getCustomerId());
+        long count = productRepository.countByIsDeletedFalseAndCustomerCustomerId(customer.getCustomerId());
         //then
         assertThat(count).isEqualTo(1);
     }
@@ -113,7 +113,7 @@ class ProductRepositoryTest {
     void countByCustomerCustomerIdAndProductStatus() {
         //given
         //when
-        long activeCount = productRepository.countByCustomerCustomerIdAndProductStatus(customer.getCustomerId(), true);
+        long activeCount = productRepository.countByIsDeletedFalseAndCustomerCustomerIdAndProductStatus(customer.getCustomerId(), true);
         //then
         assertThat(activeCount).isEqualTo(1);
     }

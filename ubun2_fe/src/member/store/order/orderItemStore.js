@@ -70,24 +70,36 @@ const useOrderItemsStore = create(
           let newSelectedItems = state.selectedItems.filter(s => s.customerId !== customerId);
 
           if (checked) {
+            const existingSelectedStore = state.selectedItems.find(s => s.customerId === customerId);
             const singleProducts = store.cartProducts.filter(p => p.orderOption === 'SINGLE');
             const subscriptionProducts = store.cartProducts.filter(p => p.orderOption === 'SUBSCRIPTION');
 
             if (singleProducts.length > 0) {
+              const existingSingleProducts = existingSelectedStore?.cartProducts.filter(p => p.orderOption === 'SINGLE') || [];
               newSelectedItems.push({
                 customerId,
                 businessName: store.businessName,
                 intervalDays: undefined,
-                cartProducts: singleProducts,
+                cartProducts: [
+                  ...existingSingleProducts,
+                  ...singleProducts.filter(p => !existingSingleProducts.some(ep => ep.cartProductId === p.cartProductId)),
+                ],
               });
             }
 
             if (subscriptionProducts.length > 0) {
+              const existingSubscriptionProducts = existingSelectedStore?.cartProducts.filter(p => p.orderOption === 'SUBSCRIPTION') || [];
               newSelectedItems.push({
                 customerId,
                 businessName: store.businessName,
-                intervalDays: 0,
-                cartProducts: subscriptionProducts,
+                intervalDays: existingSelectedStore?.intervalDays || 0,
+                cartProducts: [
+                  ...existingSubscriptionProducts,
+                  ...subscriptionProducts.filter(p => !existingSubscriptionProducts.some(ep => ep.cartProductId === p.cartProductId)),
+                ].map(p => ({
+                  ...p,
+                  intervalDays: p.intervalDays || existingSelectedStore?.intervalDays || 0,
+                })),
               });
             }
           }
@@ -102,7 +114,8 @@ const useOrderItemsStore = create(
         set(state => {
           let newSelectedItems = [...state.selectedItems];
           const storeIndex = newSelectedItems.findIndex(
-            store => store.customerId === customerId && store.intervalDays === (product.orderOption === 'SUBSCRIPTION' ? 0 : undefined)
+            store =>
+              store.customerId === customerId && (product.orderOption === 'SUBSCRIPTION' ? store.intervalDays !== undefined : store.intervalDays === undefined)
           );
 
           if (checked) {
@@ -110,13 +123,13 @@ const useOrderItemsStore = create(
               newSelectedItems.push({
                 customerId,
                 businessName: state.cartData.find(s => s.customerId === customerId)?.businessName,
-                intervalDays: product.orderOption === 'SUBSCRIPTION' ? 0 : undefined,
-                cartProducts: [{ ...product, intervalDays: product.orderOption === 'SUBSCRIPTION' ? 0 : undefined }],
+                intervalDays: product.orderOption === 'SUBSCRIPTION' ? product.intervalDays || 0 : undefined,
+                cartProducts: [product],
               });
             } else {
               newSelectedItems[storeIndex] = {
                 ...newSelectedItems[storeIndex],
-                cartProducts: [...newSelectedItems[storeIndex].cartProducts, { ...product, intervalDays: newSelectedItems[storeIndex].intervalDays }],
+                cartProducts: [...newSelectedItems[storeIndex].cartProducts, product],
               };
             }
           } else {

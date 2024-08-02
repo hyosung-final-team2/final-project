@@ -105,6 +105,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
             case "accountNumber" -> accountPayment.accountNumber;
             case "cardNumber" -> cardPayment.cardNumber;
             case "cardCompany" -> cardPayment.cardCompanyName;
+            case "createdAt" -> paymentMethod.createdAt;
             default -> null;
         };
     }

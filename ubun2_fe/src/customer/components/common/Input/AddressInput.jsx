@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRegisterAddress } from '../../../api/Address/AddressModal/queris';
 import useAddressStore from '../../../store/Address/useAddressStore';
 
 const POPUP_WIDTH = 700;
 const POPUP_HEIGHT = 760;
 
-const AddressInput = ({ disabled = false, infos, title, onChange }) => {
+const AddressInput = ({ disabled = false, infos, title, isExistButton = true, onChange }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md ';
+  const addressInputStyles = isExistButton ? '3fr 5fr 5fr 3fr' : '5fr 6fr 5fr';
   const [address, setAddress] = useState({});
   const [popup, setPopup] = useState(null);
   const [formData, setFormData] = useState(
@@ -62,7 +63,7 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
           상세주소: formData['상세주소'], // 기존 상세주소 유지
         };
         setFormData(newFormData);
-        onChange(newFormData);
+        onChange(newFormData); // 부모 컴포넌트에 변경사항 전달
       } catch (error) {
         console.error('Failed to receive message', error);
       } finally {
@@ -92,7 +93,7 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
           상세주소: formData['상세주소'], // 기존 상세주소 유지
         };
         setFormData(newFormData);
-        onChange(newFormData);
+        onChange(newFormData); // 부모 컴포넌트에 변경사항 전달
       }
     };
 
@@ -109,7 +110,7 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
       [label]: value,
     };
     setFormData(newFormData);
-    onChange(newFormData);
+    onChange(newFormData); // 부모 컴포넌트에 변경사항 전달
   };
 
   const handleOnClick = async () => {
@@ -135,12 +136,12 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
       registerMutate(apiData, {
         onSuccess: () => {
           // 성공 시 formData 초기화
-          setFormData(
-            infos.reduce((acc, info) => {
-              acc[info.label] = '';
-              return acc;
-            }, {})
-          );
+          const newFormData = infos.reduce((acc, info) => {
+            acc[info.label] = '';
+            return acc;
+          }, {});
+          setFormData(newFormData);
+          onChange(newFormData); // 부모 컴포넌트에 변경사항 전달
         },
       });
     } catch (error) {
@@ -151,7 +152,7 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
   return (
     <div className='p-3'>
       <h3 className='mb-4 text-xl font-bold'>{title}</h3>
-      <div className='grid gap-4 auto-cols-auto' style={{ gridTemplateColumns: '3fr 5fr 5fr 3fr' }}>
+      <div className='grid gap-4 auto-cols-auto' style={{ gridTemplateColumns: addressInputStyles }}>
         {infos.map((info, index) => (
           <div className='relative' key={index} onClick={info.label !== '상세주소' ? handleAddressSearch : null}>
             <input
@@ -165,12 +166,14 @@ const AddressInput = ({ disabled = false, infos, title, onChange }) => {
             <label className='absolute px-1 text-xs text-gray-500 bg-white left-3 -top-2'>{info.label}</label>
           </div>
         ))}
-        <button
-          className={`${commonButtonStyles} bg-custom-button-purple text-custom-font-purple hover:text-white hover:bg-custom-font-purple`}
-          onClick={handleOnClick}
-        >
-          추가
-        </button>
+        {isExistButton && (
+          <button
+            className={`${commonButtonStyles} bg-custom-button-purple text-custom-font-purple hover:text-white hover:bg-custom-font-purple`}
+            onClick={handleOnClick}
+          >
+            추가
+          </button>
+        )}
       </div>
     </div>
   );

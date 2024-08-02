@@ -1,9 +1,9 @@
 import DashboardStats from './DashboardItem/DashboardStats';
 
 import UserGroupIcon from '@heroicons/react/24/outline/UserGroupIcon';
-import UsersIcon from '@heroicons/react/24/outline/UsersIcon';
-import CircleStackIcon from '@heroicons/react/24/outline/CircleStackIcon';
-import CreditCardIcon from '@heroicons/react/24/outline/CreditCardIcon';
+import ProductsIcon from '@heroicons/react/24/outline/ArchiveBoxIcon';
+import PendingOrdersCount from '../../../assets/images/pending.svg';
+import OrdersCount from '../../../assets/images/order.svg';
 import html2canvas from 'html2canvas-pro';
 import DashboardTopBar from './DashboardItem/DashboardTopBar';
 import DashboardLineChart from './DashboardItem/DashBoardLineChart';
@@ -156,7 +156,7 @@ const Dashboard = () => {
       id: 'pending-orders',
       title: '미승인 주문 건수',
       value: `${pendingOrderCount}건`,
-      icon: <CircleStackIcon className='w-8 h-8' />,
+      icon: <PendingOrdersCount className='w-8 h-8' />,
       description: '클릭해서 주문 확인',
       bgColor: 'bg-white',
       hoverBgColor: 'bg-gray-200',
@@ -168,7 +168,7 @@ const Dashboard = () => {
       id: 'total-orders',
       title: '총 주문 건수',
       value: `${totalOrderCount}건`,
-      icon: <CreditCardIcon className='w-8 h-8' />,
+      icon: <OrdersCount className='w-8 h-8' />,
       description: `${startDate}~${endDate}`,
       bgColor: 'bg-white',
       hoverBgColor: 'bg-gray-200',
@@ -192,7 +192,7 @@ const Dashboard = () => {
       id: 'products-count',
       title: '상품 개수',
       value: `${productCountValue?.totalCount}개`,
-      icon: <UsersIcon className='w-8 h-8' />,
+      icon: <ProductsIcon className='w-8 h-8' />,
       description: '',
       bgColor: 'bg-white',
       hoverBgColor: 'bg-gray-200',

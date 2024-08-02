@@ -35,7 +35,7 @@ const MemberAddressTable = ({ memberAddresses, title }) => {
     <div className='p-3'>
       <h2 className='text-2xl font-bold mb-3 text-main'>{title}</h2>
       <Table hoverable>
-        <TableHead tableColumns={tableColumn.address.detail} isCheckable={false} />
+        <TableHead tableColumns={tableColumn.address.detail} isCheckable={false} nonSort={tableColumn.address.detail} />
         <DynamicTableBody
           dataList={paginatedData}
           TableRowComponent={MemberAddressTableRow}

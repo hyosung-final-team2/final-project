@@ -93,7 +93,7 @@ class ProductServiceImplTest {
     @DisplayName("상품 상세 조회 - 성공")
     void getProductByCustomerIdAndProductId() {
         //given
-        when(productRepository.findByCustomerCustomerIdAndProductId(anyLong(), anyLong()))
+        when(productRepository.findByIsDeletedFalseAndCustomerCustomerIdAndProductId(anyLong(), anyLong()))
                 .thenReturn(Optional.of(testProduct));
 
         //when
@@ -114,7 +114,7 @@ class ProductServiceImplTest {
 
         MockMultipartFile image = new MockMultipartFile("image", "test.jpg", "image/jpeg", "test image content".getBytes());
 
-        when(productRepository.existsByProductName(anyString())).thenReturn(false);
+        when(productRepository.existsByIsDeletedFalseAndProductName(anyString())).thenReturn(false);
         when(categoryService.findCategoryByCategoryName(anyString())).thenReturn(testCategory);
         when(customerService.findById(anyLong())).thenReturn(testCustomer);
         when(productRepository.save(any(Product.class))).thenReturn(testProduct);
@@ -143,7 +143,7 @@ class ProductServiceImplTest {
         productRequest.setProductStatus(true);
 
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(testProduct));
-        when(productRepository.existsByProductName(anyString())).thenReturn(false);
+        when(productRepository.existsByIsDeletedFalseAndProductName(anyString())).thenReturn(false);
         when(imageService.uploadImage(any())).thenReturn("http://a8d0d6d3-de4c-44ac-a0ce-aca5772bd30b.jpg");
 
         //when
@@ -161,7 +161,7 @@ class ProductServiceImplTest {
         //given
         Long productId = 1L;
 
-        when(productRepository.findByCustomerCustomerIdAndProductId(anyLong(), anyLong()))
+        when(productRepository.findByIsDeletedFalseAndCustomerCustomerIdAndProductId(anyLong(), anyLong()))
                 .thenReturn(Optional.of(testProduct));
 
         //when

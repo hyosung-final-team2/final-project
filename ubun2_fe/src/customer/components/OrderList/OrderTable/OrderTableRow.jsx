@@ -19,6 +19,9 @@ const OrderTableRow = ({
   isChecked,
   handleRowChecked,
   currentPage,
+   isEmpty,
+   colNum
+
 }) => {
   const { sort } = useOrderTableStore();
 
@@ -33,11 +36,19 @@ const OrderTableRow = ({
     return '';
   };
 
+
+    if (isEmpty) {
+        return (
+            <Table.Row className="cursor-default">
+                <Table.Cell colSpan={colNum + 1} className="text-center text-gray-500 bg-gray-50">
+                    <StatusBadge status={'EMPTY'} />
+                </Table.Cell>
+            </Table.Row>
+        );
+    }
+
   return (
     <Table.Row className='bg-white' onClick={() => setOpenModal(orderId, subscription, currentPage)}>
-      <Table.Cell style={{ width: '5%' }}>
-        <Checkbox checked={isChecked} onChange={() => handleRowChecked(orderId, subscription)} onClick={e => e.stopPropagation()} />
-      </Table.Cell>
       <Table.Cell className={getColorForColumn('isSubscription')} style={{ width: '20%' }}>
         <OrderOptionBadge subscription={subscription} />
       </Table.Cell>

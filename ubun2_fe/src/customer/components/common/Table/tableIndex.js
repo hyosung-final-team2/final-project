@@ -12,7 +12,7 @@ export const tableColumn = {
   paymentMethod: {
     accountList: ['회원 이메일', '회원명', '결제수단', '은행명', '계좌번호'],
     cardList: ['회원 이메일', '회원명', '결제수단', '카드사명', '카드번호'],
-    detail: ['결제수단', '카드사(은행)', '카드/계좌번호', '만료일'],
+    detail: ['번호', '결제수단', '카드사(은행)', '카드/계좌번호'],
     accountSearch: ['회원 이메일', '회원명', '은행명'],
     cardSearch: ['회원 이메일', '회원명', '카드사명'],
     nonSort: ['결제수단'],
@@ -57,4 +57,4 @@ export const getKeyByValue = (object, value) => {
   return Object.keys(object).find(key => object[key] === value);
 };
 
-export const betweenColumn = new Set(['createdAt', 'stockQuantity', 'productPrice', 'productDiscount']);
+export const betweenColumn = new Set(['createdAt', 'stockQuantity', 'productPrice', 'productDiscount','totalCost']);

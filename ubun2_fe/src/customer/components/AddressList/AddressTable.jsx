@@ -1,4 +1,4 @@
-import {useState, useEffect, useRef} from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Table } from 'flowbite-react';
 import { tableColumn } from '../common/Table/tableIndex';
 import TableHead from '../common/Table/TableHead';
@@ -8,7 +8,7 @@ import AddressTableRow from './AddressTableRow';
 import MemberAddressModal from './MemberAddressModal';
 
 import { useQueryClient } from '@tanstack/react-query';
-import {useDeleteSelectedAddresses, useGetAddresses} from '../../api/Address/AddressTable/queris.js';
+import { useDeleteSelectedAddresses, useGetAddresses } from '../../api/Address/AddressTable/queris.js';
 import { useGetAddressDetail } from '../../api/Address/AddressModal/queris.js';
 import { getAddresses } from '../../api/Address/AddressTable/addressTable.js';
 
@@ -21,8 +21,8 @@ import SkeletonAddressTableFeature from './Skeleton/SkeletonAddressTableFeature.
 import SkeletonAddressTableRow from './Skeleton/SkeletonAddressTableRow.jsx';
 
 import useSkeletonStore from '../../store/skeletonStore.js';
-import NoDataTable from "../common/Table/NoDataTable.jsx";
-import TableBody from "../common/Table/TableBody.jsx";
+import NoDataTable from '../common/Table/NoDataTable.jsx';
+import TableBody from '../common/Table/TableBody.jsx';
 
 const AddressTable = () => {
   const [openAddressRegistration, setOpenAddressRegistration] = useState(false);
@@ -31,7 +31,8 @@ const AddressTable = () => {
   const [clickedAddress, setClickedAddress] = useState(null);
   const { setSelectedMemberId, openMemberAddressModal, setOpenMemberAddressModal } = useAddressStore();
 
-  const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset, setTotalElements } = useAddressTableStore();
+  const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset, setTotalElements } =
+    useAddressTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8;
@@ -43,7 +44,7 @@ const AddressTable = () => {
 
   const dropdownRef = useRef(null);
 
-  const { mutate: deleteSelectedAddressesMutate } = useDeleteSelectedAddresses(selectedAddresses,currentPage,PAGE_SIZE)
+  const { mutate: deleteSelectedAddressesMutate } = useDeleteSelectedAddresses(selectedAddresses, currentPage, PAGE_SIZE);
 
   const queryClient = useQueryClient();
 
@@ -58,15 +59,14 @@ const AddressTable = () => {
   }, [currentPage, queryClient, totalPages, sort, searchCategory, searchKeyword]);
 
   useEffect(() => {
-    setSelectedAddresses([])
-  }, [currentPage,addressList]);
+    setSelectedAddresses([]);
+  }, [currentPage, addressList]);
 
   useEffect(() => {
     if (totalElementsFromPage !== undefined) {
       setTotalElements(totalElementsFromPage);
     }
   }, [totalElementsFromPage, setTotalElements]);
-
 
   //
   const { refetch } = useGetAddressDetail(addressId);
@@ -120,14 +120,24 @@ const AddressTable = () => {
   };
 
   const NoDataTableButtonFunc = () => {
-    setOpenAddressRegistration(true)
-  }
+    setOpenAddressRegistration(true);
+  };
 
-  const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword, setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore();
+  const {
+    setSkeletonData,
+    setSkeletonTotalPage,
+    setSkeletonSortData,
+    setSkeletonSearchCategory,
+    setSkeletonSearchKeyword,
+    setSkeletonTotalElements,
+    skeletonTotalElement,
+  } = useSkeletonStore();
 
   useEffect(() => {
     return resetData();
   }, []);
+
+  console.log('addressList', addressList);
 
   useEffect(() => {
     if (!isLoading) {
@@ -137,7 +147,7 @@ const AddressTable = () => {
       setSkeletonSearchCategory(searchCategory);
       setSkeletonSearchKeyword(searchKeyword);
       if (skeletonTotalElement !== totalElementsFromPage) {
-        setSkeletonTotalElements(totalElementsFromPage)
+        setSkeletonTotalElements(totalElementsFromPage);
       }
     }
   }, [
@@ -186,30 +196,32 @@ const AddressTable = () => {
             handleSort={handleSort}
             nonSort={tableColumn.address.nonSort}
           />
-          {
-            addressList.length > 0 ? (
-                <TableBody
-                    TableRowComponent={AddressTableRow}
-                    dataList={addressList}
-                    setOpenModal={handleRowClick}
-                    dynamicId='addressId'
-                    selectedMembers={selectedAddresses}
-                    handleRowChecked={handleRowChecked}
-                    currentPage={currentPage}
-                />
-            ) : (
-                <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 주소가 없습니다."}
-                             buttonText={searchCategory && searchKeyword ? "다시 검색하기":"주소 등록하기"}
-                             buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
-                             colNum={tableColumn.address.list.length}
-                />
-            )
-          }
+
+          {addressList.length > 0 ? (
+            <TableBody
+              TableRowComponent={AddressTableRow}
+              dataList={addressList}
+              setOpenModal={handleRowClick}
+              dynamicId='addressId'
+              selectedMembers={selectedAddresses}
+              handleRowChecked={handleRowChecked}
+              currentPage={currentPage}
+            />
+          ) : (
+            <NoDataTable
+              text={searchCategory && searchKeyword ? '검색 결과가 없습니다!' : '등록된 주소가 없습니다.'}
+              buttonText={searchCategory && searchKeyword ? '다시 검색하기' : '주소 등록하기'}
+              buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : NoDataTableButtonFunc}
+              colNum={tableColumn.address.list.length}
+            />
+          )}
 
         </Table>
         {isLoading === false && addressList.length > 0 ? (
           <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />
-        ) : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />}
+        ) : (
+          <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4 invisible' />
+        )}
 
         <MemberAddressModal
           isOpen={openMemberAddressModal}

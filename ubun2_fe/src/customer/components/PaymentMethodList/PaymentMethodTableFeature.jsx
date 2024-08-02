@@ -3,9 +3,10 @@ import Dropdown from '../common/Dropdown/Dropdown';
 import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
 import ArrowPathIcon from '@heroicons/react/24/outline/ArrowPathIcon.js';
 import SearchBarWithDrop from '../common/SearchBar/SearchBarWithDrop';
-import ToggleButton from '../common/ToggleButon/ToggleButton';
+import CreateSearchResult from '../../utils/CreateSearchResult';
+import usePaymentMethodTableStore from '../../store/PaymentMethod/paymentMethodTableStore';
 
-const PaymentMethodTableFeature = ({ setOpenModal, setCurrentPage, onSearch, tableColumns, handleDataReset }) => {
+const PaymentMethodTableFeature = ({ setOpenModal, setCurrentPage, onSearch, tableColumns, handleDataReset, dropdownRef }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const paymentMethodType = paymentMethodStore(state => state.paymentMethodType);
   const isAccount = paymentMethodType === 'ACCOUNT';
@@ -19,19 +20,19 @@ const PaymentMethodTableFeature = ({ setOpenModal, setCurrentPage, onSearch, tab
     setOpenModal(true);
   };
 
-  const handleDropdownChange = value => {
+  const handleDropdownChange = newType => {
     setCurrentPage(1);
   };
 
+  const { searchCategory, searchKeyword, totalElements } = usePaymentMethodTableStore();
   const accountStyle = isAccount ? 'text-red-600 font-bold' : 'text-black';
   const cardStyle = isAccount ? 'text-black' : 'text-red-600 font-bold';
   return (
     <div className='flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 p-4 bg-white dark:bg-gray-900'>
       <div className='flex space-x-5 items-center'>
-        <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} />
-        <div className={accountStyle}>계좌</div>
-        <ToggleButton items={items} onChange={handleDropdownChange} />
-        <div className={cardStyle}>카드</div>
+        <SearchBarWithDrop tableColumns={tableColumns} onSearch={onSearch} dropdownRef={dropdownRef} />
+        <Dropdown label={paymentMethodType === 'ACCOUNT' ? '계좌' : '카드'} items={items} onChange={handleDropdownChange} />{' '}
+        <CreateSearchResult searchCategory={searchCategory} searchKeyword={searchKeyword} totalElements={totalElements} />
       </div>
       <div className='flex space-x-2 items-center'>
         <button className='btn btn-ghost btn-sm normal-case ' onClick={() => handleDataReset()}>

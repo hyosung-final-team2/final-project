@@ -84,7 +84,6 @@ const MyPaymentsList = () => {
           setSelectedItem(null);
         },
         onError: error => {
-          ß;
           console.error(error);
         },
       });
