@@ -19,10 +19,17 @@ import SkeletonPendingOrderTableFeature from '../Skeleton/SkeletonPendingOrderTa
 import usePendingOrderTableStore from '../../../store/PendingOrderTable/pendingOrderTableStore';
 import NoDataTable from "../../common/Table/NoDataTable.jsx";
 import {useNavigate} from "react-router-dom";
+import DeleteConfirmModal from "../../common/Modal/DeleteConfirmModal.jsx";
+import AlertConfirmModal from "../../common/Modal/AlertConfirmModal.jsx";
+import CheckConfirmModal from "../../common/Modal/CheckConfirmModal.jsx";
 
 const PendingOrderTable = () => {
   const navigate = useNavigate();
   const [openPendingOrderDetailModal, setOpenPendingOrderDetailModal] = useState(false);
+  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
+  const [isAlertConfirmModalOpen, setIsAlertConfirmModalOpen] = useState(false);
+  const [isCheckConfirmModalOpen, setIsCheckConfirmModalOpen] = useState(false);
+
 
   const [selectedPendingOrders, setSelectedPendingOrders] = useState([]); // 체크된 ID
   const [selectedPendingOrderDetail, setSelectedPendingOrderDetail] = useState({ orderId: null, subscription: false, currentPage: null }); // 선택된 주문 ID - 모달 오픈 시
@@ -155,6 +162,23 @@ const PendingOrderTable = () => {
     }
   };
 
+  const deleteConfirmFirstButtonFunc = () => {
+    setIsDeleteConfirmModalOpen(true)
+  }
+
+  const deleteConfirmSecondButtonFunc = () => {
+    handleOrderUpdate(selectedPendingOrders, 'DENIED');
+  }
+
+  const checkConfirmFirstButtonFunc = () => {
+    setIsCheckConfirmModalOpen(false)
+  }
+
+  const checkConfirmSecondButtonFunc = () => {
+    handleOrderUpdate(selectedPendingOrders, 'APPROVED');
+  }
+
+
   // isLoading 시, skeletonTable
   const { setSkeletonData, setSkeletonTotalPage, setSkeletonSortData, setSkeletonSearchCategory, setSkeletonSearchKeyword, setSkeletonTotalElements, skeletonTotalElement } = useSkeletonStore();
 
@@ -204,6 +228,9 @@ const PendingOrderTable = () => {
         selectedPendingOrders={selectedPendingOrders}
         handleDataReset={handleDataReset}
         dropdownRef={dropdownRef}
+        setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
+        setIsAlertConfirmModalOpen={setIsAlertConfirmModalOpen}
+        setIsCheckConfirmModalOpen={setIsCheckConfirmModalOpen}
       />
 
       {/* 테이블 */}
@@ -253,6 +280,39 @@ const PendingOrderTable = () => {
         selectedOrderDetail={selectedPendingOrderDetail}
         handleOrderUpdate={handleOrderUpdate}
       />
+
+      {/* 삭제 화인 모달 */}
+      {
+          isDeleteConfirmModalOpen &&
+          selectedPendingOrders.length > 0 &&
+          <DeleteConfirmModal isDeleteConfirmModalOpen={isDeleteConfirmModalOpen}
+                              setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
+                              text={<p className="text-lg"><span className="text-red-500 font-bold">{selectedPendingOrders.length}</span>개의 주문을 선택하셨습니다</p>}
+                              firstButtonFunc={deleteConfirmFirstButtonFunc}
+                              secondButtonFunc={deleteConfirmSecondButtonFunc}
+          />
+      }
+
+      {/* alert 모달 */}
+      {
+          isAlertConfirmModalOpen &&
+          <AlertConfirmModal isAlertConfirmModalOpen={isAlertConfirmModalOpen}
+                             setIsAlertConfirmModalOpen={setIsAlertConfirmModalOpen}
+                             text={<p className="text-lg pt-4 pb-7">선택된 승인대기 주문이 없습니다!</p>}
+          />
+      }
+
+      {/* 체크 모달 */}
+      {
+          isCheckConfirmModalOpen &&
+          <CheckConfirmModal isCheckConfirmModalOpen={isCheckConfirmModalOpen}
+                             setIsCheckConfirmModalOpen={setIsCheckConfirmModalOpen}
+                             text={<p className="text-lg"><span className="text-green-500 font-bold">{selectedPendingOrders.length}</span>개의 주문을 선택하셨습니다</p>}
+                             secondText="승인"
+                             firstButtonFunc={checkConfirmFirstButtonFunc}
+                             secondButtonFunc={checkConfirmSecondButtonFunc}
+          />
+      }
     </div>
   );
 };
