@@ -96,6 +96,7 @@ public class AddressRepositoryImpl extends QuerydslRepositorySupport implements 
         return switch (property) {
             case "memberName" -> member.memberName;
             case "address" -> address1.address;
+            case "createdAt" -> address1.createdAt;
             default -> null;
         };
     }

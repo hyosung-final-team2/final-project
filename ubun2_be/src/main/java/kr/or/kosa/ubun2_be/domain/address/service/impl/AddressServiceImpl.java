@@ -71,7 +71,7 @@ public class AddressServiceImpl implements AddressService {
         Address address = Address.builder()
                 .member(member)
                 .address(addressRequest.getAddress())
-                .addressNickname(addressRequest.getAddressNickname()) //nullable?
+                .addressNickname(addressRequest.getAddressNickname() != null ? addressRequest.getAddressNickname() : member.getMemberName()+"님의 배송지") //nullable?
                 .recipientName(addressRequest.getRecipientName() != null ? addressRequest.getRecipientName() : member.getMemberName())
                 .recipientPhone(addressRequest.getRecipientPhone() != null ? addressRequest.getRecipientPhone() : member.getMemberPhone())
                 .defaultStatus(member.getAddresses().isEmpty()) // 첫 번째 주소면 기본 주소로 설정

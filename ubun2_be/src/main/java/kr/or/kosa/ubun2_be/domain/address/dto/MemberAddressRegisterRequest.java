@@ -19,7 +19,7 @@ public class MemberAddressRegisterRequest {
 
     private String recipientName;
 
-    @Pattern(regexp = "^(010|011|016|017|018|019)\\d{3,4}\\d{4}$", message = "ex) 01012345678")
+    @Pattern(regexp = "^(010|011|016|017|018|019)-\\d{3,4}-\\d{4}$", message = "ex) 010-1234-5678")
     private String recipientPhone;
 
     private String addressNickname;
