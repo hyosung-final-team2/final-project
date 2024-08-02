@@ -28,9 +28,9 @@ const ProductItemReadOnly = ({
       <div className='flex items-start flex-grow'>
         <div className='flex-grow'>
           <div className='flex flex-col gap-1'>
-            <p className='mb-1 text-sm font-bold'>{productDescription}</p>
+            <p className='mb-1 text-sm font-bold'>{productName}</p>
             <div className='flex gap-2 text-sm text-gray-500'>
-              <p>{productName}</p>
+              <p>{productDescription}</p>
               <span>/</span>
               <p>{`${formatPrice(finalPrice)} 원`}</p>
               <span>/</span>
