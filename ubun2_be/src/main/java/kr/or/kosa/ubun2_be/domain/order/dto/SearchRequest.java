@@ -8,4 +8,5 @@ import lombok.Setter;
 public class SearchRequest {
     private String searchCategory;
     private String searchKeyword;
+    private String orderStatus;
 }
