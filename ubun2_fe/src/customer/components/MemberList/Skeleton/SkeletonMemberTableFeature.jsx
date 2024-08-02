@@ -5,6 +5,7 @@ import useSkeletonStore from "../../../store/skeletonStore.js";
 import CreateSearchResult from "../../../utils/CreateSearchResult.jsx";
 import LinkIcon from "@heroicons/react/24/outline/LinkIcon.js";
 import UserPlusIcon from "@heroicons/react/24/outline/UserPlusIcon.js";
+import TrashIcon from "@heroicons/react/24/outline/TrashIcon.js";
 
 
 
@@ -69,7 +70,9 @@ const SkeletonMemberTableFeature = () => {
                     회원 등록
                 </button>
                 <button
-                    className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제
+                    className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 flex gap-2 pr-6 items-center`}>
+                    <TrashIcon className='w-5'/>
+                    삭제
                 </button>
             </div>
         </div>
