@@ -42,11 +42,16 @@ const PaymentMethodTableRow = ({
 
   const sortInstitute = isAccount ? 'bankName' : 'cardCompany';
   const sortNumber = isAccount ? 'accountNumber' : 'cardNumber';
+
+  const handleCheckboxChange = e => {
+    e.stopPropagation();
+    handleRowChecked(paymentMethodId, e.target.checked);
+  };
   return (
     <>
-      <Table.Row className='bg-white' onClick={() => setOpenModal(paymentMethodId, memberId, payment)}>
+      <Table.Row className='bg-white h-[60px]' onClick={() => setOpenModal(paymentMethodId, memberId, payment)}>
         <Table.Cell style={{ width: '5%' }}>
-          <Checkbox checked={isChecked} onChange={() => handleRowChecked(id)} onClick={e => e.stopPropagation()} />
+          <Checkbox checked={isChecked} onChange={handleCheckboxChange} onClick={e => e.stopPropagation()} />
         </Table.Cell>
         <Table.Cell className={getColorForColumn('memberEmail')} style={{ width: '25%' }}>
           {memberEmail}

@@ -35,7 +35,7 @@ const AddressTable = () => {
     useAddressTableStore();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 10;
   const { data: addresses, refetch: refetchAddresses, isLoading } = useGetAddresses(currentPage, PAGE_SIZE, sort, searchCategory, searchKeyword);
 
   const totalPages = addresses?.data?.data?.totalPages;
@@ -80,8 +80,14 @@ const AddressTable = () => {
     }
   };
 
-  const handleRowChecked = id => {
-    setSelectedAddresses(prev => (prev.includes(id) ? prev.filter(id => id !== id) : [...prev, id]));
+  const handleRowChecked = (addressId, isChecked) => {
+    setSelectedAddresses(prev => {
+      if (isChecked) {
+        return [...prev, addressId];
+      } else {
+        return prev.filter(id => id !== addressId);
+      }
+    });
   };
 
   const handleRowClick = async (addressId, memberId, clickedAddress) => {
@@ -137,8 +143,6 @@ const AddressTable = () => {
     return resetData();
   }, []);
 
-  console.log('addressList', addressList);
-
   useEffect(() => {
     if (!isLoading) {
       setSkeletonData(addressList);
@@ -191,7 +195,7 @@ const AddressTable = () => {
           <TableHead
             tableColumns={tableColumn.address.list}
             headerType='address'
-            allChecked={selectedAddresses.length === addressList.length}
+            allChecked={selectedAddresses.length === addressList?.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
             nonSort={tableColumn.address.nonSort}
@@ -215,7 +219,6 @@ const AddressTable = () => {
               colNum={tableColumn.address.list.length}
             />
           )}
-
         </Table>
         {isLoading === false && addressList.length > 0 ? (
           <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />

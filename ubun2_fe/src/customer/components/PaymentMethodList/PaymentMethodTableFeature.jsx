@@ -6,7 +6,7 @@ import SearchBarWithDrop from '../common/SearchBar/SearchBarWithDrop';
 import CreateSearchResult from '../../utils/CreateSearchResult';
 import usePaymentMethodTableStore from '../../store/PaymentMethod/paymentMethodTableStore';
 
-const PaymentMethodTableFeature = ({ setOpenModal, setCurrentPage, onSearch, tableColumns, handleDataReset, dropdownRef }) => {
+const PaymentMethodTableFeature = ({ setOpenModal, setCurrentPage, onSearch, tableColumns, handleDataReset, dropdownRef, deleteSelectedPaymentsMutate }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const paymentMethodType = paymentMethodStore(state => state.paymentMethodType);
   const isAccount = paymentMethodType === 'ACCOUNT';
@@ -42,7 +42,12 @@ const PaymentMethodTableFeature = ({ setOpenModal, setCurrentPage, onSearch, tab
         <button className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`} onClick={handleClick}>
           결제수단 등록
         </button>
-        <button className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제</button>
+        <button
+          onClick={() => deleteSelectedPaymentsMutate()}
+          className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}
+        >
+          삭제
+        </button>
       </div>
     </div>
   );
