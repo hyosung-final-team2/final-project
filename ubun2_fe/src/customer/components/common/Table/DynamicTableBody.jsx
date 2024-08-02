@@ -1,6 +1,6 @@
 import { Table } from 'flowbite-react';
 
-const DynamicTableBody = ({ dataList, TableRowComponent, dynamicKey, dynamicId, setOpenModal, selectedMembers, handleRowChecked, isCheckable = true,currentPage, PAGE_SIZE }) => {
+const DynamicTableBody = ({ dataList, TableRowComponent, dynamicKey, dynamicId, setOpenModal, selectedMembers, handleRowChecked, isCheckable = true,currentPage, PAGE_SIZE, colNum }) => {
 
   const paddedDataList = [...dataList];
   while (paddedDataList.length < PAGE_SIZE) {
@@ -28,6 +28,7 @@ const DynamicTableBody = ({ dataList, TableRowComponent, dynamicKey, dynamicId, 
               handleRowChecked={() => handleRowChecked(idValue, pending, data.memberName, data.memberPhone)}
               currentPage={currentPage}
               isEmpty={data.isEmpty}
+              colNum={colNum}
             />
           ) : (
             <TableRowComponent key={keyValue} {...data} setOpenModal={setOpenModal} />

@@ -197,6 +197,7 @@ const MemberTable = () => {
                     setOpenModal={handleRowClick}
                     currentPage={currentPage}
                     PAGE_SIZE={PAGE_SIZE}
+                    colNum={tableColumn.member.list.length}
                 />
             ) : (
                 <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 회원이 없습니다."}
