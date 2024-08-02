@@ -1,5 +1,4 @@
 import { Checkbox } from 'flowbite-react';
-import OrderStatusBadge from '../badge/OrderStatusBadge';
 import OrderStatusTextBadge from '../badge/OrderStatusTextBadge';
 
 const SubscriptionProductItemEditable = ({
@@ -26,9 +25,9 @@ const SubscriptionProductItemEditable = ({
       <div className='flex items-start flex-grow'>
         <div className='flex-grow'>
           <div className='flex flex-col gap-1'>
-            <p className='mb-1 text-sm font-bold'>{productDescription}</p>
+            <p className='mb-1 text-sm font-bold'>{productName}</p>
             <div className='flex gap-2 text-sm text-gray-500'>
-              <p>{productName}</p>
+              <p>{productDescription}</p>
               <span>/</span>
               <p>{`${price?.toLocaleString()} 원`}</p>
               <span>/</span>
