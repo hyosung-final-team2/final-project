@@ -131,7 +131,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     //    회원의 결제수단 기능
     @Override
     public List<MyCardPaymentResponse> getMyCardPaymentMethods(Long memberId) {
-        List<PaymentMethod> results = paymentMethodRepository.findByMemberMemberId(memberId);
+        List<PaymentMethod> results = paymentMethodRepository.findByIsDeletedFalseAndMemberMemberId(memberId);
         return results.stream()
                 .filter(pm -> pm instanceof CardPayment)
                 .map(pm -> new MyCardPaymentResponse((CardPayment) pm))
@@ -140,7 +140,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
     @Override
     public List<MyAccountPaymentResponse> getMyAccountPaymentMethods(Long memberId) {
-        List<PaymentMethod> results = paymentMethodRepository.findByMemberMemberId(memberId);
+        List<PaymentMethod> results = paymentMethodRepository.findByIsDeletedFalseAndMemberMemberId(memberId);
         return results.stream()
                 .filter(pm -> pm instanceof AccountPayment)
                 .map(pm -> new MyAccountPaymentResponse((AccountPayment) pm))
@@ -165,7 +165,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     public void registerPaymentMethod(RegisterPaymentMethodRequest registerPaymentMethodRequest, Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
 
-        boolean isFirstPaymentMethod = paymentMethodRepository.findByMemberMemberId(memberId).isEmpty();
+        boolean isFirstPaymentMethod = paymentMethodRepository.findByIsDeletedFalseAndMemberMemberId(memberId).isEmpty();
 
         if ("CARD".equals(registerPaymentMethodRequest.getPaymentType())) {
             //결제수단 카드일때 검증
@@ -292,14 +292,14 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     public List<MemberPaymentMethodsResponse> getMemberPaymentMethods(Long memberId, Long customerId) {
         validateMyMember(customerId, memberId);
 
-        List<PaymentMethod> paymentMethods = paymentMethodRepository.findByMemberMemberId(memberId);
+        List<PaymentMethod> paymentMethods = paymentMethodRepository.findByIsDeletedFalseAndMemberMemberId(memberId);
         return paymentMethods.stream()
                 .map(MemberPaymentMethodsResponse::from)
                 .toList();
     }
 
     public boolean existsByPaymentMethodIdAndMemberMemberId(Long paymentMethodId, Long memberId) {
-        return paymentMethodRepository.existsByPaymentMethodIdAndMemberMemberId(paymentMethodId, memberId);
+        return paymentMethodRepository.existsByIsDeletedFalseAndPaymentMethodIdAndMemberMemberId(paymentMethodId, memberId);
     }
 
     private boolean isValidCardNumber(String cardNumber) {

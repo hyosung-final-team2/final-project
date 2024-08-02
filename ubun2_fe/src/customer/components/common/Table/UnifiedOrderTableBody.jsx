@@ -1,10 +1,19 @@
 import { Table } from 'flowbite-react';
 
-const UnifiedOrderTableBody = ({ dataList, TableRowComponent, setOpenModal, selectedOrders, handleRowChecked, isCheckable = true, currentPage }) => {
+const UnifiedOrderTableBody = ({ dataList, TableRowComponent, setOpenModal, selectedOrders, handleRowChecked, isCheckable = true, currentPage, PAGE_SIZE, colNum }) => {
   console.log(dataList)
+
+  const paddedDataList = [...dataList];
+  while (paddedDataList.length < PAGE_SIZE) {
+    paddedDataList.push({
+      orderId: `empty-${paddedDataList.length}`,
+      isEmpty: true,
+    });
+  }
+
   return (
     <Table.Body className='divide-y'>
-      {dataList?.map((data, index) => {
+      {paddedDataList?.map((data, index) => {
         const orderId = data.orderId;
         const subscription = data.subscription;
 
@@ -16,6 +25,8 @@ const UnifiedOrderTableBody = ({ dataList, TableRowComponent, setOpenModal, sele
             isChecked={selectedOrders.some(order => order.orderId === orderId && order.subscription === subscription)}
             handleRowChecked={() => handleRowChecked(orderId, subscription)}
             currentPage={currentPage}
+            isEmpty={data.isEmpty}
+            colNum={colNum}
           />
         ) : (
           <TableRowComponent key={index} {...data} setOpenModal={setOpenModal} />

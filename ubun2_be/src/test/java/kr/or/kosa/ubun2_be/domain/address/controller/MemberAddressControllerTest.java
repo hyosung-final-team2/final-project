@@ -2,7 +2,7 @@ package kr.or.kosa.ubun2_be.domain.address.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.or.kosa.ubun2_be.common.CommonTestSetup;
-import kr.or.kosa.ubun2_be.domain.address.dto.AddressRequest;
+import kr.or.kosa.ubun2_be.domain.address.dto.MemberAddressRegisterRequest;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
 import kr.or.kosa.ubun2_be.domain.member.dto.MyAddressResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,14 +83,15 @@ class MemberAddressControllerTest extends CommonTestSetup {
     @Test
     @DisplayName("회원 주소지 추가")
     void addAddress() throws Exception {
-        AddressRequest addressRequest = new AddressRequest();
+        MemberAddressRegisterRequest addressRequest = new MemberAddressRegisterRequest();
         addressRequest.setMemberId(1L);
+        addressRequest.setAddressId(1L);
         addressRequest.setAddress("서울시 강남구");
         addressRequest.setAddressNickname("새 집");
         addressRequest.setRecipientName("김철수");
         addressRequest.setRecipientPhone("010-1234-5678");
 
-        doNothing().when(addressService).addMemberAddress(any(AddressRequest.class), anyLong());
+        doNothing().when(addressService).addMemberAddress(any(MemberAddressRegisterRequest.class), anyLong());
 
         mockMvc.perform(post("/api/members/addresses/")
                         .with(user(member))
@@ -100,21 +101,22 @@ class MemberAddressControllerTest extends CommonTestSetup {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("주소를 성공적으로 추가했습니다."));
 
-        verify(addressService).addMemberAddress(any(AddressRequest.class), eq(member.getUserId()));
+        verify(addressService).addMemberAddress(any(MemberAddressRegisterRequest.class), eq(member.getUserId()));
     }
 
     @Test
     @DisplayName("회원 주소지 수정")
     void updateAddress() throws Exception {
         Long addressId = 1L;
-        AddressRequest addressRequest = new AddressRequest();
+        MemberAddressRegisterRequest addressRequest = new MemberAddressRegisterRequest();
         addressRequest.setMemberId(1L);
-        addressRequest.setAddress("서울시 강남구 수정");
-        addressRequest.setAddressNickname("집 수정");
+        addressRequest.setAddressId(addressId);
+        addressRequest.setAddress("서울시 강남구");
+        addressRequest.setAddressNickname("새 집");
         addressRequest.setRecipientName("김철수");
         addressRequest.setRecipientPhone("010-1234-5678");
 
-        doNothing().when(addressService).updateMemberAddress(anyLong(), any(AddressRequest.class), anyLong());
+        doNothing().when(addressService).updateMemberAddress(anyLong(), any(MemberAddressRegisterRequest.class), anyLong());
 
         mockMvc.perform(put("/api/members/addresses/{addressId}", addressId)
                         .with(user(member))
@@ -124,7 +126,7 @@ class MemberAddressControllerTest extends CommonTestSetup {
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("주소를 성공적으로 수정했습니다."));
 
-        verify(addressService).updateMemberAddress(eq(addressId), any(AddressRequest.class), eq(member.getUserId()));
+        verify(addressService).updateMemberAddress(eq(addressId), any(MemberAddressRegisterRequest.class), eq(member.getUserId()));
     }
 
     @Test

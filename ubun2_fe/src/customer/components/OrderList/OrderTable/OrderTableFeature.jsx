@@ -17,7 +17,7 @@ const OrderTableFeature = ({ tableColumns, onSearch, handleDataReset, dropdownRe
       <div className='flex items-start gap-2'>
         <button className='normal-case btn btn-ghost btn-sm' onClick={() => handleDataReset()}>
           <ArrowPathIcon className='w-4 mr-2' />
-          Reset
+          초기화
         </button>
       </div>
     </div>

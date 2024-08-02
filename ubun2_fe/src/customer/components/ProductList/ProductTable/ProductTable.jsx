@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import { Table } from 'flowbite-react';
 import TableHead from '../../common/Table/TableHead';
 import ProductTableFeature from './ProductTableFeature';
@@ -67,9 +67,11 @@ const ProductTable = () => {
     }
   }, [currentPage, queryClient,searchCategory, searchKeyword, sort, totalPages]);
 
+  const memoizedProductList = useMemo(() => productList, [JSON.stringify(productList)]);
+
   useEffect(() => {
     setSelectedProducts([])
-  }, [currentPage,productList]);
+  }, [memoizedProductList]);
 
   useEffect(() => {
     if (totalElementsFromPage !== undefined) {
@@ -143,16 +145,16 @@ const ProductTable = () => {
         setSkeletonTotalElements(totalElementsFromPage)
       }
     }
-  }, [productList, currentPage, totalPages,  sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
+  }, [productList, totalPages,  sort,searchKeyword,searchCategory, setSkeletonTotalPage, setSkeletonSortData, setSkeletonData, setSkeletonSearchCategory, setSkeletonSearchKeyword, isLoading]);
 
   if (isLoading) {
     // 각자의 TableFeature, TableRow, TaleColumn 만 넣어주면 공통으로 동작
-    return <SkeletonTable SkeletonTableFeature={SkeletonProductTableFeature} TableRowComponent={SkeletonProductTableRow} tableColumns={tableColumn.product}/>
+    return <SkeletonTable SkeletonTableFeature={SkeletonProductTableFeature} TableRowComponent={SkeletonProductTableRow} tableColumns={tableColumn.product.list}/>
   }
 
   return (
     <div className='relative overflow-x-auto shadow-md' style={{ height: '95%', background: 'white' }}>
-      <ProductTableFeature tableColumns={tableColumn.product}
+      <ProductTableFeature tableColumns={tableColumn.product.search}
                            onSearch={handleSearch}
                            currentPage={currentPage}
                            handleDataReset={handleDataReset}
@@ -165,7 +167,7 @@ const ProductTable = () => {
 
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
-          <TableHead tableColumns={tableColumn.product} headerType="product" allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
+          <TableHead tableColumns={tableColumn.product.list} headerType="product" allChecked={selectedProducts.length === productList.length} setAllChecked={handleAllChecked} handleSort={handleSort}/>
           {productList.length > 0 ? (
               <TableBody
                   dataList={productList}
@@ -175,12 +177,14 @@ const ProductTable = () => {
                   selectedMembers={selectedProducts}
                   handleRowChecked={handleRowChecked}
                   currentPage={currentPage}
+                  PAGE_SIZE={PAGE_SIZE}
+                  colNum={tableColumn.product.list.length}
               />
           ) : (
               <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 상품이 없습니다."}
                            buttonText={searchCategory && searchKeyword ? "다시 검색하기":"상품 등록하기"}
                            buttonFunc={searchCategory && searchKeyword ? handleDropdownButtonClick : handleSaveClick}
-                           colNum={tableColumn.product.length} />
+                           colNum={tableColumn.product.list.length} />
           )}
 
         </Table>
@@ -190,13 +194,15 @@ const ProductTable = () => {
         }
 
         {/* modal */}
-        <ProductDetailModal
-          isOpen={openProductDetailModal}
-          setOpenModal={setOpenProductDetailModal}
-          title='상품 상세'
-          selectedProductDetail={selectedProductDetail}
-          currentPage={currentPage}
-        />
+        { openProductDetailModal &&
+          <ProductDetailModal
+            isOpen={openProductDetailModal}
+            setOpenModal={setOpenProductDetailModal}
+            title='상품 상세'
+            selectedProductDetail={selectedProductDetail}
+            currentPage={currentPage}
+          />
+        }
       </div>
     </div>
   );

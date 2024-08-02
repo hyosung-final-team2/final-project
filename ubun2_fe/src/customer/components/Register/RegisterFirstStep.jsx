@@ -131,9 +131,9 @@ const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
         </button>
 
         <div className='text-center mt-4'>
-          Already have an account?{' '}
+          이미 계정이 있으신가요?
           <Link to='/customer/login'>
-            <span className='  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200'>Login</span>
+            <span className='  inline-block  hover:text-primary hover:underline hover:cursor-pointer transition duration-200 ml-2 text-main'>로그인하기</span>
           </Link>
         </div>
       </div>

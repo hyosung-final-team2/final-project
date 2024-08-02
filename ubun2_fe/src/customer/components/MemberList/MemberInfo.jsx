@@ -2,7 +2,8 @@ import InputLabel from '../common/Input/InputLabel.jsx';
 import StatusBadge from '../common/Badge/StatusBadge.jsx';
 import { formatDate } from '../../utils/dateFormat.js';
 
-const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchable = false, isPending, handleInputChange }) => {
+
+const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchable = false, isPending, handleInputChange, isOrder = false }) => {
   return (
     <div className='p-3'>
       <div className='flex items-center gap-4 mb-3'>
@@ -33,7 +34,8 @@ const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchab
             onChange={value => handleInputChange('memberPhone', value)}
           />
           <InputLabel
-            labelTitle='가입일'
+
+            labelTitle={isOrder ? '주문일자' : '가입일'}
             defaultValue={MemberInfoData.memberCreatedAt !== '-' ? formatDate(MemberInfoData.memberCreatedAt) : '-'}
             disabled={onlyInfo}
           />
@@ -43,7 +45,7 @@ const MemberInfo = ({ MemberInfoData, isUpdate, onlyInfo = true, title, searchab
           <InputLabel labelTitle='회원명' disabled={onlyInfo} />
           <InputLabel labelTitle='이메일' disabled={onlyInfo} />
           <InputLabel labelTitle='전화번호' disabled={onlyInfo} />
-          <InputLabel labelTitle='가입일' disabled={onlyInfo} />
+          <InputLabel labelTitle={isOrder ? '주문일자' : '가입일'} disabled={onlyInfo} />
         </div>
       )}
     </div>

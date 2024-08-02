@@ -196,6 +196,7 @@ const AddressTable = () => {
             handleSort={handleSort}
             nonSort={tableColumn.address.nonSort}
           />
+
           {addressList.length > 0 ? (
             <TableBody
               TableRowComponent={AddressTableRow}
@@ -214,6 +215,7 @@ const AddressTable = () => {
               colNum={tableColumn.address.list.length}
             />
           )}
+
         </Table>
         {isLoading === false && addressList.length > 0 ? (
           <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} containerStyle='bg-white py-4' />

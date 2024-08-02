@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.util.List;
 
@@ -22,7 +21,6 @@ import java.util.List;
 @DiscriminatorColumn(name = "payment_type")
 @Table(name = "payment_method")
 @SQLDelete(sql="UPDATE payment_method SET is_deleted = true WHERE payment_method_id=?")
-@SQLRestriction("is_deleted = false")
 @Getter
 public class PaymentMethod extends BaseTimeEntity {
     @Id

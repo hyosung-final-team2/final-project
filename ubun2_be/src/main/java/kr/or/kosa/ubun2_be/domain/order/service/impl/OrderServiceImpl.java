@@ -145,32 +145,7 @@ public class OrderServiceImpl implements OrderService {
         Order findOrder = orderRepository.findOrderByIdAndCustomerId(orderId, customerId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
-        PaymentMethod paymentMethod = findOrder.getPaymentMethod();
-        if (paymentMethod == null) {
-            return new OrderDetailResponse(findOrder);
-        }
-
-        return createOrderDetailResponseWithPayment(findOrder, paymentMethod);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public SubscriptionOrderDetailResponse getSubscriptionOrderByCustomerIdAndOrderId(Long orderId, Long customerId) {
-        SubscriptionOrder subscriptionOrder = subscriptionOrderRepository.findSubscriptionOrderByIdAndCustomerId(orderId, customerId)
-                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
-
-        int latestCycleNumber = findLatestCycleNumber(customerId, orderId);
-
-        PaymentMethod paymentMethod = subscriptionOrder.getPaymentMethod();
-        if (paymentMethod == null) {
-            return new SubscriptionOrderDetailResponse(subscriptionOrder, latestCycleNumber);
-        }
-        return createSubscriptionOrderDetailResponseWithPayment(subscriptionOrder, paymentMethod, latestCycleNumber);
-    }
-
-    private int findLatestCycleNumber(Long customerId, Long orderId) {
-        return subscriptionOrderRepository.findLatestCycleNumberByCustomerIdAndOrderId(customerId, orderId)
-                .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
+        return createOrderDetailResponseWithPayment(findOrder);
     }
 
     @Override
@@ -475,12 +450,7 @@ public class OrderServiceImpl implements OrderService {
         Order findOrder = orderRepository.findByOrderIdAndMemberMemberId(orderId, memberId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
 
-        PaymentMethod paymentMethod = findOrder.getPaymentMethod();
-        if (paymentMethod == null) {
-            return new OrderDetailResponse(findOrder);
-        }
-
-        return createOrderDetailResponseWithPayment(findOrder, paymentMethod);
+        return createOrderDetailResponseWithPayment(findOrder);
     }
 
     @Override
@@ -513,9 +483,9 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private OrderDetailResponse createOrderDetailResponseWithPayment(Order findOrder, PaymentMethod paymentMethod) {
-        Long paymentMethodId = paymentMethod.getPaymentMethodId();
-        String paymentMethodType = paymentMethod.getPaymentType();
+    private OrderDetailResponse createOrderDetailResponseWithPayment(Order findOrder) {
+        Long paymentMethodId = findOrder.getPaymentMethod().getPaymentMethodId();
+        String paymentMethodType = findOrder.getPaymentMethod().getPaymentType();
 
         switch (paymentMethodType) {
             case "CARD" -> {
@@ -532,23 +502,8 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private SubscriptionOrderDetailResponse createSubscriptionOrderDetailResponseWithPayment(SubscriptionOrder findSubOrder, PaymentMethod paymentMethod, int latestCycleNumber) {
-        Long paymentMethodId = paymentMethod.getPaymentMethodId();
-        String paymentMethodType = paymentMethod.getPaymentType();
 
-        switch (paymentMethodType) {
-            case "CARD" -> {
-                CardPayment cardPayment = cardPaymentRepository.findByPaymentMethodId(paymentMethodId)
-                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
-                return new SubscriptionOrderDetailResponse(findSubOrder, cardPayment, latestCycleNumber);
-            }
-            case "ACCOUNT" -> {
-                AccountPayment accountPayment = accountPaymentRepository.findByPaymentMethodId(paymentMethodId)
-                        .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NOT_EXIST_PAYMENT_METHOD));
-                return new SubscriptionOrderDetailResponse(findSubOrder, accountPayment, latestCycleNumber);
-            }
-            default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
-        }
-    }
+
+
 
 }
