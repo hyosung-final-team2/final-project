@@ -3,19 +3,19 @@ import SearchBarWithDrop from '../../common/SearchBar/SearchBarWithDrop';
 import CreateSearchResult from "../../../utils/CreateSearchResult.jsx";
 import usePendingOrderTableStore from "../../../store/PendingOrderTable/pendingOrderTableStore.js";
 
-const PendingOrderTableFeature = ({ tableColumns, onSearch, selectedPendingOrders, handleDataReset, dropdownRef, setIsDeleteConfirmModalOpen, setIsAlertConfirmModalOpen, setIsCheckConfirmModalOpen }) => {
+const PendingOrderTableFeature = ({ tableColumns, onSearch, handleOrderUpdate, selectedPendingOrders, handleDataReset, dropdownRef }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const isButtonDisabled = selectedPendingOrders.length === 0;
 
-  // const handleApprove = e => {
-  //   e.preventDefault();
-  //   handleOrderUpdate(selectedPendingOrders, 'APPROVED');
-  // };
-  //
-  // const handleCancel = e => {
-  //   e.preventDefault();
-  //   handleOrderUpdate(selectedPendingOrders, 'DENIED');
-  // };
+  const handleApprove = e => {
+    e.preventDefault();
+    handleOrderUpdate(selectedPendingOrders, 'APPROVED');
+  };
+
+  const handleCancel = e => {
+    e.preventDefault();
+    handleOrderUpdate(selectedPendingOrders, 'DENIED');
+  };
 
   const { searchCategory, searchKeyword, totalElements} = usePendingOrderTableStore()
 
@@ -31,13 +31,7 @@ const PendingOrderTableFeature = ({ tableColumns, onSearch, selectedPendingOrder
           초기화
         </button>
         <button
-            onClick={() => {
-              if (selectedPendingOrders.length > 0) {
-                setIsCheckConfirmModalOpen(true);
-              } else {
-                setIsAlertConfirmModalOpen(true);
-              }
-            }}
+          onClick={handleApprove}
           className={`${commonButtonStyles} ${
             isButtonDisabled ? 'bg-gray-300 text-gray-500' : 'bg-green-300 text-green-700 hover:text-white hover:bg-green-500'
           } px-8`}
@@ -46,13 +40,7 @@ const PendingOrderTableFeature = ({ tableColumns, onSearch, selectedPendingOrder
           승인
         </button>
         <button
-          onClick={() => {
-            if (selectedPendingOrders.length > 0) {
-              setIsDeleteConfirmModalOpen(true);
-            } else {
-              setIsAlertConfirmModalOpen(true);
-            }
-          }}
+          onClick={handleCancel}
           className={`${commonButtonStyles} ${
             isButtonDisabled ? 'bg-gray-300 text-gray-500' : 'bg-red-300 text-red-700 hover:text-white hover:bg-red-500'
           } px-8`}
