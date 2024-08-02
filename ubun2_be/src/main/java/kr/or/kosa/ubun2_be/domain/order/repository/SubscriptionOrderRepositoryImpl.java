@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import static kr.or.kosa.ubun2_be.domain.customer.entity.QCustomer.customer;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMember.member;
 import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCustomer;
-import static kr.or.kosa.ubun2_be.domain.order.entity.QOrder.order;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QSubscriptionOrder.subscriptionOrder;
 import static kr.or.kosa.ubun2_be.domain.order.entity.QSubscriptionOrderProduct.subscriptionOrderProduct;
 import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QAccountPayment.accountPayment;
@@ -57,10 +56,19 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                 .where(
                         memberCustomer.customer.customerId.eq(customerId),
                         subscriptionOrder.orderStatus.ne(OrderStatus.PENDING),
-                        searchCondition(searchRequest)
+                        searchCondition(searchRequest),
+                        orderStatusEq(searchRequest)
                 );
 
         return query.fetch();
+    }
+    private BooleanBuilder orderStatusEq(SearchRequest searchRequest) {
+        try {
+            OrderStatus status = OrderStatus.valueOf(searchRequest.getOrderStatus());
+            return new BooleanBuilder().and(subscriptionOrder.orderStatus.eq(status));
+        } catch (Exception e) {
+            return new BooleanBuilder();
+        }
     }
 
     @Override

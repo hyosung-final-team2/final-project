@@ -120,7 +120,6 @@ public class OrderServiceImpl implements OrderService {
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), combinedList.size());
         List<UnifiedOrderResponse> paginatedList = combinedList.subList(start, end);
-
         return new PageImpl<>(paginatedList, pageable, combinedList.size());
     }
     private int compareOrders(UnifiedOrderResponse o1, UnifiedOrderResponse o2, String property) {
@@ -128,7 +127,7 @@ public class OrderServiceImpl implements OrderService {
             case "totalCost" -> compareNullable(o1.getTotalOrderPrice(), o2.getTotalOrderPrice());
             case "createdAt" -> compareNullable(o1.getCreatedAt(), o2.getCreatedAt());
             case "memberName" -> compareNullable(o1.getMemberName(), o2.getMemberName());
-            case "orderStatus" -> compareNullable(o1.getOrderStatus(), o2.getOrderStatus());
+            case "orderStatus" -> compareNullable(OrderStatus.valueOf(o1.getOrderStatus()).getName(), OrderStatus.valueOf(o2.getOrderStatus()).getName());
             case "paymentType" -> compareNullable(o1.getPaymentType(), o2.getPaymentType());
             case "isSubscription" -> Boolean.compare(o1.isSubscription(), o2.isSubscription());
             default -> 0;
