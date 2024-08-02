@@ -39,4 +39,5 @@ out/
 
 
 /src/main/resources/application.properties
+/src/main/resources/application-test.properties
 /src/main/resources/firebase_service_key.json
