@@ -171,6 +171,8 @@ const ProductTable = () => {
                   selectedMembers={selectedProducts}
                   handleRowChecked={handleRowChecked}
                   currentPage={currentPage}
+                  PAGE_SIZE={PAGE_SIZE}
+                  colNum={tableColumn.product.list.length}
               />
           ) : (
               <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 상품이 없습니다."}

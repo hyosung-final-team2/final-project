@@ -16,6 +16,8 @@ const ProductTableRow = ({
   isChecked,
   handleRowChecked,
   currentPage,
+  isEmpty,
+    colNum
 }) => {
 
   const { sort } = useProductTableStore();
@@ -30,6 +32,16 @@ const ProductTableRow = ({
     }
     return '';
   };
+
+  if (isEmpty) {
+    return (
+        <Table.Row className="cursor-default">
+          <Table.Cell colSpan={colNum + 1} className="text-center text-gray-500 bg-gray-50">
+            <StatusBadge status={'EMPTY'} />
+          </Table.Cell>
+        </Table.Row>
+    );
+  }
 
   return (
     <>
