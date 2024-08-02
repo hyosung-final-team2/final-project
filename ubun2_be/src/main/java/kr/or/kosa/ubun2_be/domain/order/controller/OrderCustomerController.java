@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import kr.or.kosa.ubun2_be.domain.order.dto.*;
 import kr.or.kosa.ubun2_be.domain.order.service.OrderService;
+import kr.or.kosa.ubun2_be.domain.order.service.SubscriptionOrderService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/customers/orders")
 public class OrderCustomerController {
+
+    private final SubscriptionOrderService subscriptionOrderService;
     private final OrderService orderService;
     private static final String SORT_DEFAULT = "createdAt";
     private static final int PAGE_SIZE = 9;
@@ -45,7 +48,7 @@ public class OrderCustomerController {
     @GetMapping("/subscription/{order_id}")
     public ResponseDto<?> getSubscriptionOrderByOrderId(@PathVariable("order_id") Long orderId,
                                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        SubscriptionOrderDetailResponse response = orderService.getSubscriptionOrderByCustomerIdAndOrderId(orderId, customUserDetails.getUserId());
+        SubscriptionOrderDetailResponse response =subscriptionOrderService.getSubscriptionOrderByCustomerIdAndOrderId(orderId, customUserDetails.getUserId());
         return ResponseDto.ok(response, "정상출력 데이터");
     }
 
