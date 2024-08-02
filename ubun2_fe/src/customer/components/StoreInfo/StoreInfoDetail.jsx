@@ -1,5 +1,4 @@
-import React from 'react';
-import { Card, FileInput, Label, TextInput } from 'flowbite-react';
+import { FileInput, Label, TextInput } from 'flowbite-react';
 import InputLabel from '../common/Input/InputLabel';
 import UpdateInputLabel from '../common/Input/UpdateInputLabel';
 import { CheckIcon, PencilSquareIcon, PhotoIcon } from '@heroicons/react/16/solid';
@@ -29,7 +28,7 @@ const StoreInfoDetail = ({ isEditingName, formData, handleNameEdit, handleInputC
   return (
     <>
       <div className='flex flex-col items-center'>
-        <div className='flex items-center justify-center w-40 h-40 mb-1 overflow-hidden bg-gray-200 rounded-full'>
+        <div className='flex items-center justify-center mb-1 overflow-hidden bg-gray-200 rounded-xl w-72 h-72'>
           {imageFile ? (
             <img src={URL.createObjectURL(imageFile)} alt='상점이미지' className='object-cover w-full h-full' />
           ) : formData.logoImagePath ? (
@@ -39,7 +38,7 @@ const StoreInfoDetail = ({ isEditingName, formData, handleNameEdit, handleInputC
           )}
         </div>
         <FileInput id='image' name='image' className='hidden' onChange={handleInputChange} accept='image/*' />
-        <Label htmlFor='image' className='flex items-center text-sm cursor-pointer text-main'>
+        <Label htmlFor='image' className='flex items-center p-2 text-sm cursor-pointer text-main'>
           <PhotoIcon className='w-5 h-5 mr-1 text-main' />
           사진 업로드
         </Label>
@@ -61,7 +60,7 @@ const StoreInfoDetail = ({ isEditingName, formData, handleNameEdit, handleInputC
             <button onClick={handleNameEdit}>{isEditingName ? <CheckIcon className='w-5 h-5' /> : <PencilSquareIcon className='w-5 h-5' />}</button>
           </div>
 
-          <div className='grid grid-cols-2 gap-4'>
+          <div className='grid grid-cols-1 gap-4'>
             <InputLabel labelTitle='대표자' defaultValue={formData.businessOwner} disabled={true} />
             <InputLabel labelTitle='사업자등록번호' defaultValue={formData.businessRegistrationNumber} disabled={true} textStyle='text-sm' />
             <InputLabel labelTitle='개업일' defaultValue={formData.businessOpenDate} disabled={true} />

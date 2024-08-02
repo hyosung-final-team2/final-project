@@ -1,4 +1,3 @@
-import React from 'react';
 import { Label, Textarea } from 'flowbite-react';
 
 const StoreDescriptionNotice = ({ formData, handleInputChange }) => {
@@ -8,9 +7,9 @@ const StoreDescriptionNotice = ({ formData, handleInputChange }) => {
   };
 
   return (
-    <div className='grid gap-6 md:grid-cols-2'>
+    <div className='grid grid-cols-1 gap-10'>
       <div>
-        <Label htmlFor='description' className='block mb-2 text-sm font-medium text-gray-700'>
+        <Label htmlFor='description' className='block mb-4 text-lg font-medium text-gray-700'>
           상점 상세 설명
         </Label>
         <Textarea
@@ -19,13 +18,13 @@ const StoreDescriptionNotice = ({ formData, handleInputChange }) => {
           name='description'
           value={formData.description}
           onChange={handleInputChange}
-          rows={6}
+          rows={8}
           className='w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500'
         />
       </div>
 
       <div>
-        <Label htmlFor='announcement' className='block mb-2 text-sm font-medium text-gray-700'>
+        <Label htmlFor='announcement' className='block mb-4 text-lg font-medium text-gray-700'>
           공지사항
         </Label>
         <Textarea
@@ -34,7 +33,7 @@ const StoreDescriptionNotice = ({ formData, handleInputChange }) => {
           name='announcement'
           value={formData.announcement}
           onChange={handleInputChange}
-          rows={6}
+          rows={8}
           className='w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500'
         />
       </div>
