@@ -3,7 +3,6 @@ import { Table } from 'flowbite-react';
 
 const TableBody = ({ dataList, TableRowComponent, dynamicId,setOpenModal, selectedMembers, handleRowChecked, isCheckable = true, handleDelete, noneSplitAddress, currentPage, PAGE_SIZE, colNum }) => {
 
-  console.log(colNum)
   const paddedDataList = [...dataList];
   while (paddedDataList.length < PAGE_SIZE) {
     paddedDataList.push({
