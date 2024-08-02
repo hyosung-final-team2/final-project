@@ -1,6 +1,5 @@
 import { Table } from 'flowbite-react';
 
-
 const TableBody = ({ dataList, TableRowComponent, dynamicId,setOpenModal, selectedMembers, handleRowChecked, isCheckable = true, handleDelete, noneSplitAddress, currentPage, PAGE_SIZE, colNum }) => {
 
   const paddedDataList = [...dataList];
@@ -13,8 +12,8 @@ const TableBody = ({ dataList, TableRowComponent, dynamicId,setOpenModal, select
 
   return (
     <Table.Body className='divide-y'>
-      {paddedDataList?.map(data => {
-        const keyValue = data[dynamicId]
+      {paddedDataList?.map((data, idx) => {
+        const keyValue = data[dynamicId];
         return (
           // 본인이 개발하는 TableRow 형식에 맞는 컴포넌트를 Props로 내려서 사용
           isCheckable ? (
@@ -29,7 +28,7 @@ const TableBody = ({ dataList, TableRowComponent, dynamicId,setOpenModal, select
               colNum={colNum}
             />
           ) : (
-            <TableRowComponent key={keyValue} {...data} setOpenModal={setOpenModal} handleDelete={handleDelete}/>
+            <TableRowComponent key={keyValue} {...data} setOpenModal={setOpenModal} handleDelete={handleDelete} idx={idx + 1} />
           )
         );
       })}

@@ -24,6 +24,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import SkeletonDashboardIndex from './Skeleton/SkeletonDashboardIndex';
 import SkeletonDashboardStats from './Skeleton/SkeletonDashboardStats';
+import { calculateDaysBetween } from './DashboardItem/calculateDaysBetween';
 
 const formatDate = date => {
   const year = date.getFullYear();
@@ -202,6 +203,8 @@ const Dashboard = () => {
     },
   ];
 
+  const daysBetween = calculateDaysBetween(dateValue);
+
   if (
     ordersCountIsLoading ||
     ordersCountAndRevenueIsLoading ||
@@ -224,13 +227,13 @@ const Dashboard = () => {
           })}
         </div>
         <div className='grid lg:grid-cols-4 gap-4 mb-4'>
-          <DashboardLineChart ordersCountAndRevenueValue={ordersCountAndRevenueValue} />
-          <DashboardAreaChart ordersCountValue={ordersCountValue} />
-          <DashboardPieChart topSellingProductsValue={topSellingProductsValue} />
+          <DashboardLineChart ordersCountAndRevenueValue={ordersCountAndRevenueValue} daysBetween={daysBetween} />
+          <DashboardAreaChart ordersCountValue={ordersCountValue} daysBetween={daysBetween} />
+          <DashboardPieChart topSellingProductsValue={topSellingProductsValue} daysBetween={daysBetween} />
         </div>
         <div className='grid lg:grid-cols-4 gap-4'>
           <SidoMap addressesByDateValue={addressesByDateValue} />
-          <RecentOrdersTable ordersByDateValue={ordersByDateValue} />
+          <RecentOrdersTable ordersByDateValue={ordersByDateValue} daysBetween={daysBetween} />
         </div>
       </div>
     </div>

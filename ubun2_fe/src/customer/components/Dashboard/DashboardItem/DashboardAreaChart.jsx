@@ -1,10 +1,10 @@
 import React from 'react';
 import { AreaChart, XAxis, YAxis, Area, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
-const DashboardAreaChart = ({ ordersCountValue }) => {
+const DashboardAreaChart = ({ ordersCountValue, daysBetween }) => {
   return (
     <div className='h-[30dvh] rounded-2xl p-5 bg-white drop-shadow-lg shadow-lg col-span-1'>
-      <h2 className='text-lg font-bold mb-4'>주간 정기주문 vs 단건주문 현황</h2>
+      <h2 className='text-lg font-bold mb-4'>{daysBetween}일간 정기vs단건 현황</h2>
       <ResponsiveContainer width='100%' height='80%'>
         <AreaChart data={ordersCountValue} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
           <defs>

@@ -4,7 +4,7 @@ import { Table } from 'flowbite-react';
 import MemberPaymentMethodModal from './MemberPaymentMethodModal';
 import { tableColumn } from '../common/Table/tableIndex';
 import TableHead from '../common/Table/TableHead';
-import DynamicTableBody from '../common/Table/DynamicTableBody';
+import TableBody from '../common/Table/TableBody';
 import { useQueryClient } from '@tanstack/react-query';
 import TablePagination from '../common/Pagination/TablePagination';
 import PaymentMethodTableFeature from './PaymentMethodTableFeature';
@@ -14,7 +14,7 @@ import { customTableTheme } from '../common/Table/tableStyle';
 import paymentMethodStore from '../../store/PaymentMethod/paymentMethodStore';
 import useAddressStore from '../../store/Address/useAddressStore';
 
-import { useGetPayments } from '../../api/PaymentMethod/Table/queris';
+import { useGetPayments, useDeleteSelectedPayments } from '../../api/PaymentMethod/Table/queris';
 import { useGetPaymentDetail } from '../../api/PaymentMethod/Modal/queris';
 import usePaymentMethodTableStore, { resetPaymentMethodTableStore } from '../../store/PaymentMethod/paymentMethodTableStore';
 import PaymentMethodRegistrationModal from './PaymentMethodRegistrationModal';
@@ -31,16 +31,18 @@ import NoDataTable from '../common/Table/NoDataTable';
 
 const PaymentMethodTable = () => {
   const [openRegistrationModal, setOpenRegistrationModal] = useState(false);
-  const [checkedMembers, setCheckedMembers] = useState([]);
+  const [checkedPaymentMethods, setCheckedPaymentMethods] = useState([]);
   const { paymentMethodType, openModal, setOpenModal } = paymentMethodStore();
   const [paymentMethodId, setPaymentMethodId] = useState(null);
   const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset, setTotalElements } =
     usePaymentMethodTableStore();
-  const PAGE_SIZE = 8;
+  const PAGE_SIZE = 10;
   const isAccount = paymentMethodType === 'ACCOUNT';
 
   const [currentPage, setCurrentPage] = useState(1);
   const [clickedPayment, setClickedPayment] = useState(null);
+
+  const { mutate: deleteSelectedPaymentsMutate } = useDeleteSelectedPayments(checkedPaymentMethods);
 
   const queryClient = useQueryClient();
 
@@ -73,19 +75,16 @@ const PaymentMethodTable = () => {
 
   const handleAllChecked = useCallback(
     checked => {
-      setCheckedMembers(checked ? paymentList.map(payment => payment.id) : []);
+      setCheckedPaymentMethods(checked ? paymentList.map(payment => payment.paymentMethodId) : []);
     },
     [paymentList]
   );
 
-  const handleRowChecked = useCallback(id => {
-    setCheckedMembers(prev => (prev.includes(id) ? prev.filter(prevId => prevId !== id) : [...prev, id]));
+  const handleRowChecked = useCallback((paymentMethodId, isChecked) => {
+    setCheckedPaymentMethods(prev => (isChecked ? [...prev, paymentMethodId] : prev.filter(id => id !== paymentMethodId)));
   }, []);
 
   const handleRowClick = async (paymentMethodId, memberId, payment) => {
-    console.log('paymentMethodId', paymentMethodId);
-    console.log('memberId', memberId);
-    console.log('payment', payment);
     setPaymentMethodId(paymentMethodId);
     setOpenModal(true);
     setClickedPayment(payment);
@@ -117,10 +116,6 @@ const PaymentMethodTable = () => {
     setCurrentPage(1);
     await refetchPayments();
   };
-
-  // useEffect(() => {
-  //   resetPaymentMethodTableStore();
-  // }, []);
 
   const dropdownRef = useRef(null);
 
@@ -215,25 +210,25 @@ const PaymentMethodTable = () => {
         onSearch={handleSearch}
         tableColumns={searchCategoryOptions}
         dropdownRef={dropdownRef}
+        deleteSelectedPaymentsMutate={deleteSelectedPaymentsMutate}
       />
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
           <TableHead
             tableColumns={isAccount ? tableColumn.paymentMethod.accountList : tableColumn.paymentMethod.cardList}
-            allChecked={checkedMembers?.length === paymentList?.length}
+            allChecked={checkedPaymentMethods?.length === paymentList?.length}
             setAllChecked={handleAllChecked}
             handleSort={handleSort}
             headerType={'paymentMethod'}
             nonSort={tableColumn.paymentMethod.nonSort}
           />
           {paymentList.length > 0 ? (
-            <DynamicTableBody
-              dataList={paymentList}
+            <TableBody
               TableRowComponent={PaymentMethodTableRow}
-              dynamicKey='paymentMethodId'
+              dataList={paymentList}
               dynamicId='paymentMethodId'
               setOpenModal={handleRowClick}
-              selectedMembers={checkedMembers}
+              selectedMembers={checkedPaymentMethods}
               handleRowChecked={handleRowChecked}
               currentPage={currentPage}
             />
