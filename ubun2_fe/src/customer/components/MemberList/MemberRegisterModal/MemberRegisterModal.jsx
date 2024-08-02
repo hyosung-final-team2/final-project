@@ -3,6 +3,7 @@ import {customModalTheme} from "../../common/Modal/ModalStyle.js";
 import InputLabel from "../../common/Input/InputLabel.jsx";
 import {useState} from "react";
 import {useRegisterMember} from "../../../api/Customer/MemberList/MemberModal/queris.js";
+import {formatPhoneNumber} from "../../../utils/phoneFormat.js";
 
 const MemberRegisterModal = ({isOpen, setOpenModal, handleRegisterSuccess}) => {
     const commonButtonStyles = 'px-8 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
@@ -24,7 +25,7 @@ const MemberRegisterModal = ({isOpen, setOpenModal, handleRegisterSuccess}) => {
     const { mutate: memberRegisterMutate } = useRegisterMember({
         pendingMemberName,
         pendingMemberEmail,
-        pendingMemberPhone
+        pendingMemberPhone: formatPhoneNumber(pendingMemberPhone),
     }, {
         onSuccess: () => {
             handleRegisterSuccess();
@@ -58,7 +59,6 @@ const MemberRegisterModal = ({isOpen, setOpenModal, handleRegisterSuccess}) => {
             <Modal.Footer>
                 <button
                     onClick={ async () => {
-                        // await memberRegisterMutate2
                         await memberRegisterMutate()
                         setOpenModal(false);
                         resetValues()

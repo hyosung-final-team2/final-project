@@ -191,14 +191,16 @@ const OrderTable = () => {
             checkable={false}
           />
           {orderList.length > 0 ? (
-            <UnifiedOrderTableBody
-              dataList={orderList}
-              TableRowComponent={OrderTableRow}
-              setOpenModal={handleRowClick}
-              selectedOrders={selectedOrders}
-              handleRowChecked={handleRowChecked}
-              currentPage={currentPage}
-            />
+              <UnifiedOrderTableBody
+                  dataList={orderList}
+                  TableRowComponent={OrderTableRow}
+                  setOpenModal={handleRowClick}
+                  selectedOrders={selectedOrders}
+                  handleRowChecked={handleRowChecked}
+                  currentPage={currentPage}
+                  PAGE_SIZE={PAGE_SIZE}
+                  colNum={tableColumn.orders.length}
+              />
           ) : (
             <NoDataTable
               text={searchCategory && searchKeyword ? '검색 결과가 없습니다!' : '주문 내역이 없습니다.'}

@@ -196,6 +196,8 @@ const AddressTable = () => {
                     selectedMembers={selectedAddresses}
                     handleRowChecked={handleRowChecked}
                     currentPage={currentPage}
+                    PAGE_SIZE={PAGE_SIZE}
+                    colNum={tableColumn.address.list.length}
                 />
             ) : (
                 <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 주소가 없습니다."}
