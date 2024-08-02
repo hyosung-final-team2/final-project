@@ -1,6 +1,5 @@
 import { Table, Checkbox } from 'flowbite-react';
 import useAddressTableStore from '../../store/Address/addressTableStore.js';
-import StatusBadge from "../common/Badge/StatusBadge.jsx";
 
 const AddressTableRow = ({ memberId, addressId, memberName, address, setOpenModal, isChecked, handleRowChecked, isEmpty,colNum }) => {
   const { sort } = useAddressTableStore();
