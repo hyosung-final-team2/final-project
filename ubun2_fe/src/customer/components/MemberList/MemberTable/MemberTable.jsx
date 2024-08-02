@@ -196,6 +196,7 @@ const MemberTable = () => {
                     handleRowChecked={handleRowChecked}
                     setOpenModal={handleRowClick}
                     currentPage={currentPage}
+                    PAGE_SIZE={PAGE_SIZE}
                 />
             ) : (
                 <NoDataTable text={searchCategory && searchKeyword ? "검색 결과가 없습니다!" : "등록된 회원이 없습니다."}
