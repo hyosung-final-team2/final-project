@@ -18,7 +18,7 @@ const StoreDescriptionNotice = ({ formData, handleInputChange }) => {
           name='description'
           value={formData.description}
           onChange={handleInputChange}
-          rows={8}
+          rows={9}
           className='w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500'
         />
       </div>
@@ -33,7 +33,7 @@ const StoreDescriptionNotice = ({ formData, handleInputChange }) => {
           name='announcement'
           value={formData.announcement}
           onChange={handleInputChange}
-          rows={8}
+          rows={9}
           className='w-full p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500'
         />
       </div>

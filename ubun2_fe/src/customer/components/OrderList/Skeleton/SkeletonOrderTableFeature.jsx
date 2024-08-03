@@ -14,12 +14,12 @@ const SkeletonOrderTableFeature = () => {
         <SearchBarWithDrop tableColumns={tableColumn.order.orders} />
         <CreateSearchResult searchCategory={skeletonSearchCategory} searchKeyword={skeletonSearchKeyword} totalElements={skeletonTotalElements} />
       </div>
-      <div className='flex items-center gap-2'>
-        <Dropdown label={`승인 상태 : 전체`} />
+      <div className='flex items-center gap-4'>
         <button className='normal-case btn btn-ghost btn-sm'>
           <ArrowPathIcon className='w-4 mr-2' />
           초기화
         </button>
+        <Dropdown label={`승인 상태 : 전체`} />
       </div>
     </div>
   );
