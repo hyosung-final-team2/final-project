@@ -72,16 +72,17 @@ public class ProductServiceImpl implements ProductService {
         if (!findProduct.getProductName().equals(productRequest.getProductName())&&isExistProductName(productRequest.getProductName())) {
             throw new ProductException(ProductExceptionType.DUPLICATE_PRODUCT_NAME);
         }
-        String existingImageUrl = findProduct.getProductImagePath();
 
-        if (image != null && !image.isEmpty()) { //새로운 이미지 있을때
+        if (image != null && !image.isEmpty()) {//새로운 이미지 있을때
+            String existingImageUrl = findProduct.getProductImagePath();
+            if (existingImageUrl != null) {
+                imageService.deleteImage(existingImageUrl);
+            }
             String newImageUrl = imageService.uploadImage(image);
             productRequest.setProductImagePath(newImageUrl);
             productRequest.setProductImageOriginalName(image.getOriginalFilename());
-        } else {
-            productRequest.setProductImagePath(null);
-            productRequest.setProductImageOriginalName(null);
         }
+
         findProduct.updateProduct(productRequest); //변경감지로 save 필요없음
 
         // 게시 -> redis.save / 미게시 ->redis.delete
@@ -91,9 +92,7 @@ public class ProductServiceImpl implements ProductService {
             inventoryService.removeStock(productRequest.getProductId());
         }
 
-        if (existingImageUrl != null) {
-            imageService.deleteImage(existingImageUrl);
-        }
+
 
     }
 

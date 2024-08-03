@@ -24,7 +24,7 @@ const ProductSaleInfo = ({ product, onlyInfo = false, title, handleInputChange }
           <input
             type='text'
             name='stockQuantity'
-            value={onlyInfo? `${product?.stockQuantity}원`: product?.stockQuantity}
+            value={onlyInfo? `${product?.stockQuantity}개`: product?.stockQuantity}
             onChange={e => handleInputChange(e)}
             disabled={onlyInfo}
             className={`
@@ -65,8 +65,8 @@ const ProductSaleInfo = ({ product, onlyInfo = false, title, handleInputChange }
             disabled={onlyInfo}
           >
             <option value='SUBSCRIPTION'>정기배송</option>
-            <option value='SINGLE'>단일배송</option>
-            <option value='BOTH'>정기 & 단일</option>
+            <option value='SINGLE'>단건배송</option>
+            <option value='BOTH'>단건&정기</option>
           </select>
         </div>
       </div>

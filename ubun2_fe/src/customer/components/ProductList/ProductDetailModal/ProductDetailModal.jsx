@@ -124,7 +124,6 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
                   <Button
                     className='w-28 bg-custom-button-purple text-custom-font-purple'
                     onClick={() => {
-                      productModifyMutate();
                       setIsEditing(true);
                     }}
                   >
