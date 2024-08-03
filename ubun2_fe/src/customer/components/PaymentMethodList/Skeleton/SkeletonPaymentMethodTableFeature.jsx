@@ -6,6 +6,8 @@ import ToggleButton from '../../common/ToggleButon/ToggleButton.jsx';
 import useSkeletonStore from '../../../store/skeletonStore.js';
 import CreateSearchResult from '../../../utils/CreateSearchResult.jsx';
 import Dropdown from '../../common/Dropdown/Dropdown.jsx';
+import TrashIcon from '@heroicons/react/24/outline/TrashIcon.js';
+import AddPayment from '../../../../assets/images/cardAdd.svg';
 
 const SkeletonAddressTableFeature = () => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
@@ -31,10 +33,16 @@ const SkeletonAddressTableFeature = () => {
       <div className='flex space-x-2 items-center'>
         <button className='btn btn-ghost btn-sm normal-case'>
           <ArrowPathIcon className='w-4 mr-2' />
-          Reset
+          초기화
         </button>
-        <button className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`}>결제수단 등록</button>
-        <button className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}>삭제</button>
+        <button className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50 flex gap-2 items-center`}>
+          <AddPayment className='w-5 h-5' />
+          결제수단 등록
+        </button>
+        <button className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 flex gap-2 items-center`}>
+          <TrashIcon className='w-5' />
+          삭제
+        </button>
       </div>
     </div>
   );

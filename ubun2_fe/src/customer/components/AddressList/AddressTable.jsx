@@ -24,12 +24,17 @@ import useSkeletonStore from '../../store/skeletonStore.js';
 import NoDataTable from '../common/Table/NoDataTable.jsx';
 import TableBody from '../common/Table/TableBody.jsx';
 
+import DeleteConfirmModal from '../common/Modal/DeleteConfirmModal.jsx';
+import AlertConfirmModal from '../common/Modal/AlertConfirmModal.jsx';
+
 const AddressTable = () => {
   const [openAddressRegistration, setOpenAddressRegistration] = useState(false);
   const [selectedAddresses, setSelectedAddresses] = useState([]); // 체크된 멤버 ID
   const [addressId, setAddressId] = useState(null);
   const [clickedAddress, setClickedAddress] = useState(null);
   const { setSelectedMemberId, openMemberAddressModal, setOpenMemberAddressModal } = useAddressStore();
+  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
+  const [isAlertConfirmModalOpen, setIsAlertConfirmModalOpen] = useState(false);
 
   const { sort, updateSort, searchCategory, setSearchCategory, searchKeyword, setSearchKeyword, resetData, toggleIsReset, setTotalElements } =
     useAddressTableStore();
@@ -129,6 +134,14 @@ const AddressTable = () => {
     setOpenAddressRegistration(true);
   };
 
+  const deleteConfirmFirstButtonFunc = () => {
+    setIsDeleteConfirmModalOpen(false);
+  };
+
+  const deleteConfirmSecondButtonFunc = () => {
+    deleteSelectedAddressesMutate();
+    setIsDeleteConfirmModalOpen(false);
+  };
   const {
     setSkeletonData,
     setSkeletonTotalPage,
@@ -175,6 +188,8 @@ const AddressTable = () => {
         TableRowComponent={SkeletonAddressTableRow}
         tableColumns={tableColumn.address.list}
         nonSort={tableColumn.address.nonSort}
+        PAGE_SIZE={PAGE_SIZE}
+        colNum={tableColumn.address.list.length}
       />
     );
   }
@@ -187,8 +202,9 @@ const AddressTable = () => {
         onSearch={handleSearch}
         selectedAddresses={selectedAddresses}
         handleDataReset={handleDataReset}
-        deleteSelectedAddressesMutate={deleteSelectedAddressesMutate}
         dropdownRef={dropdownRef}
+        setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
+        setIsAlertConfirmModalOpen={setIsAlertConfirmModalOpen}
       />
       <div className='px-4'>
         <Table hoverable>
@@ -210,6 +226,8 @@ const AddressTable = () => {
               selectedMembers={selectedAddresses}
               handleRowChecked={handleRowChecked}
               currentPage={currentPage}
+              PAGE_SIZE={PAGE_SIZE}
+              colNum={tableColumn.address.list.length}
             />
           ) : (
             <NoDataTable
@@ -235,6 +253,30 @@ const AddressTable = () => {
           currentPage={currentPage}
         />
         <AddressRegistrationModal isOpen={openAddressRegistration} setOpenModal={setOpenAddressRegistration} />
+
+        {/* 삭제 확인 모달 */}
+        {isDeleteConfirmModalOpen && selectedAddresses.length > 0 && (
+          <DeleteConfirmModal
+            isDeleteConfirmModalOpen={isDeleteConfirmModalOpen}
+            setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
+            text={
+              <p className='text-lg'>
+                <span className='text-red-500 font-bold'>{selectedAddresses.length}</span>개의 주소를 선택하셨습니다
+              </p>
+            }
+            firstButtonFunc={deleteConfirmFirstButtonFunc}
+            secondButtonFunc={deleteConfirmSecondButtonFunc}
+          />
+        )}
+
+        {/* alert 모달 */}
+        {isAlertConfirmModalOpen && (
+          <AlertConfirmModal
+            isAlertConfirmModalOpen={isAlertConfirmModalOpen}
+            setIsAlertConfirmModalOpen={setIsAlertConfirmModalOpen}
+            text={<p className='text-lg pt-4 pb-7'>선택된 주소가 없습니다!</p>}
+          />
+        )}
       </div>
     </div>
   );

@@ -74,15 +74,6 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
       />
       <form className='space-y-4'>
         <InfoItem
-          label='카드 별명'
-          placeholder='카드 별명을 입력해주세요.'
-          inputStyle={inputStyle}
-          labelStyle={labelStyle}
-          onChange={handleInputChange('paymentMethodNickname')}
-          onFocus={() => flipCard(false)}
-          value={formData.paymentMethodNickname}
-        />
-        <InfoItem
           label='카드사'
           inputStyle={inputStyle}
           labelStyle={labelStyle}
@@ -103,24 +94,12 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
           maxLength={16}
           onInputComplete={handleCardNumberComplete}
         />
-        <InfoItem
-          ref={cardPasswordRef}
-          label='카드 비밀번호'
-          placeholder='카드 비밀번호'
-          inputStyle={inputStyle}
-          labelStyle={labelStyle}
-          onChange={handleInputChange('cardPassword')}
-          value={formData.cardPassword}
-          type='password'
-          maxLength={4}
-          onInputComplete={handleCardPasswordComplete}
-        />
         <div className='flex'>
           <div className='flex-1 -mr-4'>
             <InfoItem
               ref={cvcRef}
               label='CVC'
-              placeholder='123'
+              placeholder='3자리 숫자'
               inputStyle={inputStyle}
               labelStyle={labelStyle}
               onChange={handleInputChange('cvc')}
@@ -144,6 +123,27 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
             />
           </div>
         </div>
+        <InfoItem
+          ref={cardPasswordRef}
+          label='카드 비밀번호'
+          placeholder='카드 비밀번호'
+          inputStyle={inputStyle}
+          labelStyle={labelStyle}
+          onChange={handleInputChange('cardPassword')}
+          value={formData.cardPassword}
+          type='password'
+          maxLength={4}
+          onInputComplete={handleCardPasswordComplete}
+        />
+        <InfoItem
+          label='카드 별명'
+          placeholder='카드 별명을 입력해주세요.'
+          inputStyle={inputStyle}
+          labelStyle={labelStyle}
+          onChange={handleInputChange('paymentMethodNickname')}
+          onFocus={() => flipCard(false)}
+          value={formData.paymentMethodNickname}
+        />
       </form>
       <SlideUpModal isOpen={modalState} setIsModalOpen={setModalState} headerText='카드사를 선택하세요' isButton={false}>
         <div className='bg-white px-4 pb-2 rounded-lg max-w-3xl w-full'>

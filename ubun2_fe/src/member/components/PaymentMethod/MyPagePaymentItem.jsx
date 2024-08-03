@@ -27,7 +27,7 @@ const MyPagePaymentItem = ({ payment, path, selected = false, setIsModalOpen, se
   return (
     <div className='flex items-center p-4' onClick={handleOnClick}>
       <div className='mr-5 flex-shrink-0'>
-        <img className='h-10 w-10' src={`/src/assets/images/png/${path}`} />
+        <img className='h-10 w-10' src={`/cardImages/png/${path}`} />
       </div>
       <div>
         <p className='text-xl font-bold'>{payment?.paymentMethodNickname}</p>

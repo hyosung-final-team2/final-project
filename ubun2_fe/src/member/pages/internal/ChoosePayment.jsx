@@ -40,7 +40,7 @@ const ChoosePayment = () => {
     const methods = [
       ...accountList.map(account => ({
         ...account,
-        icon: <img className='w-10 h-10' src={`/src/assets/images/png/${getPng(account.bankName)}`} alt='' />,
+        icon: <img className='w-10 h-10' src={`/cardImages/png/${getPng(account.bankName)}`} alt='' />,
         title: account.paymentMethodNickname,
         subtitle: `${account.bankName} ${formatBankAccount(account?.bankName?.slice(0, -2), account?.accountNumber, true)}`,
         defaultStatus: account.defaultStatus,
@@ -48,7 +48,7 @@ const ChoosePayment = () => {
       })),
       ...cardList.map(card => ({
         ...card,
-        icon: <img className='w-10 h-10' src={`/src/assets/images/png/${getPng(card.cardCompanyName)}`} alt='' />,
+        icon: <img className='w-10 h-10' src={`/cardImages/png/${getPng(card.cardCompanyName)}`} alt='' />,
         title: card.paymentMethodNickname,
         subtitle: `${card.cardCompanyName} ${card?.cardNumber?.slice(-4)?.replace(/\d{2}$/, '**')}`,
         defaultStatus: card.defaultStatus,

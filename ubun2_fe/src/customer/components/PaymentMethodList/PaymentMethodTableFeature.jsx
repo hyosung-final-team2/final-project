@@ -5,8 +5,20 @@ import ArrowPathIcon from '@heroicons/react/24/outline/ArrowPathIcon.js';
 import SearchBarWithDrop from '../common/SearchBar/SearchBarWithDrop';
 import CreateSearchResult from '../../utils/CreateSearchResult';
 import usePaymentMethodTableStore from '../../store/PaymentMethod/paymentMethodTableStore';
+import TrashIcon from '@heroicons/react/24/outline/TrashIcon.js';
+import AddPayment from '../../../assets/images/cardAdd.svg';
 
-const PaymentMethodTableFeature = ({ setOpenModal, setCurrentPage, onSearch, tableColumns, handleDataReset, dropdownRef, deleteSelectedPaymentsMutate }) => {
+const PaymentMethodTableFeature = ({
+  setOpenModal,
+  setCurrentPage,
+  onSearch,
+  tableColumns,
+  handleDataReset,
+  dropdownRef,
+  setIsDeleteConfirmModalOpen,
+  setIsAlertConfirmModalOpen,
+  checkedPaymentMethods,
+}) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
   const paymentMethodType = paymentMethodStore(state => state.paymentMethodType);
   const isAccount = paymentMethodType === 'ACCOUNT';
@@ -37,15 +49,17 @@ const PaymentMethodTableFeature = ({ setOpenModal, setCurrentPage, onSearch, tab
       <div className='flex space-x-2 items-center'>
         <button className='btn btn-ghost btn-sm normal-case ' onClick={() => handleDataReset()}>
           <ArrowPathIcon className='w-4 mr-2' />
-          Reset
+          초기화
         </button>
-        <button className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50`} onClick={handleClick}>
+        <button className={`${commonButtonStyles} bg-white text-gray-600 hover:text-main hover:bg-slate-50 flex items-center gap-2`} onClick={handleClick}>
+          <AddPayment className='w-5 h-5' />
           결제수단 등록
         </button>
         <button
-          onClick={() => deleteSelectedPaymentsMutate()}
-          className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 px-8`}
+          onClick={checkedPaymentMethods.length > 0 ? () => setIsDeleteConfirmModalOpen(true) : () => setIsAlertConfirmModalOpen(true)}
+          className={`${commonButtonStyles} bg-red-300 text-red-700 hover:text-white hover:bg-red-500 flex gap-2 items-center`}
         >
+          <TrashIcon className='w-5' />
           삭제
         </button>
       </div>

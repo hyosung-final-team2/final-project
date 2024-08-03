@@ -13,14 +13,14 @@ const RecentOrderTableRow = ({ id, createdAt, memberName, orderProducts, subscri
   const navigate = useNavigate();
 
   const handleOnclick = () => {
-    orderStatus === 'APPROVED' ? navigate('/customer/app/order') : navigate('/customer/app/pendingorder');
+    orderStatus === 'PENDING' ? navigate('/customer/app/pendingorder') : navigate('/customer/app/order');
   };
   return (
     <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800 hover:bg-gray-50 cursor-pointer' onClick={handleOnclick}>
       <Table.Cell className='py-2 text-sm'>{date}</Table.Cell>
       <Table.Cell className='py-2 text-sm'>{memberName}</Table.Cell>
       <Table.Cell className='py-2 text-sm'>{items}</Table.Cell>
-      <Table.Cell className='py-2 text-sm'>{totalOrderPrice}원</Table.Cell>
+      <Table.Cell className='py-2 text-sm'>{totalOrderPrice.toLocaleString('ko-KR')}원</Table.Cell>
       <Table.Cell className='py-2 text-sm'>
         <span
           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
