@@ -123,6 +123,10 @@ module.exports = {
         '12dvw': '12dvw',
         '7dvh': '7dvh',
       },
+      aspectRatio: {
+        card: '4.8 / 3',
+        account: '4.8 / 3',
+      },
     },
   },
   plugins: [require('@tailwindcss/typography'), require('daisyui'), require('flowbite/plugin'), flowbite.plugin()],

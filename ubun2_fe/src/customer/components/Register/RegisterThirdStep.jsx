@@ -1,12 +1,9 @@
 import InputText from '../common/Input/InputText';
 import InputTextWithBtn from '../common/Input/InputTextWithBtn';
 import { useState, useEffect } from 'react';
-import {useSignup} from "../../api/Customer/Register/queris.js";
-import {
-   businessStoreNameRegex, businessStoreNameRegexMessage,
-  phoneRegex,
-  phoneRegexMessage
-} from "../common/Regex/registerRegex.js";
+import { useSignup } from '../../api/Customer/Register/queris.js';
+import { businessStoreNameRegex, businessStoreNameRegexMessage, phoneRegex, phoneRegexMessage } from '../common/Regex/registerRegex.js';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
   const INITIAL_REGISTER_OBJ = {
@@ -21,6 +18,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [thirdRegisterObj, setRegisterObj] = useState(INITIAL_REGISTER_OBJ);
+  const [popup, setPopup] = useState(null);
 
   const { mutate: signUpMutate, isError } = useSignup(thirdRegisterObj);
 
@@ -51,7 +49,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
     else {
       setLoading(true);
       setRegisterThirdData(thirdRegisterObj);
-      signUpMutate()
+      signUpMutate();
       setLoading(false);
       if (!isError) {
         setRegisterStep(4);
@@ -63,6 +61,43 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
     setErrorMessage('');
     setRegisterObj({ ...thirdRegisterObj, [updateType]: value });
   };
+
+  const handleAddressSearch = () => {
+    const POPUP_WIDTH = 700;
+    const POPUP_HEIGHT = 760;
+    const features = `width=${POPUP_WIDTH},height=${POPUP_HEIGHT}`;
+    const currentHost = window.location.origin;
+    const url = `${currentHost}/customer/address-search`;
+
+    const newPopup = window.open(url, '_blank', features);
+    setPopup(newPopup);
+
+    window.addEventListener('message', handleAddressMessage);
+  };
+
+  const handleAddressMessage = event => {
+    if (event.origin !== window.location.origin) return;
+
+    if (event.data.type === 'ADDRESS_SELECTED') {
+      const result = event.data.result;
+      console.log('Address selected:', result);
+
+      // updateFormValue({ updateType: 'businessAddressNumber', value: result.zipNo || '' });
+      // updateFormValue({ updateType: 'businessAddressDefault', value: result.roadAddrPart1 || '' });
+
+      if (popup) {
+        popup.close();
+      }
+      setPopup(null);
+    }
+  };
+  // console.log(thirdRegisterObj);
+  useEffect(() => {
+    window.addEventListener('message', handleAddressMessage);
+    return () => {
+      window.removeEventListener('message', handleAddressMessage);
+    };
+  }, [handleAddressMessage]);
 
   return (
     <>
@@ -102,6 +137,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
             buttonText='검색하기'
             clickPossibleWithoutData={true}
             isAuthInput={true}
+            buttonFunc={handleAddressSearch}
           />
           <InputText
             defaultValue={thirdRegisterObj.businessAddressDefault}

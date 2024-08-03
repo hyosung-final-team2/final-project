@@ -4,7 +4,7 @@ import HanaIcon from '../../../assets/images/hana.svg';
 import LotteIcon from '../../../assets/images/lotte.svg';
 import HyundaiIcon from '../../../assets/images/hyundai.svg';
 import WooriIcon from '../../../assets/images/woori.svg';
-import SamsungIcon from '../../../assets/images/samsungcard.svg';
+import SamsungIcon from '../../../assets/images/samsung.svg';
 import ShinhanIcon from '../../../assets/images/shinhan.svg';
 import NonghyupIcon from '../../../assets/images/nonghyup.svg';
 import TossIcon from '../../../assets/images/toss.svg';
