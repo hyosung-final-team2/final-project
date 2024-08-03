@@ -418,7 +418,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<UnifiedOrderResponse> getAllOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest,Long memberId) {
+    public List<UnifiedOrderResponse> getAllOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest, Long memberId) {
         List<UnifiedOrderResponse> orderResponses = orderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
         List<UnifiedOrderResponse> subscriptionOrderResponses = subscriptionOrderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
 
@@ -442,8 +442,14 @@ public class OrderServiceImpl implements OrderService {
                         return createdAt.isAfter(startDate) && createdAt.isBefore(endDate);
                     })
                     .collect(Collectors.toList());
-
         }
+
+        // 최신순으로 정렬
+        combinedList.sort((o1, o2) -> {
+            LocalDateTime date1 = LocalDateTime.parse(o1.getCreatedAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            LocalDateTime date2 = LocalDateTime.parse(o2.getCreatedAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            return date2.compareTo(date1);  // 내림차순 정렬
+        });
 
         return combinedList;
     }

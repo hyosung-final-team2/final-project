@@ -59,6 +59,14 @@ const MySingleOrderDetail = () => {
     }
   };
 
+  const getOrderStatus = () => {
+    if (orderData?.orderStatus === 'DENIED') {
+      const productStatus = orderData?.orderProducts[0]?.orderProductStatus;
+      return productStatus === 'REJECTED' ? 'REJECTED' : 'DENIED';
+    }
+    return orderData?.orderStatus;
+  };
+
   return (
     <div className='min-h-full bg-custom-mypage-back-bg'>
       <div className='flex flex-col p-4'>
@@ -67,9 +75,9 @@ const MySingleOrderDetail = () => {
           <OrderStatusBadge status='SINGLE' />
         </div>
         <div className='px-4 py-6 mb-3 bg-white rounded-3xl'>
-          <div className='flex justify-between'>
+          <div className='flex items-center justify-between mb-4'>
             <h2 className='mb-4 text-xl font-bold text-gray-800'>주문 내역</h2>
-            <OrderStatusBadge status={orderData?.orderStatus} customSize={'text-xs'} />
+            <OrderStatusBadge status={getOrderStatus()} customSize={'text-xs'} />
           </div>
           <div className='flex items-center gap-3 mb-1 text-gray-600'>
             <h3 className='text-lg font-bold'>{orderData?.orderProducts[0].productName}</h3>
