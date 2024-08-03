@@ -1,6 +1,6 @@
 import privateFetch from '../../../common/privateFetch.js';
 import privateFileFetch from '../../../common/privateFileFetch.js';
-import qs from "qs";
+import qs from 'qs';
 
 // 전체 상품 리스트 조회
 export const getProducts = async (page, size, sort, searchCategory, searchKeyword) =>
@@ -10,14 +10,14 @@ export const getProducts = async (page, size, sort, searchCategory, searchKeywor
       size: size,
       sort: sort, //["productCategoryName","productName","stockQuantity","productPrice","productDiscount","productStatus","orderOption"]
       searchCategory: searchCategory,
-      searchKeyword: searchKeyword
+      searchKeyword: searchKeyword,
     },
-      paramsSerializer: params => {
-        return qs.stringify(params, { arrayFormat: 'repeat' });
-      }
+    paramsSerializer: params => {
+      return qs.stringify(params, { arrayFormat: 'repeat' });
+    },
   });
 
-export const registerProduct = async (productRequest, imageFile) => {
+export const registerProduct = async (productRequest, imageFile, detailImageFiles) => {
   const formData = new FormData();
   // JSON 데이터 추가
   formData.append(
@@ -45,6 +45,14 @@ export const registerProduct = async (productRequest, imageFile) => {
   if (imageFile) {
     formData.append('image', imageFile);
   }
+  if (detailImageFiles) {
+    formData.append('detailImages', detailImageFiles);
+  }
+
+  console.log('formData:', formData.get('productRequest'));
+  console.log('formData:', formData.get('image'));
+  console.log('formData:', formData.get('detailImages'));
+
   try {
     const response = await privateFileFetch.post('/customers/products', formData);
     console.log(response);
@@ -55,7 +63,7 @@ export const registerProduct = async (productRequest, imageFile) => {
   }
 };
 
-export const modifyProduct = async (productRequest, imageFile) => {
+export const modifyProduct = async (productRequest, imageFile, detailImageFiles) => {
   const formData = new FormData();
   // JSON 데이터 추가
   formData.append(
@@ -87,6 +95,12 @@ export const modifyProduct = async (productRequest, imageFile) => {
     formData.append('image', imageFile);
   }
 
+  if (detailImageFiles) {
+    for (let i = 0; i < detailImageFiles.length; i++) {
+      formData.append('detailImages', detailImageFiles[i]);
+    }
+  }
+
   try {
     const response = await privateFileFetch.put('/customers/products', formData);
     return response.data;
@@ -98,4 +112,4 @@ export const modifyProduct = async (productRequest, imageFile) => {
 
 export const deleteProduct = async productId => await privateFetch.delete(`/customers/products/${productId}`);
 
-export const deleteSelectedProducts = async selectedProducts => await privateFetch.delete(`/customers/products/selected`, {data:selectedProducts});
+export const deleteSelectedProducts = async selectedProducts => await privateFetch.delete(`/customers/products/selected`, { data: selectedProducts });
