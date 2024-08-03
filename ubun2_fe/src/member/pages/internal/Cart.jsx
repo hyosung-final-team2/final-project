@@ -4,9 +4,9 @@ import toast from 'react-hot-toast';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDeleteCart, useGetCarts } from '../../api/Cart/queris';
 import { errorToastStyle } from '../../api/toastStyle';
-import { cycleContent } from '../../components/Cart/cycleContent';
 import CartStore from '../../components/Cart/cartList/CartStore';
 import EmptyCartBox from '../../components/Cart/cartList/EmptyCartBox';
+import { cycleContent } from '../../components/Cart/cycleContent';
 import ModalBottomButton from '../../components/common/button/ModalBottomButton';
 import PaymentSummaryPre from '../../components/common/paymentSummary/PaymentSummaryPre';
 import SlideUpModal from '../../components/common/SlideUpModal';
@@ -42,7 +42,6 @@ const Cart = () => {
   }, [location, refetch]);
 
   useEffect(() => {
-    console.log('fetchedCartData:', fetchedCartData && fetchedCartData?.data?.data);
     if (fetchedCartData?.data?.data) {
       const filteredData = fetchedCartData.data.data.filter(store => store.cartProducts.length > 0);
       setCartData(filteredData);
@@ -54,7 +53,14 @@ const Cart = () => {
       store.cartProducts.some(product => product.orderOption === 'SUBSCRIPTION' && (!store.intervalDays || store.intervalDays === 0))
     );
     setUnsetSubscriptions(unsetSubs);
-    setIsOrderButtonDisabled(unsetSubs.length > 0 || selectedItems.length === 0 || selectedItems.every(store => store.cartProducts.length === 0));
+
+    const isDisabled =
+      unsetSubs.length > 0 ||
+      selectedItems.length === 0 ||
+      selectedItems.every(store => store.cartProducts.length === 0) ||
+      selectedItems.some(store => store.cartProducts.some(product => product.quantity > product.stockQuantity || product.stockQuantity === 0));
+
+    setIsOrderButtonDisabled(isDisabled);
   }, [selectedItems]);
 
   const handleSubscriptionPeriodSelect = storeId => {

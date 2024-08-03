@@ -1,9 +1,9 @@
 import { Card, Checkbox } from 'flowbite-react';
+import { useUpdateCart } from '../../../api/Cart/queris';
 import useOrderItemsStore from '../../../store/order/orderItemStore';
 import cardCustomTheme from './CartCardCustom';
 import CartSingleOrder from './CartSingleOrder';
 import CartSubscriptionOrder from './CartSubscriptionOrder';
-import { useUpdateCart } from '../../../api/Cart/queris'; // 추가
 
 const CartStore = ({ store, onSubscriptionPeriodSelect, onDeleteProduct }) => {
   const { isStoreAllSelected, handleSelectAllStore, handleSelectProduct, updateProductQuantity, selectedItems } = useOrderItemsStore(state => ({
@@ -18,31 +18,41 @@ const CartStore = ({ store, onSubscriptionPeriodSelect, onDeleteProduct }) => {
 
   const handleQuantityChange = async (cartProductId, newQuantity) => {
     const customerId = store.customerId;
-    updateProductQuantity(customerId, cartProductId, newQuantity);
-
     const productToUpdate = store.cartProducts.find(product => product.cartProductId === cartProductId);
-    try {
-      await updateCartMutation.mutateAsync([
-        {
-          cartId: productToUpdate.cartId,
-          customerId: customerId,
-          cartProducts: [{ cartProductId: productToUpdate.cartProductId, quantity: newQuantity }],
-        },
-      ]);
-    } catch (error) {
-      console.error('Failed to update product quantity:', error);
+
+    if (productToUpdate && newQuantity <= productToUpdate.stockQuantity) {
+      updateProductQuantity(customerId, cartProductId, newQuantity);
+
+      try {
+        await updateCartMutation.mutateAsync([
+          {
+            cartId: productToUpdate.cartId,
+            customerId: customerId,
+            cartProducts: [{ cartProductId: productToUpdate.cartProductId, quantity: newQuantity }],
+          },
+        ]);
+      } catch (error) {
+        console.error('Failed to update product quantity:', error);
+      }
+    } else {
+      console.error('Invalid quantity or product not found');
     }
   };
 
   const storeSelectedItems = selectedItems.filter(s => s.customerId === store.customerId);
-  const allProductsSelected = store.cartProducts.every(product =>
-    storeSelectedItems.some(s => s.cartProducts.some(p => p.cartProductId === product.cartProductId))
-  );
+  const selectableProducts = store.cartProducts.filter(product => product.stockQuantity > 0);
+  const allProductsSelected =
+    selectableProducts.length > 0 &&
+    selectableProducts.every(product => storeSelectedItems.some(s => s.cartProducts.some(p => p.cartProductId === product.cartProductId)));
+
+  const handleSelectAll = checked => {
+    handleSelectAllStore(store.customerId, checked, selectableProducts);
+  };
 
   return (
     <Card className='my-4 bg-white' theme={cardCustomTheme}>
       <div className='flex items-center w-full gap-3 px-4'>
-        <Checkbox color='purple' checked={allProductsSelected} onChange={e => handleSelectAllStore(store.customerId, e.target.checked)} />
+        <Checkbox color='purple' checked={allProductsSelected} onChange={e => handleSelectAll(e.target.checked)} disabled={selectableProducts.length === 0} />
         <h2 className='text-xl font-semibold text-main'>{store.businessName}</h2>
       </div>
       <div className='flex flex-col w-full gap-8'>

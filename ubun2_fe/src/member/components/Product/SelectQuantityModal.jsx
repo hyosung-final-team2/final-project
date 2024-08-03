@@ -1,6 +1,6 @@
 import QuantityButton from '../common/button/QuantityButton.jsx';
 
-const SelectQuantityModal = ({ productName, discountedPrice, productQuantity, setProductQuantity, clickCartBtn }) => {
+const SelectQuantityModal = ({ productName, discountedPrice, productQuantity, setProductQuantity, clickCartBtn, stockQuantity }) => {
   const handleQuantityChange = (_, newQuantity) => {
     setProductQuantity(newQuantity);
   };
@@ -13,7 +13,7 @@ const SelectQuantityModal = ({ productName, discountedPrice, productQuantity, se
           <div className='text-gray-500'>{discountedPrice?.toLocaleString()}원</div>
         </div>
         <div>
-          <QuantityButton initialQuantity={productQuantity} onQuantityChange={handleQuantityChange} cartProductId={null} />
+          <QuantityButton initialQuantity={productQuantity} onQuantityChange={handleQuantityChange} cartProductId={null} maxQuantity={stockQuantity} />
         </div>
       </div>
       <hr />
