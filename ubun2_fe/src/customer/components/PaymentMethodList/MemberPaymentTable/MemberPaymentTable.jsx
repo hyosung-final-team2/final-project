@@ -45,7 +45,7 @@ const MemberPaymentTable = ({ payments, title }) => {
       {totalPages < 1 ? null : <TablePagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
       {!payments?.length ? (
         <>
-          <div className='flex justify-center items-center mx-3 py-16 bg-gray-100 rounded-lg'>
+          <div className='flex justify-center items-center py-16 bg-gray-100 rounded-b-lg'>
             <h1>등록된 결제수단이 없습니다.</h1>
           </div>
         </>
