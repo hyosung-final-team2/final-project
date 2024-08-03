@@ -28,7 +28,6 @@ const NotificationItem = ({id, title, content, timestamp, link, setIsAlarmOpen})
 
     const extractPath = (url) => {
         const parts = url?.split('/');
-        // 나중에 배포 url로 변경
         const index = parts?.findIndex(part => part?.includes('clicknbuy.co.kr'));
         if (index === -1) {
             return '';

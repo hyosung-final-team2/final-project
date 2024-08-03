@@ -16,14 +16,15 @@ const UnifiedOrderTableBody = ({ dataList, TableRowComponent, setOpenModal, sele
       {paddedDataList?.map((data, index) => {
         const orderId = data.orderId;
         const subscription = data.subscription;
+        const memberId = data.memberId;
 
         return isCheckable ? (
           <TableRowComponent
             key={index}
             {...data}
             setOpenModal={setOpenModal}
-            isChecked={selectedOrders.some(order => order.orderId === orderId && order.subscription === subscription)}
-            handleRowChecked={() => handleRowChecked(orderId, subscription)}
+            isChecked={selectedOrders.some(order => order.orderId === orderId && order.subscription === subscription && order.memberId === memberId)}
+            handleRowChecked={() => handleRowChecked(orderId, subscription, memberId)}
             currentPage={currentPage}
             isEmpty={data.isEmpty}
             colNum={colNum}

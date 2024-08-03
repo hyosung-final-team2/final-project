@@ -22,10 +22,11 @@ public class AlarmController {
 
     @Operation(summary = "단일 구매자에게 알람 보내기")
     @PostMapping("/customers/alarm/personal")
-    public ResponseDto<?> pushMessagePersonal(@Valid @RequestBody PersonalAlarmSendRequest request) {
-        String messageId = alarmService.sendMessageToPersonal(request);
-        return ResponseDto.ok(messageId,"개인 알람 전송 성공");
+    public ResponseDto<?> pushMessagePersonal(@Valid @RequestBody List<PersonalAlarmSendRequest> request) {
+        alarmService.sendMessageToPersonal(request);
+        return ResponseDto.ok(null,"개인 알람 전송 성공");
     }
+
 
     @Operation(summary = "고객의 상점에 구독되어있는 회원 전체에게 알람 보내기")
     @PostMapping("/customers/alarm/group")
