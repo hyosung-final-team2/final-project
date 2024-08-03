@@ -1,11 +1,11 @@
 import { Checkbox, Table } from 'flowbite-react';
-import { maskAccountNumber } from '../../../utils/accountFormat';
+import { formatBankAccount } from '../../../utils/accountFormat';
 import { maskCardNumber } from '../../../utils/cardFormat';
 import paymentMethodStore from '../../../store/PaymentMethod/paymentMethodStore';
 import PaymentMethodBadge from '../../common/Badge/PaymentMethodBadge';
 import usePaymentMethodTableStore from '../../../store/PaymentMethod/paymentMethodTableStore';
 
-const SkeletonPaymentMethodTableRow = ({ memberName, memberEmail, bankName, cardCompanyName, cardNumber, accountNumber, createdAt }) => {
+const SkeletonPaymentMethodTableRow = ({ memberName, memberEmail, bankName, cardCompanyName, cardNumber, accountNumber, createdAt, isEmpty, colNum }) => {
   const paymentMethodType = paymentMethodStore(state => state.paymentMethodType);
 
   const isAccount = paymentMethodType === 'ACCOUNT';
@@ -20,11 +20,21 @@ const SkeletonPaymentMethodTableRow = ({ memberName, memberEmail, bankName, card
     return '';
   };
 
+  if (isEmpty) {
+    return (
+      <Table.Row className='cursor-default'>
+        <Table.Cell colSpan={colNum + 1} className='text-center text-gray-500 bg-gray-50'>
+          <span className='invisible'>없음</span>
+        </Table.Cell>
+      </Table.Row>
+    );
+  }
+
   const sortInstitute = isAccount ? 'bankName' : 'cardCompany';
   const sortNumber = isAccount ? 'accountNumber' : 'cardNumber';
   return (
     <>
-      <Table.Row className='bg-white'>
+      <Table.Row className='bg-white h-[60px]'>
         <Table.Cell style={{ width: '5%' }}>
           <Checkbox />
         </Table.Cell>
@@ -41,7 +51,7 @@ const SkeletonPaymentMethodTableRow = ({ memberName, memberEmail, bankName, card
           {isAccount ? bankName : cardCompanyName}
         </Table.Cell>
         <Table.Cell className={getColorForColumn(sortNumber)} style={{ width: '20%' }}>
-          {isAccount ? maskAccountNumber(accountNumber) : maskCardNumber(cardNumber)}
+          {isAccount ? formatBankAccount(bankName?.slice(0, -2), accountNumber, true) : maskCardNumber(cardNumber)}
         </Table.Cell>
       </Table.Row>
     </>
