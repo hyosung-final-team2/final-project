@@ -3,7 +3,6 @@ import InputTextWithBtn from '../common/Input/InputTextWithBtn';
 import { useState, useEffect } from 'react';
 import { useSignup } from '../../api/Customer/Register/queris.js';
 import { businessStoreNameRegex, businessStoreNameRegexMessage, phoneRegex, phoneRegexMessage } from '../common/Regex/registerRegex.js';
-import { useNavigate } from 'react-router-dom';
 
 const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
   const INITIAL_REGISTER_OBJ = {
@@ -62,6 +61,14 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
     setRegisterObj({ ...thirdRegisterObj, [updateType]: value });
   };
 
+  const updateAddress = (addressDefault, addressNumber) => {
+    setRegisterObj(prevState => ({
+      ...prevState,
+      businessAddressDefault: addressDefault,
+      businessAddressNumber: addressNumber,
+    }));
+  };
+
   const handleAddressSearch = () => {
     const POPUP_WIDTH = 700;
     const POPUP_HEIGHT = 760;
@@ -82,8 +89,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
       const result = event.data.result;
       console.log('Address selected:', result);
 
-      // updateFormValue({ updateType: 'businessAddressNumber', value: result.zipNo || '' });
-      // updateFormValue({ updateType: 'businessAddressDefault', value: result.roadAddrPart1 || '' });
+      updateAddress(result.roadAddrPart1 || '', result.zipNo || '');
 
       if (popup) {
         popup.close();
@@ -137,6 +143,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
             buttonText='검색하기'
             clickPossibleWithoutData={true}
             isAuthInput={true}
+            addressFunc={handleAddressSearch}
             buttonFunc={handleAddressSearch}
           />
           <InputText
@@ -145,6 +152,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
             containerStyle='mt-1'
             updateFormValue={updateFormValue}
             placeholder='기본 주소'
+            addressFunc={handleAddressSearch}
           />
           <InputText
             defaultValue={thirdRegisterObj.businessAddressDetail}

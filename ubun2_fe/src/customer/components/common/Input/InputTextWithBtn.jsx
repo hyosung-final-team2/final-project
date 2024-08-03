@@ -21,7 +21,8 @@ const InputTextWithBtn = ({
   regex = /.*/,
   regexMessage,
   isDuplicateInput=false,
-  duplicateMessage
+  duplicateMessage,
+  addressFunc
 }) => {
   const [value, setValue] = useState(defaultValue);
   const [error, setError] = useState(null);
@@ -69,6 +70,15 @@ const InputTextWithBtn = ({
   }, [value, regex, duplicateMessage, isDuplicateInput]);
 
 
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
+
+  const handleClick = () => {
+    if (addressFunc) {
+      addressFunc();
+    }
+  };
   return (
         <div className='flex w-full items-center'>
           <div className={`form-control w-full ${containerStyle}`}>
@@ -84,6 +94,7 @@ const InputTextWithBtn = ({
                     placeholder={placeholder || ''}
                     onChange={e => updateInputValue(e.target.value)}
                     className='input input-bordered w-full'
+                    onClick={handleClick}
                 />
                 {!isAuthInput && <div className={`absolute top-1 right-3 mt-2 text-sm`}>
                   {error === '' ? <CheckIcon className='text-badge-green h-7 w-7'/> :
