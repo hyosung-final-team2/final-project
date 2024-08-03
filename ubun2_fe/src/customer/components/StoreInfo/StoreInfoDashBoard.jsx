@@ -1,4 +1,3 @@
-import { Card } from 'flowbite-react';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { errorToastStyle, successToastStyle } from '../../../member/api/toastStyle';
