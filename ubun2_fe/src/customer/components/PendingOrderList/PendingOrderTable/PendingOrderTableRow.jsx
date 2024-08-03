@@ -34,17 +34,17 @@ const PendingOrderTableRow = ({
   setIsCheckConfirmModalOpen,
   setSelectedPendingOrders,
 }) => {
-  const { mutate: sendPersonalAlarmMutate } = useSendPersonalAlarm(memberId, orderId, subscription);
+  // const { mutate: sendPersonalAlarmMutate } = useSendPersonalAlarm(memberId, orderId, subscription);
 
   const handleApprove = e => {
     e.stopPropagation();
-    setSelectedPendingOrders([{ orderId, subscription }]);
+    setSelectedPendingOrders([{ orderId, subscription, memberId }]);
     setIsCheckConfirmModalOpen(true);
   };
 
   const handleCancel = e => {
     e.stopPropagation();
-    setSelectedPendingOrders([{ orderId, subscription }]);
+    setSelectedPendingOrders([{ orderId, subscription, memberId }]);
     setIsDeleteConfirmModalOpen(true);
   };
 
