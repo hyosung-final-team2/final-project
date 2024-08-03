@@ -5,6 +5,7 @@ const initialState = {
   sort: [],
   searchCategory: null,
   searchKeyword: null,
+  orderStatus: '',
 };
 
 const useOrderTableStore = create(
@@ -15,6 +16,7 @@ const useOrderTableStore = create(
       setSearchCategory: state => set({ searchCategory: state }),
       setSearchKeyword: state => set({ searchKeyword: state }),
       setTotalElements: state => set({ totalElements: state }),
+      setOrderStatus: status => set({ orderStatus: status }),
 
       // sort 배열 업데이트하는 메서드
       updateSort: (column, sortType) =>

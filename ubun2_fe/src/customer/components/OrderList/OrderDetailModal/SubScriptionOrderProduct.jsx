@@ -17,26 +17,23 @@ const SubscriptionOrderProduct = ({ orderInfo, selectedCycle, onCycleChange }) =
   return (
     <div className='p-3'>
       <div className='flex items-center justify-between mb-3 text-main'>
-        <h3 className='text-xl font-bold'>{selectedCycle}회차 정기배송 상품 목록</h3>
-        <div className='font-bold text-md text-custom-primary'>
-          <h5>{orderInfo?.orderStatus !== 'PENDING' && `${selectedCycle} 회`}</h5>
-        </div>
-      </div>
+        <h3 className='text-2xl font-bold'>{selectedCycle}회차 정기배송 상품 목록</h3>
 
-      {orderInfo?.orderStatus !== 'PENDING' && (
-        <div className='mb-4'>
-          <label htmlFor='cycle-select' className='block mb-2 text-sm font-medium text-gray-500'>
-            * 정기주문 회차
-          </label>
-          <Select value={selectedCycle} onChange={e => onCycleChange(Number(e.target.value))} className='mt-2 w-fit'>
-            {Array.from({ length: orderInfo?.latestCycleNumber }, (_, i) => i + 1).map(cycleNum => (
-              <option key={cycleNum} value={cycleNum}>
-                {cycleNum} 회차
-              </option>
-            ))}
-          </Select>
-        </div>
-      )}
+        {orderInfo?.orderStatus !== 'PENDING' && (
+          <div className='mb-4'>
+            <label htmlFor='cycle-select' className='block mb-2 text-sm font-medium text-gray-500'>
+              * 정기주문 회차
+            </label>
+            <Select value={selectedCycle} onChange={e => onCycleChange(Number(e.target.value))} className='mt-2 w-fit'>
+              {Array.from({ length: orderInfo?.latestCycleNumber }, (_, i) => i + 1).map(cycleNum => (
+                <option key={cycleNum} value={cycleNum}>
+                  {cycleNum} 회차
+                </option>
+              ))}
+            </Select>
+          </div>
+        )}
+      </div>
 
       <List unstyled className='px-8 py-6 divide-y divide-gray-200 rounded-md dark:divide-gray-700 bg-custom-alert-bg-gray'>
         {filteredProducts?.map(product => (
