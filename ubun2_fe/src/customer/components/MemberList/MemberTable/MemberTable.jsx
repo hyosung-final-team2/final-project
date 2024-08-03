@@ -8,7 +8,7 @@ import MemberTableRow from './MemberTableRow';
 import ExcelModal from '../ExcelModal/ExcelModal';
 import DynamicTableBody from '../../common/Table/DynamicTableBody.jsx';
 
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {
   useDeleteSelectedMember,
   useGetMembers,
@@ -65,6 +65,8 @@ const MemberTable = () => {
 
   const queryClient = useQueryClient();
 
+  const memoizedMemberList = useMemo(() => memberList, [JSON.stringify(memberList)]);
+
   useEffect(() => {
     if (currentPage < totalPages) {
       const nextPage = currentPage + 1;
@@ -77,7 +79,7 @@ const MemberTable = () => {
 
   useEffect(() => {
     setSelectedMembers([])
-  }, [currentPage,memberList]);
+  }, [memoizedMemberList]);
 
   useEffect(() => {
     if (totalElementsFromPage !== undefined) {
@@ -282,6 +284,7 @@ const MemberTable = () => {
         <CheckConfirmModal isCheckConfirmModalOpen={isCheckConfirmModalOpen}
                            setIsCheckConfirmModalOpen={setIsCheckConfirmModalOpen}
                            text={<p className="text-lg"><span className="text-green-500 font-bold">{selectedMembers.length}</span>명의 회원을 선택하셨습니다</p>}
+                           secondText="전송"
                            firstButtonFunc={checkConfirmFirstButtonFunc}
                            secondButtonFunc={checkConfirmSecondButtonFunc}
         />

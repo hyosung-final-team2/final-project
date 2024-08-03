@@ -131,7 +131,11 @@ const ChoosePayment = () => {
                 <p className='text-[80%] text-gray-500'>
                   {selectedPaymentMethod
                     ? selectedPaymentMethod.type === 'ACCOUNT'
-                      ? `${selectedPaymentMethod.bankName} ${selectedPaymentMethod.accountNumber}`
+                      ? `${selectedPaymentMethod.bankName} ${formatBankAccount(
+                          selectedPaymentMethod?.bankName.slice(0, -2),
+                          selectedPaymentMethod?.accountNumber,
+                          true
+                        )}`
                       : `${selectedPaymentMethod.cardCompanyName} ${selectedPaymentMethod.cardNumber.slice(-4).replace(/\d{2}$/, '**')}`
                     : '결제 수단이 없습니다'}
                 </p>

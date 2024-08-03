@@ -4,11 +4,10 @@ import paymentMethodStore from '../../../store/PaymentMethod/paymentMethodStore'
 import { maskCardNumber } from '../../../utils/cardFormat';
 import { formatBankAccount } from '../../../utils/accountFormat';
 
-const MemberPaymentTableRow = ({ paymentMethodId, paymentType, cardCompanyName, bankName, cardNumber, accountNumber, currentPage }) => {
+const MemberPaymentTableRow = ({ idx, paymentMethodId, paymentType, cardCompanyName, bankName, cardNumber, accountNumber, currentPage }) => {
   const isAccount = paymentType === 'ACCOUNT';
   const { isUpdate, modalPaymentId, setOpenModal } = paymentMethodStore();
   const { mutate: deleteMutate } = useDeletePaymentMethod();
-  console.log(paymentMethodId);
   const handlePaymentDelete = paymentMethodId => {
     if (paymentMethodId === modalPaymentId) {
       deleteMutate(paymentMethodId);
@@ -21,7 +20,7 @@ const MemberPaymentTableRow = ({ paymentMethodId, paymentType, cardCompanyName, 
   return (
     <>
       <Table.Row style={{ position: 'relative' }} className='bg-white'>
-        <Table.Cell>{paymentMethodId}</Table.Cell>
+        <Table.Cell>{idx}</Table.Cell>
         <Table.Cell>{isAccount ? '계좌' : '카드'}</Table.Cell>
         <Table.Cell>{isAccount ? bankName : cardCompanyName}</Table.Cell>
         <Table.Cell>{isAccount ? formatBankAccount(bankName, accountNumber, true) : maskCardNumber(cardNumber)}</Table.Cell>

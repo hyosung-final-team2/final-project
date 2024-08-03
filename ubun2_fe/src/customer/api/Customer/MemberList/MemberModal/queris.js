@@ -20,7 +20,7 @@ export const useDeleteMember = (memberId, pending, currentPage) => {
     mutationFn: () => deleteMember(memberId, pending),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['member', currentPage] }); // TODO: 코너 케이스 - 해당 페이지의 마지막 row 라면 체크해서 하나 이전 페이지 갱신해야함
-      toast.success('Member deleted successfully');
+      toast.success('정상적으로 삭제되었습니다.');
     },
     onError: error => {
       console.log('error', error);
@@ -33,7 +33,7 @@ export const useRegisterMember = (registerData, options) => {
   return useMutation({
     mutationFn: () => registerMember(registerData),
     onSuccess: () => {
-      toast.success('Member registered successfully');
+      toast.success('회원 등록에 성공하였습니다.');
       if (options && options.onSuccess) {
         options.onSuccess();
       }
@@ -50,7 +50,7 @@ export const useUpdateMember = (currentPage) => {
     mutationFn: ({memberId, isPending, requestData}) => updateMember(memberId, isPending, requestData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['member', currentPage] });
-      toast.success('Member updated successfully')
+      toast.success('회원 정보 수정에 성공하였습니다.')
     },
     onError: () => toast.error(`Member updated failed: ${error.message}`),
   })

@@ -113,7 +113,7 @@ const MemberAddressInput = ({ disabled = false, infos, title, handleAddressAdd }
     const city = addressParts[0];
     const district = addressParts[1];
     const roadAddress = addressParts.slice(2).join(' ');
-    const formattedAddress = `${formData['우편번호']},${city},${district},${roadAddress},${formData['상세주소']}`;
+    const formattedAddress = `${formData['우편번호']},${city},${district},${roadAddress} ${formData['상세주소']}`;
 
     handleAddressAdd({
       addressId: null,

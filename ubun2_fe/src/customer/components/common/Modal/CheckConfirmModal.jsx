@@ -3,7 +3,7 @@ import {customConfirmModalTheme} from "./ModalStyle.js";
 import CheckCircleIcon from "@heroicons/react/24/solid/CheckCircleIcon.js";
 
 
-const CheckConfirmModal = ({isCheckConfirmModalOpen, setIsCheckConfirmModalOpen, text, firstButtonFunc, secondButtonFunc}) => {
+const CheckConfirmModal = ({isCheckConfirmModalOpen, setIsCheckConfirmModalOpen, text, secondText, firstButtonFunc, secondButtonFunc}) => {
     return (
         <Modal
             dismissible
@@ -19,7 +19,7 @@ const CheckConfirmModal = ({isCheckConfirmModalOpen, setIsCheckConfirmModalOpen,
                 <div className="flex flex-col items-center justify-center pt-5">
                     <CheckCircleIcon className="text-green-500 w-1/5 h-1/5 mb-3"/>
                     {text}
-                    <p className="text-lg">정말 <span className="text-green-500 font-bold">전송</span>하시겠습니까?</p>
+                    <p className="text-lg">정말 <span className="text-green-500 font-bold">{secondText}</span>하시겠습니까?</p>
                 </div>
 
             </Modal.Body>

@@ -18,9 +18,13 @@ import SkeletonTable from "../../Skeleton/SkeletonTable.jsx";
 import SkeletonProductTableFeature from "../Skeleton/SkeletonProductTableFeature.jsx";
 import SkeletonProductTableRow from "../Skeleton/SkeletonProductTableRow.jsx";
 import NoDataTable from "../../common/Table/NoDataTable.jsx";
+import DeleteConfirmModal from "../../common/Modal/DeleteConfirmModal.jsx";
+import AlertConfirmModal from "../../common/Modal/AlertConfirmModal.jsx";
 
 const ProductTable = () => {
   const [openProductDetailModal, setOpenProductDetailModal] = useState(false);
+  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
+  const [isAlertConfirmModalOpen, setIsAlertConfirmModalOpen] = useState(false);
 
   const [selectedProducts, setSelectedProducts] = useState([]); // 체크된 상품 ID
   const [selectedProductDetail, setSelectedProductDetail] = useState({ productId: null }); // 선택된 멤버 ID - 모달 오픈 시
@@ -30,8 +34,6 @@ const ProductTable = () => {
   const {searchCategory, setSearchCategory} = useProductTableStore(); // 검색할 카테고리 (드롭다운)
   const { setTotalElements } = useProductTableStore()
   const { resetData } = useProductTableStore()
-
-  console.log( "외부 : ", searchKeyword,searchCategory)
 
   const [currentPage, setCurrentPage] = useState(1);
   const PAGE_SIZE = 8
@@ -58,7 +60,6 @@ const ProductTable = () => {
 
   useEffect(() => {
     if (currentPage < totalPages) {
-      console.log("useEffect : ", searchCategory,searchKeyword);
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['product', {page:nextPage,PAGE_SIZE, sort, searchCategory, searchKeyword}],
@@ -81,7 +82,7 @@ const ProductTable = () => {
 
   const handleAllChecked = checked => {
     if (checked) {
-      setSelectedProducts(productList.map(product => product.id));
+      setSelectedProducts(productList.map(product => product.productId));
     } else {
       setSelectedProducts([]);
     }
@@ -110,6 +111,15 @@ const ProductTable = () => {
     await updateSort(column,sortType);
     refetchProducts()
     setCurrentPage(1)
+  }
+
+
+  const deleteConfirmFirstButtonFunc = () => {
+    setIsDeleteConfirmModalOpen(true)
+  }
+
+  const deleteConfirmSecondButtonFunc = () => {
+    deleteSelectedProductsMutate()
   }
 
 
@@ -158,11 +168,13 @@ const ProductTable = () => {
                            onSearch={handleSearch}
                            currentPage={currentPage}
                            handleDataReset={handleDataReset}
-                           deleteSelectedProductsMutate={deleteSelectedProductsMutate}
                            handleSaveClick={handleSaveClick}
                            openProductInsertModal={openProductInsertModal}
                            setOpenProductInsertModal={setOpenProductInsertModal}
                            dropdownRef={dropdownRef}
+                           selectedProducts={selectedProducts}
+                           setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
+                           setIsAlertConfirmModalOpen={setIsAlertConfirmModalOpen}
       />
 
       <div className='px-4'>
@@ -203,6 +215,28 @@ const ProductTable = () => {
             currentPage={currentPage}
           />
         }
+
+        {/* 삭제 화인 모달 */}
+        {
+            isDeleteConfirmModalOpen &&
+            selectedProducts.length > 0 &&
+            <DeleteConfirmModal isDeleteConfirmModalOpen={isDeleteConfirmModalOpen}
+                                setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
+                                text={<p className="text-lg"><span className="text-red-500 font-bold">{selectedProducts.length}</span>개의 상품을 선택하셨습니다</p>}
+                                firstButtonFunc={deleteConfirmFirstButtonFunc}
+                                secondButtonFunc={deleteConfirmSecondButtonFunc}
+            />
+        }
+
+        {/* alert 모달 */}
+        {
+            isAlertConfirmModalOpen &&
+            <AlertConfirmModal isAlertConfirmModalOpen={isAlertConfirmModalOpen}
+                               setIsAlertConfirmModalOpen={setIsAlertConfirmModalOpen}
+                               text={<p className="text-lg pt-4 pb-7">선택된 상품이 없습니다!</p>}
+            />
+        }
+
       </div>
     </div>
   );

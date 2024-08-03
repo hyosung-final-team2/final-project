@@ -31,7 +31,7 @@ const ForgotPassword = () => {
     const navigate = useNavigate();
 
 
-    const {mutate:sendEmailMutate} = useSendEmail(passwordObj.memberEmail,"ROLE_MEMBER",false);
+    const {mutate:sendEmailMutate} = useSendEmail(passwordObj.memberEmail,"ROLE_MEMBER","NO");
     const {mutate:authEmailMutate} = useAuthEmail();
 
 

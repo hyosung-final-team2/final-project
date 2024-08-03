@@ -6,7 +6,7 @@ import SkeletonTableHead from './SkeletonTableHead.jsx';
 import SkeletonDynamicTableBody from './SkeletonDynamicTableBody.jsx';
 import useSkeletonStore from '../../store/skeletonStore.js';
 
-const SkeletonTable = ({ SkeletonTableFeature, TableRowComponent, tableColumns, nonSort }) => {
+const SkeletonTable = ({ SkeletonTableFeature, TableRowComponent, tableColumns, nonSort, isCheckable }) => {
   const { skeletonData, skeletonTotalPage } = useSkeletonStore();
 
   return (
@@ -16,7 +16,7 @@ const SkeletonTable = ({ SkeletonTableFeature, TableRowComponent, tableColumns, 
       {/* 테이블 */}
       <div className='px-4 shadow-md'>
         <Table theme={customTableTheme}>
-          <SkeletonTableHead tableColumns={tableColumns} nonSort={nonSort} />
+          <SkeletonTableHead tableColumns={tableColumns} nonSort={nonSort} isCheckable={isCheckable} />
 
           <SkeletonDynamicTableBody TableRowComponent={TableRowComponent} skeletonData={skeletonData} />
         </Table>

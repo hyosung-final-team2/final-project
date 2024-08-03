@@ -32,7 +32,7 @@ const FindLoginId = ({ setIsSuccess, setFindId }) => {
     const navigate = useNavigate();
 
 
-    const {mutate:sendEmailMutate} = useSendEmail(loginIdObj.memberEmail, "ROLE_CUSTOMER",false)
+    const {mutate:sendEmailMutate} = useSendEmail(loginIdObj.memberEmail, "ROLE_CUSTOMER","NO")
     const {mutate:authEmailMutate} = useAuthEmail();
 
 

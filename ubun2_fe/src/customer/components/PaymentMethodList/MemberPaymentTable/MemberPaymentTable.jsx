@@ -2,9 +2,9 @@ import { Table } from 'flowbite-react';
 import { tableColumn } from '../../common/Table/tableIndex';
 import MemberPaymentTableRow from './MemberPaymentTableRow';
 import TableHead from '../../common/Table/TableHead';
-import DynamicTableBody from '../../common/Table/DynamicTableBody';
 import { useState, useEffect } from 'react';
 import TablePagination from '../../common/Pagination/TablePagination';
+import TableBody from '../../common/Table/TableBody';
 
 const MemberPaymentTable = ({ payments, title }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,11 +34,10 @@ const MemberPaymentTable = ({ payments, title }) => {
       <h1 className='text-2xl font-bold mb-3 text-main'>{title}</h1>
       <Table hoverable>
         <TableHead tableColumns={tableColumn.paymentMethod.detail} isCheckable={false} nonSort={tableColumn.paymentMethod.detail} />
-        <DynamicTableBody
+        <TableBody
           dataList={paginatedData}
           TableRowComponent={MemberPaymentTableRow}
           isCheckable={false}
-          dynamicKey='paymentMethodId'
           dynamicId='paymentMethodId'
           currentPage={currentPage}
         />

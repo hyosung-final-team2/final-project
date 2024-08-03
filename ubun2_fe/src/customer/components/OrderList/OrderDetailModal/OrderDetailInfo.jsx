@@ -3,6 +3,7 @@ import { formatCurrency } from '../../../utils/currencyFormat';
 import OrderPaymentAccount from './OrderPaymentAccount';
 import OrderPaymentCard from './OrderPaymentCard';
 import { HomeIcon } from '@heroicons/react/16/solid';
+import { formatAddressOneLine } from '../../../utils/addressFormat';
 
 const customTheme = {
   root: {
@@ -42,7 +43,7 @@ const OrderDetailInfo = ({ orderInfo, selectedCycle, isSubscription }) => {
             <HomeIcon className='w-6 h-6 mr-2' />
             <p className='text-xl font-normal text-gray-700'>{orderInfo?.addressNickname}</p>
           </div>
-          <p className='font-normal text-gray-700'>{orderInfo?.address}</p>
+          <p className='font-normal text-gray-700'>{formatAddressOneLine(orderInfo?.address)}</p>
         </Card>
       </div>
 

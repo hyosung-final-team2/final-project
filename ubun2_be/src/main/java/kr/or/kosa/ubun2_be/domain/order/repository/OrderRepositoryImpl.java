@@ -2,10 +2,7 @@ package kr.or.kosa.ubun2_be.domain.order.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.ComparableExpressionBase;
-import com.querydsl.core.types.dsl.DateTimePath;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.StringPath;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.JPQLQuery;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
@@ -19,7 +16,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static kr.or.kosa.ubun2_be.domain.customer.entity.QCustomer.customer;
@@ -55,10 +53,19 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                 .where(
                         memberCustomer.customer.customerId.eq(customerId),
                         order.orderStatus.ne(OrderStatus.PENDING),
-                        searchCondition(searchRequest)
+                        searchCondition(searchRequest),
+                        orderStatusEq(searchRequest)
                 );
 
         return query.fetch();
+    }
+    private BooleanBuilder orderStatusEq(SearchRequest searchRequest) {
+        try {
+            OrderStatus status = OrderStatus.valueOf(searchRequest.getOrderStatus());
+            return new BooleanBuilder().and(order.orderStatus.eq(status));
+        } catch (Exception e) {
+            return new BooleanBuilder();
+        }
     }
 
     @Override
