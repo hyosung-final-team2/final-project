@@ -11,7 +11,7 @@ import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
 import java.util.List;
 
 public interface AlarmService {
-    String sendMessageToPersonal(PersonalAlarmSendRequest request);
+    void sendMessageToPersonal(List<PersonalAlarmSendRequest> request);
 
     void subscribeCustomer(String FcmToken, Long customerId);
 

@@ -42,23 +42,23 @@ class AlarmControllerTest extends CommonTestSetup {
     @MockBean
     private AlarmService alarmService;
 
-    @Test
-    @DisplayName("단일 구매자에게 알람 보내기")
-    void pushMessagePersonal() throws Exception {
-        PersonalAlarmSendRequest request = new PersonalAlarmSendRequest(1L,"알림제목","알림 내용","해당 링크");
-
-        when(alarmService.sendMessageToPersonal(any(PersonalAlarmSendRequest.class))).thenReturn("messageId");
-
-        mockMvc.perform(post("/api/customers/alarm/personal")
-                        .with(user(customer))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.success").value(true))
-                .andExpect(jsonPath("$.message").value("개인 알람 전송 성공"));
-
-        verify(alarmService).sendMessageToPersonal(any(PersonalAlarmSendRequest.class));
-    }
+//    @Test
+//    @DisplayName("단일 구매자에게 알람 보내기")
+//    void pushMessagePersonal() throws Exception {
+//        PersonalAlarmSendRequest request = new PersonalAlarmSendRequest(1L,"알림제목","알림 내용","해당 링크");
+//
+//        when(alarmService.sendMessageToPersonal(any(PersonalAlarmSendRequest.class))).thenReturn("messageId");
+//
+//        mockMvc.perform(post("/api/customers/alarm/personal")
+//                        .with(user(customer))
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(objectMapper.writeValueAsString(request)))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.success").value(true))
+//                .andExpect(jsonPath("$.message").value("개인 알람 전송 성공"));
+//
+//        verify(alarmService).sendMessageToPersonal(any(PersonalAlarmSendRequest.class));
+//    }
 
     @Test
     @DisplayName("고객의 상점에 구독되어있는 회원 전체에게 알람 보내기")

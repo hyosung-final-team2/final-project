@@ -43,16 +43,17 @@ public class AlarmServiceImpl implements AlarmService{
     private final ProductRepository productRepository;
 
     @Override
-    public String sendMessageToPersonal(PersonalAlarmSendRequest request) {
-        Member member = memberRepository.findById(request.getTargetMemberId())
-                .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
+    public void sendMessageToPersonal(List<PersonalAlarmSendRequest> request) {
+        for (PersonalAlarmSendRequest orderRequest : request) {
+            Member member = memberRepository.findById(orderRequest.getTargetMemberId())
+                    .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
 
-        Message message = makePersonalMessage(request, member.getFcmToken());
-        String messageId = sendMessage(message);
+            Message message = makePersonalMessage(orderRequest, member.getFcmToken());
+            sendMessage(message);
 
-        Alarm alarm = Alarm.createAlarm(request.getTitle(), request.getContent(), request.getLink());
-        memberAlarmRedisRepository.saveAlarm(String.valueOf(member.getMemberId()), alarm);
-        return messageId;
+            Alarm alarm = Alarm.createAlarm(orderRequest.getTitle(), orderRequest.getContent(), orderRequest.getLink());
+            memberAlarmRedisRepository.saveAlarm(String.valueOf(member.getMemberId()), alarm);
+        }
     }
 
     @Override
