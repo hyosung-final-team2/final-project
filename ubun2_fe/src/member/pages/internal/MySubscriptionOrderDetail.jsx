@@ -138,6 +138,13 @@ const MySubscriptionOrderDetail = () => {
     paymentContent: orderData?.paymentType === 'CARD' ? maskCardNumber(orderData?.cardNumber) : maskAccountNumber(orderData?.accountNumber),
   };
 
+  const getOrderStatus = product => {
+    if (orderData?.orderStatus === 'DENIED') {
+      return product.orderProductStatus === 'REJECTED' ? 'REJECTED' : 'DENIED';
+    }
+    return orderData?.orderStatus;
+  };
+
   return (
     <div className='min-h-full bg-custom-mypage-back-bg'>
       <div className='flex flex-col p-4'>
@@ -165,12 +172,15 @@ const MySubscriptionOrderDetail = () => {
         <div className='px-4 py-6 mb-3 bg-white rounded-3xl'>
           <div className='flex items-center justify-between mb-4'>
             <h2 className='text-xl font-bold text-gray-600'>주문 내역</h2>
+            <OrderStatusBadge status={getOrderStatus(filteredProducts[0])} customSize={'text-xs'} />
+          </div>
+
+          <div className='flex justify-end'>
             {isDeliveryEditable && !isEditing && hasEditableProducts && (
               <span className='flex gap-3 text-gray-400 underline' onClick={handleEdit}>
                 <PencilSquareIcon className='w-5 h-5' />
               </span>
             )}
-
             {isEditing && hasEditableProducts && (
               <div className='flex gap-3 text-gray-400 underline'>
                 <span
@@ -193,9 +203,15 @@ const MySubscriptionOrderDetail = () => {
                 isSelected={selectedProducts.includes(product.subscriptionOrderProductId)}
                 onSelect={() => handleProductSelect(product.subscriptionOrderProductId)}
                 disabled={false}
+                orderStatus={getOrderStatus(product)}
               />
             ) : (
-              <ProductItemReadOnly key={product.subscriptionOrderProductId} {...product} orderProductStatus={product.orderProductStatus} />
+              <ProductItemReadOnly
+                key={product.subscriptionOrderProductId}
+                {...product}
+                orderProductStatus={product.orderProductStatus}
+                orderStatus={getOrderStatus(product)}
+              />
             )
           )}
         </div>

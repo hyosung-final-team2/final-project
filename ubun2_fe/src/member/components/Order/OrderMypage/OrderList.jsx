@@ -18,6 +18,20 @@ const OrderList = ({ order }) => {
     return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
+  // 주문 상태를 결정하는 함수
+  const getOrderStatus = () => {
+    if (order.orderStatus === 'DENIED') {
+      if (firstProduct) {
+        const productStatus = order.subscription ? firstProduct.subscriptionOrderStatus : firstProduct.orderProductStatus;
+
+        return productStatus === 'REJECTED' ? 'REJECTED' : 'DENIED';
+      }
+    }
+    return order.orderStatus;
+  };
+
+  const orderStatus = getOrderStatus();
+
   return (
     <div className='border-2 border-gray-100 rounded-lg'>
       <div className='flex items-start justify-between w-full px-4 py-4 border-b'>
@@ -32,7 +46,7 @@ const OrderList = ({ order }) => {
           <span className='text-lg font-bold w-fit'>{firstProduct ? firstProduct.productName : '상품 정보 없음'}</span>
           <span>{products.length - 1 ? `외 ${products.length - 1}개` : ''}</span>
         </div>
-        <OrderStatusBadge status={order.orderStatus} customSize={'text-xs'} />
+        <OrderStatusBadge status={orderStatus} customSize={'text-xs'} />
       </div>
       <div className='flex flex-col '>
         {firstProduct && (
@@ -42,7 +56,7 @@ const OrderList = ({ order }) => {
             quantity={firstProduct.quantity}
             productImageOriginalName={firstProduct.productImageOriginalName || ''}
             totalPrice={firstProduct.totalPrice}
-            isComplete={true}
+            isComplete={orderStatus === 'APPROVED'}
           />
         )}
       </div>

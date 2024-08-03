@@ -6,7 +6,8 @@ const BADGE_STYLES = {
   REJECTED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '취소' },
   DENIED: { bgColor: 'bg-badge-red', txtColor: 'text-badge-red', text: '거절' },
   MODIFIED: { bgColor: 'bg-badge-purple', txtColor: 'text-badge-gray', text: '변경' },
-  DELAY: { bgColor: 'bg-badge-purple', txtColor: 'text-badge-gray', text: '연기' },
+  DELAY: { bgColor: 'bg-badge-dark-gray', txtColor: 'text-badge-gray', text: '연기' },
+  EMPTY: { bgColor: 'bg-transparent', txtColor: 'text-transparent', text: '없음' },
 };
 
 const OrderStatusBadge = ({ status, customSize }) => {
