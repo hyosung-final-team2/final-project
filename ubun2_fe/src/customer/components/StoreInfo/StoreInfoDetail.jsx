@@ -3,6 +3,8 @@ import InputLabel from '../common/Input/InputLabel';
 import UpdateInputLabel from '../common/Input/UpdateInputLabel';
 import { CheckIcon, PencilSquareIcon, PhotoIcon } from '@heroicons/react/16/solid';
 
+const inputStyle = 'border border-gray-300';
+
 const StoreInfoDetail = ({ isEditingName, formData, handleNameEdit, handleInputChange, imageFile }) => {
   // 전화번호 포맷팅 함수
   const formatPhoneNumber = phoneNumber => {
@@ -65,13 +67,14 @@ const StoreInfoDetail = ({ isEditingName, formData, handleNameEdit, handleInputC
             <InputLabel labelTitle='사업자등록번호' defaultValue={formData.businessRegistrationNumber} disabled={true} textStyle='text-sm' />
             <InputLabel labelTitle='개업일' defaultValue={formData.businessOpenDate} disabled={true} />
             <InputLabel labelTitle='이메일' defaultValue={formData.customerEmail} disabled={true} />
-            <UpdateInputLabel labelTitle='고객명' name='customerName' value={formData.customerName} onChange={handleInputChange} />
+            <UpdateInputLabel labelTitle='고객명' name='customerName' value={formData.customerName} onChange={handleInputChange} inputStyle={inputStyle} />
             <UpdateInputLabel
               labelTitle='전화번호'
               name='customerPhone'
               value={formData.customerPhone}
               onChange={handlePhoneChange}
               placeholder='010-0000-0000'
+              inputStyle={inputStyle}
             />
           </div>
         </div>
