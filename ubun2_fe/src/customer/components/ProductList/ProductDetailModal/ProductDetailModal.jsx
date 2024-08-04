@@ -17,12 +17,12 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
     productId: '',
     productName: '',
     productDescription: '',
-    categoryName: '과일', //기본
+    categoryName: '', //기본
     stockQuantity: '',
     productPrice: '',
     productDiscount: '',
-    productStatus: 'true',
-    orderOption: 'SINGLE', //기본
+    productStatus: '',
+    orderOption: '', //기본
     productImageOriginalName: '',
     productImagePath: '',
     detailImagesPath: ''
@@ -30,7 +30,6 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
 
   const [productData, setProductData] = useState(INITIAL_PRODUCT_OBJ); // 변경용 데이터
   const [initialData, setInitialData] = useState(INITIAL_PRODUCT_OBJ); // 복원용 데이터
-
   useEffect(() => {
     const newData = {
       productId: product?.productId || '',

@@ -91,11 +91,11 @@ public class ProductServiceImpl implements ProductService {
         }
 
         List<String> updatedDetailImagePaths = new ArrayList<>(findProduct.getDetailImagesPath());
-        for(int i = 0;i<productRequest.getChangeIndex().size();i++) { // i=0 , i=0, i=0->i=1
-            int changeIndex = productRequest.getChangeIndex().get(i); //1, 2 , 0->2
+        for(int i = 0;i<productRequest.getChangeIndex().size();i++) {
+            int changeIndex = productRequest.getChangeIndex().get(i);
             if (changeIndex >= 0 && changeIndex < 3) {
                 // 기존 이미지 삭제 (있는 경우)
-                if (changeIndex < updatedDetailImagePaths.size()) { //1<3, 2<2  0<3 2<3
+                if (changeIndex < updatedDetailImagePaths.size()) {
                     imageService.deleteImage(updatedDetailImagePaths.get(changeIndex));
                 }
                 String newDetailImageUrl = imageService.uploadImage(detailImages.get(i));
@@ -110,21 +110,21 @@ public class ProductServiceImpl implements ProductService {
             if (updatedDetailImagePaths.size() > 3) {
                 updatedDetailImagePaths = updatedDetailImagePaths.subList(0, 3);
             }
-            findProduct.getDetailImagesPath().clear();
-            findProduct.getDetailImagesPath().addAll(updatedDetailImagePaths);
-
-
-            findProduct.updateProduct(productRequest); //변경감지로 save 필요없음
-
-            // 게시 -> redis.save / 미게시 ->redis.delete
-            if (findProduct.isProductStatus()) {
-                inventoryService.saveStock(productRequest.getProductId(), findProduct.getStockQuantity());
-            } else {
-                inventoryService.removeStock(productRequest.getProductId());
-            }
-
 
         }
+        findProduct.getDetailImagesPath().clear();
+        findProduct.getDetailImagesPath().addAll(updatedDetailImagePaths);
+
+        Category findCategory = categoryService.findCategoryByCategoryName(productRequest.getCategoryName());
+        findProduct.updateProduct(productRequest,findCategory);
+
+        // 게시 -> redis.save / 미게시 ->redis.delete
+        if (findProduct.isProductStatus()) {
+            inventoryService.saveStock(productRequest.getProductId(), findProduct.getStockQuantity());
+        } else {
+            inventoryService.removeStock(productRequest.getProductId());
+        }
+
     }
 
     @Transactional
