@@ -30,7 +30,6 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
 
   const [productData, setProductData] = useState(INITIAL_PRODUCT_OBJ); // 변경용 데이터
   const [initialData, setInitialData] = useState(INITIAL_PRODUCT_OBJ); // 복원용 데이터
-  console.log("productData: ",productData)
   useEffect(() => {
     const newData = {
       productId: product?.productId || '',
@@ -86,7 +85,6 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
       ...productData,
       changeIndex: changeIndex
     };
-    console.log("updateData: ",updatedProductData)
 
     await productModifyMutate({
       productRequest: updatedProductData,

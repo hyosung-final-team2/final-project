@@ -124,12 +124,7 @@ public class ProductServiceImpl implements ProductService {
         } else {
             inventoryService.removeStock(productRequest.getProductId());
         }
-        System.out.println("service");
-        System.out.println("productRequest: " + findProduct.getProductName());
-        System.out.println("productRequest: " + findProduct.getProductDescription());
 
-        System.out.println("productRequest: " + findProduct.getProductDiscount());
-        System.out.println("productRequest: " + findProduct.getOrderOption());
     }
 
     @Transactional
