@@ -39,9 +39,18 @@ const DashboardPieChart = ({ topSellingProductsValue, daysBetween }) => {
   const first = josa(topSellingProductNames, '이/가').slice(0, -1);
   const second = josa(topSellingProductNames, '이/가').slice(-1);
 
+  if (data.length === 0 || data === undefined) {
+    return (
+      <div className='h-[30dvh] rounded-2xl p-5 bg-white drop-shadow-lg shadow-lg col-span-1'>
+        <div className='p-2 text-2xl font-bold'>{daysBetween}일 동안의 데이터</div>
+        <div className='text-xl font-bold bg-gray-100 h-[80%] rounded-xl flex items-center justify-center'>주문 데이터가 없습니다.</div>
+      </div>
+    );
+  }
+
   return (
     <div ref={containerRef} className='h-[30dvh] rounded-2xl p-5 bg-white drop-shadow-lg shadow-lg col-span-1'>
-      <div className='p-2 text-2xl font-bold'>
+      <div className='p-2 font-bold 1500p:text-2xl 1280p:text-xl 1080p:text-sm'>
         {daysBetween}일 동안 <span className='text-red-600'>{first}</span>
         {second} <br /> 가장 많이 팔렸어요!
       </div>

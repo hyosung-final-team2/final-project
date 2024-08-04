@@ -4,12 +4,14 @@ import useAddressStore from '../../store/address/AddressStore';
 import AddressItem from '../../components/Address/AddressItem';
 import BottomButton from '../../components/common/button/BottomButton';
 import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import IsLoadingPage from '../../components/Loading/isLoading';
 
 const MyAddressList = ({ title }) => {
   const navigate = useNavigate();
   const { memberId } = useAddressStore(state => ({ memberId: state.memberId }));
   const { resetAddressData } = useAddressStore();
-  const { data: addresses } = useGetMyAddresses(memberId);
+  const { data: addresses, isLoading } = useGetMyAddresses(memberId);
   const location = useLocation();
   const isFromMyPage = location.state?.isFromMyPage;
 
@@ -62,6 +64,10 @@ const MyAddressList = ({ title }) => {
       },
     });
   };
+
+  if (isLoading) {
+    return <IsLoadingPage loadingText='주소를 불러오는 중입니다.' />;
+  }
 
   return (
     <div className='relative flex flex-col h-full bg-white border'>
