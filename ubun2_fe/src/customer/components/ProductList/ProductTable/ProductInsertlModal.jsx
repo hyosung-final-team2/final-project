@@ -13,32 +13,36 @@ const ProductInsertModal = ({ isOpen, setOpenModal, title, currentPage }) => {
   const [newProduct, setNewProduct] = useState({
     productName: '',
     productDescription: '',
-    categoryName: '과일', //기본
+    categoryName: '', //기본
     stockQuantity: '',
     productPrice: '',
     productDiscount: '',
     productStatus: 'true',
-    orderOption: 'SINGLE', //기본
+    orderOption: '', //기본
     productImageOriginalName: '',
     productImagePath: '',
     detailImagesOriginalName: [],
     detailImagesPath: [],
+    changeIndex:[],
   });
+
 
   const [imageFile, setImageFile] = useState(null);
   const handleInputImageChange = imageFile => {
     setImageFile(imageFile);
   };
 
-  const [detailImageFiles, setDetailImageFiles] = useState([]);
+  const [modalDetailImageFiles, modalSetDetailImageFiles] = useState([]);
 
   const handleDetailImagesChange = detailImageFiles => {
-    setDetailImageFiles(detailImageFiles);
+    modalSetDetailImageFiles(detailImageFiles);
+  };
+  const [changeIndex, setChangeIndex] = useState([]);
+  const handleChangeIndex = (newChangeIndex) => {
+    setChangeIndex(newChangeIndex);
   };
 
-  console.log(detailImageFiles);
-
-  const { mutate: productRegisterMutate } = useRegisterProduct(newProduct, imageFile, detailImageFiles, currentPage);
+  const { mutate: productRegisterMutate } = useRegisterProduct(newProduct, imageFile, modalDetailImageFiles, currentPage);
   // TODO: productRegisterMutate의 onSuccess에다가 addProductGroupAlarmMutate 요고 달기
   const { mutate: addProductGroupAlarmMutate } = useSendGroupAlarmProduct(newProduct?.productName);
 
@@ -73,6 +77,8 @@ const ProductInsertModal = ({ isOpen, setOpenModal, title, currentPage }) => {
                 title='상품 사진'
                 handleInputImageChange={handleInputImageChange}
                 handleDetailImagesChange={handleDetailImagesChange}
+                handleChangeIndex={handleChangeIndex}
+                modalDetailImageFiles={modalDetailImageFiles}
               />
               {/* 카테고리 */}
               <ProductCategory product={newProduct} title='카테고리' handleInputChange={handleInputChange} />
@@ -96,6 +102,7 @@ const ProductInsertModal = ({ isOpen, setOpenModal, title, currentPage }) => {
                   setOpenModal(false);
                   setNewProduct(null);
                   setImageFile(null);
+                  modalSetDetailImageFiles(null)
                 }}
               >
                 등록

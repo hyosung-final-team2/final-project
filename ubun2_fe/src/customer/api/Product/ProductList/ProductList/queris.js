@@ -5,7 +5,6 @@ import { toast } from 'react-hot-toast';
 
 export const useGetProducts = (page, size, sort, searchCategory, searchKeyword) => {
   return useQuery({
-    // queryKey: ['product', page, sort, searchCategory, searchKeyword],
     queryKey: ['product', { page, sort, searchCategory, searchKeyword }],
     queryFn: () => getProducts(page, size, sort, searchCategory, searchKeyword),
     refetchOnWindowFocus: false,

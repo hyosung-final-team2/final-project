@@ -59,11 +59,12 @@ const ProductSaleInfo = ({ product, onlyInfo = false, title, handleInputChange }
         focus:ring-blue-500 block w-full p-2 mb-4 
         ${onlyInfo ? 'bg-gray-100 border-transparent' : 'bg-white border-gray-300'}
     `}
-            value={product?.orderOption}
+            value={product?.orderOption|| ''}
             name='orderOption'
             onChange={e => handleInputChange(e)}
             disabled={onlyInfo}
           >
+              <option value='' disabled>배송 주기를 선택해주세요.</option>
             <option value='SUBSCRIPTION'>정기배송</option>
             <option value='SINGLE'>단건배송</option>
             <option value='BOTH'>단건&정기</option>

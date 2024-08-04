@@ -13,8 +13,8 @@ public interface ProductService {
 
     Page<ProductResponse> getProducts(Long customerId,SearchRequest searchRequest,Pageable pageable,boolean isMember);
     ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId,boolean isMember);
-    void registerProduct(MultipartFile image, Long customerId, ProductRequest productRequest);
-    void modifyProduct(MultipartFile image,Long customerId, ProductRequest productUpdateRequest);
+    void registerProduct(MultipartFile image, List<MultipartFile> detailImages,Long customerId, ProductRequest productRequest);
+    void modifyProduct(MultipartFile image,List<MultipartFile> detailImages,Long customerId, ProductRequest productUpdateRequest);
     void removeProduct(Long customerId, Long productId);
     boolean isExistProductName(String productName);
     boolean checkValidation(ProductRequest productRequest);

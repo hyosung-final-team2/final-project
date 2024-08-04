@@ -12,6 +12,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -62,6 +63,11 @@ public class Product extends BaseTimeEntity {
     @Column
     private String productImagePath;
 
+    @ElementCollection
+    @CollectionTable(name = "product_detail_images", joinColumns = @JoinColumn(name = "product_id"))
+    @Column(name = "detail_image_path")
+    private List<String> detailImagesPath = new ArrayList<>(3);
+
     @Column
     @ColumnDefault("false")
     private boolean isDeleted;
@@ -82,8 +88,6 @@ public class Product extends BaseTimeEntity {
         this.productDiscount = productRequest.getProductDiscount();
         this.productStatus = productRequest.isProductStatus();
         this.orderOption = productRequest.getOrderOption();
-        this.productImageOriginalName = productRequest.getProductImageOriginalName();
-        this.productImagePath = productRequest.getProductImagePath();
         this.stockQuantity = productRequest.getStockQuantity();
     }
 

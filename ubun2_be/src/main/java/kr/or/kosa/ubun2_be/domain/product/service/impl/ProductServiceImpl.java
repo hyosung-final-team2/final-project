@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Transactional
     @Override
-    public void registerProduct(MultipartFile image, Long customerId, ProductRequest productRequest) {
+    public void registerProduct(MultipartFile image, List<MultipartFile> detailImages, Long customerId, ProductRequest productRequest) {
         if (isExistProductName(productRequest.getProductName())) {
             throw new ProductException(ProductExceptionType.DUPLICATE_PRODUCT_NAME);
         }
@@ -62,11 +63,18 @@ public class ProductServiceImpl implements ProductService {
         String url = imageService.uploadImage(image);
         saveProduct.saveImage(image.getOriginalFilename(), url);
 
+        if (detailImages != null && !detailImages.isEmpty()) {
+            for (MultipartFile detailImage : detailImages) {
+                String detailImageUrl = imageService.uploadImage(detailImage);
+                saveProduct.getDetailImagesPath().add(detailImageUrl);
+            }
+        }
+
     }
 
     @Transactional
     @Override
-    public void modifyProduct(MultipartFile image, Long customerId, ProductRequest productRequest) { //productName 중복 체크
+    public void modifyProduct(MultipartFile image, List<MultipartFile> detailImages, Long customerId, ProductRequest productRequest) { //productName 중복 체크
         Product findProduct = productRepository.findById(productRequest.getProductId())
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
         if (!findProduct.getProductName().equals(productRequest.getProductName())&&isExistProductName(productRequest.getProductName())) {
@@ -79,21 +87,44 @@ public class ProductServiceImpl implements ProductService {
                 imageService.deleteImage(existingImageUrl);
             }
             String newImageUrl = imageService.uploadImage(image);
-            productRequest.setProductImagePath(newImageUrl);
-            productRequest.setProductImageOriginalName(image.getOriginalFilename());
+            findProduct.saveImage(image.getOriginalFilename(), newImageUrl);
         }
 
-        findProduct.updateProduct(productRequest); //변경감지로 save 필요없음
+        List<String> updatedDetailImagePaths = new ArrayList<>(findProduct.getDetailImagesPath());
+        for(int i = 0;i<productRequest.getChangeIndex().size();i++) { // i=0 , i=0, i=0->i=1
+            int changeIndex = productRequest.getChangeIndex().get(i); //1, 2 , 0->2
+            if (changeIndex >= 0 && changeIndex < 3) {
+                // 기존 이미지 삭제 (있는 경우)
+                if (changeIndex < updatedDetailImagePaths.size()) { //1<3, 2<2  0<3 2<3
+                    imageService.deleteImage(updatedDetailImagePaths.get(changeIndex));
+                }
+                String newDetailImageUrl = imageService.uploadImage(detailImages.get(i));
+                if (changeIndex < updatedDetailImagePaths.size()) {
+                    updatedDetailImagePaths.set(changeIndex, newDetailImageUrl);
+                } else {
+                    updatedDetailImagePaths.add(newDetailImageUrl);
+                }
+            }
 
-        // 게시 -> redis.save / 미게시 ->redis.delete
-        if(findProduct.isProductStatus()){
-            inventoryService.saveStock(productRequest.getProductId(), findProduct.getStockQuantity());
-        }else{
-            inventoryService.removeStock(productRequest.getProductId());
+            updatedDetailImagePaths.removeIf(Objects::isNull);
+            if (updatedDetailImagePaths.size() > 3) {
+                updatedDetailImagePaths = updatedDetailImagePaths.subList(0, 3);
+            }
+            findProduct.getDetailImagesPath().clear();
+            findProduct.getDetailImagesPath().addAll(updatedDetailImagePaths);
+
+
+            findProduct.updateProduct(productRequest); //변경감지로 save 필요없음
+
+            // 게시 -> redis.save / 미게시 ->redis.delete
+            if (findProduct.isProductStatus()) {
+                inventoryService.saveStock(productRequest.getProductId(), findProduct.getStockQuantity());
+            } else {
+                inventoryService.removeStock(productRequest.getProductId());
+            }
+
+
         }
-
-
-
     }
 
     @Transactional

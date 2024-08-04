@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import  {useCallback, useEffect, useRef, useState} from 'react';
 import { PlusCircleIcon } from '@heroicons/react/16/solid';
 import { FileInput } from 'flowbite-react';
 import ImageWithOverlay from './ImageWithOverlay';
 
-const ProductImageCard = ({ product, onlyInfo, title, handleInputImageChange, handleDetailImagesChange }) => {
+const ProductImageCard = ({ product, onlyInfo, title, handleInputImageChange, handleDetailImagesChange, handleChangeIndex, modalImageFile, modalDetailImageFiles,mainImagePreview }) => {
   const fileInputRef = useRef(null);
   const detailFileInputRefs = [useRef(null), useRef(null), useRef(null)];
 
@@ -11,14 +11,22 @@ const ProductImageCard = ({ product, onlyInfo, title, handleInputImageChange, ha
   const [productDetailPreviewUrls, setProductDetailPreviewUrls] = useState([null, null, null]);
   const [detailImageFiles, setDetailImageFiles] = useState([]);
 
+  const [localChangeIndex, setLocalChangeIndex] = useState([]);
+
   useEffect(() => {
-    if (product?.productImagePath) {
-      setPreviewUrl(product.productImagePath);
+    if (mainImagePreview) {
+      setPreviewUrl(mainImagePreview);
     }
-    if (product?.productDetailImages) {
-      setProductDetailPreviewUrls(product.productDetailImages.concat(Array(3 - product.productDetailImages.length).fill(null)));
+
+    if (modalDetailImageFiles?.length > 0) {
+      setDetailImageFiles(modalDetailImageFiles)
+    } else if (product?.detailImagesPath) {
+      setProductDetailPreviewUrls(product?.detailImagesPath.concat(Array(3 - product?.detailImagesPath.length).fill(null)));
+      setDetailImageFiles(product?.detailImagesPath.concat(Array(3 - product?.detailImagesPath.length).fill(null)))
     }
-  }, [product]);
+
+  }, [product, modalImageFile, modalDetailImageFiles]);
+
 
   const handleIconClick = () => {
     fileInputRef.current.click();
@@ -30,13 +38,15 @@ const ProductImageCard = ({ product, onlyInfo, title, handleInputImageChange, ha
 
   const handleFileChange = e => {
     const file = e.target.files[0];
-    handleInputImageChange(file);
+    // handleInputImageChange(file);
 
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
+    handleInputImageChange(file,url);
   };
 
-  const handleDetailFileChange = (e, index) => {
+
+  const handleDetailFileChange = useCallback((e, index) => {
     const file = e.target.files[0];
     const newDetailImageFiles = [...detailImageFiles];
     newDetailImageFiles[index] = file;
@@ -49,7 +59,16 @@ const ProductImageCard = ({ product, onlyInfo, title, handleInputImageChange, ha
       newUrls[index] = url;
       return newUrls;
     });
-  };
+
+    setLocalChangeIndex(prev => {
+      const newChangeIndex = prev.includes(index) ? prev : [...prev, index];
+      return newChangeIndex;
+    });
+  }, [detailImageFiles, handleDetailImagesChange]);
+
+  useEffect(() => {
+    handleChangeIndex(localChangeIndex);
+  }, [localChangeIndex, handleChangeIndex]);
 
   return (
     <div className='bg-gray-50 p-4 rounded-lg h-full flex flex-col'>

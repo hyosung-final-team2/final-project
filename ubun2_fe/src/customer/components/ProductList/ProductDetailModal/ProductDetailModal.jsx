@@ -25,6 +25,7 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
     orderOption: 'SINGLE', //기본
     productImageOriginalName: '',
     productImagePath: '',
+    detailImagesPath: ''
   };
 
   const [productData, setProductData] = useState(INITIAL_PRODUCT_OBJ); // 변경용 데이터
@@ -48,31 +49,51 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
     setInitialData(newData);
   }, [isOpen, product]);
 
-  const [imageFile, setImageFile] = useState(null);
-  const [detailImageFiles, setDetailImageFiles] = useState([]);
+  const [mainImagePreview, setMainImagePreview] = useState(product?.productImagePath)
+  const [modalImageFile, setModalImageFile] = useState(null);
 
-  const handleInputImageChange = imageFile => {
-    setImageFile(imageFile);
+  const [modalDetailImageFiles, modalSetDetailImageFiles] = useState([]);
+  const [changeIndex, setChangeIndex] = useState([]);
+
+  const handleChangeIndex = (newChangeIndex) => {
+    setChangeIndex(newChangeIndex);
   };
 
-  console.log(detailImageFiles);
-  console.log(imageFile);
+  const handleInputImageChange = (imageFile,previewUrl) => {
+    setMainImagePreview(previewUrl)
+    setModalImageFile(imageFile);
+  };
 
   const handleDetailImagesChange = files => {
-    setDetailImageFiles(files);
+    modalSetDetailImageFiles(files);
   };
 
   const [isEditing, setIsEditing] = useState(false);
   useEffect(() => {}, [product]);
 
   const { mutate: productDeleteMutate } = useDeleteProduct(productData.productId, currentPage);
-  const { mutate: productModifyMutate } = useModifyProduct(productData, imageFile, detailImageFiles, currentPage);
+
+  const { mutate: productModifyMutate } = useModifyProduct({...productData, changeIndex},modalImageFile,modalDetailImageFiles,currentPage);
 
   const { mutate: deleteProductGroupAlarmMutate } = useSendGroupAlarmProductDelete(productData?.productName);
 
   const handleInputChange = e => {
-    //console.log( typeof e.target.value)
     setProductData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSave = async () => {
+    const updatedProductData = {
+      ...productData,
+      changeIndex: changeIndex
+    };
+
+    await productModifyMutate({
+      productRequest: updatedProductData,
+      modalImageFile,
+      modalDetailImageFiles,
+    });
+    setIsEditing(false);
+    setOpenModal(false);
   };
 
   return (
@@ -104,6 +125,10 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
                 title='상품 사진'
                 handleInputImageChange={handleInputImageChange}
                 handleDetailImagesChange={handleDetailImagesChange}
+                handleChangeIndex={handleChangeIndex}
+                modalDetailImageFiles={modalDetailImageFiles}
+                modalImageFile={modalImageFile}
+                mainImagePreview={mainImagePreview}
               />
               {/* 카테고리 */}
               <ProductCategory product={productData} onlyInfo={!isEditing} title='카테고리' handleInputChange={handleInputChange} />
@@ -143,10 +168,11 @@ const ProductDetailModal = ({ isOpen, setOpenModal, title, selectedProductDetail
               ) : (
                 <Button
                   className='w-28 bg-custom-button-purple text-custom-font-purple'
-                  onClick={async () => {
-                    await productModifyMutate();
-                    setIsEditing(false);
-                  }}
+                  // onClick={async () => {
+                  //   await productModifyMutate();
+                  //   setIsEditing(false);
+                  // }}
+                    onClick={handleSave}
                 >
                   저장
                 </Button>
