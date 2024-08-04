@@ -2,31 +2,26 @@ import { ArrowRightOnRectangleIcon, ChevronRightIcon, CreditCardIcon, ShoppingBa
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SubscriptionLineIcon from '../../../assets/images/subscription-line.svg';
+import User from '../../../assets/images/user.svg';
 import { useLogout } from '../../../customer/api/common/Logout/queris.js';
 import { useGetMemberName } from '../../api/Mypage/queris.js';
-import { useGetOrderList } from '../../api/Order/queris';
-import User from '../../../assets/images/user.svg';
+import { useGetOrderStatusSummary } from '../../api/Order/queris.js';
 
 function MyPage() {
-  const { data: orderListResponse } = useGetOrderList();
   const [memberInfo, setMemberInfo] = useState({});
   const navigate = useNavigate();
   const { data: memberName } = useGetMemberName();
 
-  useEffect(() => {
-    if (orderListResponse?.data?.data) {
-      const orders = orderListResponse.data.data;
-      const single = orders.filter(order => !order.subscription);
-      const subscription = orders.filter(order => order.subscription);
+  const { data: orderStatusSummary, isLoading, error } = useGetOrderStatusSummary();
 
-      if (orders.length > 0) {
-        setMemberInfo({
-          singleOrders: single.length,
-          subscriptionOrders: subscription.length,
-        });
-      }
+  useEffect(() => {
+    if (orderStatusSummary?.data) {
+      setMemberInfo({
+        singleOrders: orderStatusSummary?.data?.singleOrders || 0,
+        subscriptionOrders: orderStatusSummary?.data?.subscriptionOrders || 0,
+      });
     }
-  }, [orderListResponse]);
+  }, [orderStatusSummary]);
 
   const myInfoItems = [
     { id: 1, name: '주문 관리', icon: ShoppingBagIcon, value: '/member/app/mypage/order-list' },
@@ -59,10 +54,8 @@ function MyPage() {
         {/* User Info Card */}
         <div className='p-3 mb-4 rounded-xl'>
           <div className='flex flex-col items-center mb-4'>
-            {/* <img src='/src/assets/images/png/user-icon.png' alt='Avatar' className='mb-2 rounded-lg w-36 h-36' /> */}
             <User className='mb-2 rounded-lg w-28 h-28' />
             <h5 className='mb-4 ml-1 text-3xl font-bold tracking-tight text-gray-900 dark:text-white'>
-              {/* {memberName?.name} */}
               <span className='ml-1 text-base'>{memberName?.data?.data?.memberName}님</span>
             </h5>
           </div>

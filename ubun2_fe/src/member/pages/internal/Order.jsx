@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useGetMyAddresses } from '../../api/Address/queries';
+import { errorToastStyle } from '../../api/toastStyle';
 import BottomButton from '../../components/common/button/BottomButton';
 import PaymentSummaryPre from '../../components/common/paymentSummary/PaymentSummaryPre';
 import SlideUpModal from '../../components/common/SlideUpModal';
 import OrderDeliveryInfo from '../../components/Order/Order/OrderDeliveryInfo';
 import OrderStore from '../../components/Order/Order/OrderStore';
-import { deliveryContent } from '../../components/Order/orderDummyData';
+import { deliveryContent } from '../../components/Order/orderModalContent';
 import DeliveryModalContent from '../../components/Order/OrderModal/DeliveryModalContent';
 import useMemberStore from '../../store/memberStore';
 import useModalStore from '../../store/modalStore';
 import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
-import toast from 'react-hot-toast';
-import { errorToastStyle } from '../../api/toastStyle';
 
 const Order = () => {
   const navigate = useNavigate();

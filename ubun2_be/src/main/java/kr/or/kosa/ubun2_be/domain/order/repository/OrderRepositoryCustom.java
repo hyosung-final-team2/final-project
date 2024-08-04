@@ -3,6 +3,8 @@ package kr.or.kosa.ubun2_be.domain.order.repository;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,4 +29,5 @@ public interface OrderRepositoryCustom {
 
     Long sumOrderTotalByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
 
+    Page<Order> findOrdersByMemberId(Long memberId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 }
