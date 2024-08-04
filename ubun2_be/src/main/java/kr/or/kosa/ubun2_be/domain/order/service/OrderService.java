@@ -27,4 +27,7 @@ public interface OrderService {
 
     void cancelOrder(Long memberId, CancelOrderRequest cancelOrderRequest);
 
+    Page<UnifiedOrderResponse> getAllSingleOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest, Long memberId, Pageable pageable);
+
+    OrderStatusSummaryResponse getOrderStatusSummaryByMemberId(Long memberId);
 }

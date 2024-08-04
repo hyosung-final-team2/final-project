@@ -3,6 +3,9 @@ package kr.or.kosa.ubun2_be.domain.order.service.impl;//package kr.or.kosa.ubun2
 import jakarta.transaction.Transactional;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
+import kr.or.kosa.ubun2_be.domain.alarm.event.NoStockEvent;
+import kr.or.kosa.ubun2_be.domain.alarm.event.OrderCreatedEvent;
+import kr.or.kosa.ubun2_be.domain.alarm.event.SubCycleCompletedEvent;
 import kr.or.kosa.ubun2_be.domain.cart.repository.CartProductRepository;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.financial.institution.entity.Bank;
@@ -13,9 +16,6 @@ import kr.or.kosa.ubun2_be.domain.member.service.MemberService;
 import kr.or.kosa.ubun2_be.domain.order.dto.*;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
-import kr.or.kosa.ubun2_be.domain.alarm.event.NoStockEvent;
-import kr.or.kosa.ubun2_be.domain.alarm.event.OrderCreatedEvent;
-import kr.or.kosa.ubun2_be.domain.alarm.event.SubCycleCompletedEvent;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderException;
 import kr.or.kosa.ubun2_be.domain.order.exception.OrderExceptionType;
 import kr.or.kosa.ubun2_be.domain.order.repository.SubscriptionOrderProductRepository;
@@ -38,6 +38,8 @@ import kr.or.kosa.ubun2_be.domain.product.service.ProductService;
 import kr.or.kosa.ubun2_be.domain.product.service.impl.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -380,6 +382,27 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
     private int findLatestCycleNumber(Long customerId, Long orderId) {
         return subscriptionOrderRepository.findLatestCycleNumberByCustomerIdAndOrderId(customerId, orderId)
                 .orElseThrow(() -> new OrderException(OrderExceptionType.NOT_EXIST_ORDER));
+    }
+
+    @Override
+    public Page<UnifiedOrderResponse> getAllSubscriptionOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest, Long memberId, Pageable pageable) {
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = getStartDate(orderPeriodFilterRequest, endDate);
+
+        Page<SubscriptionOrder> orders = subscriptionOrderRepository.findSubscriptionOrdersByMemberId(memberId, startDate, endDate, pageable);
+
+        return orders.map(UnifiedOrderResponse::new);
+    }
+
+    private LocalDateTime getStartDate(OrderPeriodFilterRequest orderPeriodFilterRequest, LocalDateTime endDate) {
+        if (orderPeriodFilterRequest.getPeriodType() == null || orderPeriodFilterRequest.getPeriodValue() <= 0) {
+            return LocalDateTime.MIN;
+        }
+        return switch (orderPeriodFilterRequest.getPeriodType()) {
+            case WEEK -> endDate.minusWeeks(orderPeriodFilterRequest.getPeriodValue());
+            case MONTH -> endDate.minusMonths(orderPeriodFilterRequest.getPeriodValue());
+            default -> throw new OrderException(OrderExceptionType.NOT_MATCH_PERIOD_TYPE);
+        };
     }
 
     @Override
