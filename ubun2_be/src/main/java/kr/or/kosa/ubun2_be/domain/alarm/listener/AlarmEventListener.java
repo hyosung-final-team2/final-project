@@ -18,7 +18,7 @@ public class AlarmEventListener {
 
     @EventListener
     public void handleUnSubscribeAlarmEvent(UnSubscribeAlarmEvent event) {
-        alarmService.subscribeCustomer(event.getFcmToken(),event.getCustomerId());
+        alarmService.unsubscribeCustomer(event.getFcmToken(),event.getCustomerId());
     }
 
     @EventListener

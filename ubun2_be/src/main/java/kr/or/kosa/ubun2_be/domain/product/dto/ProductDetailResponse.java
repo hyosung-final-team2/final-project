@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @Setter
@@ -20,6 +22,7 @@ public class ProductDetailResponse {
     private String productDescription;
     private String productImagePath;
     private String categoryName;
+    private List<String> detailImagesPath;
 
 
 
@@ -34,6 +37,7 @@ public class ProductDetailResponse {
         this.productDescription = product.getProductDescription();
         this.productImagePath = product.getProductImagePath();
         this.categoryName = product.getCategory().getCategoryName();
+        this.detailImagesPath = product.getDetailImagesPath();
     }
 
 }

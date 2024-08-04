@@ -25,14 +25,16 @@ export const registerProduct = async (productRequest, imageFile, detailImageFile
     new Blob(
       [
         JSON.stringify({
-          productName: productRequest.productName,
-          productDescription: productRequest.productDescription,
-          categoryName: productRequest.categoryName,
-          stockQuantity: productRequest.stockQuantity,
-          productPrice: productRequest.productPrice,
-          productDiscount: productRequest.productDiscount,
-          productStatus: productRequest.productStatus === 'true',
-          orderOption: productRequest.orderOption,
+          productName: productRequest?.productName,
+          productDescription: productRequest?.productDescription,
+          categoryName: productRequest?.categoryName,
+          stockQuantity: productRequest?.stockQuantity,
+          productPrice: productRequest?.productPrice,
+          productDiscount: productRequest?.productDiscount,
+          productStatus: productRequest?.productStatus === 'true',
+          orderOption: productRequest?.orderOption,
+          changeIndex: productRequest?.changeIndex,
+
         }),
       ],
       {
@@ -45,20 +47,19 @@ export const registerProduct = async (productRequest, imageFile, detailImageFile
   if (imageFile) {
     formData.append('image', imageFile);
   }
-  if (detailImageFiles) {
-    formData.append('detailImages', detailImageFiles);
-  }
 
-  console.log('formData:', formData.get('productRequest'));
-  console.log('formData:', formData.get('image'));
-  console.log('formData:', formData.get('detailImages'));
+  if (detailImageFiles && detailImageFiles.length > 0) {
+    detailImageFiles.forEach((file, index) => {
+      if (file) {
+        formData.append(`detailImages`, file);
+      }
+    });
+  }
 
   try {
     const response = await privateFileFetch.post('/customers/products', formData);
-    console.log(response);
     return response.data;
   } catch (error) {
-    console.error('Error registering product:', error);
     throw error;
   }
 };
@@ -82,6 +83,7 @@ export const modifyProduct = async (productRequest, imageFile, detailImageFiles)
           orderOption: productRequest.orderOption,
           productImageOriginalName: productRequest.productImageOriginalName,
           productImagePath: productRequest.productImagePath || '',
+          changeIndex: productRequest.changeIndex,
         }),
       ],
       {
@@ -95,17 +97,19 @@ export const modifyProduct = async (productRequest, imageFile, detailImageFiles)
     formData.append('image', imageFile);
   }
 
-  if (detailImageFiles) {
-    for (let i = 0; i < detailImageFiles.length; i++) {
-      formData.append('detailImages', detailImageFiles[i]);
-    }
+  if (detailImageFiles && detailImageFiles.length > 0) {
+    detailImageFiles.forEach((file, index) => {
+      if (file) {
+        formData.append(`detailImages`, file);
+      }
+    });
   }
+
 
   try {
     const response = await privateFileFetch.put('/customers/products', formData);
     return response.data;
   } catch (error) {
-    console.error('Error registering product:', error);
     throw error;
   }
 };

@@ -8,6 +8,9 @@ import kr.or.kosa.ubun2_be.domain.product.enums.OrderOption;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 public class ProductRequest {
@@ -43,6 +46,8 @@ public class ProductRequest {
 
     private String productImagePath;
 
+    private List<Integer> changeIndex = new ArrayList<>(3);
+
     public Product toEntity(Customer customer, Category category) {
         return Product.builder()
                 .customer(customer)
@@ -56,6 +61,7 @@ public class ProductRequest {
                 .productImagePath(productImagePath)
                 .stockQuantity(stockQuantity)
                 .category(category)
+                .detailImagesPath(new ArrayList<>())
                 .build();
     }
 }

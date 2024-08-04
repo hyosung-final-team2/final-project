@@ -44,15 +44,21 @@ public class ProductCustomerController {
 
     @Operation(summary = "상품 등록")
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseDto<?> registerProduct(@RequestPart(value = "image", required = false) MultipartFile image, @Valid @RequestPart ProductRequest productRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        productService.registerProduct(image, customUserDetails.getUserId(), productRequest);
+    public ResponseDto<?> registerProduct(@RequestPart(value = "image", required = false) MultipartFile image,
+                                          @RequestPart(value = "detailImages", required = false) List<MultipartFile> detailImages,
+                                          @Valid @RequestPart ProductRequest productRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        productService.registerProduct(image, detailImages, customUserDetails.getUserId(), productRequest);
         return ResponseDto.ok(null, "정상출력 데이터");
     }
 
     @Operation(summary = "상품 수정")
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseDto<?> updateProduct(@RequestPart(value = "image", required = false) MultipartFile image, @Valid @RequestPart ProductRequest productRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        productService.modifyProduct(image, customUserDetails.getUserId(), productRequest);
+    public ResponseDto<?> updateProduct(@RequestPart(value = "image", required = false) MultipartFile image,
+                                        @RequestPart(value = "detailImages", required = false) List<MultipartFile> detailImages,
+                                        @Valid @RequestPart ProductRequest productRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        productService.modifyProduct(image, detailImages, customUserDetails.getUserId(), productRequest);
         return ResponseDto.ok(null, "정상출력 데이터");
     }
 
