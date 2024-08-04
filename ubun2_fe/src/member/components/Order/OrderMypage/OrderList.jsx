@@ -33,7 +33,7 @@ const OrderList = ({ order }) => {
   const orderStatus = getOrderStatus();
 
   return (
-    <div className='border-2 border-gray-100 rounded-lg'>
+    <div className='mb-2 border-2 border-gray-100 rounded-lg'>
       <div className='flex items-start justify-between w-full px-4 py-4 border-b'>
         <span className='text-lg font-bold'>{`${formatDate(order.createdAt)}`}</span>
         <div className='flex gap-1 font-bold' onClick={handleMoveOrderDetail}>
@@ -56,7 +56,7 @@ const OrderList = ({ order }) => {
             quantity={firstProduct.quantity}
             productImageOriginalName={firstProduct.productImageOriginalName || ''}
             totalPrice={firstProduct.totalPrice}
-            isComplete={orderStatus === 'APPROVED'}
+            orderStatus={orderStatus}
           />
         )}
       </div>
