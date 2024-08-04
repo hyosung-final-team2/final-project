@@ -1,6 +1,6 @@
 import privateFetch from '../../../common/privateFetch.js';
 import privateFileFetch from '../../../common/privateFileFetch.js';
-import qs from "qs";
+import qs from 'qs';
 
 // 전체 상품 리스트 조회
 export const getProducts = async (page, size, sort, searchCategory, searchKeyword) =>
@@ -10,14 +10,14 @@ export const getProducts = async (page, size, sort, searchCategory, searchKeywor
       size: size,
       sort: sort, //["productCategoryName","productName","stockQuantity","productPrice","productDiscount","productStatus","orderOption"]
       searchCategory: searchCategory,
-      searchKeyword: searchKeyword
+      searchKeyword: searchKeyword,
     },
-      paramsSerializer: params => {
-        return qs.stringify(params, { arrayFormat: 'repeat' });
-      }
+    paramsSerializer: params => {
+      return qs.stringify(params, { arrayFormat: 'repeat' });
+    },
   });
 
-export const registerProduct = async (productRequest, imageFile) => {
+export const registerProduct = async (productRequest, imageFile, detailImageFiles) => {
   const formData = new FormData();
   // JSON 데이터 추가
   formData.append(
@@ -25,14 +25,16 @@ export const registerProduct = async (productRequest, imageFile) => {
     new Blob(
       [
         JSON.stringify({
-          productName: productRequest.productName,
-          productDescription: productRequest.productDescription,
-          categoryName: productRequest.categoryName,
-          stockQuantity: productRequest.stockQuantity,
-          productPrice: productRequest.productPrice,
-          productDiscount: productRequest.productDiscount,
-          productStatus: productRequest.productStatus === 'true',
-          orderOption: productRequest.orderOption,
+          productName: productRequest?.productName,
+          productDescription: productRequest?.productDescription,
+          categoryName: productRequest?.categoryName,
+          stockQuantity: productRequest?.stockQuantity,
+          productPrice: productRequest?.productPrice,
+          productDiscount: productRequest?.productDiscount,
+          productStatus: productRequest?.productStatus === 'true',
+          orderOption: productRequest?.orderOption,
+          changeIndex: productRequest?.changeIndex,
+
         }),
       ],
       {
@@ -45,17 +47,24 @@ export const registerProduct = async (productRequest, imageFile) => {
   if (imageFile) {
     formData.append('image', imageFile);
   }
+
+  if (detailImageFiles && detailImageFiles.length > 0) {
+    detailImageFiles.forEach((file, index) => {
+      if (file) {
+        formData.append(`detailImages`, file);
+      }
+    });
+  }
+
   try {
     const response = await privateFileFetch.post('/customers/products', formData);
-    console.log(response);
     return response.data;
   } catch (error) {
-    console.error('Error registering product:', error);
     throw error;
   }
 };
 
-export const modifyProduct = async (productRequest, imageFile) => {
+export const modifyProduct = async (productRequest, imageFile, detailImageFiles) => {
   const formData = new FormData();
   // JSON 데이터 추가
   formData.append(
@@ -74,6 +83,7 @@ export const modifyProduct = async (productRequest, imageFile) => {
           orderOption: productRequest.orderOption,
           productImageOriginalName: productRequest.productImageOriginalName,
           productImagePath: productRequest.productImagePath || '',
+          changeIndex: productRequest.changeIndex,
         }),
       ],
       {
@@ -87,15 +97,23 @@ export const modifyProduct = async (productRequest, imageFile) => {
     formData.append('image', imageFile);
   }
 
+  if (detailImageFiles && detailImageFiles.length > 0) {
+    detailImageFiles.forEach((file, index) => {
+      if (file) {
+        formData.append(`detailImages`, file);
+      }
+    });
+  }
+
+
   try {
     const response = await privateFileFetch.put('/customers/products', formData);
     return response.data;
   } catch (error) {
-    console.error('Error registering product:', error);
     throw error;
   }
 };
 
 export const deleteProduct = async productId => await privateFetch.delete(`/customers/products/${productId}`);
 
-export const deleteSelectedProducts = async selectedProducts => await privateFetch.delete(`/customers/products/selected`, {data:selectedProducts});
+export const deleteSelectedProducts = async selectedProducts => await privateFetch.delete(`/customers/products/selected`, { data: selectedProducts });

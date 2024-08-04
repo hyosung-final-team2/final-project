@@ -3,6 +3,8 @@ package kr.or.kosa.ubun2_be.domain.order.repository;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,5 +33,6 @@ public interface SubscriptionOrderRepositoryCustom {
 
     Long sumSubscriptionOrderTotalByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
 
+    Page<SubscriptionOrder> findSubscriptionOrdersByMemberId(Long memberId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 }
 

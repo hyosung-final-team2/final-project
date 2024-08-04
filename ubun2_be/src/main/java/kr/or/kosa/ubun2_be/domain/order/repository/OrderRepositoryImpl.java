@@ -1,14 +1,22 @@
 package kr.or.kosa.ubun2_be.domain.order.repository;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.dsl.*;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
+import com.querydsl.core.types.dsl.DateTimePath;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPQLQuery;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.order.dto.SearchRequest;
 import kr.or.kosa.ubun2_be.domain.order.entity.Order;
+import kr.or.kosa.ubun2_be.domain.order.entity.QOrder;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderProductStatus;
 import kr.or.kosa.ubun2_be.domain.product.enums.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import java.time.LocalDate;
@@ -251,5 +259,23 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                         .multiply(orderProduct.quantity).sum().longValue());
 
         return query.fetchOne() != null ? query.fetchOne() : Long.valueOf(0L);
+    }
+
+    @Override
+    public Page<Order> findOrdersByMemberId(Long memberId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+        QOrder order = QOrder.order;
+
+        QueryResults<Order> results = from(order)
+                .where(order.member.memberId.eq(memberId)
+                        .and(order.createdAt.between(startDate, endDate)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(order.createdAt.desc())
+                .fetchResults();
+
+        List<Order> content = results.getResults();
+        long total = results.getTotal();
+
+        return new PageImpl<>(content, pageable, total);
     }
 }

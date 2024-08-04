@@ -15,15 +15,15 @@ const OrderTableFeature = ({ tableColumns, onSearch, handleDataReset, dropdownRe
         <CreateSearchResult searchCategory={searchCategory} searchKeyword={searchKeyword} totalElements={totalElements} />
       </div>
       <div className='flex items-center gap-4'>
+        <button className='normal-case btn btn-ghost btn-sm' onClick={handleDataReset}>
+          <ArrowPathIcon className='w-4 mr-2' />
+          초기화
+        </button>
         <Dropdown
           label={`승인 상태 : ${orderStatusOptions.find(option => option.value === orderStatus)?.label || '전체'}`}
           items={orderStatusOptions}
           onChange={item => onOrderStatusChange(item.value)}
         />
-        <button className='normal-case btn btn-ghost btn-sm' onClick={handleDataReset}>
-          <ArrowPathIcon className='w-4 mr-2' />
-          초기화
-        </button>
       </div>
     </div>
   );

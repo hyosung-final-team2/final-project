@@ -6,9 +6,9 @@ const Account = ({ bankName, paymentMethodNickname, accountNumber }) => {
   const formattedAccountNumber = formatBankAccount(bankName, accountNumber);
 
   return (
-    <div className={`flex-1 bg-slate-600 ${getCardColor(bankName)} text-white mx-8 h-56 rounded-xl p-6 relative flex flex-col`}>
+    <div className={`flex-1 bg-slate-600 ${getCardColor(bankName)} text-white mx-8 rounded-xl p-6 relative flex flex-col aspect-account`}>
       <div className='h-8 flex items-center mb-2'>
-        <img className='max-h-[80%] max-w-[40%] object-contain' src={`/src/assets/banklogos/${getBankLogo(bankName)}`} alt='' />
+        <img className='max-h-[80%] max-w-[40%] object-contain' src={`/cardImages/logo/banklogos/${getBankLogo(bankName)}`} alt='' />
       </div>
       <div className='mb-4 mt-4'>
         <div className='text-xs mb-1'>은행명</div>

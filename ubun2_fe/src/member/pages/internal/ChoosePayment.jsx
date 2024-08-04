@@ -13,6 +13,7 @@ import useOrderItemsStore from '../../store/order/orderItemStore';
 import toast from 'react-hot-toast';
 import { errorToastStyle } from '../../api/toastStyle';
 import { formatBankAccount } from '../../../customer/utils/accountFormat';
+import { useLocation } from 'react-router-dom';
 
 const ChoosePayment = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,6 +22,8 @@ const ChoosePayment = () => {
   const { data: accounts } = useGetAccounts();
   const { data: passwordExists } = useCheckIfPasswordExists();
   const navigate = useNavigate();
+  const location = useLocation();
+  const selectedItems = location.state?.selectedItems;
 
   const { orderData, selectedPaymentMethodId, setSelectedPaymentMethodId, selectedAddressId, setSelectedPaymentMethodType, setOrderData } = useOrderDataStore();
 
@@ -40,7 +43,7 @@ const ChoosePayment = () => {
     const methods = [
       ...accountList.map(account => ({
         ...account,
-        icon: <img className='w-10 h-10' src={`/src/assets/images/png/${getPng(account.bankName)}`} alt='' />,
+        icon: <img className='w-10 h-10' src={`/cardImages/png/${getPng(account.bankName)}`} alt='' />,
         title: account.paymentMethodNickname,
         subtitle: `${account.bankName} ${formatBankAccount(account?.bankName?.slice(0, -2), account?.accountNumber, true)}`,
         defaultStatus: account.defaultStatus,
@@ -48,7 +51,7 @@ const ChoosePayment = () => {
       })),
       ...cardList.map(card => ({
         ...card,
-        icon: <img className='w-10 h-10' src={`/src/assets/images/png/${getPng(card.cardCompanyName)}`} alt='' />,
+        icon: <img className='w-10 h-10' src={`/cardImages/png/${getPng(card.cardCompanyName)}`} alt='' />,
         title: card.paymentMethodNickname,
         subtitle: `${card.cardCompanyName} ${card?.cardNumber?.slice(-4)?.replace(/\d{2}$/, '**')}`,
         defaultStatus: card.defaultStatus,
@@ -115,10 +118,16 @@ const ChoosePayment = () => {
     navigate('/member/app/password');
   };
 
+  console.log(location.state);
+
   return (
     <div className='flex flex-col h-full bg-gray-100'>
       <main className='flex flex-col items-center flex-grow pt-12 px-7'>
-        <h2 className='text-[100%] text-gray-500 mb-1 font-bold'>결제 수단 선택</h2>
+        <h2 className='text-[100%] text-gray-500 mb-1 font-bold'>
+          {selectedItems?.length === 1
+            ? selectedItems[0]?.cartProducts[0].productName
+            : `${selectedItems[0]?.cartProducts[0].productName}외 ${selectedItems?.length - 1}건`}
+        </h2>
         <p className='text-[180%] font-bold mb-12'>{`${totals.totalAmount?.toLocaleString()}`}원</p>
 
         <div className='w-full pt-6 mb-8 bg-white shadow-sm p-7 rounded-2xl '>

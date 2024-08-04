@@ -62,7 +62,7 @@ const useOrderItemsStore = create(
       },
 
       // 스토어의 모든 제품을 선택하거나 선택 해제하는 함수
-      handleSelectAllStore: (customerId, checked) => {
+      handleSelectAllStore: (customerId, checked, selectableProducts) => {
         set(state => {
           const store = state.cartData.find(s => s.customerId === customerId);
           if (!store) return state;
@@ -71,8 +71,8 @@ const useOrderItemsStore = create(
 
           if (checked) {
             const existingSelectedStore = state.selectedItems.find(s => s.customerId === customerId);
-            const singleProducts = store.cartProducts.filter(p => p.orderOption === 'SINGLE');
-            const subscriptionProducts = store.cartProducts.filter(p => p.orderOption === 'SUBSCRIPTION');
+            const singleProducts = selectableProducts.filter(p => p.orderOption === 'SINGLE');
+            const subscriptionProducts = selectableProducts.filter(p => p.orderOption === 'SUBSCRIPTION');
 
             if (singleProducts.length > 0) {
               const existingSingleProducts = existingSelectedStore?.cartProducts.filter(p => p.orderOption === 'SINGLE') || [];
@@ -111,6 +111,8 @@ const useOrderItemsStore = create(
 
       // 특정 제품을 선택하거나 선택 해제하는 함수
       handleSelectProduct: (customerId, product, checked) => {
+        if (product.stockQuantity === 0) return; // 재고가 0인 경우 선택 불가
+
         set(state => {
           let newSelectedItems = [...state.selectedItems];
           const storeIndex = newSelectedItems.findIndex(

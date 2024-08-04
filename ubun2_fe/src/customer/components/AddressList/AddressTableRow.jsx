@@ -28,6 +28,16 @@ const AddressTableRow = ({ memberId, addressId, memberName, address, setOpenModa
     handleRowChecked(addressId, e.target.checked);
   };
 
+  if (isEmpty) {
+    return (
+      <Table.Row className='cursor-default'>
+        <Table.Cell colSpan={colNum + 1} className='text-center text-gray-500 bg-gray-50'>
+          <span className='invisible'>없음</span>
+        </Table.Cell>
+      </Table.Row>
+    );
+  }
+
   return (
     <>
       <Table.Row className='bg-white cursor-pointer h-[60px]' onClick={() => setOpenModal(addressId, memberId, address)}>

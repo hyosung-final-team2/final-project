@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useGetMyAddresses } from '../../../api/Address/queries';
 import useOrderDataStore from '../../../store/order/orderDataStore';
+import { formatAddressOneLine } from '../../../../customer/utils/addressFormat';
 
 const OrderDeliveryInfo = ({ selectedDelivery, handleDeliveryModal, setIsOrderButtonDisabled }) => {
   const navigate = useNavigate();
@@ -48,7 +49,7 @@ const OrderDeliveryInfo = ({ selectedDelivery, handleDeliveryModal, setIsOrderBu
           <div className='w-4/5 mb-4'>
             <p className='font-bold'>{selectedAddress.recipientName}</p>
             <p>{selectedAddress.recipientPhone}</p>
-            <p className='text-sm text-gray-600'>{selectedAddress.address}</p>
+            <p className='text-sm text-gray-600'>{formatAddressOneLine(selectedAddress.address)}</p>
           </div>
 
           <div>

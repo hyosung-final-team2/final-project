@@ -15,10 +15,11 @@ const ProductCategory = ({ product, onlyInfo = false, title, handleInputChange }
         ${onlyInfo ? 'bg-gray-100 border-transparent' : 'bg-white border-gray-300'}
     `}
           name='categoryName'
-          value={product?.categoryName}
+          value={product?.categoryName || ''}
           onChange={e => handleInputChange(e)}
           disabled={onlyInfo}
         >
+            <option value='' disabled >카테고리를 선택해주세요</option>
             {categories?.map((category) => {
                 return <option key={category.categoryId} value={category.categoryName}>{category.categoryName}</option>
             })}

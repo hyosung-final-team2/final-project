@@ -3,6 +3,7 @@ package kr.or.kosa.ubun2_be.domain.order.dto;
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
 import kr.or.kosa.ubun2_be.domain.order.entity.SubscriptionOrderProduct;
 import kr.or.kosa.ubun2_be.domain.product.entity.Product;
+import kr.or.kosa.ubun2_be.domain.product.enums.OrderProductStatus;
 import lombok.*;
 
 @Getter
@@ -19,6 +20,7 @@ public class SubscriptionOrderProductResponse {
     private String productImagePath;
     private String productImageOriginalName;
     private Long customerId;
+    private OrderProductStatus subscriptionOrderStatus;
 
     public static SubscriptionOrderProductResponse of(SubscriptionOrderProduct subscriptionOrderProduct) {
         Product product = subscriptionOrderProduct.getProduct();
@@ -36,6 +38,7 @@ public class SubscriptionOrderProductResponse {
                 .productImagePath(product.getProductImagePath())
                 .productImageOriginalName(product.getProductImageOriginalName())
                 .customerId(customer.getCustomerId())
+                .subscriptionOrderStatus(subscriptionOrderProduct.getOrderProductStatus())
                 .build();
     }
 }

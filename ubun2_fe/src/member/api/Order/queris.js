@@ -1,7 +1,18 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { errorToastStyle, successToastStyle } from '../toastStyle';
-import { validateOrder, createOrder, getOrderDetail, getOrderList, getSubscriptionOrder, updateOrderCancel, updateSubscriptionCancel } from './order';
+// import { validateOrder, createOrder, getOrderDetail, getOrderList, getSubscriptionOrder, updateOrderCancel, updateSubscriptionCancel } from './order';
+import {
+  createOrder,
+  getOrderDetail,
+  getOrderStatusSummary,
+  getSingleOrderList,
+  getSubscriptionOrder,
+  getSubscriptionOrderList,
+  updateOrderCancel,
+  updateSubscriptionCancel,
+  validateOrder,
+} from './order';
 
 export const useValidateOrder = () => {
   return useMutation({
@@ -31,10 +42,43 @@ export const useCreateOrder = navigate => {
   });
 };
 
-export const useGetOrderList = (periodType, periodValue) => {
+export const useGetOrderStatusSummary = () => {
   return useQuery({
-    queryKey: ['orders', periodType, periodValue],
-    queryFn: () => getOrderList(periodType, periodValue),
+    queryKey: ['orderStatusSummary'],
+    queryFn: getOrderStatusSummary,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetSingleOrderList = (size, periodType, periodValue) => {
+  return useInfiniteQuery({
+    queryKey: ['singleOrders', size, periodType, periodValue],
+    queryFn: ({ pageParam = 0 }) => {
+      return getSingleOrderList(pageParam, size, periodType, periodValue);
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.data.data.last) {
+        return undefined;
+      }
+      return lastPage.data.data.number + 1;
+    },
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const useGetSubscriptionOrderList = (size, periodType, periodValue) => {
+  return useInfiniteQuery({
+    queryKey: ['subscriptionOrders', size, periodType, periodValue],
+    queryFn: ({ pageParam = 0 }) => {
+      return getSubscriptionOrderList(pageParam, size, periodType, periodValue);
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.data.data.last) {
+        return undefined;
+      }
+      return lastPage.data.data.number + 1;
+    },
+    refetchOnWindowFocus: false,
   });
 };
 

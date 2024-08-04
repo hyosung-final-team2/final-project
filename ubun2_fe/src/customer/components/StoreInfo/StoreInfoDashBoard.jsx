@@ -1,4 +1,3 @@
-import { Card } from 'flowbite-react';
 import { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { errorToastStyle, successToastStyle } from '../../../member/api/toastStyle';
@@ -9,7 +8,7 @@ import StoreInfoDetail from './StoreInfoDetail';
 import { formatPhoneNumber } from '../../utils/phoneFormat';
 
 const StoreInfoDashBoard = () => {
-  const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md ';
+  const commonButtonStyles = 'px-6 py-3 rounded-lg transition duration-200 border border-gray-200 shadow-md text-xl';
 
   const [formData, setFormData] = useState({
     customerName: '',
@@ -168,8 +167,8 @@ const StoreInfoDashBoard = () => {
         </div>
 
         <div className='flex flex-col justify-between w-3/5 h-full gap-12 p-4 border border-gray-300 rounded-lg'>
-          <div className='h-full'>
-            <div className='mb-6'>
+          <div className='flex flex-col h-full gap-10'>
+            <div>
               <h2 className='mb-4 text-xl font-semibold'>주소 정보</h2>
               <AddressInput infos={addressInfos} onChange={handleAddressInputChange} isExistButton={false} disabled={false} />
             </div>

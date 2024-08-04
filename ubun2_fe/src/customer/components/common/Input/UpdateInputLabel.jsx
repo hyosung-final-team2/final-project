@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const UpdateInputLabel = ({ labelTitle, name, value, type, disabled = false, containerStyle = '', onChange }) => {
+const UpdateInputLabel = ({ labelTitle, name, value, type, disabled = false, containerStyle = '', onChange, inputStyle }) => {
   const [inputValue, setInputValue] = useState(value);
 
   useEffect(() => {
@@ -27,7 +27,9 @@ const UpdateInputLabel = ({ labelTitle, name, value, type, disabled = false, con
           value={inputValue}
           onChange={handleChange}
           disabled={disabled}
-          className='flex-grow w-full p-3 border-none rounded-lg input disabled:bg-custom-input-gray disabled:text-custom-font-gray'
+          className={`flex-grow w-full p-3 rounded-lg input disabled:bg-custom-input-gray disabled:text-custom-font-gray ${
+            inputStyle ? inputStyle : 'border-none'
+          }`}
         />
       </div>
     </div>

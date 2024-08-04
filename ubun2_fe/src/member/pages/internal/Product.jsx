@@ -10,7 +10,7 @@ import useModalStore from '../../store/modalStore.js';
 import SelectOrderTypeModal from '../../components/Product/SelectOrderTypeModal.jsx';
 import SelectQuantityModal from '../../components/Product/SelectQuantityModal.jsx';
 import { useCreateCart } from '../../api/Cart/queris.js';
-import NoStock from '@heroicons/react/24/outline/NoSymbolIcon.js'
+import NoStock from '@heroicons/react/24/outline/NoSymbolIcon.js';
 
 function Product() {
   const { productId } = useParams();
@@ -24,7 +24,7 @@ function Product() {
     if (orderOption === 'SINGLE') {
       return (
         <div className='flex'>
-          <div className={`flex items-center gap-1 p-1 px-3 bg-blue-200 rounded-3xl text-md ${product?.stockQuantity === 0 ? "opacity-50" : ""}`}>
+          <div className={`flex items-center gap-1 p-1 px-3 bg-blue-200 rounded-3xl text-md ${product?.stockQuantity === 0 ? 'opacity-50' : ''}`}>
             <SingleOrder />
             <span>단건</span>
           </div>
@@ -33,43 +33,41 @@ function Product() {
     } else if (orderOption === 'SUBSCRIPTION') {
       return (
         <div className='flex'>
-            <div className={`flex items-center gap-1 p-1 px-3 bg-orange-200 rounded-3xl text-md ${product?.stockQuantity === 0 ? "opacity-50" : ""}`}>
-                <SubscriptionOrder/>
-                <span>정기</span>
-            </div>
+          <div className={`flex items-center gap-1 p-1 px-3 bg-orange-200 rounded-3xl text-md ${product?.stockQuantity === 0 ? 'opacity-50' : ''}`}>
+            <SubscriptionOrder />
+            <span>정기</span>
+          </div>
         </div>
       );
     } else {
-        return (
-            <div className='flex items-center gap-1 text-md'>
-                <div className='flex'>
-                    <div className={`flex items-center gap-1 p-1 px-3 bg-blue-200 rounded-3xl text-md ${product?.stockQuantity === 0 ? "opacity-50" : ""}`}>
-                        <SingleOrder/>
-                        <span>단건</span>
-                    </div>
-                </div>
-
-                <div className='flex'>
-                    <div className={`flex items-center gap-1 p-1 px-3 bg-orange-200 rounded-3xl text-md ${product?.stockQuantity === 0 ? "opacity-50" : ""}`}>
-                        <SubscriptionOrder/>
-                        <span>정기</span>
-                    </div>
-                </div>
+      return (
+        <div className='flex items-center gap-1 text-md'>
+          <div className='flex'>
+            <div className={`flex items-center gap-1 p-1 px-3 bg-blue-200 rounded-3xl text-md ${product?.stockQuantity === 0 ? 'opacity-50' : ''}`}>
+              <SingleOrder />
+              <span>단건</span>
             </div>
-        );
+          </div>
+
+          <div className='flex'>
+            <div className={`flex items-center gap-1 p-1 px-3 bg-orange-200 rounded-3xl text-md ${product?.stockQuantity === 0 ? 'opacity-50' : ''}`}>
+              <SubscriptionOrder />
+              <span>정기</span>
+            </div>
+          </div>
+        </div>
+      );
     }
   };
 
-    const {modalState, setModalState} = useModalStore();
-    const [isSelectOrderType, setIsSelectOrderType] = useState(false);
+  const { modalState, setModalState } = useModalStore();
+  const [isSelectOrderType, setIsSelectOrderType] = useState(false);
   const [orderType, setOrderType] = useState(null);
   const [productQuantity, setProductQuantity] = useState(1);
 
   const buyButtonFunc = () => {
     setModalState(true);
   };
-
-  console.log(`productId : ${product?.productId}, orderType : ${orderType === null ? product?.orderOption : orderType}, productQuantity : ${productQuantity}`);
 
   const handleModalClose = () => {
     setIsSelectOrderType(false);
@@ -99,50 +97,51 @@ function Product() {
     <div className='flex flex-col w-full'>
       {/* 이미지 */}
       <div style={{ width: '100%', aspectRatio: '1/1', position: 'relative' }} className='bg-second'>
-        <img src={product?.productImagePath || "/default_big.png"} style={{ aspectRatio: 1 }} className='w-full' alt='상품사진' />
-          {
-              product?.stockQuantity === 0 ? (
-                  <div className="absolute top-0 left-0 w-full h-full object-cover bg-black opacity-55">
-                      <div className="h-full flex justify-center items-center">
-                          <p className="text-white text-xl font-bold tracking-widest">일시품절</p>
-                      </div>
-                  </div>
-              ) : null
-          }
+        <img src={product?.productImagePath || '/default_big.png'} style={{ aspectRatio: 1 }} className='w-full' alt='상품사진' />
+        {product?.stockQuantity === 0 ? (
+          <div className='absolute top-0 left-0 object-cover w-full h-full bg-black opacity-55'>
+            <div className='flex items-center justify-center h-full'>
+              <p className='text-xl font-bold tracking-widest text-white'>일시품절</p>
+            </div>
+          </div>
+        ) : null}
       </div>
       {/* 상품 정보*/}
       <div className='p-6'>
         <div className='mb-3'>
           <div className='text-gray-400'>{product?.categoryName}</div>
-          <div className={`text-2xl font-bold ${product?.stockQuantity === 0 ? "text-gray-400" : ""}`} style={{ letterSpacing: '0.5px' }}>
+          <div className={`text-2xl font-bold ${product?.stockQuantity === 0 ? 'text-gray-400' : ''}`} style={{ letterSpacing: '0.5px' }}>
             {product?.productName}
           </div>
         </div>
         <div className='mb-3'>
-          <div className={`text-2xl font-bold ${product?.stockQuantity === 0 ? "text-gray-400" : ""}`}  style={{ letterSpacing: '1px' }}>
-            {product?.productDiscount !== 0 ? <span className={`mr-1.5 ${product?.stockQuantity === 0 ? "text-gray-400" : "text-red-500"}`}>{product?.productDiscount}%</span> : null }
+          <div className={`text-2xl font-bold ${product?.stockQuantity === 0 ? 'text-gray-400' : ''}`} style={{ letterSpacing: '1px' }}>
+            {product?.productDiscount !== 0 ? (
+              <span className={`mr-1.5 ${product?.stockQuantity === 0 ? 'text-gray-400' : 'text-red-500'}`}>{product?.productDiscount}%</span>
+            ) : null}
             <span>{discountedPrice?.toLocaleString()}원</span>
           </div>
-          {product?.productDiscount !== 0 ?
-              <div className='text-xl text-gray-300 line-through' style={{letterSpacing: '1px'}}>
-                {product?.productPrice?.toLocaleString()}원
-              </div> : null
-          }
-
+          {product?.productDiscount !== 0 ? (
+            <div className='text-xl text-gray-300 line-through' style={{ letterSpacing: '1px' }}>
+              {product?.productPrice?.toLocaleString()}원
+            </div>
+          ) : null}
         </div>
         <div className='mb-2'>{orderOptionFunc(product?.orderOption)}</div>
-          {product?.stockQuantity !== 0 ? <div className='text-gray-500'>배송비 무료, 이 상품 배송은 평균 2~7일 걸려요</div>
-              : <div className='text-black font-bold text-xl flex items-center gap-1'>
-                  <NoStock className="w-6 h-6"/>
-                  <div>일시품절</div>
-              </div>
-          }
+        {product?.stockQuantity !== 0 ? (
+          <div className='text-gray-500'>배송비 무료, 이 상품 배송은 평균 2~7일 걸려요</div>
+        ) : (
+          <div className='flex items-center gap-1 text-xl font-bold text-black'>
+            <NoStock className='w-6 h-6' />
+            <div>일시품절</div>
+          </div>
+        )}
       </div>
 
-        {/* 상품 상세 정보 */}
-        <div className='w-full px-6 bg-amber-200' style={{ height: '1000px' }}></div>
+      {/* 상품 상세 정보 */}
+      <div className='w-full px-6 bg-amber-200' style={{ height: '1000px' }}></div>
 
-      {/*  상품 문의  */}
+      {/* 상품 문의 */}
       <div className='px-6'>
         <AccordionBody />
       </div>
@@ -150,8 +149,11 @@ function Product() {
       {/* 구매 버튼 */}
       <div className='sticky bottom-0 left-0 right-0 flex w-full'>
         <div className='p-10'></div>
-          { product?.stockQuantity !== 0 ? <BottomButton buttonText='구매하기' buttonStyle='bg-main text-white' buttonFunc={buyButtonFunc} />
-                                         : <BottomButton buttonText='일시품절된 상품입니다.' buttonStyle='bg-gray-300 text-gray-500' disabled={true} />}
+        {product?.stockQuantity !== 0 ? (
+          <BottomButton buttonText='구매하기' buttonStyle='bg-main text-white' buttonFunc={buyButtonFunc} />
+        ) : (
+          <BottomButton buttonText='일시품절된 상품입니다.' buttonStyle='bg-gray-300 text-gray-500' disabled={true} />
+        )}
       </div>
 
       <SlideUpModal
@@ -172,6 +174,7 @@ function Product() {
             productQuantity={productQuantity}
             setProductQuantity={setProductQuantity}
             clickCartBtn={clickCartBtn}
+            stockQuantity={product?.stockQuantity}
           />
         )}
       </SlideUpModal>

@@ -29,6 +29,9 @@ import { getAccountPayments } from '../../api/PaymentMethod/Table/accountPayment
 import { getCardPayments } from '../../api/PaymentMethod/Table/cardPaymentTable';
 import NoDataTable from '../common/Table/NoDataTable';
 
+import DeleteConfirmModal from '../common/Modal/DeleteConfirmModal';
+import AlertConfirmModal from '../common/Modal/AlertConfirmModal';
+
 const PaymentMethodTable = () => {
   const [openRegistrationModal, setOpenRegistrationModal] = useState(false);
   const [checkedPaymentMethods, setCheckedPaymentMethods] = useState([]);
@@ -55,6 +58,13 @@ const PaymentMethodTable = () => {
   const { refetch: refetchPaymentDetail } = useGetPaymentDetail(paymentMethodId);
 
   const { setSelectedMemberId } = useAddressStore();
+
+  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
+  const [isAlertConfirmModalOpen, setIsAlertConfirmModalOpen] = useState(false);
+
+  useEffect(() => {
+    setCheckedPaymentMethods([]);
+  }, [paymentMethodType]);
 
   useEffect(() => {
     if (currentPage < totalPages) {
@@ -91,6 +101,7 @@ const PaymentMethodTable = () => {
     setSelectedMemberId(memberId);
     await refetchPaymentDetail();
   };
+
   const handleSearch = useCallback(
     (term, category) => {
       if (term.trim() === '' || category === '카테고리') return;
@@ -189,6 +200,15 @@ const PaymentMethodTable = () => {
     setSkeletonSearchKeyword,
   ]);
 
+  const deleteConfirmFirstButtonFunc = () => {
+    setIsDeleteConfirmModalOpen(false);
+  };
+
+  const deleteConfirmSecondButtonFunc = () => {
+    deleteSelectedPaymentsMutate();
+    setIsDeleteConfirmModalOpen(false);
+  };
+
   if (isLoading) {
     return (
       <SkeletonTable
@@ -196,6 +216,8 @@ const PaymentMethodTable = () => {
         TableRowComponent={SkeletonPaymentMethodTableRow}
         tableColumns={isAccount ? tableColumn.paymentMethod.accountList : tableColumn.paymentMethod.cardList}
         nonSort={tableColumn.paymentMethod.nonSort}
+        PAGE_SIZE={PAGE_SIZE}
+        colNum={isAccount ? tableColumn.paymentMethod.accountList.length : tableColumn.paymentMethod.cardList.length}
       />
     );
   }
@@ -210,7 +232,9 @@ const PaymentMethodTable = () => {
         onSearch={handleSearch}
         tableColumns={searchCategoryOptions}
         dropdownRef={dropdownRef}
-        deleteSelectedPaymentsMutate={deleteSelectedPaymentsMutate}
+        setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
+        setIsAlertConfirmModalOpen={setIsAlertConfirmModalOpen}
+        checkedPaymentMethods={checkedPaymentMethods}
       />
       <div className='px-4'>
         <Table hoverable theme={customTableTheme}>
@@ -231,6 +255,8 @@ const PaymentMethodTable = () => {
               selectedMembers={checkedPaymentMethods}
               handleRowChecked={handleRowChecked}
               currentPage={currentPage}
+              PAGE_SIZE={PAGE_SIZE}
+              colNum={isAccount ? tableColumn.paymentMethod.accountList.length : tableColumn.paymentMethod.cardList.length}
             />
           ) : (
             <NoDataTable
@@ -254,6 +280,30 @@ const PaymentMethodTable = () => {
           clickedPayment={clickedPayment}
         />
         <PaymentMethodRegistrationModal isOpen={openRegistrationModal} setOpenModal={setOpenRegistrationModal} />
+
+        {/* 삭제 화인 모달 */}
+        {isDeleteConfirmModalOpen && checkedPaymentMethods.length > 0 && (
+          <DeleteConfirmModal
+            isDeleteConfirmModalOpen={isDeleteConfirmModalOpen}
+            setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
+            text={
+              <p className='text-lg'>
+                <span className='text-red-500 font-bold'>{checkedPaymentMethods.length}</span>개의 결제수단을 선택하셨습니다
+              </p>
+            }
+            firstButtonFunc={deleteConfirmFirstButtonFunc}
+            secondButtonFunc={deleteConfirmSecondButtonFunc}
+          />
+        )}
+
+        {/* alert 모달 */}
+        {isAlertConfirmModalOpen && (
+          <AlertConfirmModal
+            isAlertConfirmModalOpen={isAlertConfirmModalOpen}
+            setIsAlertConfirmModalOpen={setIsAlertConfirmModalOpen}
+            text={<p className='text-lg pt-4 pb-7'>선택된 결제수단이이 없습니다!</p>}
+          />
+        )}
       </div>
     </div>
   );

@@ -6,34 +6,47 @@ import ProductImageCard from '../ProductDetailModal/ProductImageCard.jsx';
 import ProductCategory from '../ProductDetailModal/ProductCategory.jsx';
 import ProductInfo from '../ProductDetailModal/ProductInfo.jsx';
 import ProductSaleInfo from '../ProductDetailModal/ProductSaleInfo.jsx';
-import { useRegisterProduct} from '../../../api/Product/ProductList/ProductList/queris.js';
-import {useSendGroupAlarmProduct} from "../../../api/notification/queris.js";
+import { useRegisterProduct } from '../../../api/Product/ProductList/ProductList/queris.js';
+import { useSendGroupAlarmProduct } from '../../../api/notification/queris.js';
 
 const ProductInsertModal = ({ isOpen, setOpenModal, title, currentPage }) => {
   const [newProduct, setNewProduct] = useState({
     productName: '',
     productDescription: '',
-    categoryName: '과일', //기본
+    categoryName: '', //기본
     stockQuantity: '',
     productPrice: '',
     productDiscount: '',
     productStatus: 'true',
-    orderOption: 'SINGLE', //기본
+    orderOption: '', //기본
     productImageOriginalName: '',
     productImagePath: '',
+    detailImagesOriginalName: [],
+    detailImagesPath: [],
+    changeIndex:[],
   });
+
 
   const [imageFile, setImageFile] = useState(null);
   const handleInputImageChange = imageFile => {
     setImageFile(imageFile);
   };
 
-  const { mutate: productRegisterMutate } = useRegisterProduct(newProduct, imageFile, currentPage);
+  const [modalDetailImageFiles, modalSetDetailImageFiles] = useState([]);
+
+  const handleDetailImagesChange = detailImageFiles => {
+    modalSetDetailImageFiles(detailImageFiles);
+  };
+  const [changeIndex, setChangeIndex] = useState([]);
+  const handleChangeIndex = (newChangeIndex) => {
+    setChangeIndex(newChangeIndex);
+  };
+
+  const { mutate: productRegisterMutate } = useRegisterProduct(newProduct, imageFile, modalDetailImageFiles, currentPage);
   // TODO: productRegisterMutate의 onSuccess에다가 addProductGroupAlarmMutate 요고 달기
-  const { mutate: addProductGroupAlarmMutate } = useSendGroupAlarmProduct(newProduct?.productName)
+  const { mutate: addProductGroupAlarmMutate } = useSendGroupAlarmProduct(newProduct?.productName);
 
   const handleInputChange = e => {
-    console.log(typeof e.target.value);
     setNewProduct(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
@@ -59,7 +72,14 @@ const ProductInsertModal = ({ isOpen, setOpenModal, title, currentPage }) => {
           <div className='flex gap-3 w-full'>
             <div className='flex gap-3 flex-col w-2/5'>
               {/* 이미지 카드 */}
-              <ProductImageCard product={newProduct} title='상품 사진' handleInputImageChange={handleInputImageChange} />
+              <ProductImageCard
+                product={newProduct}
+                title='상품 사진'
+                handleInputImageChange={handleInputImageChange}
+                handleDetailImagesChange={handleDetailImagesChange}
+                handleChangeIndex={handleChangeIndex}
+                modalDetailImageFiles={modalDetailImageFiles}
+              />
               {/* 카테고리 */}
               <ProductCategory product={newProduct} title='카테고리' handleInputChange={handleInputChange} />
             </div>
@@ -78,10 +98,11 @@ const ProductInsertModal = ({ isOpen, setOpenModal, title, currentPage }) => {
                 className='w-28 bg-custom-button-purple text-custom-font-purple'
                 onClick={async () => {
                   await productRegisterMutate();
-                  await addProductGroupAlarmMutate()
+                  await addProductGroupAlarmMutate();
                   setOpenModal(false);
                   setNewProduct(null);
                   setImageFile(null);
+                  modalSetDetailImageFiles(null)
                 }}
               >
                 등록

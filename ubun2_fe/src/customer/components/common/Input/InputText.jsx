@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import CheckIcon from '@heroicons/react/24/outline/CheckCircleIcon'
 import XIcon from '@heroicons/react/24/outline/XCircleIcon'
 
-const InputText = ({ labelTitle, labelStyle, type, containerStyle, defaultValue, placeholder, updateFormValue, updateType, isError, regex, regexMessage,isRegexInput=false }) => {
+const InputText = ({ labelTitle, labelStyle, type, containerStyle, defaultValue, placeholder, updateFormValue, updateType, isError, regex, regexMessage,isRegexInput=false, addressFunc }) => {
   const [value, setValue] = useState(defaultValue);
   const [error, setError] = useState(null);
   const [inputStyle, setInputStyle] = useState('input input-bordered w-full');
@@ -31,6 +31,16 @@ const InputText = ({ labelTitle, labelStyle, type, containerStyle, defaultValue,
         }
     }, [value, regex]);
 
+
+    useEffect(() => {
+        setValue(defaultValue);
+    }, [defaultValue]);
+
+    const handleClick = () => {
+        if (addressFunc) {
+            addressFunc();
+        }
+    };
   return (
     <div className={`form-control w-full ${containerStyle}`}>
       {labelTitle && (
@@ -46,6 +56,7 @@ const InputText = ({ labelTitle, labelStyle, type, containerStyle, defaultValue,
                 placeholder={placeholder || ''}
                 onChange={e => updateInputValue(e.target.value)}
                 className={inputStyle}
+                onClick={handleClick}
             />
             {isRegexInput ?
                 <div className={`absolute top-1 right-3 mt-2 text-sm`}>

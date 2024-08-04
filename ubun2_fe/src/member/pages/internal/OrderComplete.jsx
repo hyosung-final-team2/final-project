@@ -16,6 +16,7 @@ import OrderCompleteStore from '../../components/OrderComplete/OrderCompleteStor
 import useModalStore from '../../store/modalStore';
 import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
+import { formatAddressOneLine } from '../../../customer/utils/addressFormat';
 
 const OrderComplete = () => {
   const { selectedItems, totals, clearCart } = useOrderItemsStore();
@@ -109,7 +110,7 @@ const OrderComplete = () => {
       <div className='flex flex-col gap-2 p-4 py-8 mb-4 bg-white'>
         <h2 className='mb-2 text-xl font-semibold'>배송지 정보</h2>
         <p className='font-semibold'>{addressInfo?.addressNickname}</p>
-        <p className='text-sm text-gray-600'>{addressInfo?.address}</p>
+        <p className='text-sm text-gray-600'>{formatAddressOneLine(addressInfo?.address)}</p>
         <p className='text-sm text-gray-600'>{addressInfo?.phoneNumber}</p>
         <div className='flex gap-5 '>
           <InformationCircleIcon className='w-5' />

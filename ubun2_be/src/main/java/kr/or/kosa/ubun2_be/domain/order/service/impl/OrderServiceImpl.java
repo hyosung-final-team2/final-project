@@ -122,12 +122,14 @@ public class OrderServiceImpl implements OrderService {
         List<UnifiedOrderResponse> paginatedList = combinedList.subList(start, end);
         return new PageImpl<>(paginatedList, pageable, combinedList.size());
     }
+
     private int compareOrders(UnifiedOrderResponse o1, UnifiedOrderResponse o2, String property) {
         return switch (property) {
             case "totalCost" -> compareNullable(o1.getTotalOrderPrice(), o2.getTotalOrderPrice());
             case "createdAt" -> compareNullable(o1.getCreatedAt(), o2.getCreatedAt());
             case "memberName" -> compareNullable(o1.getMemberName(), o2.getMemberName());
-            case "orderStatus" -> compareNullable(OrderStatus.valueOf(o1.getOrderStatus()).getName(), OrderStatus.valueOf(o2.getOrderStatus()).getName());
+            case "orderStatus" ->
+                    compareNullable(OrderStatus.valueOf(o1.getOrderStatus()).getName(), OrderStatus.valueOf(o2.getOrderStatus()).getName());
             case "paymentType" -> compareNullable(o1.getPaymentType(), o2.getPaymentType());
             case "isSubscription" -> Boolean.compare(o1.isSubscription(), o2.isSubscription());
             default -> 0;
@@ -250,7 +252,7 @@ public class OrderServiceImpl implements OrderService {
                 }
             }
 
-            if(newOrderStatus.equals(OrderStatus.DENIED)) {
+            if (newOrderStatus.equals(OrderStatus.DENIED)) {
                 restoreInventoryForSubscription(findSubscriptionPendingOrder.getSubscriptionOrderProducts());
             }
             subscriptionOrderRepository.save(findSubscriptionPendingOrder);
@@ -417,8 +419,9 @@ public class OrderServiceImpl implements OrderService {
         return savedOrder;
     }
 
+    // TODO: 기존로직 - 확인 후 삭제
     @Override
-    public List<UnifiedOrderResponse> getAllOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest,Long memberId) {
+    public List<UnifiedOrderResponse> getAllOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest, Long memberId) {
         List<UnifiedOrderResponse> orderResponses = orderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
         List<UnifiedOrderResponse> subscriptionOrderResponses = subscriptionOrderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
 
@@ -426,7 +429,7 @@ public class OrderServiceImpl implements OrderService {
         combinedList.addAll(orderResponses);
         combinedList.addAll(subscriptionOrderResponses);
 
-        if(orderPeriodFilterRequest.getPeriodType()!=null && orderPeriodFilterRequest.getPeriodValue()>0){
+        if (orderPeriodFilterRequest.getPeriodType() != null && orderPeriodFilterRequest.getPeriodValue() > 0) {
             LocalDateTime endDate = LocalDateTime.now();
             LocalDateTime startDate = switch (orderPeriodFilterRequest.getPeriodType()) {
                 case WEEK -> endDate.minusWeeks(orderPeriodFilterRequest.getPeriodValue());
@@ -442,10 +445,74 @@ public class OrderServiceImpl implements OrderService {
                         return createdAt.isAfter(startDate) && createdAt.isBefore(endDate);
                     })
                     .collect(Collectors.toList());
-
         }
 
+        // 최신순으로 정렬
+        combinedList.sort((o1, o2) -> {
+            LocalDateTime date1 = LocalDateTime.parse(o1.getCreatedAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            LocalDateTime date2 = LocalDateTime.parse(o2.getCreatedAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            return date2.compareTo(date1);  // 내림차순 정렬
+        });
+
         return combinedList;
+    }
+
+    @Override
+    public Page<UnifiedOrderResponse> getAllSingleOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest, Long memberId, Pageable pageable) {
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = getStartDate(orderPeriodFilterRequest, endDate);
+
+        Page<Order> orders = orderRepository.findOrdersByMemberId(memberId, startDate, endDate, pageable);
+
+        return orders.map(UnifiedOrderResponse::new);
+    }
+
+    public OrderStatusSummaryResponse getOrderStatusSummaryByMemberId(Long memberId) {
+        List<Order> singleOrders = orderRepository.findByMemberId(memberId);
+        List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findByMemberId(memberId);
+
+        int pendingCount = 0;
+        int deniedCount = 0;
+        int approvedCount = 0;
+
+        for (Order order : singleOrders) {
+            if (order.getOrderStatus() == OrderStatus.PENDING) {
+                pendingCount++;
+            } else if (order.getOrderStatus() == OrderStatus.DENIED) {
+                deniedCount++;
+            } else if (order.getOrderStatus() == OrderStatus.APPROVED) {
+                approvedCount++;
+            }
+        }
+
+        for (SubscriptionOrder subscriptionOrder : subscriptionOrders) {
+            if (subscriptionOrder.getOrderStatus() == OrderStatus.PENDING) {
+                pendingCount++;
+            } else if (subscriptionOrder.getOrderStatus() == OrderStatus.DENIED) {
+                deniedCount++;
+            } else if (subscriptionOrder.getOrderStatus() == OrderStatus.APPROVED) {
+                approvedCount++;
+            }
+        }
+
+        return OrderStatusSummaryResponse.builder()
+                .pending(pendingCount)
+                .denied(deniedCount)
+                .approved(approvedCount)
+                .singleOrders(singleOrders.size())
+                .subscriptionOrders(subscriptionOrders.size())
+                .build();
+    }
+
+    private LocalDateTime getStartDate(OrderPeriodFilterRequest orderPeriodFilterRequest, LocalDateTime endDate) {
+        if (orderPeriodFilterRequest.getPeriodType() == null || orderPeriodFilterRequest.getPeriodValue() <= 0) {
+            return LocalDateTime.MIN;
+        }
+        return switch (orderPeriodFilterRequest.getPeriodType()) {
+            case WEEK -> endDate.minusWeeks(orderPeriodFilterRequest.getPeriodValue());
+            case MONTH -> endDate.minusMonths(orderPeriodFilterRequest.getPeriodValue());
+            default -> throw new OrderException(OrderExceptionType.NOT_MATCH_PERIOD_TYPE);
+        };
     }
 
     @Override
@@ -504,9 +571,6 @@ public class OrderServiceImpl implements OrderService {
             default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
         }
     }
-
-
-
 
 
 }

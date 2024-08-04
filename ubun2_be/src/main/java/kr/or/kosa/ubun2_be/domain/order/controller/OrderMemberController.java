@@ -8,6 +8,10 @@ import kr.or.kosa.ubun2_be.domain.order.service.SubscriptionOrderService;
 import kr.or.kosa.ubun2_be.global.auth.model.CustomUserDetails;
 import kr.or.kosa.ubun2_be.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +24,8 @@ public class OrderMemberController {
 
     private final SubscriptionOrderService subscriptionOrderService;
     private final OrderService orderService;
+    private static final int PAGE_SIZE = 9;
+    private static final String SORT_DEFAULT = "createdAt";
 
     @Operation(summary = "정기 주문 및 단건 주문 유효성 검사 및 결제 확인")
     @PostMapping("/orders/validate")
@@ -49,11 +55,49 @@ public class OrderMemberController {
         return ResponseDto.ok(null, "정상출력 데이터");
     }
 
+    /*
+    // 기존로직 - TODO: 확인 후 삭제
     @Operation(summary = "현재 로그인한 회원의 전체 주문 목록 조회")
     @GetMapping("/orders")
     public ResponseDto<List<UnifiedOrderResponse>> getAllOrders(@ModelAttribute OrderPeriodFilterRequest orderPeriodFilterRequest,@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         List<UnifiedOrderResponse> allOrders = orderService.getAllOrdersByMemberId(orderPeriodFilterRequest,customUserDetails.getUserId());
         return ResponseDto.ok(allOrders, "정상출력 데이터");
+    }
+    */
+    @Operation(summary = "현재 로그인한 회원의 전체 주문 상태 조회")
+    @GetMapping("/orders/status")
+    public ResponseDto<OrderStatusSummaryResponse> getOrderStatusSummary(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        Long memberId = customUserDetails.getUserId();
+        OrderStatusSummaryResponse summaryResponse = orderService.getOrderStatusSummaryByMemberId(memberId);
+        return ResponseDto.ok(summaryResponse, "정상 출력 데이터");
+    }
+
+    @Operation(summary = "현재 로그인한 회원의 단건 주문 목록 조회")
+    @GetMapping("/orders/single")
+    public ResponseDto<Page<UnifiedOrderResponse>> getAllSingleOrders(
+            @ModelAttribute OrderPeriodFilterRequest orderPeriodFilterRequest,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<UnifiedOrderResponse> orders = orderService.getAllSingleOrdersByMemberId(
+                orderPeriodFilterRequest,
+                customUserDetails.getUserId(),
+                pageable
+        );
+        return ResponseDto.ok(orders, "정상 출력 데이터");
+    }
+
+    @Operation(summary = "현재 로그인한 회원의 정기 주문 목록 조회")
+    @GetMapping("/orders/subscription")
+    public ResponseDto<Page<UnifiedOrderResponse>> getAllSubscriptionOrders(
+            @ModelAttribute OrderPeriodFilterRequest orderPeriodFilterRequest,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<UnifiedOrderResponse> orders = subscriptionOrderService.getAllSubscriptionOrdersByMemberId(
+                orderPeriodFilterRequest,
+                customUserDetails.getUserId(),
+                pageable
+        );
+        return ResponseDto.ok(orders, "정상 출력 데이터");
     }
 
     @Operation(summary = "현재 로그인한 회원의 단건 주문 상세 조회")

@@ -10,13 +10,31 @@ export const createOrder = async orderData => {
   return res;
 };
 
-export const getOrderList = async (periodType, periodValue) => {
-  const params = new URLSearchParams();
-  if (periodType) params.append('periodType', periodType);
-  if (periodValue) params.append('periodValue', periodValue);
+export const getSingleOrderList = async (page, size, periodType, periodValue) => {
+  const params = {
+    page,
+    size,
+  };
+  if (periodType) params.periodType = periodType;
+  if (periodValue) params.periodValue = periodValue;
 
-  const res = await privateFetch.get(`/members/orders?${params.toString()}`);
-  return res;
+  return await privateFetch.get('/members/orders/single', { params });
+};
+
+export const getOrderStatusSummary = async () => {
+  const res = await privateFetch.get('/members/orders/status');
+  return res.data;
+};
+
+export const getSubscriptionOrderList = async (page, size, periodType, periodValue) => {
+  const params = {
+    page,
+    size,
+  };
+  if (periodType) params.periodType = periodType;
+  if (periodValue) params.periodValue = periodValue;
+
+  return await privateFetch.get('/members/orders/subscription', { params });
 };
 
 export const getOrderDetail = async orderId => {
