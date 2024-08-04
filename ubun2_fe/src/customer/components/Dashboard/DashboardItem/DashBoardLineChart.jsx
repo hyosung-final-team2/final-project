@@ -36,6 +36,15 @@ const DashboardLineChart = ({ ordersCountAndRevenueValue, daysBetween }) => {
     return number.toLocaleString('ko-KR');
   };
 
+  if (ordersCountAndRevenueValue === undefined || ordersCountAndRevenueValue.length === 0 || data === undefined || data.length === 0) {
+    return (
+      <div className='h-[30dvh] rounded-2xl p-6 bg-white drop-shadow-lg shadow-lg col-span-2'>
+        <h2 className='text-lg font-bold mb-4'>{daysBetween}일간의 주문 및 매출 추이</h2>
+        <div className='text-md bg-gray-100 h-[80%] rounded-xl flex justify-center items-center'>주문 및 매출 데이터가 없습니다.</div>
+      </div>
+    );
+  }
+
   return (
     <div className='h-[30dvh] rounded-2xl p-6 bg-white drop-shadow-lg shadow-lg col-span-2'>
       <h2 className='text-lg font-bold mb-4'>{daysBetween}일간의 주문 및 매출 추이</h2>
