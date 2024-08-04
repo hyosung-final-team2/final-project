@@ -21,7 +21,7 @@ export const useSignup = thirdRegisterObj => {
     businessName: thirdRegisterObj.businessName,
     businessOwner: registerFirstData.businessOwner,
     businessOpenDate: registerFirstData.businessOpenDate,
-    businessAddress: `${thirdRegisterObj.businessAddressNumber} ${thirdRegisterObj.businessAddressDefault} ${thirdRegisterObj.businessAddressDetail}`,
+    businessAddress: `${thirdRegisterObj.businessAddressNumber},${thirdRegisterObj.businessAddressDefault},${thirdRegisterObj.businessAddressDetail}`,
     description: '상점 설명',
     fcmToken:FCMToken
   };

@@ -97,7 +97,6 @@ const MemberInsertModal = ({ isOpen, setOpenModal, selectedMemberDetail, current
   };
 
   const handleAddressAdd = address => {
-    console.log('address', address);
     setMemberData(prevState => ({
       ...prevState,
       addresses: [...prevState.addresses, address],
