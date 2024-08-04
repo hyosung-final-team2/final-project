@@ -81,7 +81,7 @@ public class Product extends BaseTimeEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<CartProduct> cartProducts;
 
-    public void updateProduct(ProductRequest productRequest) {
+    public void updateProduct(ProductRequest productRequest, Category category) {
         this.productName = productRequest.getProductName();
         this.productDescription = productRequest.getProductDescription();
         this.productPrice = productRequest.getProductPrice();
@@ -89,6 +89,7 @@ public class Product extends BaseTimeEntity {
         this.productStatus = productRequest.isProductStatus();
         this.orderOption = productRequest.getOrderOption();
         this.stockQuantity = productRequest.getStockQuantity();
+        this.category = category;
     }
 
     public void saveImage(String productImageOriginalName, String productImagePath) {
