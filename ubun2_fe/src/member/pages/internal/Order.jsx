@@ -81,7 +81,7 @@ const Order = () => {
       return;
     }
     console.log(selectedAddressId);
-    navigate('/member/app/payments');
+    navigate('/member/app/payments', { state: { selectedItems } });
   };
 
   const handleDeliverySelection = delivery => {
