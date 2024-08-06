@@ -1,6 +1,7 @@
 import {deleteSelectedMember, getMembers, sendSms} from './memberTable.js';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {toast} from "react-hot-toast";
+import {formatPhoneNumber} from "../../../../utils/phoneFormat.js";
 
 export const useGetMembers = (page, size, sort, searchCategory, searchKeyword) => {
   return useQuery({
@@ -11,7 +12,7 @@ export const useGetMembers = (page, size, sort, searchCategory, searchKeyword) =
 
 export const useSendSms = (selectedMembers) => {
   const nameAndPhoneNumbers = selectedMembers?.map((member) => {
-    return { memberName: member.memberName, phoneNumber: member.memberPhone}
+    return { memberName: member.memberName, phoneNumber: formatPhoneNumber(member.memberPhone)}
   })
 
   return useMutation({

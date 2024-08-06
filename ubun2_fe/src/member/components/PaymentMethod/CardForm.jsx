@@ -23,6 +23,7 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
   const cardPasswordRef = useRef(null);
   const cvcRef = useRef(null);
   const expirationDateRef = useRef(null);
+  const cardNicknameRef = useRef(null);
 
   const updateFormData = useCallback((key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -46,12 +47,6 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
   };
 
   const handleCardNumberComplete = () => {
-    if (cardPasswordRef.current) {
-      cardPasswordRef.current.focus();
-    }
-  };
-
-  const handleCardPasswordComplete = () => {
     if (cvcRef.current) {
       cvcRef.current.focus();
     }
@@ -60,6 +55,18 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
   const handleCVCComplete = () => {
     if (expirationDateRef.current) {
       expirationDateRef.current.focus();
+    }
+  };
+
+  const handleDateComplete = () => {
+    if (cardPasswordRef.current) {
+      cardPasswordRef.current.focus();
+    }
+  };
+
+  const handleCardPasswordComplete = () => {
+    if (cardNicknameRef.current) {
+      cardNicknameRef.current.focus();
     }
   };
 
@@ -120,6 +127,7 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
               onFocus={() => flipCard(false)}
               value={formData.expirationDate}
               maxLength={4}
+              onInputComplete={handleDateComplete}
             />
           </div>
         </div>
@@ -136,6 +144,7 @@ const CreditCardForm = ({ inputStyle, labelStyle, onFormChange }) => {
           onInputComplete={handleCardPasswordComplete}
         />
         <InfoItem
+          ref={cardNicknameRef}
           label='카드 별명'
           placeholder='카드 별명을 입력해주세요.'
           inputStyle={inputStyle}
