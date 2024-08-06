@@ -46,10 +46,10 @@ const SubscriptionOrderProduct = ({ orderInfo, selectedCycle, onCycleChange }) =
                 <span className='text-xs'>
                   <StatusBadge status={product.orderProductStatus} />
                 </span>
-                <p className='text-lg font-bold text-gray-900 dark:text-white'>{product.productDescription}</p>
+                <p className='text-lg font-bold text-gray-900 dark:text-white'>{product.productName}</p>
               </div>
               <div className='flex items-center gap-2'>
-                <span className='text-sm text-gray-500 dark:text-gray-400'>{product.productName}</span>
+                <span className='text-sm text-gray-500 dark:text-gray-400'>{product.productDescription}</span>
                 <span>|</span>
                 <span className='text-sm text-gray-500 dark:text-gray-400'>{`${formatCurrency(product.price)} 원`}</span>
                 <span>|</span>
