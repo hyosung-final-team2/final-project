@@ -79,7 +79,7 @@ public class InventoryService {
         return false;
     }
 
-    @Scheduled(fixedRate = 1800000) // 30분마다 실행
+    @Scheduled(fixedRate = 900000) // 15분마다 실행
     @Transactional
     public void syncInventory() {
         Set<String> keys = redisTemplate.keys(INVENTORY_KEY_PREFIX + "*");

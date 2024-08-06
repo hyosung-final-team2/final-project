@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "pending_member")
+@Table(name = "pending_member", indexes = {
+        @Index(name = "idx_pending_member_email", columnList = "pendingMemberEmail")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PendingMember {
     @Id

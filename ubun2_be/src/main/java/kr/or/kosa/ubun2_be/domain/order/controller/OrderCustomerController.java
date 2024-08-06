@@ -25,7 +25,7 @@ public class OrderCustomerController {
     private final SubscriptionOrderService subscriptionOrderService;
     private final OrderService orderService;
     private static final String SORT_DEFAULT = "createdAt";
-    private static final int PAGE_SIZE = 9;
+    private static final int PAGE_SIZE = 8;
 
     @Operation(summary = "전체 주문 목록 조회 (일반 주문 + 구독 주문)")
     @GetMapping("/")

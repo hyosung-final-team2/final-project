@@ -55,15 +55,7 @@ public class OrderMemberController {
         return ResponseDto.ok(null, "정상출력 데이터");
     }
 
-    /*
-    // 기존로직 - TODO: 확인 후 삭제
-    @Operation(summary = "현재 로그인한 회원의 전체 주문 목록 조회")
-    @GetMapping("/orders")
-    public ResponseDto<List<UnifiedOrderResponse>> getAllOrders(@ModelAttribute OrderPeriodFilterRequest orderPeriodFilterRequest,@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        List<UnifiedOrderResponse> allOrders = orderService.getAllOrdersByMemberId(orderPeriodFilterRequest,customUserDetails.getUserId());
-        return ResponseDto.ok(allOrders, "정상출력 데이터");
-    }
-    */
+
     @Operation(summary = "현재 로그인한 회원의 전체 주문 상태 조회")
     @GetMapping("/orders/status")
     public ResponseDto<OrderStatusSummaryResponse> getOrderStatusSummary(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
