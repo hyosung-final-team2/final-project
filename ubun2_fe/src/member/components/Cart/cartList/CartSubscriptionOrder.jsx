@@ -15,7 +15,7 @@ const CartSubscriptionOrder = ({ regularOrderProducts, selectedItems, onSelectPr
   const intervalDays = selectedSubscriptionItem?.intervalDays || 0;
 
   return (
-    <div className='flex flex-col w-full gap-3 bg-white'>
+    <div className='flex flex-col w-full gap-3 bg-white rounded-lg'>
       <div className='flex justify-between px-4 pb-2 border-b'>
         <div className='flex items-center'>
           <Subscription className='w-5 mr-2' />

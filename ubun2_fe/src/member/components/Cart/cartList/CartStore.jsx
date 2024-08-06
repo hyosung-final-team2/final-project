@@ -50,12 +50,12 @@ const CartStore = ({ store, onSubscriptionPeriodSelect, onDeleteProduct }) => {
   };
 
   return (
-    <Card className='my-4 bg-white' theme={cardCustomTheme}>
-      <div className='flex items-center w-full gap-3 px-4'>
+    <div className='my-4 mb-2 bg-white border-2 border-gray-100 rounded-lg'>
+      <div className='flex items-center w-full gap-3 p-4'>
         <Checkbox color='purple' checked={allProductsSelected} onChange={e => handleSelectAll(e.target.checked)} disabled={selectableProducts.length === 0} />
         <h2 className='text-xl font-semibold text-main'>{store.businessName}</h2>
       </div>
-      <div className='flex flex-col w-full gap-8'>
+      <div className='flex flex-col w-full gap-8 py-2'>
         <CartSingleOrder
           singleOrderProducts={store.cartProducts.filter(product => product.orderOption === 'SINGLE')}
           selectedItems={storeSelectedItems.flatMap(s => s.cartProducts)}
@@ -73,7 +73,7 @@ const CartStore = ({ store, onSubscriptionPeriodSelect, onDeleteProduct }) => {
           intervalDays={storeSelectedItems.find(s => s.intervalDays !== undefined)?.intervalDays}
         />
       </div>
-    </Card>
+    </div>
   );
 };
 

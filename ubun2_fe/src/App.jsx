@@ -10,19 +10,21 @@ import CustomerForgotPassword from './customer/pages/external/ForgotPassword';
 import CustomerForgotLoginId from './customer/pages/external/ForgotLoginId';
 import CustomerLayout from './customer/layouts/Layout';
 import AddressSearchPopUp from './customer/components/common/AddressSearch/AddressSearchPopUp';
-import ExternalPageLayout from "./customer/layouts/ExternalPageLayout.jsx";
+import ExternalPageLayout from './customer/layouts/ExternalPageLayout.jsx';
 
 //Member
-import MemberLogin from './member/pages/external/Login.jsx'
-import MemberRegister from './member/pages/external/Register.jsx'
-import MemberForgotPassword from './member/pages/external/ForgotPassword.jsx'
-import MemberForgotLoginId from "./member/pages/external/ForgotLoginId.jsx";
-import MemberResetPassword from './member/pages/external/ResetPassword.jsx'
-import MemberLayout from './member/layouts/Layout.jsx'
+import MemberLogin from './member/pages/external/Login.jsx';
+import MemberRegister from './member/pages/external/Register.jsx';
+import MemberForgotPassword from './member/pages/external/ForgotPassword.jsx';
+import MemberForgotLoginId from './member/pages/external/ForgotLoginId.jsx';
+import MemberResetPassword from './member/pages/external/ResetPassword.jsx';
+import MemberLayout from './member/layouts/Layout.jsx';
 
-import {useEffect} from "react";
-import useFCMTokenStore from "./FCMTokenStore.js";
-import {messaging} from "../initFirebase.js";
+import { useEffect } from 'react';
+import useFCMTokenStore from './FCMTokenStore.js';
+import { messaging } from '../initFirebase.js';
+import { useIsFetching } from '@tanstack/react-query';
+import GlobalLoader from './customer/components/common/Loader/GlobalLoader.jsx';
 
 const App = () => {
   const customToastStyle = {
@@ -32,7 +34,8 @@ const App = () => {
   const notify = () => toast('Here is your toast!');
   const token = localStorage.getItem('token');
 
-  const { setFCMToken} = useFCMTokenStore()
+  const { setFCMToken } = useFCMTokenStore();
+  const isFetching = useIsFetching();
 
   const onMessageFCM = async () => {
     const permission = await Notification.requestPermission();
@@ -51,28 +54,31 @@ const App = () => {
     }
   };
 
-
   useEffect(() => {
     onMessageFCM();
-  },[])
-
+  }, []);
 
   return (
     <>
+      {isFetching > 0 && <GlobalLoader />}
       <Routes>
-
         {/* Customer Routes */}
-        <Route path='/customer/*' element={<Routes>
-          <Route element={<ExternalPageLayout />}>
-            <Route path='login' element={<CustomerLogin />} />
-            <Route path='register' element={<CustomerRegister />} />
-            <Route path='forgot-password' element={<CustomerForgotPassword />} />
-            <Route path='forgot-loginid' element={<CustomerForgotLoginId />} />
-          </Route>
-          <Route path='app/*' element={<CustomerLayout />} />
-          <Route path='*' element={<Navigate to={token ? '/customer/app/dashboard' : '/customer/login'} replace />} />
-          <Route path='address-search' element={<AddressSearchPopUp />} />
-        </Routes>} />
+        <Route
+          path='/customer/*'
+          element={
+            <Routes>
+              <Route element={<ExternalPageLayout />}>
+                <Route path='login' element={<CustomerLogin />} />
+                <Route path='register' element={<CustomerRegister />} />
+                <Route path='forgot-password' element={<CustomerForgotPassword />} />
+                <Route path='forgot-loginid' element={<CustomerForgotLoginId />} />
+              </Route>
+              <Route path='app/*' element={<CustomerLayout />} />
+              <Route path='*' element={<Navigate to={token ? '/customer/app/dashboard' : '/customer/login'} replace />} />
+              <Route path='address-search' element={<AddressSearchPopUp />} />
+            </Routes>
+          }
+        />
 
         {/* Member Routes */}
         <Route

@@ -55,7 +55,7 @@ const OrderList = ({ order }) => {
             productName={firstProduct.productName || ''}
             quantity={firstProduct.quantity}
             productImageOriginalName={firstProduct.productImageOriginalName || ''}
-            totalPrice={firstProduct.totalPrice}
+            totalPrice={order.totalOrderPrice}
             orderStatus={orderStatus}
           />
         )}
