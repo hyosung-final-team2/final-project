@@ -36,13 +36,11 @@ const SingleOrderList = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loadMore]);
 
-  if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>에러가 발생했습니다.</div>;
 
   return (
     <div>
-      <div className='flex items-center justify-between mt-5 mb-10'>
-        <h3 className='text-2xl font-bold'>단건 주문 목록</h3>
+      <div className='flex items-center justify-end mt-1 mb-10'>
         <button
           onClick={() => setModalState(true)}
           className='flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
@@ -60,7 +58,6 @@ const SingleOrderList = () => {
         </React.Fragment>
       ))}
 
-      {isFetchingNextPage && <div>로딩 중...</div>}
       {hasNextPage && !isFetchingNextPage && (
         <button onClick={loadMore} className='w-full py-2 mt-4 font-bold text-white rounded-lg bg-main h-14'>
           더 보기
