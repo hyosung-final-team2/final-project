@@ -32,7 +32,7 @@ public class SmsProvider {
                 message.setFrom(from);
                 message.setTo(nameAndPhoneNumber.getPhoneNumber());
 
-                String smsText = "[효성CMS+ SQUARE] " + nameAndPhoneNumber.getMemberName() +"님, \n" + businessName + "(스토어)의 상품을 확인해보세요. \n <실제 url 보낼 곳> ";
+                String smsText = "[효성CMS+ CLICK N BUY] " + nameAndPhoneNumber.getMemberName() +"님, \n" + businessName + "(스토어)의 상품을 확인해보세요. \n https://clicknbuy.co.kr";
                 message.setText(smsText);
 
                 messageService.sendOne(new SingleMessageSendingRequest(message));
