@@ -37,7 +37,6 @@ public class SignupRequest {
     private String businessRegistrationNumber;
 
     @NotBlank(message = "상호명을 입력해주세요")
-    @Pattern(regexp = "[가-힣a-zA-Z]+", message = "상호명을 입력해주세요")
     private String businessName;
 
     @NotBlank(message = "대표자명을 입력해주세요")
