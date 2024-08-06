@@ -51,8 +51,15 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/swagger-ui': 'http://localhost:8080',
-      '/v3/api-docs': 'http://localhost:8080',
+      '/swagger-ui': {
+        target: 'https://clicknbuy.co.kr',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/swagger-ui/, '/swagger-ui')
+      },
+      '/v3/api-docs': {
+        target: 'https://clicknbuy.co.kr',
+        changeOrigin: true,
+      },
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
