@@ -51,6 +51,8 @@ export default defineConfig({
   ],
   server: {
     proxy: {
+      '/swagger-ui': 'http://localhost:8080',
+      '/v3/api-docs': 'http://localhost:8080',
       '/api': {
         target: 'http://localhost:8080',
         changeOrigin: true,
