@@ -19,7 +19,8 @@ const SetPassword = () => {
   const { mutateAsync: setNewPasswordMutation } = useSetNewPassword();
   const { isEditPassword, resetEditPassword } = usePaymentStore();
   const location = useLocation();
-  const { from } = location.state || { from: { pathname: '/member/app/mypage/payment-list' } };
+  const { from } = location?.state || { from: { pathname: '/member/app/mypage/payment-list' } };
+  const { selectedItems } = location?.state || { selectedItems: [] };
 
   // 비밀번호 변경 페이지 진입 시, 현재 비밀번호 입력부터 시작
   // 비밀번호가 없을때 새 비밀번호 입력부터 시작
@@ -38,7 +39,7 @@ const SetPassword = () => {
   // 비밀번호 입력 후, 다음 단계로 넘어가는 함수
   const handlePasswordEnter = useCallback(async () => {
     // 현재 비밀번호 입력 후, 새 비밀번호 입력으로 넘어가는 경우
-    if (step === 'initial' && currentPassword.length === 6) {
+    if (step === 'initial' && currentPassword?.length === 6) {
       try {
         const result = await checkPassword(currentPassword);
         // 현재 비밀번호가 맞는 경우
@@ -58,20 +59,20 @@ const SetPassword = () => {
         setErrorMessage('비밀번호 확인 중 오류가 발생했어요');
         setCurrentPassword('');
       }
-    } else if (step === 'newPassword' && newPassword.length === 6) {
+    } else if (step === 'newPassword' && newPassword?.length === 6) {
       // 새 비밀번호 입력 후, 새 비밀번호 확인으로 넘어가는 경우
       setStep('confirmPassword');
       setConfirmPassword('');
       resetErrorCount();
       setShouldRandomize(prev => prev + 1); // 키패드 재배치 트리거
-    } else if (step === 'confirmPassword' && confirmPassword.length === 6) {
+    } else if (step === 'confirmPassword' && confirmPassword?.length === 6) {
       // 새 비밀번호 확인 후, 새 비밀번호 설정하는 경우
       if (newPassword === confirmPassword) {
         try {
           await setNewPasswordMutation(newPassword);
           resetEditPassword();
           resetErrorCount();
-          navigate(from, { replace: true });
+          navigate(from, { replace: true, state: { selectedItems } });
 
           //여기 처리
         } catch (error) {

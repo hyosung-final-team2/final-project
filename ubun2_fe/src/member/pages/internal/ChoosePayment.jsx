@@ -24,6 +24,7 @@ const ChoosePayment = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const selectedItems = location.state?.selectedItems;
+  const [selectedItemsList, setSelectedItemsList] = useState(selectedItems);
 
   const { orderData, selectedPaymentMethodId, setSelectedPaymentMethodId, selectedAddressId, setSelectedPaymentMethodType, setOrderData } = useOrderDataStore();
 
@@ -35,9 +36,13 @@ const ChoosePayment = () => {
 
   const handleBottomButtonClick = () => {
     if (!isPasswordSet) {
-      navigate('/member/app/password/set', { state: { from: '/member/app/payments' } });
+      navigate('/member/app/password/set', { state: { from: '/member/app/payments', selectedItems: selectedItemsList } });
     }
   };
+
+  useEffect(() => {
+    setSelectedItemsList(selectedItems);
+  }, [selectedItems]);
 
   const paymentMethods = useMemo(() => {
     const methods = [
@@ -101,7 +106,7 @@ const ChoosePayment = () => {
 
     if (!isPasswordSet) {
       toast.error('결제 비밀번호를 설정해주세요.', errorToastStyle);
-      navigate('/member/app/password/set', { state: { from: '/member/app/payments' } });
+      navigate('/member/app/password/set', { state: { from: '/member/app/payments', selectedItems: selectedItemsList } });
       return;
     }
 
@@ -118,15 +123,13 @@ const ChoosePayment = () => {
     navigate('/member/app/password');
   };
 
-  console.log(location.state);
-
   return (
     <div className='flex flex-col h-full bg-gray-100'>
       <main className='flex flex-col items-center flex-grow pt-12 px-7'>
         <h2 className='text-[100%] text-gray-500 mb-1 font-bold'>
           {selectedItems?.length === 1
-            ? selectedItems[0]?.cartProducts[0].productName
-            : `${selectedItems[0]?.cartProducts[0].productName}외 ${selectedItems?.length - 1}건`}
+            ? selectedItems[0]?.cartProducts[0]?.productName
+            : `${selectedItems[0]?.cartProducts[0]?.productName}외 ${selectedItems?.length - 1}건`}
         </h2>
         <p className='text-[180%] font-bold mb-12'>{`${totals.totalAmount?.toLocaleString()}`}원</p>
 
