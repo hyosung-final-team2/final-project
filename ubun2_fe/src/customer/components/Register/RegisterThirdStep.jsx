@@ -48,11 +48,11 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
     else {
       setLoading(true);
       setRegisterThirdData(thirdRegisterObj);
-      signUpMutate();
+      signUpMutate({},{
+        onSuccess: () => setRegisterStep(4),
+        onError: () => console.log("회원가입 실패")
+      });
       setLoading(false);
-      if (!isError) {
-        setRegisterStep(4);
-      }
     }
   };
 
