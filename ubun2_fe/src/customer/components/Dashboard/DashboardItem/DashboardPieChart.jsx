@@ -83,13 +83,13 @@ const DashboardPieChart = ({ topSellingProductsValue, daysBetween }) => {
                     right: 0,
                     top: '50%',
                     transform: 'translate(0, -50%)',
-                    fontSize: '90%',
+                    fontSize: '75%',
                   }
                 : {
                     bottom: '20px',
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    fontSize: '90%',
+                    fontSize: '0.8dvw',
                   }
             }
           />
