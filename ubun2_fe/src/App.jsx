@@ -23,7 +23,6 @@ import MemberLayout from './member/layouts/Layout.jsx'
 import {useEffect} from "react";
 import useFCMTokenStore from "./FCMTokenStore.js";
 import {messaging} from "../initFirebase.js";
-import SwaggerUIRedirect from "./Swagger.jsx";
 
 const App = () => {
   const customToastStyle = {
@@ -93,7 +92,6 @@ const App = () => {
 
         {/* Fallback Route */}
         {/*<Route path='*' element={<Navigate to={token ? '/customer/app/dashboard' : '/customer/login'} replace />} />*/}
-        <Route path='/swagger-ui/*' element={<SwaggerUIRedirect />} />
         <Route path='*' element={<Navigate to={'/member/login'} replace />} />
       </Routes>
 
