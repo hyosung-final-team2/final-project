@@ -24,7 +24,7 @@ const DashboardStats = ({ title, bgColor, hoverBgColor, icon, value, description
           <div className='flex flex-col ml-4 min-w-0 flex-1 justify-center h-full'>
             <div className={`stat-title dark:text-slate-300 ${textColor} text-sm truncate`}>{title}</div>
             <div className={`stat-value dark:text-slate-300 ${textColor} text-2xl font-bold truncate`}>{value}</div>
-            <div className={`stat-desc text-main text-xs truncate`}>{description}</div>
+            <div className={`stat-desc  text-xs 1350p:text-main lg:text-transparent truncate`}>{description}</div>
           </div>
         </div>
       </div>
