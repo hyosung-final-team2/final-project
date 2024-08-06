@@ -48,7 +48,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                        // configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://clicknbuy.co.kr"));
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://clicknbuy.co.kr","https://clicknbuy.co.kr/swagger-ui"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -88,8 +88,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/api/customers/login", "/api/customers/signup", "/api/token/refresh",
                                          "/api/auth/send", "/api/auth", "/api/members/signup", "/api/find/id",
-                                         "/api/find/password","/api/reset/password", "api/checkId","/swagger",
-                                         "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**").permitAll()
+                                         "/api/find/password","/api/reset/password", "api/checkId",
+                                "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**").permitAll()
                         .requestMatchers("/api/customers/**").hasRole("CUSTOMER")
                         .requestMatchers("/api/members/**").hasRole("MEMBER")
                         .anyRequest().authenticated());
