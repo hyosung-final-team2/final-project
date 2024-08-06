@@ -139,15 +139,25 @@ function Product() {
       </div>
 
       {/* 상품 상세 정보 */}
-      <div className='w-full px-6 bg-amber-200' style={{ height: '1000px' }}></div>
+        {product?.detailImagesPath.length > 0 ?
+            <div className='w-full px-6'>
+                {product?.detailImagesPath.map((image, idx) => {
+                    return <img key={idx} src={image} alt={image} width="100%"/>
+                })}
+            </div> :
+            <div style={{height:"300px"}} className='w-full px-6 flex justify-center items-center text-xl bg-base-200 rounded-xl overflow-hidden'>
+              <div>등록된 상품 설명이 없습니다.</div>
+            </div>
+        }
 
-      {/* 상품 문의 */}
-      <div className='px-6'>
-        <AccordionBody />
-      </div>
 
-      {/* 구매 버튼 */}
-      <div className='sticky bottom-0 left-0 right-0 flex w-full'>
+        {/* 상품 문의 */}
+        <div className='px-6 pt-4'>
+            <AccordionBody customerName={product?.customerName} customerPhone={product?.customerPhone} customerEmail={product?.customerEmail} customerAddress={product?.customerAddress}/>
+        </div>
+
+        {/* 구매 버튼 */}
+        <div className='sticky bottom-0 left-0 right-0 flex w-full'>
         <div className='p-10'></div>
         {product?.stockQuantity !== 0 ? (
           <BottomButton buttonText='구매하기' buttonStyle='bg-main text-white' buttonFunc={buyButtonFunc} />
