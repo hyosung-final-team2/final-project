@@ -16,7 +16,8 @@ public enum AuthExceptionType implements CustomExceptionType {
     BLACKLIST_TOKEN(109,HttpStatus.UNAUTHORIZED, "블랙리스트에 등록된 토큰입니다."),
     SAME_AS_OLD_PASSWORD(110,HttpStatus.BAD_REQUEST, "이전 비밀번호와 같은 비밀번호입니다."),
     NO_EXIST_EMAIL(111,HttpStatus.BAD_REQUEST, "존재하지 않는 이메일입니다."),
-    NO_EXIST_AUTH_NUMBER(112,HttpStatus.BAD_REQUEST, "인증번호가 존재하지 않습니다.");
+    NO_EXIST_AUTH_NUMBER(112,HttpStatus.BAD_REQUEST, "인증번호가 존재하지 않습니다."),
+    EMAIL_SEND_FAILED(113,HttpStatus.BAD_REQUEST, "이메일 발송에 실패했습니다.");
 
     private int errorCode;
     private HttpStatus httpStatus;
