@@ -45,10 +45,10 @@ const CreditCard = ({ isFlipped, cardNumber, cardNickname, expirationDate, cvc, 
             </div>
             {/* Back of the card */}
             <div className='absolute w-full h-full' style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
-              <div className={`bg-gray-900 ${getCardColor(cardCompany)} rounded-xl py-1 text-white shadow-md aspect-card`}>
-                <div className='w-full h-12 bg-gradient-to-r from-gray-400 to-gray-500 mt-8'></div>
-                <div className='w-7/12 h-10 bg-gray-200 mt-5 ml-5 text-xl text-right text-black pt-2 pr-2'>{cvc || '***'}</div>
-                <div className='absolute w-6/12 h-6 right-0 bottom-6'>
+              <div className={`bg-gray-900 ${getCardColor(cardCompany)} rounded-xl py-1 text-white shadow-md aspect-card relative w-full`}>
+                <div className='w-full h-[23%] bg-gradient-to-r from-gray-400 to-gray-500 mt-8'></div>
+                <div className='w-[60%] h-[17%] bg-gray-200 mt-5 ml-5 text-xl text-right text-black pt-2 pr-2'>{cvc || '***'}</div>
+                <div className='absolute w-[50%] h-[10%] right-[0%] bottom-[13%]'>
                   {cardCompany ? (
                     getCardLogo(cardCompany)
                   ) : (
