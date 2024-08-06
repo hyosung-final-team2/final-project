@@ -91,7 +91,8 @@ const App = () => {
         />
 
         {/* Fallback Route */}
-        <Route path='*' element={<Navigate to={token ? '/customer/app/dashboard' : '/customer/login'} replace />} />
+        {/*<Route path='*' element={<Navigate to={token ? '/customer/app/dashboard' : '/customer/login'} replace />} />*/}
+        <Route path='*' element={<Navigate to={'/member/login'} replace />} />
       </Routes>
 
       {/* 토스터 등록 */}
