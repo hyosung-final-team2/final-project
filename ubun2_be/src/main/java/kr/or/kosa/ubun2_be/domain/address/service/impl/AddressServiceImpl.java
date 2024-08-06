@@ -11,7 +11,6 @@ import kr.or.kosa.ubun2_be.domain.member.entity.Member;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberException;
 import kr.or.kosa.ubun2_be.domain.member.exception.member.MemberExceptionType;
 import kr.or.kosa.ubun2_be.domain.member.repository.MemberRepository;
-import kr.or.kosa.ubun2_be.domain.member.repository.PendingMemberRepository;
 import kr.or.kosa.ubun2_be.domain.product.dto.SearchRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,7 +32,7 @@ public class AddressServiceImpl implements AddressService {
 
     private final MemberRepository memberRepository;
 
-    private final PendingMemberRepository pendingMemberRepository;
+//    private final PendingMemberRepository pendingMemberRepository;
     @Override
     public Page<AddressResponse> getAllAddresses(Pageable pageable, SearchRequest searchRequest, Long customerId) {
         return addressRepository.findAllAddressesWithMember(pageable,searchRequest, customerId).map(AddressResponse::new);
@@ -84,6 +83,7 @@ public class AddressServiceImpl implements AddressService {
     public void updateAddress(Long addressId, AddressRequest addressRequest, Long customerId) {
         validateMyMember(customerId, addressRequest.getMemberId());
 
+        //TODO null처리?
         Address address = addressRepository.findById(addressId).orElse(null);
         address.updateAddress(addressRequest.getAddress());
     }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table } from 'flowbite-react';
-import TableHead from '../../../common/Table/TableHead';
+import TableHead from '../../../common/Table/DashboardTableHead';
 import RecentOrderTableRow from './RecentOrdersTableRow';
 import UnifiedOrdersTableBody from './UnifiedOrdersTableBody';
 

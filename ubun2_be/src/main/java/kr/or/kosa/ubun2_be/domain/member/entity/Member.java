@@ -17,7 +17,10 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
-@Table(name = "member")
+@Table(name = "member", indexes = {
+        @Index(name = "idx_member_email", columnList = "memberEmail"),
+        @Index(name = "idx_member_login_id", columnList = "memberLoginId")
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Member extends BaseTimeEntity implements UserType {

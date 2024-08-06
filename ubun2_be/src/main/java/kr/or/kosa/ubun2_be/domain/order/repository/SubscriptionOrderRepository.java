@@ -22,5 +22,4 @@ public interface SubscriptionOrderRepository extends JpaRepository<SubscriptionO
 
     Optional<SubscriptionOrder> findBySubscriptionOrderIdAndMemberId(Long orderId, Long memberId);
 
-    List<SubscriptionOrder> findByMemberIdOrderByCreatedAtDesc(Long memberId);
 }
