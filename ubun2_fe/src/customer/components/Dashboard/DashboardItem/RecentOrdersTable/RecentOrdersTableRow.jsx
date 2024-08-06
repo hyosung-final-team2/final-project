@@ -17,11 +17,11 @@ const RecentOrderTableRow = ({ id, createdAt, memberName, orderProducts, subscri
   };
   return (
     <Table.Row className='bg-white dark:border-gray-700 dark:bg-gray-800 hover:bg-gray-50 cursor-pointer' onClick={handleOnclick}>
-      <Table.Cell className='py-2 text-[0.8dvw]'>{date}</Table.Cell>
-      <Table.Cell className='py-2 text-[0.8dvw]'>{memberName}</Table.Cell>
-      <Table.Cell className='py-2 text-[0.8dvw]'>{items}</Table.Cell>
-      <Table.Cell className='py-2 text-[0.8dvw]'>{totalOrderPrice.toLocaleString('ko-KR')}원</Table.Cell>
-      <Table.Cell className='py-2 text-[0.8dvw]'>
+      <Table.Cell className='py-2 text-sm '>{date}</Table.Cell>
+      <Table.Cell className='py-2 text-sm'>{memberName}</Table.Cell>
+      <Table.Cell className='py-2 text-sm'>{items}</Table.Cell>
+      <Table.Cell className='py-2 text-sm '>{totalOrderPrice.toLocaleString('ko-KR')}원</Table.Cell>
+      <Table.Cell className='py-2 text-sm '>
         <span
           className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
           ${orderStatus === 'APPROVED' ? 'bg-badge-green text-white' : orderStatus === 'PENDING' ? 'bg-badge-orange text-white' : 'bg-badge-red text-white'}`}
