@@ -14,7 +14,7 @@ const OrderItemList = ({ productImagePath, productName, productImageOriginalName
           <div className='flex flex-col gap-1'>
             <p className='mb-1 text-sm font-bold'>{productName}</p>
             <div className='flex items-end gap-3'>
-              <p className='font-bold'>{`${formatPrice(totalPrice)} 원`}</p>
+              <p className='font-bold'>{`총 ${formatPrice(totalPrice)} 원`}</p>
             </div>
             {paymentCancel.includes(orderStatus) ? <p className='text-sm text-red-600'>결제취소</p> : <p className='text-sm text-blue-600'>결제완료</p>}
           </div>

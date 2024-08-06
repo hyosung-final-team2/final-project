@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import DeleteConfirmModal from '../../common/Modal/DeleteConfirmModal.jsx';
 import AlertConfirmModal from '../../common/Modal/AlertConfirmModal.jsx';
 import CheckConfirmModal from '../../common/Modal/CheckConfirmModal.jsx';
-import {useSendPersonalAlarm} from "../../../api/notification/queris.js";
+import { useSendPersonalAlarm } from '../../../api/notification/queris.js';
 
 const PendingOrderTable = () => {
   const navigate = useNavigate();
@@ -82,11 +82,11 @@ const PendingOrderTable = () => {
   const handleAllChecked = checked => {
     if (checked) {
       setSelectedPendingOrders(
-          pendingOrderList.map(pendingOrder => ({
-            orderId: pendingOrder.orderId,
-            subscription: pendingOrder.subscription,
-            memberId: pendingOrder.memberId
-          }))
+        pendingOrderList.map(pendingOrder => ({
+          orderId: pendingOrder.orderId,
+          subscription: pendingOrder.subscription,
+          memberId: pendingOrder.memberId,
+        }))
       );
     } else {
       setSelectedPendingOrders([]);
@@ -95,11 +95,13 @@ const PendingOrderTable = () => {
 
   const handleRowChecked = (id, subscription, memberId) => {
     setSelectedPendingOrders(prev => {
-      const isSelected = prev.some(pendingOrder => pendingOrder.orderId === id && pendingOrder.subscription === subscription && pendingOrder.memberId === memberId);
+      const isSelected = prev.some(
+        pendingOrder => pendingOrder.orderId === id && pendingOrder.subscription === subscription && pendingOrder.memberId === memberId
+      );
       if (isSelected) {
         return prev.filter(pendingOrder => !(pendingOrder.orderId === id && pendingOrder.subscription === subscription && pendingOrder.memberId === memberId));
       } else {
-        return [...prev, { orderId: id, subscription, memberId  }];
+        return [...prev, { orderId: id, subscription, memberId }];
       }
     });
   };
@@ -152,13 +154,14 @@ const PendingOrderTable = () => {
       subscription: order.subscription,
     }));
 
-    updatePendingOrderMutation({ requestData },
-        {
-          onSuccess: () => {
-            const isApproved =  newStatus === 'APPROVED'
-            sendPersonalAlarmMutate([orders, isApproved])
-          }
-        }
+    updatePendingOrderMutation(
+      { requestData },
+      {
+        onSuccess: () => {
+          const isApproved = newStatus === 'APPROVED';
+          sendPersonalAlarmMutate([orders, isApproved]);
+        },
+      }
     );
   };
 
@@ -314,7 +317,7 @@ const PendingOrderTable = () => {
           setIsDeleteConfirmModalOpen={setIsDeleteConfirmModalOpen}
           text={
             <p className='text-lg'>
-              <span className='font-bold text-red-500'>{selectedPendingOrders.length}</span>건의 주문을 취소하시겠습니까?
+              <span className='font-bold text-red-500'>{selectedPendingOrders.length}</span>건의 주문을 거절하시겠습니까?
             </p>
           }
           firstButtonFunc={deleteConfirmFirstButtonFunc}
