@@ -17,7 +17,7 @@ export const formatDate = dateString => {
 
 export const formatDateFromNumbers = input => {
   // input이 undefined이거나 빈 문자열인 경우 처리
-  if (input === undefined || input === '') {
+  if (input === undefined || input === '' || input === null) {
     return '**/**';
   }
 
@@ -27,7 +27,7 @@ export const formatDateFromNumbers = input => {
   //toast로 알려줘야함
   // 입력이 숫자로만 이루어졌는지 확인
   if (!/^\d{1,4}$/.test(inputString)) {
-    throw new Error('입력은 1에서 4자리의 숫자여야 합니다.');
+    toast.error('입력은 숫자여야 합니다.', errorToastStyle);
   }
 
   let month = inputString.slice(0, 2).padEnd(2, '*');
