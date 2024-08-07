@@ -198,7 +198,8 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                 .join(product.customer, customer)
                 .where(customer.customerId.eq(customerId)
                         .and(order.createdAt.between(startDate, endDate))
-                        .and(order.orderStatus.eq(OrderStatus.APPROVED)))
+                        .and(order.orderStatus.eq(OrderStatus.APPROVED))
+                        .and(product.customer.customerId.eq(customerId)))
                 .groupBy(product.productId, product.productName)
                 .orderBy(orderProduct.quantity.sum().desc())
                 .fetch();
