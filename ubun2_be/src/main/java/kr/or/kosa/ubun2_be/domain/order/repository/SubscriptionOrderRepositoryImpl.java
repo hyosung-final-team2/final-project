@@ -52,12 +52,12 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     public List<SubscriptionOrder> findSubscriptionOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
         JPQLQuery<SubscriptionOrder> query = from(subscriptionOrder)
                 .distinct()
-                .leftJoin(subscriptionOrder.member, member).fetchJoin()
+                .join(subscriptionOrder.member, member).fetchJoin()
                 .join(member.memberCustomers, memberCustomer)
-                .leftJoin(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct).fetchJoin()
-                .leftJoin(subscriptionOrder.paymentMethod, paymentMethod).fetchJoin()
-                .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
-                .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
+                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct).fetchJoin()
+                .join(subscriptionOrder.paymentMethod, paymentMethod).fetchJoin()
+                .join(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
+                .join(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .where(
                         memberCustomer.customer.customerId.eq(customerId),
                         subscriptionOrder.orderStatus.ne(OrderStatus.PENDING),
@@ -80,12 +80,12 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     public List<SubscriptionOrder> findPendingSubscriptionOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
         JPQLQuery<SubscriptionOrder> query = from(subscriptionOrder)
                 .distinct()
-                .leftJoin(subscriptionOrder.member, member).fetchJoin()
+                .join(subscriptionOrder.member, member).fetchJoin()
                 .join(member.memberCustomers, memberCustomer)
-                .leftJoin(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct).fetchJoin()
-                .leftJoin(subscriptionOrder.paymentMethod, paymentMethod).fetchJoin()
-                .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
-                .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
+                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct).fetchJoin()
+                .join(subscriptionOrder.paymentMethod, paymentMethod).fetchJoin()
+                .join(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
+                .join(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .where(
                         memberCustomer.customer.customerId.eq(customerId),
                         subscriptionOrder.orderStatus.eq(OrderStatus.PENDING),
@@ -99,7 +99,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     public Optional<SubscriptionOrder> findPendingSubscriptionOrderByIdAndCustomerId(Long subscriptionOrderId, Long customerId) {
         JPQLQuery<SubscriptionOrder> query = from(subscriptionOrder)
                 .distinct()
-                .leftJoin(subscriptionOrder.member, member).fetchJoin()
+                .join(subscriptionOrder.member, member).fetchJoin()
                 .join(member.memberCustomers, memberCustomer)
                 .where(
                         subscriptionOrder.subscriptionOrderId.eq(subscriptionOrderId),
