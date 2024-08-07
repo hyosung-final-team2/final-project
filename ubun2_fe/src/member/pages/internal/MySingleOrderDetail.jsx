@@ -11,6 +11,7 @@ import ProductItemReadOnly from '../../components/common/productItem/ProductItem
 import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
 import AddressSummary from '../../components/common/addressSummary/AddressSummary';
+import GlobalLoader from '../../../customer/components/common/Loader/GlobalLoader';
 
 const MySingleOrderDetail = () => {
   const { orderId } = useParams();
@@ -20,7 +21,7 @@ const MySingleOrderDetail = () => {
   const modalButtonStyle = 'bg-gray-600 text-white';
   const secondModalButtonStyle = 'bg-red-700 text-white';
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <GlobalLoader />;
   if (isError) return <div>Error occurred while fetching order details.</div>;
 
   const orderData = orderResponse?.data?.data;

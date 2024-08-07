@@ -17,6 +17,7 @@ import useModalStore from '../../store/modalStore';
 import useOrderDataStore from '../../store/order/orderDataStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
 import { formatAddressOneLine } from '../../../customer/utils/addressFormat';
+import GlobalLoader from '../../../customer/components/common/Loader/GlobalLoader';
 
 const OrderComplete = () => {
   const { selectedItems, totals, clearCart } = useOrderItemsStore();
@@ -71,7 +72,7 @@ const OrderComplete = () => {
   };
 
   if (addressesLoading || cardLoading || accountLoading) {
-    return <div>Loading...</div>;
+    return <GlobalLoader />;
   }
 
   if (addressesError || cardError || accountError) {

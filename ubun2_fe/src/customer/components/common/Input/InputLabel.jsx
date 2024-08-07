@@ -10,6 +10,7 @@ const InputLabel = ({
   isOptional = true,
   onChange,
   textStyle = 'text-lg',
+  placeholder
 }) => {
   const [value, setValue] = useState(defaultValue);
 
@@ -37,6 +38,7 @@ const InputLabel = ({
           defaultValue={value}
           onChange={e => updateInputValue(e.target.value)}
           disabled={disabled}
+          placeholder={placeholder}
           className={`flex-grow w-full p-3 ${value === '-' ? 'text-center' : ''} ${
             isUpdate ? 'border border-gray-300' : 'border-none'
           } rounded-lg input disabled:bg-custom-input-gray disabled:text-custom-font-gray`}

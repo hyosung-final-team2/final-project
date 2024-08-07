@@ -51,9 +51,9 @@ const MemberRegisterModal = ({isOpen, setOpenModal, handleRegisterSuccess}) => {
 
             <Modal.Body>
                 <div className='flex flex-col gap-2'>
-                    <InputLabel labelTitle='회원명' defaultValue={pendingMemberName} isUpdate={true} isOptional={false} onChange={handleMemberNameChange}/>
-                    <InputLabel labelTitle='전화번호' defaultValue={pendingMemberPhone} isUpdate={true} isOptional={false} onChange={handleMemberPhoneChange}/>
-                    <InputLabel labelTitle='이메일' defaultValue={pendingMemberEmail} isUpdate={true} isOptional={false} onChange={handleMemberEmailChange}/>
+                    <InputLabel labelTitle='회원명' defaultValue={pendingMemberName} isUpdate={true} isOptional={false} onChange={handleMemberNameChange} placeholder="이름을 입력해주세요."/>
+                    <InputLabel labelTitle='전화번호' defaultValue={pendingMemberPhone} isUpdate={true} isOptional={false} onChange={handleMemberPhoneChange}  placeholder="ex) 01012345678"/>
+                    <InputLabel labelTitle='이메일' defaultValue={pendingMemberEmail} isUpdate={true} isOptional={false} onChange={handleMemberEmailChange} placeholder="이메일을 입력해주세요 "/>
                 </div>
             </Modal.Body>
             <Modal.Footer>
