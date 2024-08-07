@@ -52,14 +52,15 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     public List<SubscriptionOrder> findSubscriptionOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
         JPQLQuery<SubscriptionOrder> query = from(subscriptionOrder)
                 .distinct()
+                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
+                .join(subscriptionOrderProduct.product, product)
+                .join(product.customer, customer)
                 .leftJoin(subscriptionOrder.member, member).fetchJoin()
-                .join(member.memberCustomers, memberCustomer)
-                .leftJoin(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct).fetchJoin()
                 .leftJoin(subscriptionOrder.paymentMethod, paymentMethod).fetchJoin()
                 .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
                 .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .where(
-                        memberCustomer.customer.customerId.eq(customerId),
+                        customer.customerId.eq(customerId),
                         subscriptionOrder.orderStatus.ne(OrderStatus.PENDING),
                         searchCondition(searchRequest),
                         orderStatusEq(searchRequest)
@@ -80,14 +81,15 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     public List<SubscriptionOrder> findPendingSubscriptionOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
         JPQLQuery<SubscriptionOrder> query = from(subscriptionOrder)
                 .distinct()
+                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
+                .join(subscriptionOrderProduct.product, product)
+                .join(product.customer, customer)
                 .leftJoin(subscriptionOrder.member, member).fetchJoin()
-                .join(member.memberCustomers, memberCustomer)
-                .leftJoin(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct).fetchJoin()
                 .leftJoin(subscriptionOrder.paymentMethod, paymentMethod).fetchJoin()
                 .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
                 .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .where(
-                        memberCustomer.customer.customerId.eq(customerId),
+                        customer.customerId.eq(customerId),
                         subscriptionOrder.orderStatus.eq(OrderStatus.PENDING),
                         searchCondition(searchRequest)
                 );

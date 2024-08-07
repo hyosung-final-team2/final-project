@@ -52,14 +52,15 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     public List<Order> findOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
         JPQLQuery<Order> query = from(order)
                 .distinct()
+                .join(order.orderProducts, orderProduct)
+                .join(orderProduct.product, product)
+                .join(product.customer, customer)
                 .leftJoin(order.member, member).fetchJoin()
-                .join(member.memberCustomers, memberCustomer)
-                .leftJoin(order.orderProducts, orderProduct).fetchJoin()
                 .leftJoin(order.paymentMethod, paymentMethod).fetchJoin()
                 .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
                 .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .where(
-                        memberCustomer.customer.customerId.eq(customerId),
+                        customer.customerId.eq(customerId),
                         order.orderStatus.ne(OrderStatus.PENDING),
                         searchCondition(searchRequest),
                         orderStatusEq(searchRequest)
@@ -80,14 +81,15 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     public List<Order> findPendingOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
         JPQLQuery<Order> query = from(order)
                 .distinct()
+                .join(order.orderProducts, orderProduct)
+                .join(orderProduct.product, product)
+                .join(product.customer, customer)
                 .leftJoin(order.member, member).fetchJoin()
-                .join(member.memberCustomers, memberCustomer)
-                .leftJoin(order.orderProducts, orderProduct).fetchJoin()
                 .leftJoin(order.paymentMethod, paymentMethod).fetchJoin()
                 .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
                 .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .where(
-                        memberCustomer.customer.customerId.eq(customerId),
+                        customer.customerId.eq(customerId),
                         order.orderStatus.eq(OrderStatus.PENDING),
                         searchCondition(searchRequest)
                 );
