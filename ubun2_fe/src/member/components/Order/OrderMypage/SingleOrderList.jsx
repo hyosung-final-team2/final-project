@@ -5,6 +5,7 @@ import SlideUpModal from '../../common/SlideUpModal';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import useModalStore from '../../../store/modalStore';
 import { myOrderPeriodOptions } from '../orderModalContent';
+import GlobalLoader from '../../../../customer/components/common/Loader/GlobalLoader';
 
 const SingleOrderList = () => {
   const [selectedPeriod, setSelectedPeriod] = useState({ value: null, label: '전체', periodType: null, periodValue: null });
@@ -36,6 +37,7 @@ const SingleOrderList = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loadMore]);
 
+  if (isLoading) return <GlobalLoader />;
   if (isError) return <div>에러가 발생했습니다.</div>;
 
   return (

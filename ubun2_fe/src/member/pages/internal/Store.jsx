@@ -12,6 +12,7 @@ import ChevronDownIcon from '@heroicons/react/24/outline/ChevronDownIcon.js';
 import { useGetCategory } from '../../api/Store/queris.js';
 import SelectCategoryModal from '../../components/Product/SelectCategoryModal.jsx';
 import useCategoryStore from '../../store/category/categoryStore.js';
+import GlobalLoader from '../../../customer/components/common/Loader/GlobalLoader.jsx';
 
 function Store() {
   const location = useLocation();
@@ -82,7 +83,7 @@ function Store() {
     setIsClickedCategory(false);
   };
 
-  if (isLoading) return <h3>로딩중</h3>;
+  if (isLoading) return <GlobalLoader />;
   if (isError) return <h3>잘못된 데이터 입니다.</h3>;
 
   return (
@@ -98,7 +99,7 @@ function Store() {
           useWindow={false}
         >
           <div className='flex flex-col'>
-            <div className='px-4 py-3 pt-8 pb-0 text-xl flex justify-between items-center'>
+            <div className='flex items-center justify-between px-4 py-3 pt-8 pb-0 text-xl'>
               <div
                 onClick={() => {
                   setModalState(true);
@@ -111,7 +112,7 @@ function Store() {
               </div>
               <div>{data?.pages[0]?.data?.data?.totalElements}개</div>
             </div>
-            <div className='w-full h-full flex flex-wrap'>
+            <div className='flex flex-wrap w-full h-full'>
               {data?.pages?.map(page =>
                 page?.data?.data?.content?.map((item, idx) => (
                   <ProductItem

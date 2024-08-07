@@ -13,6 +13,7 @@ import ProductItemReadOnly from '../../components/common/productItem/ProductItem
 import SubscriptionProductItemEditable from '../../components/common/productItem/SubscriptionProductItemEditable';
 import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
+import GlobalLoader from '../../../customer/components/common/Loader/GlobalLoader';
 
 const modalButtonStyle = 'bg-gray-600 text-white';
 const secondModalButtonStyle = 'bg-red-700 text-white';
@@ -129,7 +130,7 @@ const MySubscriptionOrderDetail = () => {
     return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <GlobalLoader />;
   if (isError) return <div>Error occurred while fetching order details.</div>;
   if (!orderData) return null;
 
