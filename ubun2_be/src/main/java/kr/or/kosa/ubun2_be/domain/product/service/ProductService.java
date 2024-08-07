@@ -17,7 +17,7 @@ public interface ProductService {
     void modifyProduct(MultipartFile image,List<MultipartFile> detailImages,Long customerId, ProductRequest productUpdateRequest);
     void removeProduct(Long customerId, Long productId);
     boolean isExistProductName(String productName);
-    boolean checkValidation(ProductRequest productRequest);
+//    boolean checkValidation(ProductRequest productRequest);
     Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable,Long memberId);
     ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId,Long memberId);
     Product getProductById(Long productId);

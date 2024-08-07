@@ -6,11 +6,11 @@ const OrderStore = ({ store }) => {
   const regularOrderProducts = store.cartProducts.filter(product => product.orderOption === 'SUBSCRIPTION');
 
   return (
-    <div className='p-4 py-3 mt-2 mb-2 bg-white'>
+    <div className='py-4 m-4 bg-white border-2 border-gray-100 rounded-lg'>
       <div className='flex items-center w-full px-4 py-2'>
-        <h2 className='pb-2 text-xl font-semibold text-main'>{store.businessName}</h2>
+        <h2 className='text-xl font-semibold  text-main'>{store.businessName}</h2>
       </div>
-      <div className='flex flex-col w-full gap-8 p-4'>
+      <div className='flex flex-col w-full gap-8'>
         {singleOrderProducts.length > 0 && <SingleOrder singleOrderProducts={singleOrderProducts} />}
         {regularOrderProducts.length > 0 && <SubscriptionOrder regularOrderProducts={regularOrderProducts} />}
       </div>

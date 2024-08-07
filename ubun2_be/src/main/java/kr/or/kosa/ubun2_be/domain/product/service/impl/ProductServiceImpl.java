@@ -1,6 +1,9 @@
 package kr.or.kosa.ubun2_be.domain.product.service.impl;
 
 import kr.or.kosa.ubun2_be.domain.customer.entity.Customer;
+import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerException;
+import kr.or.kosa.ubun2_be.domain.customer.exception.CustomerExceptionType;
+import kr.or.kosa.ubun2_be.domain.customer.repository.CustomerRepository;
 import kr.or.kosa.ubun2_be.domain.customer.service.CustomerService;
 import kr.or.kosa.ubun2_be.domain.member.service.MemberService;
 import kr.or.kosa.ubun2_be.domain.product.dto.*;
@@ -35,6 +38,7 @@ public class ProductServiceImpl implements ProductService {
     private final MemberService memberService;
     private final InventoryService inventoryService;
     private final CategoryRepository categoryRepository;
+    private final CustomerRepository customerRepository;
 
     @Override
     public Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable,boolean isMember) {
@@ -46,7 +50,10 @@ public class ProductServiceImpl implements ProductService {
         Product findProduct = productRepository.findByIsDeletedFalseAndCustomerCustomerIdAndProductId(customerId, productId)
                 .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
 
-        return new ProductDetailResponse(findProduct);
+        Customer findCustomer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER));
+
+        return new ProductDetailResponse(findProduct, findCustomer);
     }
 
     @Transactional
@@ -145,10 +152,10 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.existsByIsDeletedFalseAndProductName(productName);
     }
 
-    @Override
-    public boolean checkValidation(ProductRequest productRequest) {
-        return true;
-    }
+//    @Override
+//    public boolean checkValidation(ProductRequest productRequest) {
+//        return true;
+//    }
 
     @Override
     public Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable,Long memberId) {

@@ -27,31 +27,29 @@ const MyOrdersList = () => {
     }
   }, [orderStatusSummary]);
 
-  if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading data</div>;
 
   const hasOrders = memberInfo.singleOrders > 0 || memberInfo.subscriptionOrders > 0;
 
   return (
-    <div className='flex flex-col h-full gap-5 p-4 bg-white'>
+    <div className='flex flex-col h-full gap-10 p-4 bg-white'>
       <UserInfo memberInfo={memberInfo} />
 
       {hasOrders ? (
         <>
           <div className='flex w-full'>
-            <div className='flex justify-around w-full mt-3 mb-6'>
-              <div className='cursor-pointer' onClick={() => setActiveTab('single')}>
+            <div className='flex justify-around w-full mt-3'>
+              <div className='w-full text-center cursor-pointer' onClick={() => setActiveTab('single')}>
                 <h2 className={`text-2xl font-bold ${activeTab === 'single' ? 'text-main' : 'text-gray-400'}`}>단건주문</h2>
                 {activeTab === 'single' && <div className='h-1 mt-2 bg-indigo-700'></div>}
               </div>
-              <div className='cursor-pointer' onClick={() => setActiveTab('subscription')}>
+              <div className='w-full text-center cursor-pointer' onClick={() => setActiveTab('subscription')}>
                 <h2 className={`text-2xl font-bold ${activeTab === 'subscription' ? 'text-main' : 'text-gray-400'}`}>정기주문</h2>
                 {activeTab === 'subscription' && <div className='h-1 mt-2 bg-indigo-700'></div>}
               </div>
             </div>
-            {activeTab === 'creditCard' && <div className='h-1 mt-2 bg-indigo-700'></div>}
+            {activeTab === 'single' && <div className='h-1 mt-2 bg-indigo-700'></div>}
           </div>
-
           {activeTab === 'single' ? <SingleOrderList /> : <SubscriptionOrderList />}
         </>
       ) : (

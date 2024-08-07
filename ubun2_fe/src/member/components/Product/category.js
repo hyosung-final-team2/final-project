@@ -1,8 +1,8 @@
 export const categories = [
   { categoryName: '전체', path: 'all' },
-  { categoryName: '식품', path: 'cook.png' },
+  { categoryName: '식품', path: 'food.png' },
   { categoryName: '가전', path: 'elec.png' },
-  { categoryName: '주방', path: 'kitchen.png' },
+  { categoryName: '주방', path: 'cook.png' },
   { categoryName: '생활', path: 'life.png' },
   { categoryName: '음료', path: 'drink.png' },
   { categoryName: '패션', path: 'fashion.png' },

@@ -150,12 +150,11 @@ const StoreInfoDashBoard = () => {
     );
   };
 
-  if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>에러가 발생했습니다.</div>;
 
   return (
     <div className='p-6' style={{ height: '95%', background: 'white' }}>
-      <div className='flex w-full h-full gap-10'>
+      <div className='flex w-full h-full gap-3'>
         <div className='flex flex-col items-center justify-center w-2/5 h-full p-4 border border-gray-300 rounded-lg'>
           <StoreInfoDetail
             isEditingName={isEditingName}
@@ -166,7 +165,7 @@ const StoreInfoDashBoard = () => {
           />
         </div>
 
-        <div className='flex flex-col justify-between w-3/5 h-full gap-12 p-4 border border-gray-300 rounded-lg'>
+        <div className='flex flex-col justify-between w-3/5 h-full gap-10 px-12 py-8 border border-gray-300 rounded-lg'>
           <div className='flex flex-col h-full gap-10'>
             <div>
               <h2 className='mb-4 text-xl font-semibold'>주소 정보</h2>

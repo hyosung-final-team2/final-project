@@ -37,7 +37,6 @@ public class SignupRequest {
     private String businessRegistrationNumber;
 
     @NotBlank(message = "상호명을 입력해주세요")
-    @Pattern(regexp = "[가-힣a-zA-Z]+", message = "상호명을 입력해주세요")
     private String businessName;
 
     @NotBlank(message = "대표자명을 입력해주세요")
@@ -45,7 +44,7 @@ public class SignupRequest {
     private String businessOwner;
 
     @NotBlank(message = "개업일자를 선택해주세요")
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "올바른 날짜 형식이 아닙니다. (YYYY-MM-DD)")
+    @Pattern(regexp = "^\\d{4}\\d{2}\\d{2}$", message = "올바른 날짜 형식이 아닙니다. (YYYYMMDD)")
     private String businessOpenDate;
 
     @NotBlank(message = "사업장 주소를 입력해주세요")

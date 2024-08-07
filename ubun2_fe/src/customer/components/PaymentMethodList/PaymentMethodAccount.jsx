@@ -9,7 +9,7 @@ const PaymentMethodAccount = ({ bankName, memberName, accountNumber }) => {
     <div className={`flex-1 bg-slate-600 w-[400px] h-[230px] ${getCardColor(bankName)} text-white  p-6 relative flex flex-col rounded-xl`}>
       {/* <div className='mt-auto flex justify-between'> */}
       <div className='pb-10'>
-        <img className='h-[30px]' src={`/src/assets/banklogos/${getBankLogo(bankName)}`} alt='' />
+        <img className='h-[30px]' src={`/cardImages/logo/banklogos/${getBankLogo(bankName)}`} alt='' />
       </div>
       <div>
         <div className='text-sm '>은행명</div>

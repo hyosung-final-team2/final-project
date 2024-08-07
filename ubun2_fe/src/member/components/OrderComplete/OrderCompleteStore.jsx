@@ -7,8 +7,8 @@ const OrderCompleteStore = ({ store }) => {
   const { businessName, orderType, products, intervalDays } = store;
 
   return (
-    <div className='flex flex-col gap-2 px-4 py-3 mb-3 bg-white'>
-      <div className='flex justify-between w-full py-2 mt-2'>
+    <div className='flex flex-col gap-2 py-3 my-4 mb-2 bg-white border-2 border-gray-100 rounded-lg'>
+      <div className='flex justify-between w-full px-4 py-2'>
         <h2 className='pb-2 text-2xl font-semibold text-main'>{businessName}</h2>
         {orderType === '정기 주문' ? (
           <div className='flex'>
@@ -26,7 +26,8 @@ const OrderCompleteStore = ({ store }) => {
           </div>
         )}
       </div>
-      <div className='flex flex-col w-full gap-8 '>
+      <div className='w-full border-b'></div>
+      <div className='flex flex-col w-full gap-8 px-4'>
         <div className='flex flex-col w-full gap-3 bg-white'>
           <div className='flex items-end justify-end gap-3 text-gray-500'>{orderType === '정기 주문' && intervalDays && getCycleText(intervalDays)}</div>
           <div className='flex flex-col gap-5'>

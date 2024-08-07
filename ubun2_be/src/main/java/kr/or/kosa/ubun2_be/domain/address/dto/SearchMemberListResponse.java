@@ -21,12 +21,12 @@ public class SearchMemberListResponse {
         this.memberPhone = member.getMemberPhone();
         this.createdAt = member.getCreatedAt();
     }
-
-    public SearchMemberListResponse(PendingMember pendingMember) {
-        this.memberId = pendingMember.getPendingMemberId();
-        this.memberEmail = pendingMember.getPendingMemberEmail();
-        this.memberName = pendingMember.getPendingMemberName();
-        this.memberPhone = pendingMember.getPendingMemberPhone();
-        this.createdAt = null;
-    }
+//
+//    public SearchMemberListResponse(PendingMember pendingMember) {
+//        this.memberId = pendingMember.getPendingMemberId();
+//        this.memberEmail = pendingMember.getPendingMemberEmail();
+//        this.memberName = pendingMember.getPendingMemberName();
+//        this.memberPhone = pendingMember.getPendingMemberPhone();
+//        this.createdAt = null;
+//    }
 }

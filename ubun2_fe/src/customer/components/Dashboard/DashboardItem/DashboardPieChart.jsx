@@ -50,7 +50,7 @@ const DashboardPieChart = ({ topSellingProductsValue, daysBetween }) => {
 
   return (
     <div ref={containerRef} className='h-[30dvh] rounded-2xl p-5 bg-white drop-shadow-lg shadow-lg col-span-1'>
-      <div className='p-2 font-bold 1500p:text-2xl 1280p:text-xl 1080p:text-sm'>
+      <div className='p-2 font-bold 1500p:text-xl 1280p:text-lg 1080p:text-sm'>
         {daysBetween}일 동안 <span className='text-red-600'>{first}</span>
         {second} <br /> 가장 많이 팔렸어요!
       </div>
@@ -83,13 +83,13 @@ const DashboardPieChart = ({ topSellingProductsValue, daysBetween }) => {
                     right: 0,
                     top: '50%',
                     transform: 'translate(0, -50%)',
-                    fontSize: '90%',
+                    fontSize: '75%',
                   }
                 : {
                     bottom: '20px',
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    fontSize: '90%',
+                    fontSize: '75%',
                   }
             }
           />

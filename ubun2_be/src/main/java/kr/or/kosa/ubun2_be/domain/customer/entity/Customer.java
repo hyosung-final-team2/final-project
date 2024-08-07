@@ -18,7 +18,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "customer")
+@Table(name = "customer", indexes = {
+        @Index(name = "idx_customer_email", columnList = "customerEmail"),
+        @Index(name = "idx_customer_login_id", columnList = "customerLoginId")
+})
 public class Customer extends BaseTimeEntity implements UserType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

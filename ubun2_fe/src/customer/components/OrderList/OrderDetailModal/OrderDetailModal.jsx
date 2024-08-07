@@ -93,7 +93,7 @@ const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPr
                 승인
               </button>
               <button onClick={handleCancel} className={`${commonButtonStyles.DENIED}`}>
-                취소
+                거절
               </button>
             </div>
           ) : (

@@ -23,10 +23,10 @@ const SingleOrderProduct = ({ orderInfo }) => {
                 <span className='text-xs'>
                   <StatusBadge status={orderProduct.orderProductStatus} />
                 </span>
-                <p className='text-lg font-bold text-gray-900 dark:text-white'>{orderProduct.productDescription}</p>
+                <p className='text-lg font-bold text-gray-900 dark:text-white'>{orderProduct.productName}</p>
               </div>
               <div className='flex items-center gap-2'>
-                <span className='text-sm text-gray-500 dark:text-gray-400'>{orderProduct.productName}</span>
+                <span className='text-sm text-gray-500 dark:text-gray-400'>{orderProduct.productDescription}</span>
                 <span>|</span>
                 <span className='text-sm text-gray-500 dark:text-gray-400'>{`${formatCurrency(orderProduct.price)} 원`}</span>
                 <span>|</span>
