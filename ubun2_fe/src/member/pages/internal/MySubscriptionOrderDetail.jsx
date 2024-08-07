@@ -178,12 +178,12 @@ const MySubscriptionOrderDetail = () => {
 
           <div className='flex justify-end'>
             {isDeliveryEditable && !isEditing && hasEditableProducts && (
-              <span className='flex gap-3 text-gray-400 underline' onClick={handleEdit}>
+              <span className='flex gap-3 mb-2 text-gray-400 underline' onClick={handleEdit}>
                 <PencilSquareIcon className='w-5 h-5' />
               </span>
             )}
             {isEditing && hasEditableProducts && (
-              <div className='flex gap-3 text-gray-400 underline'>
+              <div className='flex gap-3 mb-2 text-sm text-gray-400 underline'>
                 <span
                   onClick={() => selectedProducts.length > 0 && setModalState(true)}
                   className={`cursor-pointer ${selectedProducts.length === 0 ? 'opacity-50' : ''}`}
