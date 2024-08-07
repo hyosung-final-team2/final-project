@@ -160,6 +160,7 @@ const MemberTable = () => {
 
   const checkConfirmSecondButtonFunc = () => {
     smsMutate()
+    setIsCheckConfirmModalOpen(false)
   }
 
   const {toggleIsReset} = useMemberTableStore();
