@@ -225,7 +225,8 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                 .join(subscriptionOrder.member.memberCustomers, memberCustomer)
                 .where(memberCustomer.customer.customerId.eq(customerId)
                         .and(subscriptionOrder.createdAt.between(startDate, endDate))
-                        .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED)))
+                        .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED))
+                        .and(product.customer.customerId.eq(customerId)))
                 .groupBy(product.productId, product.productName)
                 .orderBy(subscriptionOrderProduct.quantity.sum().desc())
                 .fetch();
