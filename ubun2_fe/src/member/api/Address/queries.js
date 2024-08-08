@@ -15,7 +15,6 @@ export const useRegisterAddress = () => {
     mutationFn: data => registerAddress(data),
     onSuccess: response => {
       queryClient.invalidateQueries({ queryKey: ['myAddresses'] });
-      console.log(response);
     },
     onError: error => {
       console.log(error);

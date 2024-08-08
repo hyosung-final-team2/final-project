@@ -22,7 +22,6 @@ export const useDeleteAddress = currentPage => {
       toast.success('주소지를 성공적으로 삭제했습니다.');
     },
     onError: error => {
-      console.log('error', error);
       toast.error(`Failed to delete Address: ${error.message}`);
     },
   });
@@ -36,7 +35,6 @@ export const useRegisterAddress = () => {
     onSuccess: response => {
       queryClient.invalidateQueries({ queryKey: ['address'] });
       toast.success('주소지를 성공적으로 등록했습니다.');
-      console.log(response);
     },
     onError: error => {
       console.log(error);

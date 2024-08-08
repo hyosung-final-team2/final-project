@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AlarmServiceImpl implements AlarmService{
+public class AlarmServiceImpl implements AlarmService {
 
     private final MemberRepository memberRepository;
     private final FirebaseMessaging firebaseMessaging;
@@ -83,7 +83,7 @@ public class AlarmServiceImpl implements AlarmService{
         Message message = makeGroupMessage(request, topic);
         sendMessage(message);
 
-        Alarm alarm = Alarm.createAlarm(request.getTitle(), request.getContent(),"");
+        Alarm alarm = Alarm.createAlarm(request.getTitle(), request.getContent(), "");
         List<Member> members = memberCustomerRepository.findMembersByCustomerId(request.getCustomerId());
 
         for (Member member : members) {
@@ -136,24 +136,26 @@ public class AlarmServiceImpl implements AlarmService{
 
     @Override
     public void markCustomerAlarmAsRead(Long customerId, String alarmId) {
-        customerAlarmRedisRepository.removeAlarmById(String.valueOf(customerId),alarmId);
+        customerAlarmRedisRepository.removeAlarmById(String.valueOf(customerId), alarmId);
     }
 
     @Override
-    public void sendSubCycleMessage(SubscriptionOrder subscriptionOrder,String delayReason) {
+    public void sendSubCycleMessage(SubscriptionOrder subscriptionOrder, String delayReason) {
         String businessName = subscriptionOrder.getSubscriptionOrderProducts().get(0).getProduct().getCustomer().getBusinessName();
         Long orderId = subscriptionOrder.getSubscriptionOrderId();
         int currentCycle = subscriptionOrder.getMaxCycleNumber();
         String fcmToken = subscriptionOrder.getMember().getFcmToken();
 
         String content = delayReason == null ?
-                         currentCycle + "회차 정기주문 완료 - 주문번호 : " + orderId :
-                         currentCycle + "회차 정기주문 연기 - 연기사유 : " + delayReason;
+                currentCycle + "회차 정기주문 완료 - 주문번호 : " + orderId :
+                currentCycle + "회차 정기주문 연기 - 연기사유 : " + delayReason;
 
         Message message = makeSubCycleMessage(businessName, content, fcmToken, subscriptionOrder.getSubscriptionOrderId());
         sendMessage(message);
-        Alarm alarm = Alarm.createAlarm(businessName, content,"");
-        memberAlarmRedisRepository.saveAlarm(String.valueOf(subscriptionOrder.getMember().getMemberId()),alarm);
+
+        String link = "http://localhost:5173/member/app/mypage/subscription-order/" + subscriptionOrder.getSubscriptionOrderId();
+        Alarm alarm = Alarm.createAlarm(businessName, content, link);
+        memberAlarmRedisRepository.saveAlarm(String.valueOf(subscriptionOrder.getMember().getMemberId()), alarm);
     }
 
     @Override
@@ -163,9 +165,9 @@ public class AlarmServiceImpl implements AlarmService{
         String content = subscriptionOrderProduct.getProduct().getProductName() + " - 상품 재고가 부족합니다.";
         String link = "https://clicknbuy.co.kr/customer/app/product";
 
-        sendMessage(makeOrderMessage(title,content,fcmToken,link));
-        Alarm alarm = Alarm.createAlarm(title, content,link);
-        customerAlarmRedisRepository.saveAlarm(String.valueOf(subscriptionOrderProduct.getProduct().getCustomer().getCustomerId()),alarm);
+        sendMessage(makeOrderMessage(title, content, fcmToken, link));
+        Alarm alarm = Alarm.createAlarm(title, content, link);
+        customerAlarmRedisRepository.saveAlarm(String.valueOf(subscriptionOrderProduct.getProduct().getCustomer().getCustomerId()), alarm);
     }
 
     // 단건,정기주문 들어왔을때, 재고 부족할때 - 고객에게 날아가는 push
@@ -178,8 +180,8 @@ public class AlarmServiceImpl implements AlarmService{
                         .build())
                 .putData("title", title)
                 .putData("content", content)
-                .putData("link",link)
-                .putData("receiver","CUSTOMER")
+                .putData("link", link)
+                .putData("receiver", "CUSTOMER")
                 .setToken(token)
                 .build();
     }
@@ -193,8 +195,8 @@ public class AlarmServiceImpl implements AlarmService{
                         .build())
                 .putData("title", request.getTitle())
                 .putData("content", request.getContent())
-                .putData("link",request.getLink())
-                .putData("receiver","MEMBER")
+                .putData("link", request.getLink())
+                .putData("receiver", "MEMBER")
                 .setToken(token)
                 .build();
     }
@@ -208,8 +210,8 @@ public class AlarmServiceImpl implements AlarmService{
                         .build())
                 .putData("title", request.getTitle())
                 .putData("content", request.getContent())
-                .putData("link",request.getLink())
-                .putData("receiver","MEMBER")
+                .putData("link", request.getLink())
+                .putData("receiver", "MEMBER")
                 .setTopic(topic)
                 .build();
     }
@@ -218,12 +220,11 @@ public class AlarmServiceImpl implements AlarmService{
         return Message.builder()
                 .putData("title", title)
                 .putData("content", content)
-                .putData("orderId",String.valueOf(orderId))
-                .putData("receiver","MEMBER")
+                .putData("orderId", String.valueOf(orderId))
+                .putData("receiver", "MEMBER")
                 .setToken(token)
                 .build();
     }
-
 
     private String sendMessage(Message message) {
         try {
@@ -235,7 +236,6 @@ public class AlarmServiceImpl implements AlarmService{
 
         }
     }
-
 
     private Product getFirstProduct(SubscriptionOrderRequest request, Customer customer) {
         Long firstProductId = request.getSubscriptionOrderProducts().get(0).getProductId();
@@ -252,15 +252,15 @@ public class AlarmServiceImpl implements AlarmService{
                 firstProductName + "이 주문되었습니다." :
                 firstProductName + " 외 " + (productListSize - 1) + "개가 주문되었습니다.";
     }
+
     @Override
     public void sendNoStock(Customer customer, String productName) {
         String title = "재고부족";
         String content = productName + " - 상품 재고가 부족합니다.";
         String link = "https://clicknbuy.co.kr/customer/app/product";
 
-        sendMessage(makeOrderMessage(title,content,customer.getFcmToken(),link));
-        Alarm alarm = Alarm.createAlarm(title, content,link);
-        customerAlarmRedisRepository.saveAlarm(String.valueOf(customer.getCustomerId()),alarm);
+        sendMessage(makeOrderMessage(title, content, customer.getFcmToken(), link));
+        Alarm alarm = Alarm.createAlarm(title, content, link);
+        customerAlarmRedisRepository.saveAlarm(String.valueOf(customer.getCustomerId()), alarm);
     }
-
 }

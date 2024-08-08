@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import BackIcon from '../../../assets/images/backspace.svg';
 
 const PasswordKeypad = ({ errorCount, onPasswordEnter, amount, isSetting, isRightPassword, password, setPassword, setInitialPassword, setCheckPassword }) => {
@@ -26,7 +26,6 @@ const PasswordKeypad = ({ errorCount, onPasswordEnter, amount, isSetting, isRigh
   );
 
   useEffect(() => {
-    console.log('password', password);
     if (password.length === 6) {
       onPasswordEnter();
     }

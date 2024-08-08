@@ -13,9 +13,7 @@ const MyOrdersList = () => {
   const [memberInfo, setMemberInfo] = useState({});
 
   useEffect(() => {
-    console.log('orderStatusSummary:', orderStatusSummary?.data);
     if (orderStatusSummary?.data) {
-      console.log('orderStatusSummary:', orderStatusSummary?.data);
       setMemberInfo({
         name: memberName?.data?.data?.memberName,
         singleOrders: orderStatusSummary?.data?.singleOrders,

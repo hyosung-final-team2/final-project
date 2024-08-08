@@ -147,11 +147,12 @@ const MemberTable = () => {
   };
 
   const deleteConfirmFirstButtonFunc = () => {
-    setIsDeleteConfirmModalOpen(true)
+    setIsDeleteConfirmModalOpen(false)
   }
 
   const deleteConfirmSecondButtonFunc = () => {
     selectedMemberDeleteMutate()
+    setIsDeleteConfirmModalOpen(false)
   }
 
   const checkConfirmFirstButtonFunc = () => {
@@ -160,6 +161,7 @@ const MemberTable = () => {
 
   const checkConfirmSecondButtonFunc = () => {
     smsMutate()
+    setIsCheckConfirmModalOpen(false)
   }
 
   const {toggleIsReset} = useMemberTableStore();

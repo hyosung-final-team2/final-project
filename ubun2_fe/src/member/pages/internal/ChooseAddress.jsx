@@ -60,7 +60,6 @@ const ChooseAddress = ({ title }) => {
   };
 
   const handleOnclickBottomButton = () => {
-    console.log('handleOnclickBottomButton');
     navigate('/member/app/addresses/register', {
       state: {
         isRegister: true,

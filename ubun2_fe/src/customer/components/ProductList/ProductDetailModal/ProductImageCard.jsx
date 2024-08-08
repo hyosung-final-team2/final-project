@@ -2,6 +2,9 @@ import  {useCallback, useEffect, useRef, useState} from 'react';
 import { PlusCircleIcon } from '@heroicons/react/16/solid';
 import { FileInput } from 'flowbite-react';
 import ImageWithOverlay from './ImageWithOverlay';
+import {QuestionMarkCircleIcon} from "@heroicons/react/24/outline/index.js";
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css'
 
 const ProductImageCard = ({ product, onlyInfo, title, handleInputImageChange, handleDetailImagesChange, handleChangeIndex, modalImageFile, modalDetailImageFiles,mainImagePreview }) => {
   const fileInputRef = useRef(null);
@@ -71,49 +74,61 @@ const ProductImageCard = ({ product, onlyInfo, title, handleInputImageChange, ha
   }, [localChangeIndex, handleChangeIndex]);
 
   return (
-    <div className='bg-gray-50 p-4 rounded-lg h-full flex flex-col'>
-      <div className='text-lg font-bold mb-4'>{title}</div>
-      <div className='w-full border-2 border-dashed border-gray-300 flex flex-col items-center justify-center rounded-lg aspect-square'>
-        {previewUrl ? (
-          <ImageWithOverlay url={previewUrl} onClick={handleIconClick} disabled={onlyInfo} />
-        ) : (
-          <div className='h-full flex flex-col items-center justify-center gap-4'>
-            {!onlyInfo && (
-              <>
-                <div className='bg-gray-100 p-2 rounded-lg'>
-                  <p className='text-sm'>등록하실 상품의 사진을 등록해주세요.</p>
-                </div>
-                <button onClick={handleIconClick}>
-                  <PlusCircleIcon className='w-7 h-7 text-purple-200' />
-                </button>
-              </>
-            )}
-          </div>
-        )}
-        <FileInput id='file-upload' onChange={handleFileChange} ref={fileInputRef} style={{ display: 'none' }} />
+      <div className='bg-gray-50 p-4 rounded-lg h-full flex flex-col'>
+        <div className='text-lg font-bold mb-4 flex gap-1 items-center'>
+          <div>{title}</div>
+          <QuestionMarkCircleIcon className="w-5 h-5 text-gray-400 cursor-pointer"
+                                  data-tooltip-id="imageDescription"
+                                  data-tooltip-html="상단의 이미지는 대표이미지로 등록됩니다.<br>하단의 이미지들은 상품 설명으로 등록됩니다."
+                                  data-tooltip-place="top"/>
+          <Tooltip
+              id="imageDescription"
+          />
+        </div>
+        <div
+            className='w-full border-2 border-dashed border-gray-300 flex flex-col items-center justify-center rounded-lg aspect-square'>
+          {previewUrl ? (
+              <ImageWithOverlay url={previewUrl} onClick={handleIconClick} disabled={onlyInfo}/>
+          ) : (
+              <div className='h-full flex flex-col items-center justify-center gap-4'>
+                {!onlyInfo && (
+                    <>
+                      <div className='bg-gray-100 p-2 rounded-lg'>
+                        <p className='text-sm'>등록하실 상품의 사진을 등록해주세요.</p>
+                      </div>
+                      <button onClick={handleIconClick}>
+                        <PlusCircleIcon className='w-7 h-7 text-purple-200'/>
+                      </button>
+                    </>
+                )}
+              </div>
+          )}
+          <FileInput id='file-upload' onChange={handleFileChange} ref={fileInputRef} style={{display: 'none'}}/>
+        </div>
+        <div className='flex w-full pt-1 rounded-lg gap-1'>
+          {productDetailPreviewUrls.map((url, index) => (
+              <div key={index}
+                   className='w-1/3 border-2 border-dashed border-gray-300 aspect-square rounded-lg flex justify-center items-center'>
+                {url ? (
+                    <ImageWithOverlay url={url} onClick={() => handleDetailIconClick(index)} disabled={onlyInfo}
+                                      isDetail={true}/>
+                ) : (
+                    !onlyInfo && (
+                        <button onClick={() => handleDetailIconClick(index)}>
+                          <PlusCircleIcon className='w-7 h-7 text-purple-200'/>
+                        </button>
+                    )
+                )}
+                <FileInput
+                    id={`detail-file-upload-${index}`}
+                    onChange={e => handleDetailFileChange(e, index)}
+                    ref={detailFileInputRefs[index]}
+                    style={{display: 'none'}}
+                />
+              </div>
+          ))}
+        </div>
       </div>
-      <div className='flex w-full pt-1 rounded-lg gap-1'>
-        {productDetailPreviewUrls.map((url, index) => (
-          <div key={index} className='w-1/3 border-2 border-dashed border-gray-300 aspect-square rounded-lg flex justify-center items-center'>
-            {url ? (
-              <ImageWithOverlay url={url} onClick={() => handleDetailIconClick(index)} disabled={onlyInfo} isDetail={true} />
-            ) : (
-              !onlyInfo && (
-                <button onClick={() => handleDetailIconClick(index)}>
-                  <PlusCircleIcon className='w-7 h-7 text-purple-200' />
-                </button>
-              )
-            )}
-            <FileInput
-              id={`detail-file-upload-${index}`}
-              onChange={e => handleDetailFileChange(e, index)}
-              ref={detailFileInputRefs[index]}
-              style={{ display: 'none' }}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
   );
 };
 

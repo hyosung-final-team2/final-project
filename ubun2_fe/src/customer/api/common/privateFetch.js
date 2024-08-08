@@ -25,7 +25,6 @@ privateFetch.interceptors.request.use(
 privateFetch.interceptors.response.use(
     response => {
         if (response.status === 404) {
-            // 404페이지 생기면 거기로 넘기기
             console.log("404")
         }
 

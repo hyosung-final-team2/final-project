@@ -13,6 +13,7 @@ import ProductItemReadOnly from '../../components/common/productItem/ProductItem
 import SubscriptionProductItemEditable from '../../components/common/productItem/SubscriptionProductItemEditable';
 import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
+import GlobalLoader from '../../../customer/components/common/Loader/GlobalLoader';
 
 const modalButtonStyle = 'bg-gray-600 text-white';
 const secondModalButtonStyle = 'bg-red-700 text-white';
@@ -94,7 +95,6 @@ const MySubscriptionOrderDetail = () => {
     });
 
     if (validProductIds.length === 0) {
-      console.log('선택된 유효한 상품이 없습니다.');
       return;
     }
 
@@ -129,7 +129,7 @@ const MySubscriptionOrderDetail = () => {
     return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <GlobalLoader />;
   if (isError) return <div>Error occurred while fetching order details.</div>;
   if (!orderData) return null;
 
@@ -177,12 +177,12 @@ const MySubscriptionOrderDetail = () => {
 
           <div className='flex justify-end'>
             {isDeliveryEditable && !isEditing && hasEditableProducts && (
-              <span className='flex gap-3 text-gray-400 underline' onClick={handleEdit}>
+              <span className='flex gap-3 mb-2 text-gray-400 underline' onClick={handleEdit}>
                 <PencilSquareIcon className='w-5 h-5' />
               </span>
             )}
             {isEditing && hasEditableProducts && (
-              <div className='flex gap-3 text-gray-400 underline'>
+              <div className='flex gap-3 mb-2 text-sm text-gray-400 underline'>
                 <span
                   onClick={() => selectedProducts.length > 0 && setModalState(true)}
                   className={`cursor-pointer ${selectedProducts.length === 0 ? 'opacity-50' : ''}`}

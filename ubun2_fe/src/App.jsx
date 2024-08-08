@@ -24,7 +24,6 @@ import { useEffect } from 'react';
 import useFCMTokenStore from './FCMTokenStore.js';
 import { messaging } from '../initFirebase.js';
 import { useIsFetching } from '@tanstack/react-query';
-import GlobalLoader from './customer/components/common/Loader/GlobalLoader.jsx';
 
 const App = () => {
   const customToastStyle = {
@@ -35,7 +34,6 @@ const App = () => {
   const token = localStorage.getItem('token');
 
   const { setFCMToken } = useFCMTokenStore();
-  const isFetching = useIsFetching();
 
   const onMessageFCM = async () => {
     const permission = await Notification.requestPermission();
@@ -60,7 +58,6 @@ const App = () => {
 
   return (
     <>
-      {isFetching > 0 && <GlobalLoader />}
       <Routes>
         {/* Customer Routes */}
         <Route

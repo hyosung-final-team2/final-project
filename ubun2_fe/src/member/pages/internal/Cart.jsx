@@ -12,6 +12,7 @@ import PaymentSummaryPre from '../../components/common/paymentSummary/PaymentSum
 import SlideUpModal from '../../components/common/SlideUpModal';
 import useModalStore from '../../store/modalStore';
 import useOrderItemsStore from '../../store/order/orderItemStore';
+import GlobalLoader from '../../../customer/components/common/Loader/GlobalLoader';
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -126,21 +127,10 @@ const Cart = () => {
       return;
     }
 
-    const selectedOrderData = selectedItems
-      .filter(store => store.cartProducts.length > 0)
-      .map(store => ({
-        customerId: store.customerId,
-        businessName: store.businessName,
-        intervalDays: store.intervalDays,
-        cartProducts: store.cartProducts,
-      }));
-
-    console.log('선택된 items들:', selectedOrderData);
-
     navigate('/member/app/order');
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <GlobalLoader />;
   if (isError) return <div>Error fetching cart data</div>;
 
   return (
