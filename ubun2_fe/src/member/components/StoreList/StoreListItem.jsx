@@ -7,7 +7,6 @@ function StoreListItem({ customerId, storeName, storeDesc, storeImg }) {
   const navigate = useNavigate();
   const { setCurrentStoreName, setCustomerId } = useStoreStore();
   const { setCategory } = useCategoryStore()
-  console.log(storeImg)
 
   const handleClick = () => {
     setCustomerId(customerId);

@@ -8,7 +8,7 @@ export const getCart = async () => {
 };
 
 export const deleteCart = async requestData => {
-  console.log('Delete request payload :', requestData);
+
   const res = await privateFetch({
     method: 'delete',
     url: '/members/carts',
@@ -18,7 +18,7 @@ export const deleteCart = async requestData => {
 };
 
 export const updateCartQuantity = async requestData => {
-  console.log('Update request payload :', requestData);
+
   const res = await privateFetch({
     method: 'put',
     url: '/members/carts',

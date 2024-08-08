@@ -26,7 +26,6 @@ export const updateMember = async (memberId, isPending, requestData) => {
         request: requestData
     };
 
-    console.log(requestPayload)
     const res = await privateFetch.put(`/customers/members/${memberId}`, requestPayload);
     return res.data;
 };

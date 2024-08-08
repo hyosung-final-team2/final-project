@@ -127,17 +127,6 @@ const Cart = () => {
       return;
     }
 
-    const selectedOrderData = selectedItems
-      .filter(store => store.cartProducts.length > 0)
-      .map(store => ({
-        customerId: store.customerId,
-        businessName: store.businessName,
-        intervalDays: store.intervalDays,
-        cartProducts: store.cartProducts,
-      }));
-
-    console.log('선택된 items들:', selectedOrderData);
-
     navigate('/member/app/order');
   };
 

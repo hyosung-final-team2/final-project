@@ -15,7 +15,7 @@ public class OrderCountResponse {
     private long subscriptionOrderCount;
     private LocalDate date;
 
-   public static OrderCountResponse of(long orderCount, long subscriptionOrderCount, LocalDate date) {
+    public static OrderCountResponse of(long orderCount, long subscriptionOrderCount, LocalDate date) {
         return OrderCountResponse.builder()
                 .orderCount(orderCount)
                 .subscriptionOrderCount(subscriptionOrderCount)

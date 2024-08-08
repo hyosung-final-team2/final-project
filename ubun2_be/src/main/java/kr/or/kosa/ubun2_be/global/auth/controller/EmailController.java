@@ -24,11 +24,11 @@ public class EmailController {
         emailService.sendEmail(emailRequest);
         return ResponseDto.ok(null, "정상출력 데이터");
     }
+
     @Operation(summary = "인증번호 검증")
     @PostMapping("/auth")
     public ResponseDto<?> checkAuthenticationNumber(@Valid @RequestBody EmailAuthenticationRequest emailAuthenticationRequest) {
         boolean isValid = emailService.validateAuthenticationNumber(emailAuthenticationRequest);
         return ResponseDto.ok(isValid, "정상출력 데이터");
     }
-
 }

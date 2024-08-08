@@ -42,7 +42,7 @@ public class InventoryService {
 
         if (redisQuantity == null) {
             Product product = productRepository.findById(productId)
-                    .orElseThrow(()->new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
+                    .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
             redisQuantity = product.getStockQuantity();
             redisTemplate.opsForValue().set(key, redisQuantity);
         }
@@ -70,8 +70,8 @@ public class InventoryService {
         });
 
         if (Boolean.TRUE.equals(success)) {
-            Product product =  productRepository.findById(productId)
-                    .orElseThrow(()->new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
+            Product product = productRepository.findById(productId)
+                    .orElseThrow(() -> new ProductException(ProductExceptionType.NOT_EXIST_PRODUCT));
             product.updateStockQuantity(product.getStockQuantity() - quantity);
             productRepository.save(product); // 저장 호출 추가
             return true;
@@ -88,12 +88,12 @@ public class InventoryService {
             Integer redisQuantity = (Integer) redisTemplate.opsForValue().get(key);
 
             if (redisQuantity == null) continue;
-            Product product =  productRepository.findById(productId)
-                    .orElseGet(()->{
+            Product product = productRepository.findById(productId)
+                    .orElseGet(() -> {
                         redisTemplate.delete(key);
                         return null;
                     });
-            if(product==null) continue;
+            if (product == null) continue;
             product.updateStockQuantity(redisQuantity);
             productRepository.save(product); //명시적 호출
         }

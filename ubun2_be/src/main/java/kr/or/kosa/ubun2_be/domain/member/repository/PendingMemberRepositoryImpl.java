@@ -16,8 +16,7 @@ import static kr.or.kosa.ubun2_be.domain.member.entity.QPendingMember.pendingMem
 
 public class PendingMemberRepositoryImpl extends QuerydslRepositorySupport implements PendingMemberRepositoryCustom {
 
-    private static final List<String> STRING_SEARCH_FIELDS = List.of("memberEmail","memberName","memberPhone");
-
+    private static final List<String> STRING_SEARCH_FIELDS = List.of("memberEmail", "memberName", "memberPhone");
 
     public PendingMemberRepositoryImpl() {
         super(Product.class);
@@ -25,7 +24,8 @@ public class PendingMemberRepositoryImpl extends QuerydslRepositorySupport imple
 
     @Override
     public List<PendingMember> findPendingMembersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
-        if(("createdAt").equals(searchRequest.getSearchCategory())&&searchRequest.getSearchKeyword()!=null) return new ArrayList<>();
+        if (("createdAt").equals(searchRequest.getSearchCategory()) && searchRequest.getSearchKeyword() != null)
+            return new ArrayList<>();
         return from(pendingMember)
                 .where(pendingMember.customer.customerId.eq(customerId), pendingMemberSearch(searchRequest))
                 .fetch();
@@ -33,7 +33,7 @@ public class PendingMemberRepositoryImpl extends QuerydslRepositorySupport imple
 
     private BooleanBuilder pendingMemberSearch(SearchRequest searchRequest) {
         BooleanBuilder builder = new BooleanBuilder();
-        if (searchRequest == null || searchRequest.getSearchCategory()==null || searchRequest.getSearchKeyword() == null) {
+        if (searchRequest == null || searchRequest.getSearchCategory() == null || searchRequest.getSearchKeyword() == null) {
             return null;
         }
         String category = searchRequest.getSearchCategory();

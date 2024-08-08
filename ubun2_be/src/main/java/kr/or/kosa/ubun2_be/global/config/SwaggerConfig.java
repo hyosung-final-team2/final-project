@@ -28,7 +28,7 @@ public class SwaggerConfig {
                         .description("final-project"))
                 .security(Arrays.asList(securityRequirement))
                 .servers(Arrays.asList(
-                new Server().url("https://clicknbuy.co.kr").description("Production server"),
-                new Server().url("http://localhost:8080").description("Local server")));
+                        new Server().url("https://clicknbuy.co.kr").description("Production server"),
+                        new Server().url("http://localhost:8080").description("Local server")));
     }
 }

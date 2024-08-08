@@ -81,7 +81,6 @@ const ForgotPassword = () => {
 
         findPwMutate({userName:passwordObj.memberName, userLoginId:passwordObj.memberLoginId ,userEmail:passwordObj.memberEmail, role:"ROLE_MEMBER"},{
             onSuccess: (res) => {
-                console.log(res)
                 navigate('/member/reset-password',{ state : { memberEmail:passwordObj.memberEmail }})
             }
         })
@@ -117,7 +116,6 @@ const ForgotPassword = () => {
                     setDuplicateEmailMessage(null)
                 },
                 onError: (err) => {
-                    console.log(err)
                     setIsEmailCheckPass(false)
                     setDuplicateEmailMessage(err.response.data.errorMessage)
                 }

@@ -33,6 +33,4 @@ public class OrderProductResponse {
                 .productName(orderProduct.getProduct().getProductName())
                 .build();
     }
-
-
 }

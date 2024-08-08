@@ -47,8 +47,7 @@ public class SecurityConfig {
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                       // configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://clicknbuy.co.kr"));
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://clicknbuy.co.kr"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
@@ -65,10 +64,10 @@ public class SecurityConfig {
         // 로그아웃
         http
                 .logout(logout -> logout
-                .logoutUrl("/api/logout")
-                .deleteCookies("refreshToken")
-                .addLogoutHandler(logoutService)
-                .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                        .logoutUrl("/api/logout")
+                        .deleteCookies("refreshToken")
+                        .addLogoutHandler(logoutService)
+                        .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
                 );
 
         //csrf disable
@@ -87,8 +86,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/api/customers/login", "/api/customers/signup", "/api/token/refresh",
-                                         "/api/auth/send", "/api/auth", "/api/members/signup", "/api/find/id",
-                                         "/api/find/password","/api/reset/password", "api/checkId",
+                                "/api/auth/send", "/api/auth", "/api/members/signup", "/api/find/id",
+                                "/api/find/password", "/api/reset/password", "api/checkId",
                                 "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**").permitAll()
                         .requestMatchers("/api/customers/**").hasRole("CUSTOMER")
                         .requestMatchers("/api/members/**").hasRole("MEMBER")
@@ -100,7 +99,7 @@ public class SecurityConfig {
 
         // 로그인 필터 등록
         http
-                .addFilterAt(new LoginFilter(authenticationManager, objectMapper, jwtUtil, refreshTokenService,"/api/login"), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager, objectMapper, jwtUtil, refreshTokenService, "/api/login"), UsernamePasswordAuthenticationFilter.class);
 
         //세션 설정
         http

@@ -34,10 +34,10 @@ public class RegisterMemberRequest {
     }
 
     public static RegisterMemberRequest createRegisterMemberRequest(String pendingMemberEmail, String pendingMemberName, String pendingMemberPhone) {
-         return RegisterMemberRequest.builder()
-                 .pendingMemberEmail(pendingMemberEmail)
-                 .pendingMemberName(pendingMemberName)
-                 .pendingMemberPhone(pendingMemberPhone)
-                 .build();
+        return RegisterMemberRequest.builder()
+                .pendingMemberEmail(pendingMemberEmail)
+                .pendingMemberName(pendingMemberName)
+                .pendingMemberPhone(pendingMemberPhone)
+                .build();
     }
 }

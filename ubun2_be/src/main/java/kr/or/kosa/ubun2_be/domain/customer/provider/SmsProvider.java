@@ -15,13 +15,14 @@ public class SmsProvider {
 
     private final DefaultMessageService messageService;
 
-    @Value("${sms.from-number}") String from;
+    @Value("${sms.from-number}")
+    String from;
 
 
     public SmsProvider(@Value("${sms.api-key}") String API_KEY,
                        @Value("${sms.api-secret-key}") String API_SECRET,
                        @Value("${sms.api-domain}") String DOMAIN) {
-        this.messageService = NurigoApp.INSTANCE.initialize(API_KEY,API_SECRET,DOMAIN);
+        this.messageService = NurigoApp.INSTANCE.initialize(API_KEY, API_SECRET, DOMAIN);
     }
 
     public boolean sendSms(List<SmsRequest> nameAndPhoneNumbers, String businessName) {
@@ -32,7 +33,7 @@ public class SmsProvider {
                 message.setFrom(from);
                 message.setTo(nameAndPhoneNumber.getPhoneNumber());
 
-                String smsText = "[효성CMS+ CLICK N BUY] " + nameAndPhoneNumber.getMemberName() +"님, \n" + businessName + "(스토어)의 상품을 확인해보세요. \n https://clicknbuy.co.kr";
+                String smsText = "[효성CMS+ CLICK N BUY] " + nameAndPhoneNumber.getMemberName() + "님, \n" + businessName + "(스토어)의 상품을 확인해보세요. \n https://clicknbuy.co.kr";
                 message.setText(smsText);
 
                 messageService.sendOne(new SingleMessageSendingRequest(message));

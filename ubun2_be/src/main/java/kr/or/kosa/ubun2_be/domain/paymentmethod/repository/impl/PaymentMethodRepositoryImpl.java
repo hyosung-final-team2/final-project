@@ -32,8 +32,8 @@ import static kr.or.kosa.ubun2_be.domain.paymentmethod.entity.QPaymentMethod.pay
 @Repository
 public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport implements PaymentMethodRepositoryCustom {
 
-    private static final List<String> CARD_SEARCH_FIELDS = List.of("memberEmail","memberName","paymentType","cardCompany","cardNumber");
-    private static final List<String> ACCOUNT_SEARCH_FIELDS = List.of("memberEmail","memberName","paymentType","bankName","accountNumber");
+    private static final List<String> CARD_SEARCH_FIELDS = List.of("memberEmail", "memberName", "paymentType", "cardCompany", "cardNumber");
+    private static final List<String> ACCOUNT_SEARCH_FIELDS = List.of("memberEmail", "memberName", "paymentType", "bankName", "accountNumber");
 
     public PaymentMethodRepositoryImpl() {
         super(PaymentMethod.class);
@@ -47,7 +47,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
                 .join(cardPayment)
                 .on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .join(member.memberCustomers, memberCustomer)
-                .where(paymentMethod.isDeleted.isFalse(),paymentMethod.paymentType.eq(String.valueOf(PaymentMethodOption.CARD)).and(memberCustomer.customer.customerId.eq(customerId)),paymentMethodSearch(searchRequest,PaymentMethodOption.CARD))
+                .where(paymentMethod.isDeleted.isFalse(), paymentMethod.paymentType.eq(String.valueOf(PaymentMethodOption.CARD)).and(memberCustomer.customer.customerId.eq(customerId)), paymentMethodSearch(searchRequest, PaymentMethodOption.CARD))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(paymentMethodSort(pageable).toArray(OrderSpecifier[]::new))
@@ -58,6 +58,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
 
         return new PageImpl<>(content, pageable, total);
     }
+
     private BooleanBuilder paymentMethodSearch(SearchRequest searchRequest, PaymentMethodOption paymentMethodOption) {
         if (searchRequest == null || searchRequest.getSearchCategory() == null || searchRequest.getSearchKeyword() == null) {
             return null;
@@ -71,7 +72,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
         }
         if (paymentMethodOption.equals(PaymentMethodOption.CARD) && CARD_SEARCH_FIELDS.contains(category)) {
             return new BooleanBuilder().and(((StringPath) path).containsIgnoreCase(keyword));
-        }else if(paymentMethodOption.equals(PaymentMethodOption.ACCOUNT) && ACCOUNT_SEARCH_FIELDS.contains(category)){
+        } else if (paymentMethodOption.equals(PaymentMethodOption.ACCOUNT) && ACCOUNT_SEARCH_FIELDS.contains(category)) {
             return new BooleanBuilder().and(((StringPath) path).containsIgnoreCase(keyword));
         }
         return new BooleanBuilder();
@@ -84,7 +85,7 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
                 .join(accountPayment)
                 .on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
                 .join(member.memberCustomers, memberCustomer)
-                .where(paymentMethod.isDeleted.isFalse(),paymentMethod.paymentType.eq(String.valueOf(PaymentMethodOption.ACCOUNT)).and(memberCustomer.customer.customerId.eq(customerId)),paymentMethodSearch(searchRequest,PaymentMethodOption.ACCOUNT))
+                .where(paymentMethod.isDeleted.isFalse(), paymentMethod.paymentType.eq(String.valueOf(PaymentMethodOption.ACCOUNT)).and(memberCustomer.customer.customerId.eq(customerId)), paymentMethodSearch(searchRequest, PaymentMethodOption.ACCOUNT))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(paymentMethodSort(pageable).toArray(OrderSpecifier[]::new))
@@ -137,8 +138,8 @@ public class PaymentMethodRepositoryImpl extends QuerydslRepositorySupport imple
         PaymentMethod result = from(paymentMethod)
                 .join(paymentMethod.member, member)
                 .join(member.memberCustomers, memberCustomer)
-                .join(memberCustomer.customer,customer)
-                .where(paymentMethod.isDeleted.isFalse(),paymentMethod.paymentMethodId.eq(paymentMethodId)
+                .join(memberCustomer.customer, customer)
+                .where(paymentMethod.isDeleted.isFalse(), paymentMethod.paymentMethodId.eq(paymentMethodId)
                         .and(customer.customerId.eq(customerId)))
                 .fetchOne();
 

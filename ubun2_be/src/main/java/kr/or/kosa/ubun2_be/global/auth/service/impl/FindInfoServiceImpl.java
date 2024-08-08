@@ -69,7 +69,7 @@ public class FindInfoServiceImpl implements FindInfoService {
                 }
                 customer.updateCustomerPassword(passwordEncoder.encode(newPassword));
             }, () -> {
-                throw new  CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER);
+                throw new CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER);
             });
         } else if (role.equals("ROLE_MEMBER")) {
             memberRepository.findByMemberEmail(userEmail).ifPresentOrElse(member -> {
@@ -84,6 +84,7 @@ public class FindInfoServiceImpl implements FindInfoService {
             throw new AuthException(AuthExceptionType.INVALID_LOGIN_ROLE);
         }
     }
+
     public void checkLoginId(CheckLoginIdRequest checkLoginIdRequest) {
         if (checkLoginIdRequest.getUserType().equals(UserRole.ROLE_CUSTOMER.toString()) && customerRepository.existsByCustomerLoginId(checkLoginIdRequest.getLoginId())) { // Customer
             throw new CustomerException(CustomerExceptionType.DUPLICATE_CUSTOMER_LOGIN_ID);

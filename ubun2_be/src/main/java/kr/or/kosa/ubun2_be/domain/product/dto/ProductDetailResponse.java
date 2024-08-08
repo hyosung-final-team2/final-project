@@ -47,5 +47,4 @@ public class ProductDetailResponse {
         this.customerPhone = customer.getCustomerPhone();
         this.customerAddress = customer.getBusinessAddress();
     }
-
 }

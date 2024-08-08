@@ -80,7 +80,7 @@ public class Customer extends BaseTimeEntity implements UserType {
     private List<MemberCustomer> memberCustomers;
 
     @OneToMany(mappedBy = "customer")
-    private List<Cart> carts ;
+    private List<Cart> carts;
 
     @OneToMany(mappedBy = "customer")
     private List<Product> products;
@@ -112,7 +112,9 @@ public class Customer extends BaseTimeEntity implements UserType {
         this.customerPassword = newPassword;
     }
 
-    public void updateCustomerFcmToken(String fcmToken) { this.fcmToken = fcmToken; }
+    public void updateCustomerFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 
     public void updateCustomer(MyPageUpdateRequest myPageUpdateRequest) {
         this.customerName = myPageUpdateRequest.getCustomerName();

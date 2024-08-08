@@ -37,7 +37,7 @@ public class ExcelController {
     @PostMapping("/upload/excel")
     public ResponseDto<?> registerExcel(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         excelService.registerExcel(customUserDetails.getUserId(), file);
-        return ResponseDto.ok(null,"회원 일괄 등록 완료");
+        return ResponseDto.ok(null, "회원 일괄 등록 완료");
     }
 
 }

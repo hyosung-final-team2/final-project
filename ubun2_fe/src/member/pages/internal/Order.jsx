@@ -80,7 +80,7 @@ const Order = () => {
       }
       return;
     }
-    console.log(selectedAddressId);
+
     navigate('/member/app/payments', { state: { selectedItems } });
   };
 

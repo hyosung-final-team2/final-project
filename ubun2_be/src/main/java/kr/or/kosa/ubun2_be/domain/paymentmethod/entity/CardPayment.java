@@ -28,5 +28,4 @@ public class CardPayment extends PaymentMethod {
         this.cardNumber = cardNumber;
         this.cardCompanyName = cardCompanyName;
     }
-
 }

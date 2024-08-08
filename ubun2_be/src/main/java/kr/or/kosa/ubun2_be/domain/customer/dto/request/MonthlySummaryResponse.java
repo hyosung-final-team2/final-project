@@ -14,7 +14,6 @@ public class MonthlySummaryResponse {
     private MonthStatistics currentMonth;
     private MonthStatistics previousMonth;
 
-
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor

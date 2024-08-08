@@ -31,14 +31,14 @@ public class ProductCustomerController {
     @Operation(summary = "전체 상품 목록 및 정렬,검색을 통한 상품 목록 조회")
     @GetMapping
     public ResponseDto<?> getProducts(SearchRequest searchRequest, @PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        Page<ProductResponse> productResponseList = productService.getProducts(customUserDetails.getUserId(), searchRequest, pageable,false);
+        Page<ProductResponse> productResponseList = productService.getProducts(customUserDetails.getUserId(), searchRequest, pageable, false);
         return ResponseDto.ok(productResponseList, "정상출력 데이터");
     }
 
     @Operation(summary = "상품 상세 조회")
     @GetMapping("/{product_id}")
     public ResponseDto<?> getProductByProductId(@PathVariable("product_id") Long productId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        ProductDetailResponse productDetailResponse = productService.getProductByCustomerIdAndProductId(customUserDetails.getUserId(),productId,false);
+        ProductDetailResponse productDetailResponse = productService.getProductByCustomerIdAndProductId(customUserDetails.getUserId(), productId, false);
         return ResponseDto.ok(productDetailResponse, "정상출력 데이터");
     }
 
@@ -72,14 +72,14 @@ public class ProductCustomerController {
     @Operation(summary = "전체 카테고리 조회")
     @GetMapping("/category")
     public ResponseDto<?> getProductCategory() {
-        List<CategoryResponse> categories= productService.getProductCategory();
-        return ResponseDto.ok(categories,"정상출력 데이터");
+        List<CategoryResponse> categories = productService.getProductCategory();
+        return ResponseDto.ok(categories, "정상출력 데이터");
     }
 
     @Operation(summary = "상품 리스트 삭제")
     @DeleteMapping("/selected")
     public ResponseDto<?> removeSelectedProducts(@Valid @RequestBody ProductDeleteSelectedRequest productDeleteSelectedRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        productService.removeSelectedProducts(productDeleteSelectedRequest,customUserDetails.getUserId());
+        productService.removeSelectedProducts(productDeleteSelectedRequest, customUserDetails.getUserId());
         return ResponseDto.ok(null, "상품 리스트 삭제 완료");
     }
 

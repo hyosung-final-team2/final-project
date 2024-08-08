@@ -69,7 +69,6 @@ public class OrderServiceImpl implements OrderService {
     private final AddressService addressService;
     private final OrderProductRepository orderProductRepository;
     private final CartService cartService;
-    //private final AlarmService alarmService;
     private final CardPaymentRepository cardPaymentRepository;
     private final AccountPaymentRepository accountPaymentRepository;
     private final ApplicationEventPublisher eventPublisher;
@@ -302,8 +301,6 @@ public class OrderServiceImpl implements OrderService {
         deleteCartProducts(memberId, orderRequest.getSubscriptionOrderProducts());
 
         // 5. 고객에게 push notification (단건주문)
-        //TODO 이벤트 등록듕
-        //alarmService.sendMessageToCustomer(orderRequest);
         eventPublisher.publishEvent(new OrderCreatedEvent(orderRequest));
     }
 
@@ -387,7 +384,6 @@ public class OrderServiceImpl implements OrderService {
         Address address = addressService.findByAddressIdAndMemberId(request.getAddressId(), member.getMemberId());
         Cart cart = cartService.findByMemberIdAndCustomerId(member.getMemberId(), request.getCustomerId()); // Cart 객체를 가져오는 로직 추가
 
-
         Order order = Order.builder()
                 .member(member)
                 .paymentMethod(paymentMethod)
@@ -417,44 +413,6 @@ public class OrderServiceImpl implements OrderService {
         savedOrder.createOrderProducts(savedOrderProducts);
 
         return savedOrder;
-    }
-
-    // TODO: 기존로직 - 확인 후 삭제
-    @Override
-    public List<UnifiedOrderResponse> getAllOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest, Long memberId) {
-        List<UnifiedOrderResponse> orderResponses = orderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
-        List<UnifiedOrderResponse> subscriptionOrderResponses = subscriptionOrderRepository.findByMemberId(memberId).stream().map(UnifiedOrderResponse::new).toList();
-
-        List<UnifiedOrderResponse> combinedList = new ArrayList<>();
-        combinedList.addAll(orderResponses);
-        combinedList.addAll(subscriptionOrderResponses);
-
-        if (orderPeriodFilterRequest.getPeriodType() != null && orderPeriodFilterRequest.getPeriodValue() > 0) {
-            LocalDateTime endDate = LocalDateTime.now();
-            LocalDateTime startDate = switch (orderPeriodFilterRequest.getPeriodType()) {
-                case WEEK -> endDate.minusWeeks(orderPeriodFilterRequest.getPeriodValue());
-                case MONTH -> endDate.minusMonths(orderPeriodFilterRequest.getPeriodValue());
-                default -> throw new OrderException(OrderExceptionType.NOT_MATCH_PERIOD_TYPE);
-            };
-
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-
-            combinedList = combinedList.stream()
-                    .filter(order -> {
-                        LocalDateTime createdAt = LocalDateTime.parse(order.getCreatedAt(), formatter);
-                        return createdAt.isAfter(startDate) && createdAt.isBefore(endDate);
-                    })
-                    .collect(Collectors.toList());
-        }
-
-        // 최신순으로 정렬
-        combinedList.sort((o1, o2) -> {
-            LocalDateTime date1 = LocalDateTime.parse(o1.getCreatedAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            LocalDateTime date2 = LocalDateTime.parse(o2.getCreatedAt(), DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-            return date2.compareTo(date1);  // 내림차순 정렬
-        });
-
-        return combinedList;
     }
 
     @Override
@@ -571,6 +529,4 @@ public class OrderServiceImpl implements OrderService {
             default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
         }
     }
-
-
 }

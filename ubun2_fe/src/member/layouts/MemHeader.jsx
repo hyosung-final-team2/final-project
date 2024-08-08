@@ -47,7 +47,7 @@ const MemHeader = ({setIsAlarmOpen, showBackBtn}) => {
       onMessage(messaging, payload => {
         console.log('Message received. ', payload);
         if (payload.data?.receiver === "CUSTOMER") return;
-        if (payload.data?.content.split(" ")[1] === "승인") {
+        if (payload.data?.content.split(" ")[2] === "완료" || payload.data?.content.includes("새상품")) {
           toast.success(
             <div>
               <strong>{payload.data.title}</strong><br />

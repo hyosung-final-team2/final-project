@@ -33,7 +33,6 @@ export const updatePayment = async (paymentId, data) => {
 };
 
 export const checkPassword = async paymentPassword => {
-  console.log(paymentPassword);
   return await privateFetch.post('/members/simplecheck', { paymentPassword });
 };
 

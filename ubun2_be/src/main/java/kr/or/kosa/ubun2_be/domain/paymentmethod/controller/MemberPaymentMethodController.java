@@ -24,7 +24,6 @@ public class MemberPaymentMethodController {
     @GetMapping("/password")
     public ResponseDto<?> checkPaymentPassword(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boolean hasPaymentPassword = paymentMethodService.hasPaymentPassword(customUserDetails.getUserId());
-        System.out.println("hasPaymentPassword = " + hasPaymentPassword);
         return ResponseDto.ok(hasPaymentPassword, "결제비밀번호 존재 여부를 성공적으로 확인했습니다.");
     }
 
@@ -60,21 +59,21 @@ public class MemberPaymentMethodController {
     @PostMapping
     public ResponseDto<?> registerPaymentMethod(@AuthenticationPrincipal CustomUserDetails customUserDetails, @Valid @RequestBody RegisterPaymentMethodRequest registerPaymentMethodRequest) {
         paymentMethodService.registerPaymentMethod(registerPaymentMethodRequest, customUserDetails.getUserId());
-        return ResponseDto.ok(null,"결제수단을 성공적으로 등록했습니다.");
+        return ResponseDto.ok(null, "결제수단을 성공적으로 등록했습니다.");
     }
 
     @Operation(summary = "결제수단 수정")
     @PutMapping("/{paymentMethodId}")
     public ResponseDto<?> updatePaymentMethod(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long paymentMethodId, @Valid @RequestBody UpdatePaymentMethodRequest updatePaymentMethodRequest) {
         paymentMethodService.updatePaymentMethod(paymentMethodId, updatePaymentMethodRequest, customUserDetails.getUserId());
-        return ResponseDto.ok(null,"결제수단을 성공적으로 수정했습니다.");
+        return ResponseDto.ok(null, "결제수단을 성공적으로 수정했습니다.");
     }
 
     @Operation(summary = "결제수단 삭제")
     @DeleteMapping("/{paymentMethodId}")
     public ResponseDto<?> deletePaymentMethod(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable Long paymentMethodId) {
         paymentMethodService.deleteMyPaymentMethod(paymentMethodId, customUserDetails.getUserId());
-        return ResponseDto.ok(null,"결제수단을 성공적으로 삭제했습니다.");
+        return ResponseDto.ok(null, "결제수단을 성공적으로 삭제했습니다.");
     }
 
     @Operation(summary = "회원의 대표 결제수단 설정")
@@ -83,5 +82,4 @@ public class MemberPaymentMethodController {
         paymentMethodService.setDefaultPaymentMethod(paymentMethodId, userDetails.getUserId());
         return ResponseDto.ok(null, "대표 결제수단이 성공적으로 설정되었습니다.");
     }
-
 }

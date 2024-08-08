@@ -22,7 +22,7 @@ public class AuthController {
 
         refreshTokenService.deleteCookie(response, "refreshToken");
         response.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tokens[0]);
-        Cookie refreshTokenCookie = refreshTokenService.createRefreshTokenCookie("refreshToken",tokens[1]);
+        Cookie refreshTokenCookie = refreshTokenService.createRefreshTokenCookie("refreshToken", tokens[1]);
         response.addCookie(refreshTokenCookie);
 
         return ResponseDto.ok(null, "토큰 정상 발급 완료");

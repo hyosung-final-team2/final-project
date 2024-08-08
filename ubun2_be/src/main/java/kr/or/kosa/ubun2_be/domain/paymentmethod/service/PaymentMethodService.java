@@ -14,9 +14,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PaymentMethodService {
-    Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(Pageable pageable, SearchRequest searchRequest,Long customerId);
+    Page<CardPaymentResponse> getAllCardPaymentMethodsForMember(Pageable pageable, SearchRequest searchRequest, Long customerId);
 
-    Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(Pageable pageable,SearchRequest searchRequest, Long customerId);
+    Page<AccountPaymentResponse> getAllAccountPaymentMethodsForMember(Pageable pageable, SearchRequest searchRequest, Long customerId);
 
     PaymentMethodDetailResponse getPaymentMethodDetailByMemberId(Long paymentMethodId, Long customerId);
 

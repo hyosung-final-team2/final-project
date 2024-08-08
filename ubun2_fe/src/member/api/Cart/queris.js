@@ -10,7 +10,6 @@ export const useCreateCart = cartAddProduct => {
   const { customerId } = useStoreStore();
   const queryClient = useQueryClient();
   const cartProducts = [cartAddProduct];
-  console.log('cartAddProduct:', cartAddProduct);
 
   const cartData = [
     {
@@ -28,7 +27,6 @@ export const useCreateCart = cartAddProduct => {
     },
     onError: error => {
       toast.error('장바구니에 상품을 담지 못했어요. 다시 시도해주세요.', errorToastStyle);
-      console.error('Cart addition failed:', error);
     },
   });
 };
@@ -59,7 +57,7 @@ export const useDeleteCart = () => {
     },
     onError: error => {
       toast.error('상품 삭제 실패! 다시 시도해주세요.', errorToastStyle);
-      console.log('장바구니 물품 삭제 실패 : ', error);
+
     },
   });
 };

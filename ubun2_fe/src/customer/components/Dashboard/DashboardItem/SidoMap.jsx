@@ -70,7 +70,6 @@ const SidoMap = ({ addressesByDateValue }) => {
     setSalesDatas(initialSalesData);
 
     if (addressesByDateValue) {
-      console.log('addressesByDateValue', addressesByDateValue);
       const newSalesDatas = { ...initialSalesData };
       addressesByDateValue.forEach(address => {
         const sidoName = address?.addressName?.split(',')[1]?.trim();

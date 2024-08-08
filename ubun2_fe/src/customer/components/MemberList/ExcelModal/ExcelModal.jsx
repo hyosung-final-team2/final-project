@@ -6,6 +6,7 @@ import ImportFileInfo from './ImportFileInfo';
 import ExcelUploadResult from './ExcelUploadResult';
 import { excelDownload } from '../../../api/Customer/MemberList/ExcelModal/excel.js';
 import { useUploadExcel } from '../../../api/Customer/MemberList/ExcelModal/queris.js';
+import {useQueryClient} from "@tanstack/react-query";
 
 const ExcelModal = ({ isOpen, setOpenModal }) => {
   const commonButtonStyles = 'px-4 py-2 rounded-lg transition duration-200 border border-gray-200 shadow-md';
@@ -14,14 +15,20 @@ const ExcelModal = ({ isOpen, setOpenModal }) => {
   const [isSuccess, setIsSuccess] = useState(null);
 
   const { mutate: excelMutate } = useUploadExcel();
+  const queryClient = useQueryClient();
 
   const handleUploadFile = () => {
     if (fileInfo === null) return;
     excelMutate(fileInfo, {
       onSuccess: () => {
-        setIsSuccess(true);
+        try {
+          setIsSuccess(true);
+          queryClient.invalidateQueries({queryKey:['member']})
+        } catch (err) {
+          setIsSuccess(false);
+        }
       },
-      onError: () => {
+      onError: (err) => {
         setIsSuccess(false);
       },
     });

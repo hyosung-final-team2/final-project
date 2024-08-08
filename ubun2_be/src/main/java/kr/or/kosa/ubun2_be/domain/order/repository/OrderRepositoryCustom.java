@@ -17,17 +17,17 @@ public interface OrderRepositoryCustom {
 
     Optional<Order> findPendingOrderByIdAndCustomerId(Long orderId, Long customerId);
 
-    List<Order> findOrdersByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+    List<Order> findOrdersByDateRangeAndCustomerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId);
 
-    List<Order> findAllOrdersByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+    List<Order> findAllOrdersByDateRangeAndCustomerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId);
 
     List<Object[]> findTopSellingProductsByCustomerId(Long customerId, LocalDateTime startDate, LocalDateTime endDate);
 
     List<Address> findAddressesByDateRange(Long customerId, LocalDateTime startDate, LocalDateTime endDate);
 
-    Long countOrdersByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+    Long countOrdersByCustomerAndDateRange(LocalDateTime startDate, LocalDateTime endDate, Long customerId);
 
-    Long sumOrderTotalByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+    Long sumOrderTotalByCustomerAndDateRange(LocalDateTime startDate, LocalDateTime endDate, Long customerId);
 
     Page<Order> findOrdersByMemberId(Long memberId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 }

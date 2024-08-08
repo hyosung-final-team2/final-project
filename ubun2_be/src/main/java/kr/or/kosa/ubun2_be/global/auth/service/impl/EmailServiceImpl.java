@@ -62,14 +62,14 @@ public class EmailServiceImpl implements EmailService {
         }
 
         String authenticationNumber = generateAuthenticationNumber();
-        saveAuthenticationNumber(email,authenticationNumber);
+        saveAuthenticationNumber(email, authenticationNumber);
 
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setTo(email);
-            helper.setSubject("[ClickNBuy] 회원가입 이메일 인증");
+            helper.setSubject("[ClickNBuy] 이메일 인증");
             helper.setText(createEmailContent(authenticationNumber), true);
 
             javaMailSender.send(message);
@@ -96,9 +96,9 @@ public class EmailServiceImpl implements EmailService {
                 + "</head>"
                 + "<body>"
                 + "<div class='container'>"
-                + "<h1>ClickNBuy 회원가입 인증</h1>"
-                + "<p>안녕하세요, ClickNBuy 회원가입을 위한 이메일 인증번호입니다.</p>"
-                + "<p>아래의 인증번호를 회원가입 페이지에 입력해 주세요:</p>"
+                + "<h1>ClickNBuy 이메일 인증</h1>"
+                + "<p>안녕하세요, ClickNBuy 이메일 인증을 위한 인증번호입니다.</p>"
+                + "<p>아래의 인증번호를 페이지에 입력해 주세요:</p>"
                 + "<p class='verification-code'>" + authenticationNumber + "</p>"
                 + "<p>본 인증번호는 5분간 유효합니다.</p>"
                 + "<p>감사합니다.</p>"
@@ -138,8 +138,8 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public boolean validateAuthenticationNumber(EmailAuthenticationRequest emailAuthenticationRequest) {
         String authenticationNumber = getAuthenticationNumber(emailAuthenticationRequest.getEmail())
-                                      .orElseThrow(()->new AuthException(AuthExceptionType.NO_EXIST_AUTH_NUMBER));
-        if(authenticationNumber.equals(emailAuthenticationRequest.getAuthenticationNumber())) {
+                .orElseThrow(() -> new AuthException(AuthExceptionType.NO_EXIST_AUTH_NUMBER));
+        if (authenticationNumber.equals(emailAuthenticationRequest.getAuthenticationNumber())) {
             deleteAuthenticationNumber(emailAuthenticationRequest.getEmail());
             return true;
         }

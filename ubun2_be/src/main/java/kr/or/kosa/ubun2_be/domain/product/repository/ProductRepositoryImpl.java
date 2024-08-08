@@ -27,7 +27,7 @@ import static kr.or.kosa.ubun2_be.domain.product.entity.QProduct.product;
 @Repository
 public class ProductRepositoryImpl extends QuerydslRepositorySupport implements ProductRepositoryCustom {
 
-    private static final List<String> STRING_SEARCH_FIELDS = List.of("productName","productCategoryName");
+    private static final List<String> STRING_SEARCH_FIELDS = List.of("productName", "productCategoryName");
     private static final List<String> NUMERIC_SEARCH_FIELDS = List.of("stockQuantity", "productPrice", "productDiscount");
 
     public ProductRepositoryImpl() {
@@ -37,8 +37,8 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
     @Override
     public Page<Product> findProducts(Long customerId, SearchRequest searchRequest, Pageable pageable, boolean isMember) {
         QueryResults<Product> results = from(product)
-                .join(product.category,category)
-                .where(product.isDeleted.isFalse(),product.customer.customerId.eq(customerId), productSearch(searchRequest), productStatusForMember(isMember))
+                .join(product.category, category)
+                .where(product.isDeleted.isFalse(), product.customer.customerId.eq(customerId), productSearch(searchRequest), productStatusForMember(isMember))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(productSort(pageable).stream().toArray(OrderSpecifier[]::new))
@@ -72,6 +72,7 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
 
         return new BooleanBuilder();
     }
+
     private BooleanBuilder numericSearch(NumberPath<?> path, String keyword) {
         String[] range = keyword.split(",");
         if (range.length != 2) return new BooleanBuilder();
@@ -120,10 +121,11 @@ public class ProductRepositoryImpl extends QuerydslRepositorySupport implements 
             default -> null;
         };
     }
+
     @Override
     public Page<Product> findProductsByCategory(Long customerId, CategoryRequest categoryRequest, Pageable pageable) {
         QueryResults<Product> results = from(product)
-                .where(product.isDeleted.isFalse(),product.customer.customerId.eq(customerId), categorySearch(categoryRequest),productStatusForMember(true))
+                .where(product.isDeleted.isFalse(), product.customer.customerId.eq(customerId), categorySearch(categoryRequest), productStatusForMember(true))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .orderBy(product.createdAt.desc()) //생성날짜 내림차순

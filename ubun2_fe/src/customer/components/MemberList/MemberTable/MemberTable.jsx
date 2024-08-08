@@ -147,11 +147,12 @@ const MemberTable = () => {
   };
 
   const deleteConfirmFirstButtonFunc = () => {
-    setIsDeleteConfirmModalOpen(true)
+    setIsDeleteConfirmModalOpen(false)
   }
 
   const deleteConfirmSecondButtonFunc = () => {
     selectedMemberDeleteMutate()
+    setIsDeleteConfirmModalOpen(false)
   }
 
   const checkConfirmFirstButtonFunc = () => {

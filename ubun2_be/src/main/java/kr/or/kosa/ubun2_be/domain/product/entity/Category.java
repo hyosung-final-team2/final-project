@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-@Table(name = "category",  indexes = {
+@Table(name = "category", indexes = {
         @Index(name = "idx_category_name", columnList = "categoryName")
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

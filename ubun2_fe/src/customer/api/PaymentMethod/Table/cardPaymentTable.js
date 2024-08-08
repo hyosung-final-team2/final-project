@@ -18,7 +18,6 @@ export const getCardPayments = async (page, size, sort, searchCategory, searchKe
 };
 
 export const deleteSelectedPayments = async selectedPayments => {
-  console.log('Calling API with:', { selectedPayments });
   return await privateFetch.delete('/customers/payments/selected', {
     data: selectedPayments,
   });

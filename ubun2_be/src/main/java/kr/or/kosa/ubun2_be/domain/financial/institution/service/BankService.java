@@ -17,11 +17,11 @@ public class BankService {
     private final AccountPaymentRepository accountPaymentRepository;
 
     public Bank getAccount(PaymentMethod paymentMethod, String memberName) {
-            AccountPayment accountPayment = accountPaymentRepository.findById(paymentMethod.getPaymentMethodId())
-                    .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_INFO));
+        AccountPayment accountPayment = accountPaymentRepository.findById(paymentMethod.getPaymentMethodId())
+                .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_INFO));
 
-            return bankRepository.findByAccountNumberAndUserNameAndAccountStatusTrue(
-                            accountPayment.getAccountNumber(), memberName)
-                    .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_INFO));
+        return bankRepository.findByAccountNumberAndUserNameAndAccountStatusTrue(
+                        accountPayment.getAccountNumber(), memberName)
+                .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_INFO));
     }
 }

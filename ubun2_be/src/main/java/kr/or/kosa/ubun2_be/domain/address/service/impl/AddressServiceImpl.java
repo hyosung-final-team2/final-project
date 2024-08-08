@@ -32,10 +32,9 @@ public class AddressServiceImpl implements AddressService {
 
     private final MemberRepository memberRepository;
 
-//    private final PendingMemberRepository pendingMemberRepository;
     @Override
     public Page<AddressResponse> getAllAddresses(Pageable pageable, SearchRequest searchRequest, Long customerId) {
-        return addressRepository.findAllAddressesWithMember(pageable,searchRequest, customerId).map(AddressResponse::new);
+        return addressRepository.findAllAddressesWithMember(pageable, searchRequest, customerId).map(AddressResponse::new);
     }
 
     @Override
@@ -43,7 +42,7 @@ public class AddressServiceImpl implements AddressService {
         AddressMemberDetailRequest addressMemberDetailRequest = AddressMemberDetailRequest.builder()
                 .addressId(addressId).build();
         Address address = addressRepository.findAddressByIdAndCustomerId(addressMemberDetailRequest.getAddressId(), customerId)
-                .orElseThrow(()->new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
+                .orElseThrow(() -> new AddressException(AddressExceptionType.NOT_EXIST_ADDRESS));
 
         Member member = address.getMember();
 
@@ -69,7 +68,7 @@ public class AddressServiceImpl implements AddressService {
         Address address = Address.builder()
                 .member(member)
                 .address(addressRequest.getAddress())
-                .addressNickname(addressRequest.getAddressNickname() != null ? addressRequest.getAddressNickname() : member.getMemberName()+"님의 배송지") //nullable?
+                .addressNickname(addressRequest.getAddressNickname() != null ? addressRequest.getAddressNickname() : member.getMemberName() + "님의 배송지") //nullable?
                 .recipientName(addressRequest.getRecipientName() != null ? addressRequest.getRecipientName() : member.getMemberName())
                 .recipientPhone(addressRequest.getRecipientPhone() != null ? addressRequest.getRecipientPhone() : member.getMemberPhone())
                 .defaultStatus(member.getAddresses().isEmpty()) // 첫 번째 주소면 기본 주소로 설정
@@ -83,8 +82,7 @@ public class AddressServiceImpl implements AddressService {
     public void updateAddress(Long addressId, AddressRequest addressRequest, Long customerId) {
         validateMyMember(customerId, addressRequest.getMemberId());
 
-        //TODO null처리?
-        Address address = addressRepository.findById(addressId).orElse(null);
+        Address address = addressRepository.findById(addressId).orElseThrow(() -> new AddressException(AddressExceptionType.ADDRESS_NOT_MATCH));
         address.updateAddress(addressRequest.getAddress());
     }
 

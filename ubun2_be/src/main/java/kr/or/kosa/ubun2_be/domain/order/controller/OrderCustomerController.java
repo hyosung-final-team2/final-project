@@ -48,7 +48,7 @@ public class OrderCustomerController {
     @GetMapping("/subscription/{order_id}")
     public ResponseDto<?> getSubscriptionOrderByOrderId(@PathVariable("order_id") Long orderId,
                                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        SubscriptionOrderDetailResponse response =subscriptionOrderService.getSubscriptionOrderByCustomerIdAndOrderId(orderId, customUserDetails.getUserId());
+        SubscriptionOrderDetailResponse response = subscriptionOrderService.getSubscriptionOrderByCustomerIdAndOrderId(orderId, customUserDetails.getUserId());
         return ResponseDto.ok(response, "정상출력 데이터");
     }
 
@@ -65,7 +65,7 @@ public class OrderCustomerController {
     @Operation(summary = "대기 단건 주문 리스트 승인, 취소")
     @PutMapping("/approve")
     public ResponseDto<?> updateOrderStatus(@Valid @RequestBody List<OrderApproveRequest> orderApproveRequests,
-                                             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+                                            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         orderService.updateOrderStatus(customUserDetails.getUserId(), orderApproveRequests);
         return ResponseDto.ok(null, "정상출력 데이터");
     }
@@ -73,9 +73,8 @@ public class OrderCustomerController {
     @Operation(summary = "대기 정기 주문(최초 정기주문만) 리스트 승인, 취소")
     @PutMapping("/subscription/approve")
     public ResponseDto<?> updateSubscriptionOrderStatus(@Valid @RequestBody List<SubscriptionApproveRequest> subscriptionApproveRequests,
-                                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+                                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         orderService.updateSubscriptionOrderStatus(customUserDetails.getUserId(), subscriptionApproveRequests);
         return ResponseDto.ok(null, "정상출력 데이터");
     }
-
 }

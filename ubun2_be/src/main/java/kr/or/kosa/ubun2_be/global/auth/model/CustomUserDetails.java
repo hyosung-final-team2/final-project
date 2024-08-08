@@ -29,7 +29,9 @@ public class CustomUserDetails implements UserDetails {
         return user.getLoginId();
     }
 
-    public Long getUserId() { return user.getId(); }
+    public Long getUserId() {
+        return user.getId();
+    }
 
     @Override
     public boolean isAccountNonExpired() {

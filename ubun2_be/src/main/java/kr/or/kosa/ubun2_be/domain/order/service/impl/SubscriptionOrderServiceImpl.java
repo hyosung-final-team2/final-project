@@ -3,6 +3,7 @@ package kr.or.kosa.ubun2_be.domain.order.service.impl;//package kr.or.kosa.ubun2
 import jakarta.transaction.Transactional;
 import kr.or.kosa.ubun2_be.domain.address.entity.Address;
 import kr.or.kosa.ubun2_be.domain.address.service.AddressService;
+import kr.or.kosa.ubun2_be.domain.alarm.event.CustomerNoStockAlarmEvent;
 import kr.or.kosa.ubun2_be.domain.alarm.event.NoStockEvent;
 import kr.or.kosa.ubun2_be.domain.alarm.event.OrderCreatedEvent;
 import kr.or.kosa.ubun2_be.domain.alarm.event.SubCycleCompletedEvent;
@@ -61,7 +62,6 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
     private final BankService bankService;
     private final AddressService addressService;
     private final CardCompanyService cardCompanyService;
-    //private final AlarmService alarmService;
     private final CardPaymentRepository cardPaymentRepository;
     private final AccountPaymentRepository accountPaymentRepository;
 
@@ -103,8 +103,6 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             deleteCartProducts(memberId, request.getSubscriptionOrderProducts());
 
             // 4. 고객에게 push notification (정기주문)
-            //TODO
-            //alarmService.sendMessageToCustomer(request);
             eventPublisher.publishEvent(new OrderCreatedEvent(request));
         }
     }
@@ -134,10 +132,7 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
                     Long productId = product.getProductId();
                     Product findProduct = productService.getProductById(productId);
                     Customer customer = findProduct.getCustomer();
-                    //TODO
-                    //alarmService.sendNoStock(customer, findProduct.getProductName());
-                    System.out.println("여기 아직 메서드 못만들엇어.......");
-                    //eventPublisher.publishEvent(new NoStockEvent());
+                    eventPublisher.publishEvent(new CustomerNoStockAlarmEvent(customer, findProduct.getProductName()));
                     return new InSufficientStockProductResponse(productId, findProduct.getProductName());
                 })
                 .collect(Collectors.toList());
@@ -271,21 +266,14 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             List<SubscriptionOrderProduct> nextProducts = createNextCycleProducts(subscriptionOrder, previousCycleProducts);
             updateOrderWithNewProducts(subscriptionOrder, nextProducts);
             // 정기주문 회차 생성 (회원)
-            //TODO
-            //alarmService.sendSubCycleMessage(subscriptionOrder, null);
-            eventPublisher.publishEvent(new SubCycleCompletedEvent(subscriptionOrder,null));
+            eventPublisher.publishEvent(new SubCycleCompletedEvent(subscriptionOrder, null));
         } catch (ProductException e) {
             // 연기 알림 보내는 부분 (회원) - 사유 : 재고부족
-            //TODO
-            //alarmService.sendSubCycleMessage(subscriptionOrder, "재고부족");
-            eventPublisher.publishEvent(new SubCycleCompletedEvent(subscriptionOrder,"재고부족"));
+            eventPublisher.publishEvent(new SubCycleCompletedEvent(subscriptionOrder, "재고부족"));
             subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
         } catch (Exception e) {
             // 연기 알림 보내는 부분(회원) - 사유 : 결제실패
-            // TODO
-            // alarmService.sendSubCycleMessage(subscriptionOrder, "결제실패");
-            eventPublisher.publishEvent(new SubCycleCompletedEvent(subscriptionOrder,"결제실패"));
-
+            eventPublisher.publishEvent(new SubCycleCompletedEvent(subscriptionOrder, "결제실패"));
             subscriptionOrder.changeOrderStatus(OrderStatus.DELAY); //정기주문 N회차 생성불가 -> Delay status
         }
         subscriptionOrderRepository.save(subscriptionOrder);//        명시적 save
@@ -297,9 +285,7 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             int availableStock = inventoryService.getStock(product.getProduct().getProductId());
             if (availableStock < product.getQuantity()) {
                 // 재고부족한 상품이름 (고객)
-                //TODO
-                //alarmService.sendNoStock(product, orderId);
-                eventPublisher.publishEvent(new NoStockEvent(product,orderId));
+                eventPublisher.publishEvent(new NoStockEvent(product, orderId));
                 throw new ProductException(ProductExceptionType.INSUFFICIENT_STOCK);
             }
         }
@@ -368,6 +354,7 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             processSubscriptionOrder(order);
         }
     }
+
     @Override
     @Transactional
     public SubscriptionOrderDetailResponse getSubscriptionOrderByCustomerIdAndOrderId(Long orderId, Long customerId) {
@@ -376,7 +363,7 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
 
         int latestCycleNumber = findLatestCycleNumber(customerId, orderId);
 
-        return createSubscriptionOrderDetailResponse(subscriptionOrder,latestCycleNumber);
+        return createSubscriptionOrderDetailResponse(subscriptionOrder, latestCycleNumber);
     }
 
     private int findLatestCycleNumber(Long customerId, Long orderId) {
@@ -412,7 +399,7 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
 
         int latestCycleNumber = findSubscriptionOrder.getMaxCycleNumber();
 
-        return createSubscriptionOrderDetailResponse(findSubscriptionOrder,latestCycleNumber);
+        return createSubscriptionOrderDetailResponse(findSubscriptionOrder, latestCycleNumber);
     }
 
     private SubscriptionOrderDetailResponse createSubscriptionOrderDetailResponse(SubscriptionOrder findSubOrder, int latestCycleNumber) {
@@ -433,6 +420,7 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             default -> throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_PAYMENT_TYPE);
         }
     }
+
     @Transactional
     public void removeSubscriptionOrderProducts(Long memberId, RemoveSubscriptionOrderProductRequest request) {
         memberService.isExistMemberCustomer(memberId, request.getCustomerId());
@@ -462,7 +450,6 @@ public class SubscriptionOrderServiceImpl implements SubscriptionOrderService {
             order.changeOrderStatus(OrderStatus.MODIFIED);  // APPROVED 상태에서만 MODIFIED로 변경
         }
         // PENDING 상태일 경우 상태 변경 없음
-
         subscriptionOrderRepository.save(order);
     }
 }

@@ -169,7 +169,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
 
         if ("CARD".equals(registerPaymentMethodRequest.getPaymentType())) {
             //결제수단 카드일때 검증
-            if (registerPaymentMethodRequest.getCardNumber() == null || registerPaymentMethodRequest.getCardCompanyName() == null || registerPaymentMethodRequest.getCardPassword() == null || registerPaymentMethodRequest.getCvc() == null|| registerPaymentMethodRequest.getCardExpirationDate() == null) {
+            if (registerPaymentMethodRequest.getCardNumber() == null || registerPaymentMethodRequest.getCardCompanyName() == null || registerPaymentMethodRequest.getCardPassword() == null || registerPaymentMethodRequest.getCvc() == null || registerPaymentMethodRequest.getCardExpirationDate() == null) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
             }
             //카드번호 16자리 숫자 정규식 검증
@@ -183,7 +183,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
                     .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NO_MATCHING_CARD_NUMBER));
 
             // 카드사명 검증
-            if(!registerPaymentMethodRequest.getCardCompanyName().equals(card.getCardCompanyName())) {
+            if (!registerPaymentMethodRequest.getCardCompanyName().equals(card.getCardCompanyName())) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.NO_MATCHING_CARD_COMPANY);
             }
 
@@ -193,7 +193,7 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             }
 
             // CVC 검증
-            if(!passwordEncoder.matches(registerPaymentMethodRequest.getCvc(), card.getCvc())) {
+            if (!passwordEncoder.matches(registerPaymentMethodRequest.getCvc(), card.getCvc())) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CVC);
             }
 
@@ -201,12 +201,12 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yy");
             String formattedExpiryDate = card.getExpiryDate().format(formatter);
 
-            if (!registerPaymentMethodRequest.getCardExpirationDate().equals(formattedExpiryDate)){
+            if (!registerPaymentMethodRequest.getCardExpirationDate().equals(formattedExpiryDate)) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
             }
 
             // 만료일 검증
-            if( card.getExpiryDate().isBefore(LocalDateTime.now())) {
+            if (card.getExpiryDate().isBefore(LocalDateTime.now())) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_CARD_INFO);
             }
 
@@ -233,20 +233,19 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
                     .orElseThrow(() -> new PaymentMethodException(PaymentMethodExceptionType.NO_MATCHING_ACCOUNT_NUMBER));
 
             // 은행명 검증
-            if(!registerPaymentMethodRequest.getBankName().equals(account.getBankName())) {
+            if (!registerPaymentMethodRequest.getBankName().equals(account.getBankName())) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.NO_MATCHING_BANK);
             }
 
             // 계좌 비밀번호 검증
-            if(!passwordEncoder.matches(registerPaymentMethodRequest.getAccountPassword(), account.getAccountPassword())) {
+            if (!passwordEncoder.matches(registerPaymentMethodRequest.getAccountPassword(), account.getAccountPassword())) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_PASSWORD);
             }
 
             // 계좌 상태 검증
-            if(!account.isAccountStatus()) {
+            if (!account.isAccountStatus()) {
                 throw new PaymentMethodException(PaymentMethodExceptionType.INVALID_ACCOUNT_STATUS);
             }
-
 
             AccountPayment accountPayment = AccountPayment.builder()
                     .member(member)

@@ -21,8 +21,6 @@ public interface OrderService {
 
     void createSingleOrder(Long memberId, SubscriptionOrderRequest orderRequest);
 
-    List<UnifiedOrderResponse> getAllOrdersByMemberId(OrderPeriodFilterRequest orderPeriodFilterRequest,Long memberId);
-
     OrderDetailResponse getOrderByMemberIdAndOrderId(Long memberId, Long orderId);
 
     void cancelOrder(Long memberId, CancelOrderRequest cancelOrderRequest);

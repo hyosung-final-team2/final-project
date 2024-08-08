@@ -19,7 +19,6 @@ const commonButtonStyles = {
 const OrderDetailModal = ({ isOpen, setOpenModal, title, primaryButtonText, onPrimaryClick, selectedOrderDetail, handleOrderUpdate }) => {
   const { data: orderDetail, isLoading } = useGetOrderDetail(selectedOrderDetail.orderId, selectedOrderDetail.subscription);
   const orderInfo = orderDetail?.data?.data;
-  console.log(orderInfo);
   const [selectedCycle, setSelectedCycle] = useState(1);
 
   const { mutate: sendPersonalAlarmMutate } = useSendPersonalAlarm(orderInfo?.memberId, orderInfo?.orderId, orderInfo?.intervalDays);

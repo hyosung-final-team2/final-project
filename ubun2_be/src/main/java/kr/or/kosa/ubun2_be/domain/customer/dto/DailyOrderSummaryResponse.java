@@ -14,5 +14,5 @@ public class DailyOrderSummaryResponse {
     private long count;
     private long price;
     private String type;
-    private String startTime ;
+    private String startTime;
 }

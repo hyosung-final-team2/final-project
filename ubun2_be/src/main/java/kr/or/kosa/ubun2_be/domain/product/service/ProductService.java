@@ -11,17 +11,27 @@ import java.util.List;
 
 public interface ProductService {
 
-    Page<ProductResponse> getProducts(Long customerId,SearchRequest searchRequest,Pageable pageable,boolean isMember);
-    ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId,boolean isMember);
-    void registerProduct(MultipartFile image, List<MultipartFile> detailImages,Long customerId, ProductRequest productRequest);
-    void modifyProduct(MultipartFile image,List<MultipartFile> detailImages,Long customerId, ProductRequest productUpdateRequest);
+    Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable, boolean isMember);
+
+    ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId, boolean isMember);
+
+    void registerProduct(MultipartFile image, List<MultipartFile> detailImages, Long customerId, ProductRequest productRequest);
+
+    void modifyProduct(MultipartFile image, List<MultipartFile> detailImages, Long customerId, ProductRequest productUpdateRequest);
+
     void removeProduct(Long customerId, Long productId);
+
     boolean isExistProductName(String productName);
-//    boolean checkValidation(ProductRequest productRequest);
-    Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable,Long memberId);
-    ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId,Long memberId);
+
+    Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable, Long memberId);
+
+    ProductDetailResponse getProductByCustomerIdAndProductId(Long customerId, Long productId, Long memberId);
+
     Product getProductById(Long productId);
+
     Page<ProductResponse> getProductsByCategory(Long customerId, CategoryRequest categoryRequest, Pageable pageable, Long memberId);
+
     List<CategoryResponse> getProductCategory();
+
     void removeSelectedProducts(ProductDeleteSelectedRequest productDeleteSelectedRequest, Long customerId);
 }

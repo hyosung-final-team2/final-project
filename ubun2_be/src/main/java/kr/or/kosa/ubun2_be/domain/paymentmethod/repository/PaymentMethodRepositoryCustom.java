@@ -9,7 +9,10 @@ import java.util.Optional;
 
 public interface PaymentMethodRepositoryCustom {
     Page<PaymentMethod> findAllCardPaymentMethodsByMemberId(Pageable pageable, SearchRequest searchRequest, Long customerId);
+
     Page<PaymentMethod> findAllAccountPaymentMethodsByMemberId(Pageable pageable, SearchRequest searchRequest, Long customerId);
+
     Optional<PaymentMethod> findPaymentMethodByPaymentMethodIdAndCustomerId(Long paymentMethodId, Long customerId);
+
     boolean checkIsMyMember(Long customerId, Long memberId);
 }

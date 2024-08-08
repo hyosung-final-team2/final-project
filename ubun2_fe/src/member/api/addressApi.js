@@ -24,7 +24,6 @@ const fetchAddressData = (keyword, confmKey = apikey) => {
       // JSON 문자열을 객체로 파싱
       const data = JSON.parse(jsonString);
 
-      console.log(data);
 
       return data;
     })

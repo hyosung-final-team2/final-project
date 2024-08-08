@@ -40,7 +40,6 @@ public class RefreshTokenService {
         redisTemplate.delete(loginId);
     }
 
-    //TODO: cookie.setSecure(true); https 설정 / cookie.setPath("/"); 쿠키 적용 범위
     public Cookie createRefreshTokenCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
         cookie.setPath("/");
@@ -59,9 +58,9 @@ public class RefreshTokenService {
     public String[] refreshTokens(String refreshToken) {
         // 1. refreshToken이 만료되지 않았고 2. 토큰 타입이 refresh이고 3. redis에도 존재하면
         if (jwtUtil.isExpired(refreshToken) ||
-            !jwtUtil.getTokenType(refreshToken).equals("refresh") ||
-            getRedisRefreshToken(jwtUtil.getLoginId(refreshToken)).isEmpty() ||
-            !getRedisRefreshToken(jwtUtil.getLoginId(refreshToken)).get().equals(refreshToken)
+                !jwtUtil.getTokenType(refreshToken).equals("refresh") ||
+                getRedisRefreshToken(jwtUtil.getLoginId(refreshToken)).isEmpty() ||
+                !getRedisRefreshToken(jwtUtil.getLoginId(refreshToken)).get().equals(refreshToken)
         ) {
             throw new AuthException(AuthExceptionType.INVALID_JWT_REFRESH);
         }
@@ -71,6 +70,6 @@ public class RefreshTokenService {
         this.saveRedisRefreshToken(loginId, newRefreshToken);
         String newAccessToken = jwtUtil.createJwt("access", jwtUtil.getUserId(refreshToken), loginId, jwtUtil.getRole(refreshToken));
 
-        return new String[] { newAccessToken, newRefreshToken };
+        return new String[]{newAccessToken, newRefreshToken};
     }
 }

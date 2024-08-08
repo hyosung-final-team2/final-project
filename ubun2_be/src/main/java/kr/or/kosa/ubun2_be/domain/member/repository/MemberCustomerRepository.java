@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface MemberCustomerRepository extends JpaRepository<MemberCustomer,Long> {
+public interface MemberCustomerRepository extends JpaRepository<MemberCustomer, Long> {
 
     @Query("SELECT CASE WHEN COUNT(mc) > 0 THEN true ELSE false END " +
             "FROM MemberCustomer mc " +

@@ -13,6 +13,7 @@ public interface MemberService {
     boolean isExistMemberCustomer(Long memberId, Long customerId);
 
     AnnouncementResponse getAnnouncement(Long customerId, Long memberId);
+
     Member findById(Long memberId);
 
     void updateMemberFcmToken(Long memberId, FcmTokenRequest fcmTokenRequest);
