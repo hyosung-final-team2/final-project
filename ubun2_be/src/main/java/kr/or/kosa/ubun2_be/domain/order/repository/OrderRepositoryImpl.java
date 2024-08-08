@@ -52,14 +52,15 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     public List<Order> findOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
         JPQLQuery<Order> query = from(order)
                 .distinct()
-                .join(order.member, member).fetchJoin()
-                .join(member.memberCustomers, memberCustomer)
-                .join(order.orderProducts, orderProduct).fetchJoin()
-                .join(order.paymentMethod, paymentMethod).fetchJoin()
-                .join(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
-                .join(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
+                .join(order.orderProducts, orderProduct)
+                .join(orderProduct.product, product)
+                .join(product.customer, customer)
+                .leftJoin(order.member, member).fetchJoin()
+                .leftJoin(order.paymentMethod, paymentMethod).fetchJoin()
+                .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
+                .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .where(
-                        memberCustomer.customer.customerId.eq(customerId),
+                        customer.customerId.eq(customerId),
                         order.orderStatus.ne(OrderStatus.PENDING),
                         searchCondition(searchRequest),
                         orderStatusEq(searchRequest)
@@ -80,14 +81,15 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     public List<Order> findPendingOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
         JPQLQuery<Order> query = from(order)
                 .distinct()
-                .join(order.member, member).fetchJoin()
-                .join(member.memberCustomers, memberCustomer)
-                .join(order.orderProducts, orderProduct).fetchJoin()
-                .join(order.paymentMethod, paymentMethod).fetchJoin()
-                .join(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
-                .join(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
+                .join(order.orderProducts, orderProduct)
+                .join(orderProduct.product, product)
+                .join(product.customer, customer)
+                .leftJoin(order.member, member).fetchJoin()
+                .leftJoin(order.paymentMethod, paymentMethod).fetchJoin()
+                .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
+                .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .where(
-                        memberCustomer.customer.customerId.eq(customerId),
+                        customer.customerId.eq(customerId),
                         order.orderStatus.eq(OrderStatus.PENDING),
                         searchCondition(searchRequest)
                 );
@@ -99,7 +101,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     public Optional<Order> findPendingOrderByIdAndCustomerId(Long orderId, Long customerId) {
         JPQLQuery<Order> query = from(order)
                 .distinct()
-                .join(order.member, member).fetchJoin()
+                .leftJoin(order.member, member).fetchJoin()
                 .join(member.memberCustomers, memberCustomer)
                 .where(
                         order.orderId.eq(orderId),
@@ -218,15 +220,14 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
         List<Tuple> results = from(order)
                 .select(order.address, order.orderId)
                 .join(order.orderProducts, orderProduct)
-                .join(orderProduct.product.customer, customer)
+                .join(orderProduct.product, product)
+                .join(product.customer, customer)
                 .where(customer.customerId.eq(customerId)
                         .and(order.createdAt.between(startDate, endDate))
                         .and(order.orderStatus.eq(OrderStatus.APPROVED)))
                 .distinct()
                 .fetch();
-        return  results.stream().map(tuple -> {
-            return tuple.get(order.address);
-        }).toList();
+        return results.stream().map(tuple -> tuple.get(order.address)).toList();
     }
 
     @Override

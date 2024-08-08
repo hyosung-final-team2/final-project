@@ -52,14 +52,15 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     public List<SubscriptionOrder> findSubscriptionOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
         JPQLQuery<SubscriptionOrder> query = from(subscriptionOrder)
                 .distinct()
-                .join(subscriptionOrder.member, member).fetchJoin()
-                .join(member.memberCustomers, memberCustomer)
-                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct).fetchJoin()
-                .join(subscriptionOrder.paymentMethod, paymentMethod).fetchJoin()
-                .join(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
-                .join(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
+                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
+                .join(subscriptionOrderProduct.product, product)
+                .join(product.customer, customer)
+                .leftJoin(subscriptionOrder.member, member).fetchJoin()
+                .leftJoin(subscriptionOrder.paymentMethod, paymentMethod).fetchJoin()
+                .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
+                .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .where(
-                        memberCustomer.customer.customerId.eq(customerId),
+                        customer.customerId.eq(customerId),
                         subscriptionOrder.orderStatus.ne(OrderStatus.PENDING),
                         searchCondition(searchRequest),
                         orderStatusEq(searchRequest)
@@ -80,14 +81,15 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     public List<SubscriptionOrder> findPendingSubscriptionOrdersByCustomerIdAndSearchRequest(Long customerId, SearchRequest searchRequest) {
         JPQLQuery<SubscriptionOrder> query = from(subscriptionOrder)
                 .distinct()
-                .join(subscriptionOrder.member, member).fetchJoin()
-                .join(member.memberCustomers, memberCustomer)
-                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct).fetchJoin()
-                .join(subscriptionOrder.paymentMethod, paymentMethod).fetchJoin()
-                .join(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
-                .join(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
+                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
+                .join(subscriptionOrderProduct.product, product)
+                .join(product.customer, customer)
+                .leftJoin(subscriptionOrder.member, member).fetchJoin()
+                .leftJoin(subscriptionOrder.paymentMethod, paymentMethod).fetchJoin()
+                .leftJoin(accountPayment).on(paymentMethod.paymentMethodId.eq(accountPayment.paymentMethodId))
+                .leftJoin(cardPayment).on(paymentMethod.paymentMethodId.eq(cardPayment.paymentMethodId))
                 .where(
-                        memberCustomer.customer.customerId.eq(customerId),
+                        customer.customerId.eq(customerId),
                         subscriptionOrder.orderStatus.eq(OrderStatus.PENDING),
                         searchCondition(searchRequest)
                 );
@@ -99,7 +101,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     public Optional<SubscriptionOrder> findPendingSubscriptionOrderByIdAndCustomerId(Long subscriptionOrderId, Long customerId) {
         JPQLQuery<SubscriptionOrder> query = from(subscriptionOrder)
                 .distinct()
-                .join(subscriptionOrder.member, member).fetchJoin()
+                .leftJoin(subscriptionOrder.member, member).fetchJoin()
                 .join(member.memberCustomers, memberCustomer)
                 .where(
                         subscriptionOrder.subscriptionOrderId.eq(subscriptionOrderId),
@@ -162,7 +164,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
         }
     }
 
-  public List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+    public List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
 
         return from(subscriptionOrder)
                 .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
@@ -175,7 +177,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                 .fetch();
     }
 
-  public List<SubscriptionOrder> findAllSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+    public List<SubscriptionOrder> findAllSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
 
         return from(subscriptionOrder)
                 .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
@@ -184,7 +186,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                 .where(customer.customerId.eq(customerId)
                         .and(subscriptionOrder.createdAt.between(startDate, endDate)))
                 .fetch();
-  }
+    }
 
     @Override
     public Optional<SubscriptionOrder> findSubscriptionOrderByIdAndCustomerId(Long orderId, Long customerId) {
@@ -245,8 +247,9 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     public List<Address> findAddressesByDateRange(Long customerId, LocalDateTime startDate, LocalDateTime endDate) {
         List<Tuple> results = from(subscriptionOrder)
                 .select(subscriptionOrder.address, subscriptionOrder.subscriptionOrderId)
-                .join(subscriptionOrder.member.memberCustomers, memberCustomer)
-                .where(memberCustomer.customer.customerId.eq(customerId)
+                .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
+                .join(subscriptionOrderProduct.product.customer, customer)
+                .where(customer.customerId.eq(customerId)
                         .and(subscriptionOrder.createdAt.between(startDate,endDate))
                         .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED)))
                 .distinct()
