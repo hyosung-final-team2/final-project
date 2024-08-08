@@ -1,6 +1,6 @@
 const LandingIntro = () => {
   return (
-    <div className='min-h-full rounded-l-xl main_left bg-login-main'>
+    <div className='min-h-full rounded-l-xl bg-login-main'>
       {/* <img src='/login.png' alt='' className='rounded-l-xl' /> */}
 
       <div className='hero-content py-12 w-full h-full bg-login-movie rounded-l-xl'>

@@ -140,15 +140,6 @@ html {
   }
 }
 
-.main_left {
-  background: rgba(0, 0, 0, 0.65);
-  /*box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );*/
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  /*border-radius: 10px;*/
-  border: 1px solid rgba(255, 255, 255, 0.18);
-}
-
 /* 메인 글귀*/
 .content {
   height: 10%;
@@ -397,24 +388,6 @@ html {
   background-size: cover; /* 이미지가 요소를 덮도록 조정 */
   background-position: center; /* 이미지가 중앙에 위치하도록 설정 */
   background-repeat: no-repeat; /* 이미지가 반복되지 않도록 설정 */
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.55); /* 검은색 반투명 배경 */
-  backdrop-filter: blur(5px); /* 블러 효과 추가 */
-  z-index: 1; /* 다른 요소들 뒤에 배치 */
-  border-radius: 10px 0 0 10px;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2; /* 앞쪽에 배치하여 배경 위에 표시 */
 }
 
 /* 밑줄 */
