@@ -154,8 +154,10 @@ public class AlarmServiceImpl implements AlarmService{
 
         Message message = makeSubCycleMessage(businessName, content, fcmToken, subscriptionOrder.getSubscriptionOrderId());
         sendMessage(message);
+
+        String link = "http://localhost:5173/member/app/mypage/subscription-order/" + subscriptionOrder.getSubscriptionOrderId();
         // TODO: 실제 링크로 변경
-        Alarm alarm = Alarm.createAlarm(businessName, content,"");
+        Alarm alarm = Alarm.createAlarm(businessName, content, link);
         memberAlarmRedisRepository.saveAlarm(String.valueOf(subscriptionOrder.getMember().getMemberId()),alarm);
     }
 
