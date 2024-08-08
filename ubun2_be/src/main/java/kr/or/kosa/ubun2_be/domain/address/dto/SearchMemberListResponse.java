@@ -1,7 +1,6 @@
 package kr.or.kosa.ubun2_be.domain.address.dto;
 
 import kr.or.kosa.ubun2_be.domain.member.entity.Member;
-import kr.or.kosa.ubun2_be.domain.member.entity.PendingMember;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -21,12 +20,4 @@ public class SearchMemberListResponse {
         this.memberPhone = member.getMemberPhone();
         this.createdAt = member.getCreatedAt();
     }
-//
-//    public SearchMemberListResponse(PendingMember pendingMember) {
-//        this.memberId = pendingMember.getPendingMemberId();
-//        this.memberEmail = pendingMember.getPendingMemberEmail();
-//        this.memberName = pendingMember.getPendingMemberName();
-//        this.memberPhone = pendingMember.getPendingMemberPhone();
-//        this.createdAt = null;
-//    }
 }

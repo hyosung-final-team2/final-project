@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface PendingMemberRepository extends JpaRepository<PendingMember,Long>,PendingMemberRepositoryCustom {
+public interface PendingMemberRepository extends JpaRepository<PendingMember, Long>, PendingMemberRepositoryCustom {
     List<PendingMember> findByPendingMemberEmail(String memberEmail);
 
     @Query("SELECT CASE WHEN COUNT(pm) > 0 THEN true ELSE false END " +

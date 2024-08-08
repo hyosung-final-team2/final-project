@@ -16,6 +16,6 @@ public class SmsRequest {
     private String phoneNumber;
 
     @NotBlank(message = "이름을 입력해주세요")
-    @Pattern(regexp = "[가-힣a-zA-Z]+",message = "이름을 입력해주세요")
+    @Pattern(regexp = "[가-힣a-zA-Z]+", message = "이름을 입력해주세요")
     private String memberName;
 }

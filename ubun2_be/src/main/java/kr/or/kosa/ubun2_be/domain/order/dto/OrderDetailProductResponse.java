@@ -19,7 +19,6 @@ public class OrderDetailProductResponse {
     private OrderProductStatus orderProductStatus;
     private Long customerId;
 
-
     public OrderDetailProductResponse(OrderProduct orderProduct) {
         Product product = orderProduct.getProduct();
         this.productId = product.getProductId();

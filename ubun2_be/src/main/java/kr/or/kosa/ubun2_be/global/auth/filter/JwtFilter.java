@@ -18,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 
 @RequiredArgsConstructor
@@ -65,7 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String loginId = jwtUtil.getLoginId(token);
         String role = jwtUtil.getRole(token); // "ROLE_CUSTOMER" or "ROLE_MEMBER"
 
-        CustomUserDetails customUserDetails = userFactory.createUserDetails(userId,loginId, role);
+        CustomUserDetails customUserDetails = userFactory.createUserDetails(userId, loginId, role);
         setAuthentication(customUserDetails);
 
         filterChain.doFilter(request, response);

@@ -32,15 +32,15 @@ public class PaymentMethodController {
 
     @Operation(summary = "카드결제수단을 전체 조회.")
     @GetMapping("/cards")
-    public ResponseDto<?> getCardPaymentMethods(@PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable, SearchRequest searchRequest ,@AuthenticationPrincipal CustomUserDetails userDetails) {
-        Page<CardPaymentResponse> paymentMethods = paymentMethodService.getAllCardPaymentMethodsForMember(pageable, searchRequest,userDetails.getUserId());
+    public ResponseDto<?> getCardPaymentMethods(@PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable, SearchRequest searchRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Page<CardPaymentResponse> paymentMethods = paymentMethodService.getAllCardPaymentMethodsForMember(pageable, searchRequest, userDetails.getUserId());
         return ResponseDto.ok(paymentMethods, "카드 목록을 성공적으로 조회했습니다.");
     }
 
     @Operation(summary = "계좌결제수단을 전체 조회.")
     @GetMapping("/accounts")
     public ResponseDto<?> getAccountPaymentMethods(@PageableDefault(size = PAGE_SIZE, sort = SORT_DEFAULT, direction = Sort.Direction.DESC) Pageable pageable, SearchRequest searchRequest, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Page<AccountPaymentResponse> paymentMethods = paymentMethodService.getAllAccountPaymentMethodsForMember(pageable, searchRequest,userDetails.getUserId());
+        Page<AccountPaymentResponse> paymentMethods = paymentMethodService.getAllAccountPaymentMethodsForMember(pageable, searchRequest, userDetails.getUserId());
         return ResponseDto.ok(paymentMethods, "계좌 목록을 성공적으로 조회했습니다.");
     }
 
@@ -71,12 +71,11 @@ public class PaymentMethodController {
         List<MemberPaymentMethodsResponse> memberPaymentMethods = paymentMethodService.getMemberPaymentMethods(memberId, userDetails.getUserId());
         return ResponseDto.ok(memberPaymentMethods, "회원의 결제수단 목록을 성공적으로 조회했습니다.");
     }
-  
+
     @Operation(summary = "회원의 결제수단 삭제")
-    @DeleteMapping( "/selected")
+    @DeleteMapping("/selected")
     public ResponseDto<?> deleteSelectedPayment(@Valid @RequestBody List<PaymentMethodDeleteRequest> paymentMethodDeleteRequestList, @AuthenticationPrincipal CustomUserDetails userDetails) {
         paymentMethodService.deleteSelectedPaymentMethod(paymentMethodDeleteRequestList, userDetails.getUserId());
         return ResponseDto.ok(null, "주소가 성공적으로 삭제되었습니다.");
     }
-
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Builder
 @Getter
 public class AddressMemberInfoResponse {
@@ -24,5 +25,4 @@ public class AddressMemberInfoResponse {
                 .addresses(memberDetailAddressResponse)
                 .build();
     }
-
 }

@@ -21,7 +21,7 @@ import static kr.or.kosa.ubun2_be.domain.member.entity.QMemberCustomer.memberCus
 public class MemberRepositoryImpl extends QuerydslRepositorySupport implements MemberRepositoryCustom {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
-    private static final List<String> STRING_SEARCH_FIELDS = List.of("memberEmail","memberName","memberPhone");
+    private static final List<String> STRING_SEARCH_FIELDS = List.of("memberEmail", "memberName", "memberPhone");
     private static final List<String> DATE_SEARCH_FIELDS = List.of("createdAt");
 
     public MemberRepositoryImpl() {
@@ -38,7 +38,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport implements M
 
     private BooleanBuilder memberSearch(SearchRequest searchRequest) {
         BooleanBuilder builder = new BooleanBuilder();
-        if (searchRequest == null ||searchRequest.getSearchCategory()==null|| searchRequest.getSearchKeyword() == null) {
+        if (searchRequest == null || searchRequest.getSearchCategory() == null || searchRequest.getSearchKeyword() == null) {
             return null;
         }
         String category = searchRequest.getSearchCategory();
@@ -56,6 +56,7 @@ public class MemberRepositoryImpl extends QuerydslRepositorySupport implements M
         }
         return builder;
     }
+
     private BooleanBuilder dateTimeSearch(DateTimePath<LocalDateTime> path, String keyword) {
         String[] range = keyword.split(",");
         if (range.length != 2) return new BooleanBuilder();

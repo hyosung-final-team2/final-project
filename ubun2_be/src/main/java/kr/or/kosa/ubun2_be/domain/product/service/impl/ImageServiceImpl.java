@@ -66,7 +66,7 @@ public class ImageServiceImpl implements ImageService {
     public void deleteImage(String imagePath) {
 
         String storedImageName = getStoredImageName(imagePath);
-        if(storedImageName.isEmpty()) {
+        if (storedImageName.isEmpty()) {
             throw new ImageException(ImageExceptionType.IMAGE_DELETE_FAILED);
         }
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, storedImageName));
@@ -81,5 +81,4 @@ public class ImageServiceImpl implements ImageService {
             throw new ImageException(ImageExceptionType.IMAGE_PATH_DECODING_FAILED);
         }
     }
-
 }

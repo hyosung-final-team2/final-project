@@ -24,6 +24,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Member extends BaseTimeEntity implements UserType {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
@@ -60,7 +61,7 @@ public class Member extends BaseTimeEntity implements UserType {
     private List<PaymentMethod> paymentMethods;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<Order> orders ;
+    private List<Order> orders;
 
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<SubscriptionOrder> subscriptionOrders;
@@ -108,6 +109,8 @@ public class Member extends BaseTimeEntity implements UserType {
         this.fcmToken = fcmToken;
     }
 
-    public void updatePaymentPassword(String paymentPassword) { this.paymentPassword = paymentPassword; }
+    public void updatePaymentPassword(String paymentPassword) {
+        this.paymentPassword = paymentPassword;
+    }
 
 }

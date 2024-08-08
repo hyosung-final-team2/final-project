@@ -33,5 +33,4 @@ public class ProductResponse {
         this.productImageOriginalName = product.getProductImageOriginalName();
         this.productImagePath = product.getProductImagePath();
     }
-
 }

@@ -76,7 +76,6 @@ public class ProductServiceImpl implements ProductService {
                 saveProduct.getDetailImagesPath().add(detailImageUrl);
             }
         }
-
     }
 
     @Transactional
@@ -152,11 +151,6 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.existsByIsDeletedFalseAndProductName(productName);
     }
 
-//    @Override
-//    public boolean checkValidation(ProductRequest productRequest) {
-//        return true;
-//    }
-
     @Override
     public Page<ProductResponse> getProducts(Long customerId, SearchRequest searchRequest, Pageable pageable,Long memberId) {
         memberService.isExistMemberCustomer(memberId, customerId);
@@ -196,5 +190,4 @@ public class ProductServiceImpl implements ProductService {
             removeProduct(customerId, productId);
         }
     }
-
 }

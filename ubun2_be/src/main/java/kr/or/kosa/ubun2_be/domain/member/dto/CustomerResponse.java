@@ -12,7 +12,6 @@ public class CustomerResponse { //customer 조회
     private String description;
     private String logoImagePath;
 
-
     public CustomerResponse(Customer customer) {
         this.customerId = customer.getCustomerId();
         this.businessName = customer.getBusinessName();

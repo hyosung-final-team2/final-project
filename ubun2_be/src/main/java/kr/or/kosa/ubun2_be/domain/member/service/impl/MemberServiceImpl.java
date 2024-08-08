@@ -34,13 +34,12 @@ public class MemberServiceImpl implements MemberService {
     private final MemberCustomerRepository memberCustomerRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
-    //private final AlarmService alarmService;
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
     public void createMember(MemberSignUpRequest memberSignUpRequest) {
-        if(memberRepository.existsByMemberEmail(memberSignUpRequest.getMemberEmail())){
+        if (memberRepository.existsByMemberEmail(memberSignUpRequest.getMemberEmail())) {
             throw new MemberException(MemberExceptionType.DUPLICATE_MEMBER);
         }
         Member savedMember = memberRepository.save(Member.builder().memberLoginId(memberSignUpRequest.getMemberLoginId())
@@ -52,13 +51,12 @@ public class MemberServiceImpl implements MemberService {
                 .userRole(UserRole.ROLE_MEMBER).build());
 
         List<PendingMember> findPendingMembers = pendingMemberRepository.findByPendingMemberEmail(memberSignUpRequest.getMemberEmail());
-        if(findPendingMembers.isEmpty()){
+        if (findPendingMembers.isEmpty()) {
             return;
         }
         for (PendingMember findPendingMember : findPendingMembers) {
-            memberCustomerRepository.save(MemberCustomer.createMemberCustomer(savedMember,findPendingMember.getCustomer()));
-            //alarmService.subscribeCustomer(memberSignUpRequest.getFcmToken(), findPendingMember.getCustomer().getId());
-            eventPublisher.publishEvent(new SubscribeAlarmEvent(memberSignUpRequest.getFcmToken(),findPendingMember.getCustomer().getId()));
+            memberCustomerRepository.save(MemberCustomer.createMemberCustomer(savedMember, findPendingMember.getCustomer()));
+            eventPublisher.publishEvent(new SubscribeAlarmEvent(memberSignUpRequest.getFcmToken(), findPendingMember.getCustomer().getId()));
             pendingMemberRepository.delete(findPendingMember);
         }
     }
@@ -69,7 +67,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     public boolean isExistMemberCustomer(Long memberId, Long customerId) {
-        if(memberCustomerRepository.existsByCustomerIdAndMemberId(customerId,memberId)){
+        if (memberCustomerRepository.existsByCustomerIdAndMemberId(customerId, memberId)) {
             return true;
         }
         throw new CustomerException(CustomerExceptionType.NOT_EXIST_CUSTOMER);
@@ -81,8 +79,8 @@ public class MemberServiceImpl implements MemberService {
             Optional<String> announcement = customerRepository.findAnnouncementByCustomerId(customerId);
             if (announcement.isPresent()) {
                 return AnnouncementResponse.builder()
-                                           .announcement(announcement.get())
-                                           .build();
+                        .announcement(announcement.get())
+                        .build();
             }
         }
         return AnnouncementResponse.builder()
@@ -107,16 +105,14 @@ public class MemberServiceImpl implements MemberService {
 
         // 1. 원래 FcmToken으로 구독된거 다 끊어주고
         for (MemberCustomer memberCustomer : memberCustomers) {
-            //alarmService.unsubscribeCustomer(member.getFcmToken(), memberCustomer.getCustomer().getCustomerId());
-            eventPublisher.publishEvent(new UnSubscribeAlarmEvent(member.getFcmToken(),memberCustomer.getCustomer().getCustomerId()));
+            eventPublisher.publishEvent(new UnSubscribeAlarmEvent(member.getFcmToken(), memberCustomer.getCustomer().getCustomerId()));
         }
         // 2. FCM 토큰 업데이트 해주고
         member.updateMemberFcmToken(fcmTokenRequest.getFcmToken());
 
         // 3. 바뀐 토큰으로 다시 구독
         for (MemberCustomer memberCustomer : memberCustomers) {
-            //alarmService.subscribeCustomer(fcmTokenRequest.getFcmToken(), memberCustomer.getCustomer().getCustomerId());
-            eventPublisher.publishEvent(new SubscribeAlarmEvent(member.getFcmToken(),memberCustomer.getCustomer().getCustomerId()));
+            eventPublisher.publishEvent(new SubscribeAlarmEvent(member.getFcmToken(), memberCustomer.getCustomer().getCustomerId()));
         }
 
     }
@@ -135,7 +131,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void updateSimplePassword(Long memberId,  PaymentPasswordRequest request) {
+    public void updateSimplePassword(Long memberId, PaymentPasswordRequest request) {
         Member member = findById(memberId);
         member.updatePaymentPassword(passwordEncoder.encode(request.getPaymentPassword()));
     }

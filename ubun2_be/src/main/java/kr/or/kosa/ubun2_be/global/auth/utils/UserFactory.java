@@ -37,5 +37,4 @@ public class UserFactory {
                 .userRole(UserRole.ROLE_MEMBER)
                 .build();
     }
-
 }

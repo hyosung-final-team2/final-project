@@ -18,9 +18,9 @@ public class MemberDetailAddressRequest {
     private String address;
 
     public Address toEntity(Member member) {
-            return Address.builder()
-                    .member(member)
-                    .address(this.address)
-                    .build();
+        return Address.builder()
+                .member(member)
+                .address(this.address)
+                .build();
     }
 }

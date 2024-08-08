@@ -20,7 +20,7 @@ public class JwtUtil {
     @Value("${spring.jwt.refresh-cookie-expiration-time}")
     private int cookieExpirationTime;
 
-    public JwtUtil(@Value("${spring.jwt.secret}")String secret) {
+    public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
         secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
@@ -48,12 +48,12 @@ public class JwtUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(String tokenType,Long userId,String loginId, String role) {
+    public String createJwt(String tokenType, Long userId, String loginId, String role) {
         long expirationTime = tokenType.equals("access") ? accessExpirationTime : refreshExpirationTime;
 
         return Jwts.builder()
                 .claim("tokenType", tokenType)
-                .claim("userId",userId)
+                .claim("userId", userId)
                 .claim("loginId", loginId)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))

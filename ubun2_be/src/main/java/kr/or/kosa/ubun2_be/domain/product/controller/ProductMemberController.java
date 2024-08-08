@@ -33,7 +33,7 @@ public class ProductMemberController {
     @Operation(summary = "상품 카테고리 조회")
     @GetMapping("/store/{customer_id}/category")
     public ResponseDto<?> getCategories(@PathVariable("customer_id") Long customerId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        List<CategoryResponse> categories = categoryService.getCategories(customerId,customUserDetails.getUserId());
+        List<CategoryResponse> categories = categoryService.getCategories(customerId, customUserDetails.getUserId());
         return ResponseDto.ok(categories, "정상출력 데이터");
     }
 
@@ -46,8 +46,8 @@ public class ProductMemberController {
 
     @Operation(summary = "상품 상세 조회")
     @GetMapping("/products/{customer_id}/{product_id}")
-    public ResponseDto<?> getProductByProductId(@PathVariable("customer_id") Long customerId,@PathVariable("product_id") Long productId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        ProductDetailResponse productDetailResponse = productService.getProductByCustomerIdAndProductId(customerId,productId,customUserDetails.getUserId());
+    public ResponseDto<?> getProductByProductId(@PathVariable("customer_id") Long customerId, @PathVariable("product_id") Long productId, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        ProductDetailResponse productDetailResponse = productService.getProductByCustomerIdAndProductId(customerId, productId, customUserDetails.getUserId());
         return ResponseDto.ok(productDetailResponse, "정상출력 데이터");
     }
 

@@ -4,7 +4,7 @@ import kr.or.kosa.ubun2_be.global.exception.base.CustomExceptionType;
 import org.springframework.http.HttpStatus;
 
 public enum PaymentMethodExceptionType implements CustomExceptionType {
-    NOT_EXIST_PAYMENT_METHOD(-901,HttpStatus.BAD_REQUEST, "존재하지 않는 결제수단입니다."),
+    NOT_EXIST_PAYMENT_METHOD(-901, HttpStatus.BAD_REQUEST, "존재하지 않는 결제수단입니다."),
     INVALID_PAYMENT_TYPE(-902, HttpStatus.BAD_REQUEST, "잘못된 결제 유형입니다."),
     INVALID_CARD_INFO(-903, HttpStatus.BAD_REQUEST, "잘못된 카드 정보입니다."),
     INVALID_ACCOUNT_INFO(-904, HttpStatus.BAD_REQUEST, "잘못된 계좌 정보입니다."),

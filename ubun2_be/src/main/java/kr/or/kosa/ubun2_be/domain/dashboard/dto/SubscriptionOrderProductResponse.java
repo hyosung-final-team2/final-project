@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class SubscriptionOrderProductResponse {
-
     private Long subscriptionOrderProductId;
     private int quantity;
     private int price;

@@ -44,8 +44,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         setFilterProcessesUrl(loginUrl);  // 로그인 URL 설정
     }
 
-
-
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
@@ -61,12 +59,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         }
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginRequest.getLoginId(),
-                                                                                                loginRequest.getPassword(),
-                                                                                                Collections.singletonList(loginRequest::getUserType));
+                loginRequest.getPassword(),
+                Collections.singletonList(loginRequest::getUserType));
 
         return authenticationManager.authenticate(authToken);
     }
-
 
     //로그인 성공시 실행하는 메소드 (jwt 발급)
     @Override
@@ -80,8 +77,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        String accessToken = jwtUtil.createJwt("access", userId,loginId, roles);
-        String refreshToken = jwtUtil.createJwt("refresh", userId,loginId, roles);
+        String accessToken = jwtUtil.createJwt("access", userId, loginId, roles);
+        String refreshToken = jwtUtil.createJwt("refresh", userId, loginId, roles);
 
         refreshTokenService.saveRedisRefreshToken(loginId, refreshToken);
 
@@ -99,5 +96,4 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
         System.out.println("fail");
     }
-
 }

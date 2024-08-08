@@ -21,17 +21,17 @@ public interface SubscriptionOrderRepositoryCustom {
 
     Optional<Integer> findLatestCycleNumberByCustomerIdAndOrderId(Long customerId, Long orderId);
 
-    List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+    List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId);
 
-    List<SubscriptionOrder> findAllSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+    List<SubscriptionOrder> findAllSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId);
 
     List<Object[]> findTopSellingProductsByCustomerId(Long customerId, LocalDateTime startDate, LocalDateTime endDate);
 
-    List<Address> findAddressesByDateRange(Long customerId,LocalDateTime startDate, LocalDateTime endDate);
+    List<Address> findAddressesByDateRange(Long customerId, LocalDateTime startDate, LocalDateTime endDate);
 
-    Long countSubscriptionOrdersByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+    Long countSubscriptionOrdersByCustomerAndDateRange(LocalDateTime startDate, LocalDateTime endDate, Long customerId);
 
-    Long sumSubscriptionOrderTotalByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId);
+    Long sumSubscriptionOrderTotalByCustomerAndDateRange(LocalDateTime startDate, LocalDateTime endDate, Long customerId);
 
     Page<SubscriptionOrder> findSubscriptionOrdersByMemberId(Long memberId, LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 }

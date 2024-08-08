@@ -8,7 +8,8 @@ import lombok.Getter;
 public class UpdatePendingMemberRequest {
 
     @NotBlank(message = "이름을 입력해주세요")
-    @Pattern(regexp = "[가-힣a-zA-Z]+", message = "이름을 입력해주세요")    private String pendingMemberName;
+    @Pattern(regexp = "[가-힣a-zA-Z]+", message = "이름을 입력해주세요")
+    private String pendingMemberName;
 
     @NotBlank(message = "이메일을 입력해주세요")
     @Pattern(regexp = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", message = "이메일 형식에 맞게 입력해주세요")

@@ -37,16 +37,16 @@ public class MemberController {
     @GetMapping("/announcement/{customer_id}")
     public ResponseDto<?> getAnnouncement(@PathVariable Long customer_id,
                                           @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        AnnouncementResponse announcementResponse = memberService.getAnnouncement(customer_id,customUserDetails.getUserId());
-        return ResponseDto.ok(announcementResponse,"정상출력 데이터");
+        AnnouncementResponse announcementResponse = memberService.getAnnouncement(customer_id, customUserDetails.getUserId());
+        return ResponseDto.ok(announcementResponse, "정상출력 데이터");
     }
 
     @Operation(summary = "회원의 기기등록 FcmToken 전송 받기")
     @PutMapping("/fcmtoken")
     public ResponseDto<?> updateFcmToken(@Valid @RequestBody FcmTokenRequest fcmTokenRequest,
                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        memberService.updateMemberFcmToken(customUserDetails.getUserId(),fcmTokenRequest);
-        return ResponseDto.ok(null,"fcm 토큰 등록/업데이트 완료");
+        memberService.updateMemberFcmToken(customUserDetails.getUserId(), fcmTokenRequest);
+        return ResponseDto.ok(null, "fcm 토큰 등록/업데이트 완료");
     }
 
     @Operation(summary = "회원의 간편 결제 비밀번호 체크")
@@ -54,30 +54,30 @@ public class MemberController {
     public ResponseDto<?> simpleCheck(@Valid @RequestBody PaymentPasswordRequest request,
                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         boolean result = memberService.simpleCheck(customUserDetails.getUserId(), request);
-        return ResponseDto.ok(result,"결제 비밀번호 체크 완료");
+        return ResponseDto.ok(result, "결제 비밀번호 체크 완료");
     }
 
     @Operation(summary = "회원의 간편 결제 비밀번호 등록")
     @PostMapping("/simplepassword")
     public ResponseDto<?> simplePassword(@Valid @RequestBody PaymentPasswordRequest request,
-                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         memberService.registerSimplePassword(customUserDetails.getUserId(), request);
-        return ResponseDto.ok(null,"결제 비밀번호 등록 완료");
+        return ResponseDto.ok(null, "결제 비밀번호 등록 완료");
     }
 
     @Transactional
     @Operation(summary = "회원의 간편 결제 비밀번호 수정")
     @PutMapping("/simplepassword")
     public ResponseDto<?> updateSimplePassword(@Valid @RequestBody PaymentPasswordRequest request,
-                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+                                               @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         memberService.updateSimplePassword(customUserDetails.getUserId(), request);
-        return ResponseDto.ok(null,"결제 비밀번호 수정 완료");
+        return ResponseDto.ok(null, "결제 비밀번호 수정 완료");
     }
 
     @Operation(summary = "로그인시 필요한 회원 정보")
     @GetMapping("/memberinfo")
     public ResponseDto<?> memberInfo(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         MemberInfoResponse response = memberService.memberInfo(customUserDetails.getUserId());
-        return ResponseDto.ok(response,"정상출력 데이터");
+        return ResponseDto.ok(response, "정상출력 데이터");
     }
 }

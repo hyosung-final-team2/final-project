@@ -26,11 +26,10 @@ import java.util.stream.Collectors;
 public class DashboardServiceImpl implements DashboardService {
     private final OrderRepository orderRepository;
     private final SubscriptionOrderRepository subscriptionOrderRepository;
-
     private final ProductRepository productRepository;
-
     private final MemberCustomerRepository memberCustomerRepository;
     private final PendingMemberRepository pendingMemberRepository;
+
     @Override
     public List<UnifiedOrderResponse> getUnifiedOrdersByDateRangeAndCustomerId(LocalDate startDate, LocalDate endDate, Long customerId) {
         //localdate를 localdatetime으로 변환
@@ -38,8 +37,8 @@ public class DashboardServiceImpl implements DashboardService {
         LocalDateTime end = endDate.atTime(LocalTime.MAX).minusSeconds(1);
 
         // 주문 목록 조회
-        List<Order> orders = orderRepository.findAllOrdersByDateRangeAndCustomerId(start,end,customerId);
-        List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findAllSubscriptionOrderByDateRangeAndCustomerId(start,end,customerId);
+        List<Order> orders = orderRepository.findAllOrdersByDateRangeAndCustomerId(start, end, customerId);
+        List<SubscriptionOrder> subscriptionOrders = subscriptionOrderRepository.findAllSubscriptionOrderByDateRangeAndCustomerId(start, end, customerId);
 
         // 주문 목록을 통합
         List<UnifiedOrderResponse> unifiedOrders = new ArrayList<>();
@@ -213,6 +212,4 @@ public class DashboardServiceImpl implements DashboardService {
 
         return price.multiply(quantity).multiply(BigDecimal.ONE.subtract(discount));
     }
-
-
 }

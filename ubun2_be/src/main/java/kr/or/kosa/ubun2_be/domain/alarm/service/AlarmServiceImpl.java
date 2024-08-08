@@ -83,7 +83,6 @@ public class AlarmServiceImpl implements AlarmService{
         Message message = makeGroupMessage(request, topic);
         sendMessage(message);
 
-        // TODO: 실제 링크로 변경
         Alarm alarm = Alarm.createAlarm(request.getTitle(), request.getContent(),"");
         List<Member> members = memberCustomerRepository.findMembersByCustomerId(request.getCustomerId());
 
@@ -120,9 +119,8 @@ public class AlarmServiceImpl implements AlarmService{
         String link = "https://clicknbuy.co.kr/customer/app/pendingorder";
 
         Message message = makeOrderMessage(title, content, customer.getFcmToken(), link);
-        String messageId = sendMessage(message);
+        sendMessage(message);
 
-        // TODO: 실제 링크로 변경
         Alarm alarm = Alarm.createAlarm(title, content, link);
         customerAlarmRedisRepository.saveAlarm(String.valueOf(customer.getCustomerId()), alarm);
     }
@@ -154,7 +152,6 @@ public class AlarmServiceImpl implements AlarmService{
 
         Message message = makeSubCycleMessage(businessName, content, fcmToken, subscriptionOrder.getSubscriptionOrderId());
         sendMessage(message);
-        // TODO: 실제 링크로 변경
         Alarm alarm = Alarm.createAlarm(businessName, content,"");
         memberAlarmRedisRepository.saveAlarm(String.valueOf(subscriptionOrder.getMember().getMemberId()),alarm);
     }
@@ -167,7 +164,6 @@ public class AlarmServiceImpl implements AlarmService{
         String link = "https://clicknbuy.co.kr/customer/app/product";
 
         sendMessage(makeOrderMessage(title,content,fcmToken,link));
-        // TODO: 실제 링크로 변경
         Alarm alarm = Alarm.createAlarm(title, content,link);
         customerAlarmRedisRepository.saveAlarm(String.valueOf(subscriptionOrderProduct.getProduct().getCustomer().getCustomerId()),alarm);
     }
@@ -263,7 +259,6 @@ public class AlarmServiceImpl implements AlarmService{
         String link = "https://clicknbuy.co.kr/customer/app/product";
 
         sendMessage(makeOrderMessage(title,content,customer.getFcmToken(),link));
-        // TODO: 실제 링크로 변경
         Alarm alarm = Alarm.createAlarm(title, content,link);
         customerAlarmRedisRepository.saveAlarm(String.valueOf(customer.getCustomerId()),alarm);
     }

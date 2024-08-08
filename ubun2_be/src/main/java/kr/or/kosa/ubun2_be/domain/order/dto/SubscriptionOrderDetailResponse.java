@@ -70,6 +70,7 @@ public class SubscriptionOrderDetailResponse {
         this.bankName = accountPayment.getBankName();
         this.paymentMethodNickname = accountPayment.getPaymentMethodNickname();
     }
+
     private void calculateOrderAmounts(SubscriptionOrder order) {
         this.orderAmount = subscriptionOrderProducts.stream()
                 .mapToInt(op -> op.getPrice() * op.getQuantity())

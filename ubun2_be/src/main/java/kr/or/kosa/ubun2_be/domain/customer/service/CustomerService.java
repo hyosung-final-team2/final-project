@@ -23,11 +23,11 @@ public interface CustomerService {
 
     void registerMember(RegisterMemberRequest registerMemberRequest, Long customerId);
 
-    MemberDetailResponse getMemberDetail(Long customerId,Long memberId, Boolean isPending);
+    MemberDetailResponse getMemberDetail(Long customerId, Long memberId, Boolean isPending);
 
     void updateMember(Long customerId, Long memberId, MemberRequestWrapper<?> memberRequestWrapper);
 
-    void deleteMember(Long customerId,Long memberId, Boolean isPending);
+    void deleteMember(Long customerId, Long memberId, Boolean isPending);
 
     Page<MemberListResponse> getMembers(Long customerId, SearchRequest searchRequest, Pageable pageable);
 
@@ -37,7 +37,7 @@ public interface CustomerService {
 
     void deleteSelectedProducts(List<MemberDeleteRequest> memberDeleteRequestList, Long customerId);
 
-    void updateMyPage(MultipartFile image, Long customerId, MyPageUpdateRequest myPageUpdateRequest) ;
+    void updateMyPage(MultipartFile image, Long customerId, MyPageUpdateRequest myPageUpdateRequest);
 
     MypageDetailResponse getMyPage(Long customerId);
 }

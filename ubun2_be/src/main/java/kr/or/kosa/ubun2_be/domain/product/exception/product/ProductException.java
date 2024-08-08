@@ -10,7 +10,8 @@ public class ProductException extends CustomException {
     public ProductException(ProductExceptionType productExceptionType) {
         this.productExceptionType = productExceptionType;
     }
-    public ProductException(ProductExceptionType productExceptionType,Object data) {
+
+    public ProductException(ProductExceptionType productExceptionType, Object data) {
         this.productExceptionType = productExceptionType;
         this.data = data;
     }
@@ -20,7 +21,7 @@ public class ProductException extends CustomException {
         return this.productExceptionType;
     }
 
-    public Object getData(){
+    public Object getData() {
         return this.data;
     }
 }

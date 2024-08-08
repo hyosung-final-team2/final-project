@@ -93,8 +93,8 @@ public class CalendarService {
     public MonthlySummaryResponse getMonthlySummary(CalendarRequest calendarRequest, Long customerId) {
         LocalDateTime currentStartDate = LocalDateTime.of(calendarRequest.getYear(), calendarRequest.getMonth(), 1, 0, 0);
 
-        LocalDateTime currentEndDate = LocalDateTime.now().getMonth()==currentStartDate.getMonth()&&LocalDateTime.now().getYear()==currentStartDate.getYear()?
-                                            LocalDateTime.now():currentStartDate.plusMonths(1).minusNanos(1);
+        LocalDateTime currentEndDate = LocalDateTime.now().getMonth() == currentStartDate.getMonth() && LocalDateTime.now().getYear() == currentStartDate.getYear() ?
+                LocalDateTime.now() : currentStartDate.plusMonths(1).minusNanos(1);
         MonthlySummaryResponse.MonthStatistics currentMonth = calculateMonthlySummary(currentStartDate, currentEndDate, customerId);
 
         LocalDateTime previousStartDate = currentStartDate.minusMonths(1);
@@ -107,8 +107,9 @@ public class CalendarService {
                 .build();
 
     }
+
     private MonthlySummaryResponse.MonthStatistics calculateMonthlySummary(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
-        long totalDays = ChronoUnit.DAYS.between(startDate, endDate)+1;
+        long totalDays = ChronoUnit.DAYS.between(startDate, endDate) + 1;
 
         long monthOrderCount = orderRepository.countOrdersByCustomerAndDateRange(startDate, endDate, customerId);
         long monthSubscriptionOrderCount = subscriptionOrderRepository.countSubscriptionOrdersByCustomerAndDateRange(startDate, endDate, customerId);
@@ -125,8 +126,8 @@ public class CalendarService {
                 .monthOrderTotalSales(monthOrderTotalSales)
                 .monthSubscriptionOrderTotalSales(monthSubscriptionOrderTotalSales)
                 .monthTotalSales(monthTotalSales)
-                .monthAverageDailySales(monthTotalSales/totalDays)
-                .monthAverageDailyOrderCount(monthTotalOrderCount/totalDays)
+                .monthAverageDailySales(monthTotalSales / totalDays)
+                .monthAverageDailyOrderCount(monthTotalOrderCount / totalDays)
                 .build();
 
     }

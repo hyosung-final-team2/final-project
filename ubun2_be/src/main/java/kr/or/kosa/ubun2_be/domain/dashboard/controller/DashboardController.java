@@ -19,7 +19,6 @@ import java.util.List;
 public class DashboardController {
     private final DashboardService dashboardService;
 
-
     @Operation(summary = "기간별 주문 목록 조회 (일반 주문 + 구독 주문)")
     @GetMapping("/orders/{start_date}/{end_date}")
     public ResponseDto<?> getOrders(@AuthenticationPrincipal CustomUserDetails customUserDetails,
@@ -83,5 +82,4 @@ public class DashboardController {
         List<OrderCountResponse> orderCounts = dashboardService.getOrderCounts(customUserDetails.getUserId(), startDate, endDate);
         return ResponseDto.ok(orderCounts, "기간 동안의 주문 횟수를 성공적으로 조회했습니다.");
     }
-
 }

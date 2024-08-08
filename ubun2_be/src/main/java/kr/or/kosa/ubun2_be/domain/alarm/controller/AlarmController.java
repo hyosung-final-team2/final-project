@@ -24,7 +24,7 @@ public class AlarmController {
     @PostMapping("/customers/alarm/personal")
     public ResponseDto<?> pushMessagePersonal(@Valid @RequestBody List<PersonalAlarmSendRequest> request) {
         alarmService.sendMessageToPersonal(request);
-        return ResponseDto.ok(null,"개인 알람 전송 성공");
+        return ResponseDto.ok(null, "개인 알람 전송 성공");
     }
 
 
@@ -32,7 +32,7 @@ public class AlarmController {
     @PostMapping("/customers/alarm/group")
     public ResponseDto<?> pushMessageGroup(@Valid @RequestBody GroupAlarmSendRequest request) {
         alarmService.sendMessageToGroup(request);
-        return ResponseDto.ok(null,"토픽 알람 전송 성공");
+        return ResponseDto.ok(null, "토픽 알람 전송 성공");
     }
 
     @Operation(summary = "회원별 알림 조회")

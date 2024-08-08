@@ -101,5 +101,4 @@ public class Product extends BaseTimeEntity {
         this.stockQuantity = stockQuantity;
     }
 
-
 }

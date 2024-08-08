@@ -8,7 +8,8 @@ public enum CartExceptionType implements CustomExceptionType {
     NO_EXIST_PRODUCT(-752, HttpStatus.BAD_REQUEST, "존재하지 않는 제품입니다."),
     NOT_EXIST_CUSTOMER(-753, HttpStatus.BAD_REQUEST, "존재하지 않는 고객입니다."),
     NO_EXIST_CART(-754, HttpStatus.BAD_REQUEST, "존재하지 않는 장바구니입니다."),
-    NO_EXIST_CART_PRODUCT(-755, HttpStatus.BAD_REQUEST, "존재하지 않는 장바구니 제품입니다."),;
+    NO_EXIST_CART_PRODUCT(-755, HttpStatus.BAD_REQUEST, "존재하지 않는 장바구니 제품입니다."),
+    ;
 
     private int errorCode;
     private HttpStatus httpStatus;

@@ -4,8 +4,7 @@ import kr.or.kosa.ubun2_be.global.exception.base.CustomExceptionType;
 import org.springframework.http.HttpStatus;
 
 public enum PendingMemberExceptionType implements CustomExceptionType {
-    NOT_EXIST_PENDING_MEMBER(-601,HttpStatus.BAD_REQUEST,"존재하지 않는 가입대기 회원입니다.");
-
+    NOT_EXIST_PENDING_MEMBER(-601, HttpStatus.BAD_REQUEST, "존재하지 않는 가입대기 회원입니다.");
 
     private int errorCode;
     private HttpStatus httpStatus;

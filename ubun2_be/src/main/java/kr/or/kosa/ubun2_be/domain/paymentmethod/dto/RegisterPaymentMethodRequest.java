@@ -14,7 +14,7 @@ public class RegisterPaymentMethodRequest {
     @NotBlank(message = "결제수단 종류를 입력해주세요")
     private String paymentType;
 
-    @Pattern(regexp = "^(\\d{4}[-\\s]?){3}\\d{4}$" )
+    @Pattern(regexp = "^(\\d{4}[-\\s]?){3}\\d{4}$")
     private String cardNumber;
 
     private String paymentMethodNickname;

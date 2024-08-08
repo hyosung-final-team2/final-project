@@ -10,7 +10,7 @@ import lombok.Setter;
 public class CalendarRequest {
 
     @Min(value = 1900, message = "연도는 1900년 이상이어야 합니다.")
-    @Max(value = 2030, message = "연도는 현재 연도를 초과할 수 없습니다.") //TODO max value 수정 필요
+    @Max(value = 2030, message = "연도는 현재 연도를 초과할 수 없습니다.")
     private int year;
 
     @Min(value = 1, message = "월은 1 이상이어야 합니다.")

@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface CategoryService {
     Category findCategoryByCategoryName(String categoryName);
+
     List<CategoryResponse> getCategories(Long customerId, Long memberId);
 }

@@ -28,14 +28,14 @@ public class CalendarController {
     @GetMapping("/calendar")
     public ResponseDto<?> getDailySalesForMonthAndCustomer(@Valid @ModelAttribute CalendarRequest calendarRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         List<DailyOrderSummaryResponse> dailySalesForMonthAndCustomer = calendarService.getDailySalesForMonthAndCustomer(calendarRequest, customUserDetails.getUserId());
-        return ResponseDto.ok(dailySalesForMonthAndCustomer,"주문 데이터 ");
+        return ResponseDto.ok(dailySalesForMonthAndCustomer, "주문 데이터 ");
     }
 
     @Operation(summary = "월간 요약 조회")
     @GetMapping("/calendar/summary")
     public ResponseDto<?> getMonthlySummary(@Valid @ModelAttribute CalendarRequest calendarRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException {
         MonthlySummaryResponse monthlySummary = calendarService.getMonthlySummary(calendarRequest, customUserDetails.getUserId());
-        return ResponseDto.ok(monthlySummary,"월간 요약 데이터 ");
+        return ResponseDto.ok(monthlySummary, "월간 요약 데이터 ");
     }
 
 }

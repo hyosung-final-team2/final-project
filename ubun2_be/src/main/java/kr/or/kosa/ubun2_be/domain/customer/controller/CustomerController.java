@@ -33,7 +33,6 @@ public class CustomerController {
     private static final int PAGE_SIZE = 8;
     private static final String SORT_DEFAULT = "createdAt";
 
-
     @Operation(summary = "고객 회원가입")
     @PostMapping("/signup")
     public ResponseDto<?> signupCustomer(@Valid @RequestBody SignupRequest signupRequest) {
@@ -63,7 +62,7 @@ public class CustomerController {
     public ResponseDto<?> updateMember(@PathVariable Long memberId,
                                        @Valid @RequestBody MemberRequestWrapper<?> memberRequestWrapper,
                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        customerService.updateMember(customUserDetails.getUserId() ,memberId, memberRequestWrapper);
+        customerService.updateMember(customUserDetails.getUserId(), memberId, memberRequestWrapper);
         return ResponseDto.ok(null, "회원 수정 정상 완료");
     }
 
@@ -72,7 +71,7 @@ public class CustomerController {
     public ResponseDto<?> deleteMember(@PathVariable Long memberId,
                                        @Valid @RequestBody MemberDetailRequest memberDeleteRequest,
                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        customerService.deleteMember(customUserDetails.getUserId() ,memberId, memberDeleteRequest.getIsPending());
+        customerService.deleteMember(customUserDetails.getUserId(), memberId, memberDeleteRequest.getIsPending());
         return ResponseDto.ok(null, "회원 삭제 정상 완료");
     }
 
@@ -89,21 +88,21 @@ public class CustomerController {
     @GetMapping("/storename")
     public ResponseDto<?> getStoreName(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         StoreInfoResponse storeInfo = customerService.getStoreInfo(customUserDetails.getUserId());
-        return ResponseDto.ok(storeInfo,"정상출력 데이터");
+        return ResponseDto.ok(storeInfo, "정상출력 데이터");
     }
 
     @Operation(summary = "고객의 기기등록 FcmToken 전송 받기")
     @PutMapping("/fcmtoken")
     public ResponseDto<?> updateFcmToken(@Valid @RequestBody FcmTokenRequest fcmTokenRequest,
                                          @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        customerService.updateCustomerFcmToken(customUserDetails.getUserId(),fcmTokenRequest);
-        return ResponseDto.ok(null,"fcm 토큰 등록/업데이트 완료");
+        customerService.updateCustomerFcmToken(customUserDetails.getUserId(), fcmTokenRequest);
+        return ResponseDto.ok(null, "fcm 토큰 등록/업데이트 완료");
     }
 
     @Operation(summary = "회원 & 가입대기 회원 리스트 삭제")
     @DeleteMapping("/members/selected")
     public ResponseDto<?> deleteSelectedMember(@Valid @RequestBody List<MemberDeleteRequest> memberDeleteRequestList,
-                                       @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+                                               @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         customerService.deleteSelectedProducts(memberDeleteRequestList, customUserDetails.getUserId());
         return ResponseDto.ok(null, "회원 삭제 정상 완료");
     }
@@ -112,14 +111,14 @@ public class CustomerController {
     @PutMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}, value = "/mypage")
     public ResponseDto<?> updateMyPage(@RequestPart(value = "image", required = false) MultipartFile image, @Valid @RequestPart MyPageUpdateRequest myPageUpdateRequest, @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         customerService.updateMyPage(image, customUserDetails.getUserId(), myPageUpdateRequest);
-        return ResponseDto.ok(null,"고객 마이페이지 수정 완료");
+        return ResponseDto.ok(null, "고객 마이페이지 수정 완료");
     }
 
     @Operation(summary = "고객 마이페이지 조회")
     @GetMapping("/mypage")
     public ResponseDto<?> getMyPage(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         MypageDetailResponse myPage = customerService.getMyPage(customUserDetails.getUserId());
-        return ResponseDto.ok(myPage,"고객 마이페이지 조회 완료");
+        return ResponseDto.ok(myPage, "고객 마이페이지 조회 완료");
     }
 
 }

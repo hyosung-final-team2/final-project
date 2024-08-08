@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class SubscriptionOrderProductRequest {
 
-    @Min(value=1,message = "가격은 양수여야 합니다.")
+    @Min(value = 1, message = "가격은 양수여야 합니다.")
     private int price;
 
     @Min(value = 1, message = "수량은 최소 1 이상이어야 합니다.")

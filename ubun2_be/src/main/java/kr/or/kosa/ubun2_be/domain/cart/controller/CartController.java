@@ -24,7 +24,7 @@ public class CartController {
 
     @Operation(summary = "장바구니 생성")
     @PostMapping("/carts")
-    public ResponseDto<?> registerCarts(@Valid  @RequestBody List<CartRequest> cartRequests,
+    public ResponseDto<?> registerCarts(@Valid @RequestBody List<CartRequest> cartRequests,
                                         @AuthenticationPrincipal CustomUserDetails customerUserDetails) {
         cartService.createCarts(customerUserDetails.getUserId(), cartRequests);
         return ResponseDto.ok(null, "정상출력 데이터");

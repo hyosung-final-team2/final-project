@@ -71,7 +71,6 @@ public class CustomerServiceImpl implements CustomerService {
     private final AccountPaymentRepository accountPaymentRepository;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
-    //private final AlarmService alarmService;
     private final ImageService imageService;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -108,8 +107,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (memberOptional.isPresent()) {
             // 1. 있으면 => 이미 서비스에 가입되어있는 회원이기에 바로 다대다 테이블에 등록
             memberCustomerRepository.save(MemberCustomer.createMemberCustomer(memberOptional.get(),customer));
-            // TODO: 구독 로직
-           // alarmService.subscribeCustomer(memberOptional.get().getFcmToken(), customerId);
+
             eventPublisher.publishEvent(new SubscribeAlarmEvent(memberOptional.get().getFcmToken(), customerId));
         } else {
             // 2. 없으면 => 가입 대기중인 pendingMemberTable에 등록
@@ -228,8 +226,6 @@ public class CustomerServiceImpl implements CustomerService {
     @Transactional
     public void updateCustomerFcmToken(Long customerId, FcmTokenRequest fcmTokenRequest) {
         Customer customer = findById(customerId);
-        System.out.println(customer.getFcmToken());
-        System.out.println(fcmTokenRequest.getFcmToken());
         if (customer.getFcmToken().equals(fcmTokenRequest.getFcmToken())) {
             return;
         }
@@ -330,8 +326,6 @@ public class CustomerServiceImpl implements CustomerService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberExceptionType.NOT_EXIST_MEMBER));
         memberRepository.deleteById(memberId);
-        //TODO
-        //alarmService.unsubscribeCustomer(member.getFcmToken(), customerId);
         eventPublisher.publishEvent(new UnSubscribeAlarmEvent(member.getFcmToken(), customerId));
     }
 
@@ -362,7 +356,6 @@ public class CustomerServiceImpl implements CustomerService {
             // 새로운 이미지가 제공되지 않은 경우
             // 기존 이미지 유지 (아무 작업도 하지 않음)
         }
-
         findCustomer.updateCustomer(myPageUpdateRequest);
     }
 
@@ -371,5 +364,4 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = findById(customerId);
         return MypageDetailResponse.of(customer);
     }
-
 }

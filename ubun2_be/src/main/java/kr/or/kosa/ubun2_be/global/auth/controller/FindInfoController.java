@@ -18,28 +18,28 @@ public class FindInfoController {
     @Operation(summary = "고객&회원 아이디 찾기")
     @PostMapping("/find/id")
     public ResponseDto<?> findId(@Valid @RequestBody FindIdRequest findIdRequest) {
-        FindIdResponse findIdResponse = findInfoService.findId(findIdRequest.getUserName(),findIdRequest.getUserEmail(),findIdRequest.getRole());
-        return ResponseDto.ok(findIdResponse,"아이디 찾기 성공");
+        FindIdResponse findIdResponse = findInfoService.findId(findIdRequest.getUserName(), findIdRequest.getUserEmail(), findIdRequest.getRole());
+        return ResponseDto.ok(findIdResponse, "아이디 찾기 성공");
     }
 
     @Operation(summary = "고객&회원 비밀번호 찾기")
     @PostMapping("/find/password")
     public ResponseDto<?> findPassword(@Valid @RequestBody FindPasswordRequest findPasswordRequest) {
-        findInfoService.findPassword(findPasswordRequest.getUserName(),findPasswordRequest.getUserEmail(),findPasswordRequest.getUserLoginId(),findPasswordRequest.getRole());
-        return ResponseDto.ok(null,"비밀번호 재설정 허용");
+        findInfoService.findPassword(findPasswordRequest.getUserName(), findPasswordRequest.getUserEmail(), findPasswordRequest.getUserLoginId(), findPasswordRequest.getRole());
+        return ResponseDto.ok(null, "비밀번호 재설정 허용");
     }
 
     @Operation(summary = "고객&회원 비밀번호 재설정")
     @PutMapping("/reset/password")
     public ResponseDto<?> resetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
-        findInfoService.resetPassword(resetPasswordRequest.getUserEmail(),resetPasswordRequest.getNewPassword(), resetPasswordRequest.getRole());
-        return ResponseDto.ok(null,"비밀번호 재설정 완료");
+        findInfoService.resetPassword(resetPasswordRequest.getUserEmail(), resetPasswordRequest.getNewPassword(), resetPasswordRequest.getRole());
+        return ResponseDto.ok(null, "비밀번호 재설정 완료");
     }
 
     @Operation(summary = "고객&회원 id 중복 체크")
     @PostMapping("/checkId")
     public ResponseDto<?> checkLoginId(@Valid @RequestBody CheckLoginIdRequest checkLoginIdRequest) {
-         findInfoService.checkLoginId(checkLoginIdRequest);
+        findInfoService.checkLoginId(checkLoginIdRequest);
         return ResponseDto.ok(null, "고객 ID 중복체크 완료");
     }
 }

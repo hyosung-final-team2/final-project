@@ -62,7 +62,7 @@ public class EmailServiceImpl implements EmailService {
         }
 
         String authenticationNumber = generateAuthenticationNumber();
-        saveAuthenticationNumber(email,authenticationNumber);
+        saveAuthenticationNumber(email, authenticationNumber);
 
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
@@ -138,8 +138,8 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public boolean validateAuthenticationNumber(EmailAuthenticationRequest emailAuthenticationRequest) {
         String authenticationNumber = getAuthenticationNumber(emailAuthenticationRequest.getEmail())
-                                      .orElseThrow(()->new AuthException(AuthExceptionType.NO_EXIST_AUTH_NUMBER));
-        if(authenticationNumber.equals(emailAuthenticationRequest.getAuthenticationNumber())) {
+                .orElseThrow(() -> new AuthException(AuthExceptionType.NO_EXIST_AUTH_NUMBER));
+        if (authenticationNumber.equals(emailAuthenticationRequest.getAuthenticationNumber())) {
             deleteAuthenticationNumber(emailAuthenticationRequest.getEmail());
             return true;
         }

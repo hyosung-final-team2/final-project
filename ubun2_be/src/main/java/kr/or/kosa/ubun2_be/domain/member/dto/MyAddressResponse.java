@@ -16,12 +16,12 @@ public class MyAddressResponse {
     private Long addressId;
     private boolean defaultStatus;
 
-   public MyAddressResponse(Address address) {
-       this.address = address.getAddress();
-       this.recipientName = address.getRecipientName();
-       this.recipientPhone = address.getRecipientPhone();
-       this.addressNickname = address.getAddressNickname();
-       this.defaultStatus = address.isDefaultStatus();
-       this.addressId = address.getAddressId();
-   }
+    public MyAddressResponse(Address address) {
+        this.address = address.getAddress();
+        this.recipientName = address.getRecipientName();
+        this.recipientPhone = address.getRecipientPhone();
+        this.addressNickname = address.getAddressNickname();
+        this.defaultStatus = address.isDefaultStatus();
+        this.addressId = address.getAddressId();
+    }
 }

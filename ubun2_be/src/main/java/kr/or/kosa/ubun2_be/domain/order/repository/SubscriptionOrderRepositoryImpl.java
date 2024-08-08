@@ -41,7 +41,7 @@ import static kr.or.kosa.ubun2_be.domain.product.entity.QProduct.product;
 public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport implements SubscriptionOrderRepositoryCustom {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
-    private static final List<String> STRING_SEARCH_FIELDS = List.of("orderStatus","memberName");
+    private static final List<String> STRING_SEARCH_FIELDS = List.of("orderStatus", "memberName");
     private static final List<String> DATE_SEARCH_FIELDS = List.of("createdAt");
 
     public SubscriptionOrderRepositoryImpl() {
@@ -67,6 +67,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
 
         return query.fetch();
     }
+
     private BooleanBuilder orderStatusEq(SearchRequest searchRequest) {
         try {
             OrderStatus status = OrderStatus.valueOf(searchRequest.getOrderStatus());
@@ -162,7 +163,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
         }
     }
 
-  public List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+    public List<SubscriptionOrder> findSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
 
         return from(subscriptionOrder)
                 .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
@@ -175,7 +176,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                 .fetch();
     }
 
-  public List<SubscriptionOrder> findAllSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+    public List<SubscriptionOrder> findAllSubscriptionOrderByDateRangeAndCustomerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
 
         return from(subscriptionOrder)
                 .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
@@ -184,7 +185,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                 .where(customer.customerId.eq(customerId)
                         .and(subscriptionOrder.createdAt.between(startDate, endDate)))
                 .fetch();
-  }
+    }
 
     @Override
     public Optional<SubscriptionOrder> findSubscriptionOrderByIdAndCustomerId(Long orderId, Long customerId) {
@@ -219,7 +220,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     @Override
     public List<Object[]> findTopSellingProductsByCustomerId(Long customerId, LocalDateTime startDate, LocalDateTime endDate) {
         List<Tuple> tuples = from(subscriptionOrderProduct)
-                .select(product.productId,product.productName,subscriptionOrderProduct.quantity.sum())
+                .select(product.productId, product.productName, subscriptionOrderProduct.quantity.sum())
                 .join(subscriptionOrderProduct.subscriptionOrder, subscriptionOrder)
                 .join(subscriptionOrderProduct.product, product)
                 .join(subscriptionOrder.member.memberCustomers, memberCustomer)
@@ -246,7 +247,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
                 .select(subscriptionOrder.address, subscriptionOrder.subscriptionOrderId)
                 .join(subscriptionOrder.member.memberCustomers, memberCustomer)
                 .where(memberCustomer.customer.customerId.eq(customerId)
-                        .and(subscriptionOrder.createdAt.between(startDate,endDate))
+                        .and(subscriptionOrder.createdAt.between(startDate, endDate))
                         .and(subscriptionOrder.orderStatus.eq(OrderStatus.APPROVED)))
                 .distinct()
                 .fetch();
@@ -256,7 +257,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     }
 
     @Override
-    public Long countSubscriptionOrdersByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+    public Long countSubscriptionOrdersByCustomerAndDateRange(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
 
         JPQLQuery<Long> query = from(subscriptionOrder)
                 .join(subscriptionOrder.member, member)
@@ -271,7 +272,7 @@ public class SubscriptionOrderRepositoryImpl extends QuerydslRepositorySupport i
     }
 
     @Override
-    public Long sumSubscriptionOrderTotalByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+    public Long sumSubscriptionOrderTotalByCustomerAndDateRange(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
         JPQLQuery<Long> query = from(subscriptionOrder)
                 .join(subscriptionOrder.subscriptionOrderProducts, subscriptionOrderProduct)
                 .join(subscriptionOrder.member, member)

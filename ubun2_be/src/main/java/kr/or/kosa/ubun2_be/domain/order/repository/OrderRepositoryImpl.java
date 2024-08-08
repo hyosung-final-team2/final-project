@@ -41,7 +41,7 @@ import static kr.or.kosa.ubun2_be.domain.product.entity.QProduct.product;
 public class OrderRepositoryImpl extends QuerydslRepositorySupport implements OrderRepositoryCustom {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
-    private static final List<String> STRING_SEARCH_FIELDS = List.of("orderStatus","memberName","paymentType");
+    private static final List<String> STRING_SEARCH_FIELDS = List.of("orderStatus", "memberName", "paymentType");
     private static final List<String> DATE_SEARCH_FIELDS = List.of("createdAt");
 
     public OrderRepositoryImpl() {
@@ -67,6 +67,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
 
         return query.fetch();
     }
+
     private BooleanBuilder orderStatusEq(SearchRequest searchRequest) {
         try {
             OrderStatus status = OrderStatus.valueOf(searchRequest.getOrderStatus());
@@ -162,7 +163,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     }
 
     @Override
-    public List<Order> findOrdersByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+    public List<Order> findOrdersByDateRangeAndCustomerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
 
         return from(order)
                 .join(order.orderProducts, orderProduct)
@@ -177,7 +178,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     }
 
     @Override
-    public List<Order> findAllOrdersByDateRangeAndCustomerId(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+    public List<Order> findAllOrdersByDateRangeAndCustomerId(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
 
         return from(order)
                 .join(order.orderProducts, orderProduct)
@@ -223,13 +224,13 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
                         .and(order.orderStatus.eq(OrderStatus.APPROVED)))
                 .distinct()
                 .fetch();
-        return  results.stream().map(tuple -> {
+        return results.stream().map(tuple -> {
             return tuple.get(order.address);
         }).toList();
     }
 
     @Override
-    public Long countOrdersByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+    public Long countOrdersByCustomerAndDateRange(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
 
         JPQLQuery<Long> query = from(order)
                 .join(order.member, member)
@@ -244,7 +245,7 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport implements Or
     }
 
     @Override
-    public Long sumOrderTotalByCustomerAndDateRange(LocalDateTime startDate , LocalDateTime endDate, Long customerId) {
+    public Long sumOrderTotalByCustomerAndDateRange(LocalDateTime startDate, LocalDateTime endDate, Long customerId) {
         JPQLQuery<Long> query = from(order)
                 .join(order.orderProducts, orderProduct)
                 .join(order.member, member)

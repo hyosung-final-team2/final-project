@@ -7,8 +7,10 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryCustom {
     Optional<Product> findByIsDeletedFalseAndCustomerCustomerIdAndProductId(Long customerId, Long productId);
+
     boolean existsByIsDeletedFalseAndProductName(String productName);
 
     long countByIsDeletedFalseAndCustomerCustomerId(Long customerId);
+
     long countByIsDeletedFalseAndCustomerCustomerIdAndProductStatus(Long customerId, boolean productStatus);
 }
