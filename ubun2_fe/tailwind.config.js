@@ -31,6 +31,10 @@ module.exports = {
         'custom-badge-jibun': '#E6E6E6',
         'custom-badge-jibun-text': '#54585B',
 
+        //main
+        'login-movie': '#2B303A',
+        'login-main': '#4B5059',
+
         // [bg] - button
         'custom-button-purple': '#D4CDE7',
         'custom-font-purple': '#290386',
@@ -129,8 +133,13 @@ module.exports = {
       },
       screens: {
         '1080p': '1080px',
+        '1200p': '1200px',
         '1280p': '1280px',
+        '1350p': '1350px',
         '1500p': '1500px',
+      },
+      fontSize: {
+        '1280p': '1.05rem',
       },
     },
   },
