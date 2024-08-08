@@ -29,7 +29,7 @@ export const useSendGroupAlarmProduct = (productName) => {
         customerId : customerId,
         title:businessName,
         content: `새상품(${productName})이 추가되었습니다.`,
-        link: `${BASE_URL}/member/app/store/product/62` // TODO : onSuccess
+        link: `${BASE_URL}/member/home`
     }
     return useMutation({
         mutationFn:() => sendGroupAlarm(groupData)
@@ -47,6 +47,21 @@ export const useSendGroupAlarmProductDelete = (productName) => {
         mutationFn:() => sendGroupAlarm(groupData)
     })
 }
+
+export const useSendGroupAlarmAnnouncement = () => {
+    const {customerId, businessName}= useCustomerStore()
+    const BASE_URL = import.meta.env.VITE_PUSH_LINK
+    const groupData = {
+        customerId : customerId,
+        title:businessName,
+        content: "새로운 공지사항을 확인해보세요!",
+        link: `${BASE_URL}/member/home`
+    }
+    return useMutation({
+        mutationFn:() => sendGroupAlarm(groupData)
+    })
+}
+
 
 
 export const useSendPersonalAlarmMember = (memberName) => {
