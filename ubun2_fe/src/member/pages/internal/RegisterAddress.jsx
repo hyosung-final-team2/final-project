@@ -31,15 +31,10 @@ const RegisterAddress = () => {
     { label: '휴대폰번호', placeholder: '휴대폰 번호를 알려주세요', key: 'phoneNumber' },
   ];
 
-  // useEffect(() => {
-  //   if (addressId) {
-  //     setLocalAddressId(addressId);
-  //   }
-  // }, [addressId]);
 
   // 수정 시 기존 데이터 불러오기
   useEffect(() => {
-    console.log(isRegister);
+
 
     resetAddressData();
 
@@ -156,7 +151,6 @@ const RegisterAddress = () => {
         navigate(ADDRESS_LIST_URL);
       },
     }); // 주소 ID가 필요할 경우 추가해야 합니다.
-    console.log('주소 삭제');
   };
 
   const inputStyle = 'bg-custom-input-lightgray border border-gray-100 text-gray-600';

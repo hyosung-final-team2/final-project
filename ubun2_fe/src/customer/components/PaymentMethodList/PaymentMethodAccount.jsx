@@ -1,10 +1,9 @@
-import React from 'react';
 import { getBankLogo, getCardColor } from '../../../member/components/PaymentMethod/CardList';
 import { formatBankAccount } from '../../utils/accountFormat';
 
 const PaymentMethodAccount = ({ bankName, memberName, accountNumber }) => {
   const formattedBankNumber = accountNumber ? formatBankAccount(bankName?.slice(0, -2), accountNumber, true) : '-';
-  console.log(getCardColor(bankName));
+
   return (
     <div className={`flex-1 bg-slate-600 w-[400px] h-[230px] ${getCardColor(bankName)} text-white  p-6 relative flex flex-col rounded-xl`}>
       {/* <div className='mt-auto flex justify-between'> */}

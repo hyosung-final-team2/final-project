@@ -1,7 +1,7 @@
 import { getCategoryPath } from './category';
 
 const SelectCategoryModal = ({ categoryList, setCategory, setModalState }) => {
-  console.log(categoryList);
+
   return (
     <>
       <div className='px-4 flex flex-wrap'>

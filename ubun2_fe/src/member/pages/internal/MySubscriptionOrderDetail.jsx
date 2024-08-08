@@ -95,7 +95,6 @@ const MySubscriptionOrderDetail = () => {
     });
 
     if (validProductIds.length === 0) {
-      console.log('선택된 유효한 상품이 없습니다.');
       return;
     }
 

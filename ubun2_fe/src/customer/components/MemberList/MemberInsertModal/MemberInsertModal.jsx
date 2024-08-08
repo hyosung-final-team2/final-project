@@ -176,15 +176,12 @@ const MemberInsertModal = ({ isOpen, setOpenModal, selectedMemberDetail, current
     } else {
       const updatedPaymentMethods = [...memberData.paymentMethods, ...deletedPaymentMethods];
       const updatedAddresses = [...memberData.addresses, ...deletedAddresses];
-      console.log('updatedAddresses', updatedAddresses);
       const updatedMemberData = { ...memberData, paymentMethods: updatedPaymentMethods, addresses: updatedAddresses };
       updateMutate({ memberId: selectedMemberDetail.memberId, isPending: selectedMemberDetail.pending, requestData: updatedMemberData });
     }
   };
 
   const { mutate: deleteMutate } = useDeleteMember(selectedMemberDetail.memberId, selectedMemberDetail.pending, selectedMemberDetail.currentPage);
-
-  // const [isAllValuePossible, setIsAllValuePossible] = useState(false);
 
   const [isUpdate, setIsUpdate] = useState(false);
 

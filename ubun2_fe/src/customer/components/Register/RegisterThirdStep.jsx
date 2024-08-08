@@ -87,7 +87,6 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
 
     if (event.data.type === 'ADDRESS_SELECTED') {
       const result = event.data.result;
-      console.log('Address selected:', result);
 
       updateAddress(result.roadAddrPart1 || '', result.zipNo || '');
 
@@ -97,7 +96,7 @@ const RegisterSecondStep = ({ setRegisterStep, setRegisterThirdData }) => {
       setPopup(null);
     }
   };
-  // console.log(thirdRegisterObj);
+
   useEffect(() => {
     window.addEventListener('message', handleAddressMessage);
     return () => {

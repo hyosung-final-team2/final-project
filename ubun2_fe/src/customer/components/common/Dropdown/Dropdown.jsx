@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import paymentMethodStore from '../../../../customer/store/PaymentMethod/paymentMethodStore';
 import usePaymentMethodTableStore from '../../../store/PaymentMethod/paymentMethodTableStore';
 
@@ -12,8 +12,6 @@ const Dropdown = ({ label, items, onChange }) => {
   const handleToggle = () => setIsOpen(!isOpen);
 
   const handleItemClick = item => {
-    console.log('handleItemClick');
-    console.log('paymentMethodType', paymentMethodType);
     const newType = paymentMethodType === 'ACCOUNT' ? 'CARD' : 'ACCOUNT';
     setPaymentMethodType(newType);
     onChange && onChange(item);

@@ -24,12 +24,9 @@ const fetchAddressData = (keyword, confmKey = apikey) => {
       // JSON 문자열을 객체로 파싱
       const data = JSON.parse(jsonString);
 
-      console.log(data);
-
       return data;
     })
     .catch(error => {
-      console.error('에러 발생:', error);
       throw error;
     });
 };

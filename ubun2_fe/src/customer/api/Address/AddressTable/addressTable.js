@@ -32,7 +32,6 @@ export const searchMember = async searchKeyword => {
 };
 
 export const getMemberAddresses = async memberId => {
-  console.log('Calling API with:', { memberId });
   return await privateFetch.get(`/customers/addresses/member/${memberId}`);
 };
 

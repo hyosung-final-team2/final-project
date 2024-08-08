@@ -13,7 +13,6 @@ const BottomButton = ({ buttonText, buttonStyle, buttonFunc, disabled }) => {
     } else {
       setKeyboardSize(0);
       setScrollOffset(0);
-      console.log('Keyboard closed');
     }
   }, [isKeyboardOpen]);
 
@@ -21,7 +20,6 @@ const BottomButton = ({ buttonText, buttonStyle, buttonFunc, disabled }) => {
     if (isKeyboardOpen) {
       const newScrollOffset = window.visualViewport.pageTop;
       setScrollOffset(newScrollOffset);
-      console.log('Scroll offset:', newScrollOffset);
     } else {
       setScrollOffset(0);
     }

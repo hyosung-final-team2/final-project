@@ -115,7 +115,6 @@ const ForgotLoginId = () => {
                     setDuplicateEmailMessage(null)
                 },
                 onError: (err) => {
-                    console.log(err)
                     setIsEmailCheckPass(false)
                     setDuplicateEmailMessage(err.response.data.errorMessage)
                 }

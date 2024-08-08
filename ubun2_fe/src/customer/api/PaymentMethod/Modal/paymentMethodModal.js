@@ -7,7 +7,6 @@ export const registerPayment = async paymentData => await privateFetch.post('/cu
 export const deletePayment = async paymentMethodId => await privateFetch.delete(`/customers/payments/${paymentMethodId}`);
 
 export const searchMember = async searchKeyword => {
-  console.log('Calling API with:', { searchKeyword });
   return await privateFetch.get('/customers/addresses/search-member', {
     params: {
       page: 0,

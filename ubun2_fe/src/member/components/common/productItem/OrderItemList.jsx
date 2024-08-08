@@ -5,7 +5,7 @@ const formatPrice = price => {
 const paymentCancel = ['DENIED', 'REJECTED'];
 
 const OrderItemList = ({ productImagePath, productName, productImageOriginalName, totalPrice, orderStatus }) => {
-  console.log(orderStatus);
+
   return (
     <div className='flex items-center justify-between px-4 mb-6'>
       <img src={productImagePath} alt={productImageOriginalName} className='object-cover w-24 h-24 mr-4 rounded-md' />

@@ -96,7 +96,7 @@ export const useCheckPassword = () => {
     onSuccess: res => {
       return res.data;
     },
-    onError: () => {
+    onError: (error) => {
       console.log(error);
     },
   });
@@ -117,7 +117,6 @@ export const useSetNewPassword = () => {
 };
 
 export const useSetDefaultPayment = () => {
-  console.log('useSetDefaultPayment');
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: paymentMethodId => setDefaultPayment(paymentMethodId),

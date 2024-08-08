@@ -38,15 +38,12 @@ export const getSubscriptionOrderList = async (page, size, periodType, periodVal
 };
 
 export const getOrderDetail = async orderId => {
-  console.log('orderId:', orderId);
   const res = await privateFetch.get(`/members/orders/${orderId}`);
-  console.log('res:', res);
   return res;
 };
 
 export const getSubscriptionOrder = async orderId => {
   const res = await privateFetch.get(`/members/orders/subscription/${orderId}`);
-  console.log(res);
   return res;
 };
 

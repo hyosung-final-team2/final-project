@@ -1,7 +1,6 @@
 import { Table } from 'flowbite-react';
 
 const UnifiedOrderTableBody = ({ dataList, TableRowComponent, setOpenModal, selectedOrders, handleRowChecked, isCheckable = true, currentPage, PAGE_SIZE, colNum }) => {
-  console.log(dataList)
 
   const paddedDataList = [...dataList];
   while (paddedDataList.length < PAGE_SIZE) {

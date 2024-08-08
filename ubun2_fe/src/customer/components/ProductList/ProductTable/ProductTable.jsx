@@ -59,7 +59,6 @@ const ProductTable = () => {
 
   useEffect(() => {
     if (currentPage < totalPages) {
-      console.log('useEffect : ', searchCategory, searchKeyword);
       const nextPage = currentPage + 1;
       queryClient.prefetchQuery({
         queryKey: ['product', { page: nextPage, PAGE_SIZE, sort, searchCategory, searchKeyword }],

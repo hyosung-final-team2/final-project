@@ -27,9 +27,6 @@ const RegisterFirstStep = ({ setRegisterStep, setRegisterFirstData }) => {
 
   useEffect(() => {
     const { businessRegistrationNumber, businessOpenDate, businessOwner } = registerObj;
-    console.log(registerObj);
-    console.log(isAllValuePossible);
-    console.log(isAuthSuccess)
     if (
       businessRegistrationNumber.trim() !== '' &&
       businessOpenDate.trim() !== '' &&

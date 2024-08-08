@@ -19,7 +19,6 @@ export const useRegisterPayment = () => {
     onSuccess: response => {
       queryClient.invalidateQueries({ queryKey: ['payment'] });
       toast.success('결제수단이 성공적으로 추가되었습니다.');
-      console.log(response);
     },
     onError: error => {
       console.log(error);
