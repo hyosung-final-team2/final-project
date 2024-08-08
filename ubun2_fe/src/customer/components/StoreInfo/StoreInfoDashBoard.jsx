@@ -36,7 +36,7 @@ const StoreInfoDashBoard = () => {
 
   const { data: mypage, isLoading, isError } = useGetMypage();
   const updateMypageMutation = useUpdateMypage();
-  const {mutate: announceMutate } = useSendGroupAlarmAnnouncement();
+  // const {mutate: announceMutate } = useSendGroupAlarmAnnouncement();
 
   const addressRegex = /^(.*(?:로|길)\s*\d+(?:-\d+)?(?:\s*\d*)?)\s+(.+)$/;
   const separateAddress = fullAddress => {
@@ -144,7 +144,7 @@ const StoreInfoDashBoard = () => {
           }));
           setImageFile(null);
           toast.success('마이페이지 업데이트가 완료되었습니다.', successToastStyle);
-          announceMutate()
+          // announceMutate()
         },
         onError: () => {
           toast.error('마이페이지 업데이트가 실패했습니다. 다시 시도해주세요.', errorToastStyle);
